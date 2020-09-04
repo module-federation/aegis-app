@@ -8,7 +8,7 @@
     "build-dev": "babel src -d dist",
     "start-webpack": "webpack-dev-server",
     "restart": "npm run build && npm run start",
-    "start": "cd dist && node main.js",
+    "start": "node dist/main.js",
     "clean": "rm -rf dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

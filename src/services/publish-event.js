@@ -13,7 +13,7 @@ export default function publishEvent(event) {
       'Content-Length': Buffer.byteLength(serialized)
     }
   }
-  
+
   const req = http.request(options, (res) => {
     console.log(`STATUS: ${res.statusCode}`);
     console.log(`HEADERS: ${JSON.stringify(res.headers)}`);

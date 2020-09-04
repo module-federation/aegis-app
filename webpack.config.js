@@ -1,12 +1,19 @@
 var path = require('path')
 const ModuleFederationPlugin = require("webpack").container.ModuleFederationPlugin;
 const nodeExternals = require('webpack-node-externals');
+// const httpNode = require('./webpack/http-node');
 
 var serverConfig = {
+  target: 'async-node',
   entry: [path.resolve(__dirname, "src/index.js")],
-  target: 'node',
   output: {
+    path: path.resolve(__dirname, "dist"),
+    publicPath: 'http://localhost:8060',
     libraryTarget: 'commonjs',
+  },
+  devServer: {
+    contentBase: path.join(__dirname, "dist"),
+    port: 8060,
   },
   externals: nodeExternals({
     allowlist: [/webpack\/container/],
@@ -38,7 +45,6 @@ var serverConfig = {
         "./service1": "./src/services/service1",
         "./publish-event": "./src/services/publish-event"
       },
-      shared: ["express"],
     }),
   ]
 }
