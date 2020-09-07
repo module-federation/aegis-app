@@ -1,10 +1,10 @@
 var path = require('path')
 const ModuleFederationPlugin = require("webpack").container.ModuleFederationPlugin;
 const nodeExternals = require('webpack-node-externals');
-// const httpNode = require('./webpack/http-node');
+const httpNode = require('./webpack/http-node');
 
 var serverConfig = {
-  target: 'async-node',
+  target: httpNode,
   entry: [path.resolve(__dirname, "src/index.js")],
   output: {
     path: path.resolve(__dirname, "dist"),
