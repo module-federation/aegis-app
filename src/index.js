@@ -28,5 +28,8 @@ app.post(`${API_ROOT}/publish`, (req, res) => {
   console.log({ event: req.body });
   res.status(201).send({ "event": req.body, "date": new Date().toUTCString() });
 });
+// app.get(`${API_ROOT}/model2`, (req, res) => {
+
+// });
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
 

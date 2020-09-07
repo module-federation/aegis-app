@@ -43,7 +43,8 @@ var serverConfig = {
       filename: "remoteEntry.js",
       exposes: {
         "./service1": "./src/services/service1",
-        "./publish-event": "./src/services/publish-event"
+        "./publish-event": "./src/services/publish-event",
+        "./create-model2": "./src/services/create-model2"
       },
     }),
   ]
