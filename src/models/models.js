@@ -1,15 +1,21 @@
+import crypto from 'crypto';
 import DefineModels from './define-models';
-import createModel2Factory from './create-model2';
+import createModel1Factory from './model1';
+import createModel2Factory from './model2';
 
 const models = new DefineModels();
 
+function hash(data) {
+  return crypto.createHash('sha1').update(data).digest('hex');
+}
+
 models.add({
-  modelName: 'model3',
-  factory: createModel2Factory()
+  modelName: 'model1',
+  factory: createModel1Factory(hash)
 });
 
 models.add({
-  modelName: 'model4',
+  modelName: 'model2',
   factory: createModel2Factory()
 });
 
