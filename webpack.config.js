@@ -11,10 +11,6 @@ var serverConfig = {
     publicPath: 'http://localhost:8060',
     libraryTarget: 'commonjs',
   },
-  devServer: {
-    contentBase: path.join(__dirname, "dist"),
-    port: 8060,
-  },
   externals: nodeExternals({
     allowlist: [/webpack\/container/],
   }),

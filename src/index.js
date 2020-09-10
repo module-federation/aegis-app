@@ -78,7 +78,6 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ clientTracking: true, noServer: true });
 
 app.post(`${API_ROOT}/publish`, (req, res) => {
-  console.log(wss);
   wss.clients.forEach(function each(client) {
     if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify({ event: req.body }));
@@ -97,7 +96,7 @@ server.on('upgrade', function (request, socket, head) {
       return;
     }
 
-    console.log('Session is parsed!');
+    console.log('Session is parsed');
 
     wss.handleUpgrade(request, socket, head, function (ws) {
       wss.emit('connection', ws, request);
