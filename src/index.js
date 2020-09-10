@@ -1,19 +1,65 @@
 
-'use strict'
+'use strict';
 
-const express = require("express");
+const session = require('express-session');
+const express = require('express');
+const http = require('http');
+const uuid = require('uuid');
 const bodyParser = require("body-parser");
 
+const WebSocket = require('ws');
+
 const app = express();
+const map = new Map();
+
 const API_ROOT = "/api";
 const PORT = 8060;
 
-app.use(bodyParser.json());
+//
+// We need the same instance of the session parser in express and
+// WebSocket server.
+//
+const sessionParser = session({
+  saveUninitialized: false,
+  secret: '$eCuRiTy',
+  resave: false
+});
+
+//
+// Serve static files from the 'public' folder.
+//
+app.use(express.static('public'));
 app.use(express.static('dist'));
+app.use(sessionParser);
+app.use(bodyParser.json());
+
+app.post('/login', function (req, res) {
+  //
+  // "Log in" user and set userId to session.
+  //
+  const id = uuid.v4();
+
+  console.log(`Updating session for user ${id}`);
+  req.session.userId = id;
+  res.send({ result: 'OK', message: 'Session updated' });
+});
+
+app.delete('/logout', function (request, response) {
+  const ws = map.get(request.session.userId);
+
+  console.log('Destroying session');
+  request.session.destroy(function () {
+    if (ws) ws.close();
+
+    response.send({ result: 'OK', message: 'Session destroyed' });
+  });
+});
+
 app.get(
   `${API_ROOT}/fedmonserv`,
   (req, res) => res.send('Federated Monolith Service')
 );
+
 app.get(`${API_ROOT}/service1`, (req, res) => {
   console.log({ from: req.ip, url: req.originalUrl });
   res.status(200).send({
@@ -24,9 +70,61 @@ app.get(`${API_ROOT}/service1`, (req, res) => {
     "date": new Date().toUTCString()
   });
 });
+
+//
+// Create HTTP server by ourselves.
+//
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ clientTracking: true, noServer: true });
+
 app.post(`${API_ROOT}/publish`, (req, res) => {
+  console.log(wss);
+  wss.clients.forEach(function each(client) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify({ event: req.body }));
+    }
+  });
   console.log({ event: req.body });
   res.status(201).send({ "event": req.body, "date": new Date().toUTCString() });
 });
-app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
 
+server.on('upgrade', function (request, socket, head) {
+  console.log('Parsing session from request...');
+
+  sessionParser(request, {}, () => {
+    if (!request.session.userId) {
+      socket.destroy();
+      return;
+    }
+
+    console.log('Session is parsed!');
+
+    wss.handleUpgrade(request, socket, head, function (ws) {
+      wss.emit('connection', ws, request);
+    });
+  });
+});
+
+wss.on('connection', function (ws, request) {
+  const userId = request.session.userId;
+
+  map.set(userId, ws);
+
+  ws.on('message', function (message) {
+    //
+    // Here we can now use session parameters.
+    //
+    console.log(`Received message ${message} from user ${userId}`);
+  });
+
+  ws.on('close', function () {
+    map.delete(userId);
+  });
+});
+
+//
+// Start the server.
+//
+server.listen(PORT, function () {
+  console.log(`Listening on http://localhost:${PORT}`);
+});
