@@ -44,7 +44,7 @@ var serverConfig = {
       exposes: {
         "./service1": "./src/services/service1",
         "./publish-event": "./src/services/publish-event",
-        "./models": "/src/models/models"
+        "./models": "./src/models/models"
       },
       shared: require('./package.json').dependencies
     }),
