@@ -11,7 +11,10 @@ function hash(data) {
 
 models.add({
   modelName: 'model1',
-  factory: createModel1Factory(hash)
+  factory: createModel1Factory(hash),
+  handler: async (event) => {
+    console.log(`event handler >>>>>>>>>>> ${event.eventName}`);
+  }
 });
 
 models.add({

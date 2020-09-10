@@ -25,7 +25,6 @@
     "express-cli": "0.0.1",
     "webpack": "^5.0.0-beta.25",
     "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.0",
     "webpack-node-externals": "^2.5.2"
   }
 }
