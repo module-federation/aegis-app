@@ -27,7 +27,7 @@ const sessionParser = session({
 
 //
 // Serve static files from the 'public' folder.
-//
+// 
 app.use(express.static('public'));
 app.use(express.static('dist'));
 app.use(sessionParser);

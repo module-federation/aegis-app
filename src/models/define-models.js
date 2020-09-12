@@ -1,3 +1,5 @@
+
+
 /**
  * @typedef {{modelName: string, factory: function(): any, isValid?: function(): boolean, handler?: function(): Promise<void> }} ModelDef
  */
@@ -7,8 +9,8 @@
  */
 export default class DefineModels extends Set {
   /**
-   * 
-   * @param {Iterable<ModelDef>} models 
+   *
+   * @param {Iterable<ModelDef>} models
    */
   constructor(models) {
     super(models);
@@ -16,10 +18,10 @@ export default class DefineModels extends Set {
 
   /**
    * @override
-   * @param {ModelDef} param0 
+   * @param {ModelDef} param0
    */
-  add({ modelName, factory, isValid, handler }) {
-    super.add({ modelName, factory, isValid, handler });
+  add({ modelName, factory, isValid, handler, mixins = [] }) {
+    super.add({ modelName, factory, isValid, handler, mixins });
   }
 
 }
