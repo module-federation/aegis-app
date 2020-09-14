@@ -1,32 +1,37 @@
-import crypto from 'crypto';
+import {
+  hash,
+  uuid,
+  requireParams as rp
+} from '../lib/utils';
 import DefineModels from "./define-models";
-import createModel1Factory, {
-  validateModel1Factory
-} from './model1';
-import createModel2Factory from './model2';
-import mixins, { redact } from './mixins';
-
-
-function hash(data) {
-  return crypto.createHash('sha1').update(data).digest('hex');
-}
+import createUserFactory, {
+  validateUser,
+  handleUserEvent
+} from './user';
+import createModel2 from './model2';
+import {
+  encryptProperties,
+  requireProperties
+} from './mixins';
 
 const models = new DefineModels();
 
 models.add({
-  modelName: 'model1',
-  factory: createModel1Factory(hash),
-  isValid: validateModel1Factory(),
-  handler: async (event) => {
-    console.log(`event handler >>> ${event.eventName}`);
-  },
-  mixins: mixins
+  modelName: 'user',
+  factory: createUserFactory(hash, uuid, rp),
+  isValid: validateUser,
+  handler: handleUserEvent,
+  mixins: [requireProperties(
+    'userName', 
+    'password',
+    'lastName'
+  )]
 });
 
 models.add({
   modelName: 'model2',
-  factory: createModel2Factory(),
-  mixins: [redact]
+  factory: createModel2,
+  mixins: [encryptProperties('field1')]
 });
 
 export default models;

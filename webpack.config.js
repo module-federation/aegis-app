@@ -2,6 +2,7 @@ var path = require('path')
 const ModuleFederationPlugin = require("webpack").container.ModuleFederationPlugin;
 const nodeExternals = require('webpack-node-externals');
 const httpNode = require('./webpack/http-node');
+const sharedDependencies = require('./package.json').dependencies;
 
 var serverConfig = {
   target: httpNode,
@@ -42,7 +43,12 @@ var serverConfig = {
         "./publish-event": "./src/services/publish-event",
         "./models": "./src/models/models",
       },
-      shared: require('./package.json').dependencies
+      shared: {
+        ...sharedDependencies,
+        // uuid: {
+        //   eager: true
+        // }
+      }
     }),
   ]
 }

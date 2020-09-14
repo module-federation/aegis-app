@@ -1,33 +1,85 @@
 import crypto from 'crypto';
 
+/**
+ * @callback mixinFunction
+ * @param {Object} o Object to compose
+ * @returns {Object} Composed object
+ */
+
+/**
+ * @callback functionalMixinFactory
+ * @param {*} mixinFunctionParams params for mixin function 
+ * @returns {mixinFunction}
+ */
+
 function encrypt(data) {
-  var mykey = crypto.createCipher('aes-128-cbc', 'mypassword');
-  var mystr = mykey.update(data, 'utf8', 'hex')
-  return mystr += mykey.final('hex');
+  var key = crypto.createCipher('aes-128-cbc', 'secret');
+  var str = key.update(data, 'utf8', 'hex')
+  return str += key.final('hex');
+}
+
+/**
+ * @type {functionalMixinFactory}
+ * @param  {...string} propNames 
+ */
+export const encryptProperties = (...propNames) => (o) => {
+  const encryptProps = (props) => {
+    return props.map(p => o[p] ? { [p]: encrypt(o[p]) } : {})
+      .reduce((p, c) => ({ ...c, ...p }));
+  }
+  return {
+    ...o,
+    ...encryptProps(propNames)
+  }
+}
+
+/**
+ * @type {functionalMixinFactory}
+ * @param  {...string} propNames 
+ */
+export const requireProperties = (...propNames) => (o) => {
+  const requireProps = () => {
+    const missing = propNames.filter(key => !o[key]);
+    if (missing && missing.length > 0) {
+      throw new Error(`missing required properties: ${missing}`);
+    }
+  }
+  requireProps(propNames);
+  return {
+    ...o,
+    requireProps
+  }
 }
 
 
+/**
+ * @type {mixinFunction}
+ * @param {*} o 
+ */
 export const remoteMixin = o => ({
   remoteMixin: true,
   ...o
 })
 
-export const redact = o => {
-  const _redact = o['sensitive'] ? true : false;
-  if (_redact) {
-    o.sensitive = encrypt(o.sensitive);
-  }
-  return {
-    redact: _redact,
-    ...o
-  }
-}
+// Implement GDPR across models
+const encryptPersonalInfo = encryptProperties(
+  'lastName',
+  'address',
+  'email',
+  'phone'
+);
 
-const mixins = [
-  remoteMixin,
-  redact
+
+
+/**
+ * Global mixins
+ * @type {Array<mixinFunction>}
+ */
+const Mixins = [
+  encryptPersonalInfo,
+  remoteMixin
 ];
 
-export default mixins;
+export default Mixins;
 
 

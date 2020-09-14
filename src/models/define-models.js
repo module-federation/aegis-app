@@ -1,10 +1,26 @@
-
+import Mixins from './mixins';
 
 /**
- * @typedef {{modelName: string, factory: function(): any, isValid?: function(): boolean, handler?: function(): Promise<void> }} ModelDef
+ * @callback modelFactory
+ * @param {*} args 
  */
 
 /**
+ * @typedef {{
+ *  modelName: string, 
+ *  factory: modelFactory, 
+ *  isValid: function(pq4): boolean, 
+ *  handler: function(): Promise<void>,
+ *  mixins: Array<import("./mixins").mixinFunction>
+ * }} ModelDef
+ */
+
+/**
+ * @typedef {Set<ModelDef>} DefineModels 
+ */
+
+/**
+ * @type {DefineModels}
  * @extends Set
  */
 export default class DefineModels extends Set {
@@ -20,8 +36,21 @@ export default class DefineModels extends Set {
    * @override
    * @param {ModelDef} param0
    */
-  add({ modelName, factory, isValid, handler, mixins = [] }) {
-    super.add({ modelName, factory, isValid, handler, mixins });
+  add({
+    modelName,
+    factory,
+    isValid,
+    handler,
+    mixins = []
+  }) {
+    super.add({
+      modelName,
+      factory,
+      isValid,
+      handler,
+      mixins: Mixins.concat(mixins) // global
+    });
   }
+
 
 }
