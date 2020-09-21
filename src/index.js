@@ -15,6 +15,10 @@ const map = new Map();
 const API_ROOT = "/api";
 const PORT = 8060;
 
+import * as models from './models';
+
+Object.keys(models).forEach(key => console.log({ key, value: models[key] }))
+
 //
 // We need the same instance of the session parser in express and
 // WebSocket server.

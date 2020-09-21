@@ -1,35 +1,49 @@
 'use strict'
 
-export default function createUserFactory(hash, uuid, chkparm) {
-  return async function createUser({
-    userName,
-    password,
-    firstName,
-    lastName,
-    address,
-    country,
-    phone
-  } = {}) {
-    //chkparm({ userName, password, firstName });
-    return Object.freeze({
-      userId: uuid(),
-      password: hash(password),
+import {
+  requireProperties,
+  freezeProperties
+} from './mixins'
+
+export default {
+  modelName: 'user',
+  factory: ({ hash, uuid }) => {
+    return function ({
       userName,
+      password,
       firstName,
       lastName,
-      country,
-      address,
-      phone
-    });
-  }
+      email
+    } = {}) {
+      if (!password) {
+        throw new Error('password required');
+      }
+      return Object.freeze({
+        userId: uuid(),
+        password: hash(password),
+        userName,
+        firstName,
+        lastName,
+        email
+      });
+    }
+  },
+  mixins: [
+    requireProperties(
+      'userName',
+      'password',
+      'firstName'
+    ),
+    freezeProperties(
+      'userId',
+      'userName'
+    )
+  ],
+  onUpdate: ({ model, changes }) => {
+    model.requireProperties();
+    model.freezeProperties(changes);
+  },
+  onDelete: model => console.log(model),
 }
 
-export function validateUser() {
-  this.requireProperties();
-}
 
-
-export async function handleUserEvent(event) {
-
-  console.log(`USER event handler: ${{ ...event }}`);
-}

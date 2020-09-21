@@ -19,38 +19,63 @@ function encrypt(data) {
 }
 
 /**
- * @type {functionalMixinFactory}
- * @param  {...string} propNames 
+ * Functional mixin that encrypts the properties specified in `propNames`  
+ * @param  {...string} propNames - The properties to encrypt
  */
 export const encryptProperties = (...propNames) => (o) => {
-  const encryptProps = (props) => {
-    return props.map(p => o[p] ? { [p]: encrypt(o[p]) } : {})
+  const encryptProps = () => {
+    return propNames.map(p => o[p]
+      ? { [p]: encrypt(o[p]) }
+      : {})
       .reduce((p, c) => ({ ...c, ...p }));
   }
+
   return {
     ...o,
-    ...encryptProps(propNames)
+    ...encryptProps(),
+    encryptProperties: encryptProps
+  }
+}
+
+/** 
+ * Functional mixin that enforces required fields 
+ * @param  {...string} propNames - required property names
+ */
+export const requireProperties = (...propNames) => (o) => {
+  const requireProperties = () => {
+    const missing = propNames.filter(key => !o[key]);
+
+    if (missing?.length > 0) {
+      throw new Error(`missing required properties: ${missing}`);
+    }
+  }
+  requireProperties();
+
+  return {
+    ...o,
+    requireProperties
   }
 }
 
 /**
- * @type {functionalMixinFactory}
- * @param  {...string} propNames 
+ * Functional mixin that prevents properties from being updated
+ * @param  {...string} propNames - names of properties to freeze
  */
-export const requireProperties = (...propNames) => (o) => {
-  const requireProps = () => {
-    const missing = propNames.filter(key => !o[key]);
-    if (missing && missing.length > 0) {
-      throw new Error(`missing required properties: ${missing}`);
+export const freezeProperties = (...propNames) => (o) => {
+  const preventUpdates = (updates) => {
+    const intersection = Object.keys(updates)
+      .filter(key => propNames.includes(key));
+
+    if (intersection?.length > 0) {
+      throw new Error(`cannot update readonly properties: ${intersection}`);
     }
   }
-  requireProps(propNames);
+
   return {
     ...o,
-    requireProps
+    freezeProperties: preventUpdates
   }
 }
-
 
 /**
  * @type {mixinFunction}
@@ -69,17 +94,14 @@ const encryptPersonalInfo = encryptProperties(
   'phone'
 );
 
-
-
 /**
  * Global mixins
- * @type {Array<mixinFunction>}
  */
-const Mixins = [
+const GlobalMixins = [
   encryptPersonalInfo,
   remoteMixin
 ];
 
-export default Mixins;
+export default GlobalMixins;
 
 

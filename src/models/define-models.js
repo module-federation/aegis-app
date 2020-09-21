@@ -1,4 +1,4 @@
-import Mixins from './mixins';
+import GlobalMixins from './mixins';
 
 /**
  * @callback modelFactory
@@ -9,7 +9,7 @@ import Mixins from './mixins';
  * @typedef {{
  *  modelName: string, 
  *  factory: modelFactory, 
- *  isValid: function(pq4): boolean, 
+ *  onUpdate: function({model: Object, changes: any[]}), 
  *  handler: function(): Promise<void>,
  *  mixins: Array<import("./mixins").mixinFunction>
  * }} ModelDef
@@ -23,7 +23,7 @@ import Mixins from './mixins';
  * @type {DefineModels}
  * @extends Set
  */
-export default class DefineModels extends Set {
+export class DefineModels extends Set {
   /**
    *
    * @param {Iterable<ModelDef>} models
@@ -36,21 +36,25 @@ export default class DefineModels extends Set {
    * @override
    * @param {ModelDef} param0
    */
-  add({
-    modelName,
-    factory,
-    isValid,
-    handler,
-    mixins = []
-  }) {
+  add({ modelName, factory, onUpdate, handler, mixins }) {
     super.add({
       modelName,
       factory,
-      isValid,
+      onUpdate,
       handler,
-      mixins: Mixins.concat(mixins) // global
+      mixins: GlobalMixins.concat(mixins) // add global mixins
     });
   }
-
-
 }
+
+// export class ModelDefinition extends Set {
+
+//   add({ modelName, factoryFn, eventHandlers, mixins = [] }) {
+//     this._modelName = modelName;
+//     this._factoryFn = factoryFn;
+//     this._eventHandlers = eventHandlers;
+//     this._mixins = mixins.concat(GlobalMixins);
+//     super.add(this);
+//   }
+// }
+
