@@ -1,58 +1,14 @@
+'use strict'
+
 import {
-  requireProperties,
-  freezeProperties,
+  requirePropertiesMixin,
+  freezePropertiesMixin
 } from './mixins';
 
-/**
- * @typedef {Object} Model
- * @property {String} id - unique id
- * @property {String} modelName - model name
- * @property {String} createTime - time created
- * @property {Function} [isValid] - check model is valid
- */
+import onUpdate from './on-update';
 
 /**
- * @typedef {Object} Event
- * @property {EventType} eventType
- * @property {String} eventName
- * @property {String} eventTime
- * @property {String} modelName
- * @property {Object} modelData
- * @property {String} id
- */
-
-/**
- * @callback eventHandler
- * @param Event
- */
-
-/**
- * @callback onUpdate
- * @param {model: Model, changes: Object} changes
- */
-
-/**
- * @callback onDelete
- * @param {Model} model
- */
-
-/**
- * @typedef {Object} ModelConfig
- * @property {string} modelName
- * @property {function(...args): any} factory
- * @property {Object} [eventHandlers]
- * @property {eventHandler[]} [eventHandlers.onCreate]
- * @property {eventHandler[]} [eventHandlers.onUpdate]
- * @property {eventHandler[]} [eventHandlers.onDelete]
- * @property {Array<import("./mixins").mixinFunction>} [mixins]
- * @property {Object} [validate]
- * @property {onUpdate} [validate.onUpdate]
- * @property {onDelete} [validate.onDelete]
- * 
- */
-
-/**
- * @type {ModelConfig}
+ * @type {import('./index').ModelConfig}
  */
 export default {
   modelName: 'model2',
@@ -65,18 +21,17 @@ export default {
     }
   },
   mixins: [
-    requireProperties(
+    requirePropertiesMixin(
       'field1',
       'field2'
     ),
-    freezeProperties(
+    freezePropertiesMixin(
       'field1'
     )
   ],
-  onUpdate: ({model, changes}) => {
-    model.requireProperties();
-    model.freezeProperties(changes);
-  },
+
+  ...onUpdate,
+
   onDelete: (model) => {
     console.log(`deleting: ${model}`);
   }

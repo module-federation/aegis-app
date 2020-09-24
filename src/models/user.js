@@ -1,49 +1,56 @@
 'use strict'
+import onUpdate from './on-update';
 
 import {
-  requireProperties,
-  freezeProperties
+  requirePropertiesMixin,
+  freezePropertiesMixin,
+  hashPasswordsMixin
 } from './mixins'
 
+/**
+ * @type {import('./index').ModelConfig}
+ */
 export default {
+
   modelName: 'user',
-  factory: ({ hash, uuid }) => {
-    return function ({
+  factory: ({ uuid }) => {
+
+    return function createUser({
       userName,
       password,
       firstName,
       lastName,
       email
     } = {}) {
-      if (!password) {
-        throw new Error('password required');
-      }
+
       return Object.freeze({
         userId: uuid(),
-        password: hash(password),
+        password,
         userName,
         firstName,
         lastName,
         email
       });
+
     }
   },
   mixins: [
-    requireProperties(
+    requirePropertiesMixin(
       'userName',
       'password',
       'firstName'
     ),
-    freezeProperties(
+    freezePropertiesMixin(
       'userId',
       'userName'
+    ),
+    hashPasswordsMixin(
+      'password'
     )
   ],
-  onUpdate: ({ model, changes }) => {
-    model.requireProperties();
-    model.freezeProperties(changes);
-  },
-  onDelete: model => console.log(model),
+
+  ...onUpdate
+
 }
 
 

@@ -1,5 +1,4 @@
-
-import { uuid, hash } from './utils';
+import { uuid } from './utils';
 import GlobalMixins from './mixins';
 import { default as userConfig } from './user';
 import { default as model2Config } from './model2';
@@ -27,7 +26,7 @@ function make(module, dependencies) {
   module.mixins = module.mixins.concat(GlobalMixins);
 }
 
-make(userConfig, { hash, uuid });
+make(userConfig, { uuid });
 make(model2Config, {});
 
 export {

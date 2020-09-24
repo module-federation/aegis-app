@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { hash, encrypt } from './utils';
 
 /**
  * @callback mixinFunction
@@ -12,17 +13,24 @@ import crypto from 'crypto';
  * @returns {mixinFunction}
  */
 
-function encrypt(data) {
-  var key = crypto.createCipher('aes-128-cbc', 'secret');
-  var str = key.update(data, 'utf8', 'hex')
-  return str += key.final('hex');
+function preUpdateMixins(o, name, cb) {
+  const preUpdateMixins = o.preUpdateMixins || new Map();
+
+  if (!preUpdateMixins.has(name)) {
+    preUpdateMixins.set(name, cb());
+    return {
+      ...o,
+      preUpdateMixins
+    }
+  }
+  return o;
 }
 
 /**
  * Functional mixin that encrypts the properties specified in `propNames`  
  * @param  {...string} propNames - The properties to encrypt
  */
-export const encryptProperties = (...propNames) => (o) => {
+const encryptProperties = (...propNames) => (o) => {
   const encryptProps = () => {
     return propNames.map(p => o[p]
       ? { [p]: encrypt(o[p]) }
@@ -31,29 +39,10 @@ export const encryptProperties = (...propNames) => (o) => {
   }
 
   return {
-    ...o,
-    ...encryptProps(),
-    encryptProperties: encryptProps
-  }
-}
-
-/** 
- * Functional mixin that enforces required fields 
- * @param  {...string} propNames - required property names
- */
-export const requireProperties = (...propNames) => (o) => {
-  const requireProperties = () => {
-    const missing = propNames.filter(key => !o[key]);
-
-    if (missing?.length > 0) {
-      throw new Error(`missing required properties: ${missing}`);
-    }
-  }
-  requireProperties();
-
-  return {
-    ...o,
-    requireProperties
+    ...preUpdateMixins(o, encryptProperties.name, () => {
+      return encryptProperties(...propNames)
+    }),
+    ...encryptProps()
   }
 }
 
@@ -61,9 +50,9 @@ export const requireProperties = (...propNames) => (o) => {
  * Functional mixin that prevents properties from being updated
  * @param  {...string} propNames - names of properties to freeze
  */
-export const freezeProperties = (...propNames) => (o) => {
-  const preventUpdates = (updates) => {
-    const intersection = Object.keys(updates)
+const freezeProperties = (isUpdate, ...propNames) => (o) => {
+  const preventUpdates = () => {
+    const intersection = Object.keys(o)
       .filter(key => propNames.includes(key));
 
     if (intersection?.length > 0) {
@@ -71,20 +60,58 @@ export const freezeProperties = (...propNames) => (o) => {
     }
   }
 
+  if (isUpdate) {
+    preventUpdates();
+  }
+
+  return preUpdateMixins(o, freezeProperties.name, () => {
+    return freezeProperties(true, ...propNames)
+  });
+}
+
+/** 
+ * Functional mixin that enforces required fields 
+ * @param  {...string} propNames - required property names
+ */
+const requireProperties = (...propNames) => (o) => {
+  const missing = propNames.filter(key => !o[key]);
+  if (missing?.length > 0) {
+    throw new Error(`missing required properties: ${missing}`);
+  }
+  return o;
+}
+
+const hashPasswords = (hash, ...propNames) => (o) => {
+  function hashPwds() {
+    return propNames.map(p => o[p]
+      ? { [p]: hash(o[p]) }
+      : {})
+      .reduce((p, c) => ({ ...c, ...p }));
+  }
+
   return {
-    ...o,
-    freezeProperties: preventUpdates
+    ...preUpdateMixins(o, hashPasswords.name, () => {
+      return hashPasswords(hash, ...propNames);
+    }),
+    ...hashPwds()
   }
 }
 
-/**
- * @type {mixinFunction}
- * @param {*} o 
- */
-export const remoteMixin = o => ({
-  remoteMixin: true,
-  ...o
-})
+export function requirePropertiesMixin(...propNames) {
+  return requireProperties(...propNames);
+}
+
+export function freezePropertiesMixin(...propNames) {
+  return freezeProperties(false, ...propNames);
+}
+
+export function encryptPropertiesMixin(...propNames) {
+  return encryptProperties(...propNames);
+}
+
+export function hashPasswordsMixin(...propNames) {
+  return hashPasswords(hash, ...propNames);
+}
 
 // Implement GDPR across models
 const encryptPersonalInfo = encryptProperties(
@@ -98,8 +125,7 @@ const encryptPersonalInfo = encryptProperties(
  * Global mixins
  */
 const GlobalMixins = [
-  encryptPersonalInfo,
-  remoteMixin
+  encryptPersonalInfo
 ];
 
 export default GlobalMixins;
