@@ -13,6 +13,12 @@ import { hash, encrypt } from './utils';
  * @returns {mixinFunction}
  */
 
+/**
+ * 
+ * @param {*} o Object to compose
+ * @param {*} name `Function.name` 
+ * @param {function(): (o:any) => any} cb functional mixin
+ */
 function preUpdateMixins(o, name, cb) {
   const preUpdateMixins = o.preUpdateMixins || new Map();
 
@@ -38,16 +44,20 @@ const encryptProperties = (...propNames) => (o) => {
       .reduce((p, c) => ({ ...c, ...p }));
   }
 
+  const mixins = preUpdateMixins(
+    o, encryptProperties.name,
+    () => encryptProperties(...propNames)
+  );
+
   return {
-    ...preUpdateMixins(o, encryptProperties.name, () => {
-      return encryptProperties(...propNames)
-    }),
+    ...mixins,
     ...encryptProps()
   }
 }
 
 /**
  * Functional mixin that prevents properties from being updated
+ * @param {boolean} isUpdate - only execute when true
  * @param  {...string} propNames - names of properties to freeze
  */
 const freezeProperties = (isUpdate, ...propNames) => (o) => {
@@ -89,10 +99,13 @@ const hashPasswords = (hash, ...propNames) => (o) => {
       .reduce((p, c) => ({ ...c, ...p }));
   }
 
+  const mixins = preUpdateMixins(
+    o, hashPasswords.name,
+    () => hashPasswords(hash, ...propNames)
+  );
+
   return {
-    ...preUpdateMixins(o, hashPasswords.name, () => {
-      return hashPasswords(hash, ...propNames);
-    }),
+    ...mixins,
     ...hashPwds()
   }
 }
@@ -118,7 +131,11 @@ const encryptPersonalInfo = encryptProperties(
   'lastName',
   'address',
   'email',
-  'phone'
+  'phone',
+  'mobile',
+  'creditCard',
+  'ccv',
+  'ssn'
 );
 
 /**

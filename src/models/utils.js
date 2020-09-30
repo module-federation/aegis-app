@@ -2,7 +2,10 @@ import crypto from 'crypto';
 
 export function compose(...funcs) {
   return function (initVal) {
-    return funcs.reduceRight((v, f) => f(v), initVal);
+    return funcs.reduceRight(
+      (val, func) => func(val), 
+      initVal
+    );
   }
 }
 

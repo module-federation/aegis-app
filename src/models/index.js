@@ -1,7 +1,8 @@
-import { uuid } from './utils';
 import GlobalMixins from './mixins';
-import { default as userConfig } from './user';
-import { default as model2Config } from './model2';
+import { uuid } from './utils';
+
+import { default as user } from './user';
+import { default as order } from './order';
 
 /**
  * @callback onUpdate
@@ -26,12 +27,12 @@ function make(module, dependencies) {
   module.mixins = module.mixins.concat(GlobalMixins);
 }
 
-make(userConfig, { uuid });
-make(model2Config, {});
+make(user, { uuid });
+make(order, {});
 
 export {
-  userConfig,
-  model2Config
+  user,
+  order
 }
 
 

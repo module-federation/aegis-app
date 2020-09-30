@@ -31,7 +31,6 @@ export default {
         lastName,
         email
       });
-
     }
   },
   mixins: [
