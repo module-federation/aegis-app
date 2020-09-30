@@ -10,7 +10,7 @@
     "restart": "npm run build && npm run start",
     "start": "node dist/main.js",
     "clean": "rm -rf dist",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "open http://localhost:8060"
   },
   "author": "Tyson Midboe",
   "license": "MIT",
