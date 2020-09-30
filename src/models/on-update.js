@@ -4,15 +4,15 @@ import { compose } from './utils';
 
 export default {
   onUpdate: (model, changes) => {
-    if (model.preUpdateMixins) {
-      changes = compose(...model.preUpdateMixins.values())(changes);
-    }
-    let updated = { ...model, ...changes };
+    const updates = model.preUpdateMixins
+      ? compose(...model.preUpdateMixins.values())(changes)
+      : changes;
 
-    if (model.postUpdateMixins) {
-      updated = compose(...model.postUpdateMixins.values())(updated);
-    }
-    return updated;
+    const updated = { ...model, ...updates };
+
+    return model.postUpdateMixins
+      ? compose(...model.postUpdateMixins.values())(updated)
+      : updated;
   }
 }
 

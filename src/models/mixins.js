@@ -21,6 +21,7 @@ import { hash, encrypt } from './utils';
  */
 function preUpdateMixins(o, name, cb) {
   const preUpdateMixins = o.preUpdateMixins || new Map();
+  preUpdateMixins.toJSON = () => void 0; // don't print this
 
   if (!preUpdateMixins.has(name)) {
     preUpdateMixins.set(name, cb());
@@ -45,7 +46,8 @@ const encryptProperties = (...propNames) => (o) => {
   }
 
   const mixins = preUpdateMixins(
-    o, encryptProperties.name,
+    o,
+    encryptProperties.name,
     () => encryptProperties(...propNames)
   );
 
@@ -100,7 +102,8 @@ const hashPasswords = (hash, ...propNames) => (o) => {
   }
 
   const mixins = preUpdateMixins(
-    o, hashPasswords.name,
+    o,
+    hashPasswords.name,
     () => hashPasswords(hash, ...propNames)
   );
 
