@@ -34,6 +34,7 @@ export default {
       });
     }
   },
+
   mixins: [
     requirePropertiesMixin(
       'userName',

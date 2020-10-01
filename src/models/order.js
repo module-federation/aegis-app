@@ -2,7 +2,8 @@
 
 import {
   requirePropertiesMixin,
-  freezePropertiesMixin
+  freezePropertiesMixin,
+  validatePropertyValuesMixin
 } from './mixins';
 
 import onUpdate from './on-update';
@@ -31,7 +32,6 @@ export default {
         orderStatus: 'PENDING'
       });
     }
-
   },
 
   mixins: [
@@ -43,6 +43,17 @@ export default {
       'customerId',
       'items'
     ),
+    validatePropertyValuesMixin([
+      {
+        propName: 'orderStatus',
+        values: [
+          'PENDING',
+          'APPROVED',
+          'CANCELED',
+          'COMPLETE'
+        ],
+      },
+    ])
   ],
 
   ...onUpdate,
