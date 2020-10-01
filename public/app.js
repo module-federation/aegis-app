@@ -4,6 +4,7 @@
   const wsSendButton = document.querySelector('#wsSendButton');
   const logout = document.querySelector('#logout');
   const login = document.querySelector('#login');
+  const clearButton = document.querySelector('#clear');
 
   function showMessage(message) {
     messages.textContent += `\n${message}`;
@@ -57,6 +58,10 @@
       showMessage(JSON.stringify(JSON.parse(data.data), undefined, 2));
     }
   };
+
+  clearButton.onclick = function () {
+    messages.textContent = '';
+  }
 
   wsSendButton.onclick = function () {
     if (!ws) {

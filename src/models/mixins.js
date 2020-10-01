@@ -1,4 +1,3 @@
-import crypto from 'crypto';
 import { hash, encrypt } from './utils';
 
 /**
@@ -14,20 +13,32 @@ import { hash, encrypt } from './utils';
  */
 
 /**
- * 
- * @param {*} o Object to compose
+ * Store mixins for execution on update
+ * @param {'pre' | 'post'} type run before changes or after
+ * @param {*} o  Object containing changes to apply (pre) 
+ * or new object after changes have been applied (post)
  * @param {*} name `Function.name` 
- * @param {function(): (o:any) => any} cb functional mixin
+ * @param {mixinFunction} cb mixin function
  */
-function preUpdateMixins(o, name, cb) {
-  const preUpdateMixins = o.preUpdateMixins || new Map();
-  preUpdateMixins.toJSON = () => void 0; // don't print this
+function updateMixins(type, o, name, cb) {
+  const mixinType = {
+    pre: 'preUpdateMixins',
+    post: 'postUpdateMixins'
+  }
 
-  if (!preUpdateMixins.has(name)) {
-    preUpdateMixins.set(name, cb());
+  if (!mixinType[type]) {
+    throw new Error('invalid mixin set');
+  }
+
+  const mixinSet = o[mixinType[type]] || new Map();
+  mixinSet.toJSON = () => void 0; // don't show this
+
+  if (!mixinSet.has(name)) {
+    mixinSet.set(name, cb());
+
     return {
       ...o,
-      preUpdateMixins
+      [mixinType[type]]: mixinSet
     }
   }
   return o;
@@ -45,9 +56,8 @@ const encryptProperties = (...propNames) => (o) => {
       .reduce((p, c) => ({ ...c, ...p }));
   }
 
-  const mixins = preUpdateMixins(
-    o,
-    encryptProperties.name,
+  const mixins = updateMixins(
+    'pre', o, encryptProperties.name,
     () => encryptProperties(...propNames)
   );
 
@@ -59,7 +69,7 @@ const encryptProperties = (...propNames) => (o) => {
 
 /**
  * Functional mixin that prevents properties from being updated
- * @param {boolean} isUpdate - only execute when true
+ * @param {boolean} isUpdate - set to true on update
  * @param  {...string} propNames - names of properties to freeze
  */
 const freezeProperties = (isUpdate, ...propNames) => (o) => {
@@ -76,9 +86,10 @@ const freezeProperties = (isUpdate, ...propNames) => (o) => {
     preventUpdates();
   }
 
-  return preUpdateMixins(o, freezeProperties.name, () => {
-    return freezeProperties(true, ...propNames)
-  });
+  return updateMixins(
+    'pre', o, freezeProperties.name,
+    () => freezeProperties(true, ...propNames)
+  );
 }
 
 /** 
@@ -93,6 +104,11 @@ const requireProperties = (...propNames) => (o) => {
   return o;
 }
 
+/**
+ * Functional mixin that hashes passwords
+ * @param {*} hash hash algorithm
+ * @param  {...any} propNames name of password props
+ */
 const hashPasswords = (hash, ...propNames) => (o) => {
   function hashPwds() {
     return propNames.map(p => o[p]
@@ -101,9 +117,8 @@ const hashPasswords = (hash, ...propNames) => (o) => {
       .reduce((p, c) => ({ ...c, ...p }));
   }
 
-  const mixins = preUpdateMixins(
-    o,
-    hashPasswords.name,
+  const mixins = updateMixins(
+    'pre', o, hashPasswords.name,
     () => hashPasswords(hash, ...propNames)
   );
 
@@ -113,20 +128,65 @@ const hashPasswords = (hash, ...propNames) => (o) => {
   }
 }
 
+const internalPropList = ['preUpdateMixins', 'postUpdateMixins'];
+
+const allowProperties = (isUpdate, ...propNames) => (o) => {
+  function rejectUnknownProps() {
+    const allowList = propNames.concat(internalPropList);
+    const unknownProps = Object.keys(o).filter(k => !allowList.includes(k))
+
+    if (unknownProps?.length > 0) {
+      throw new Error(`invalid properties: ${unknownProps}`);
+    }
+  }
+
+  if (isUpdate) {
+    rejectUnknownProps();
+  }
+
+  return updateMixins('pre', o, allowProperties.name, () => {
+    return allowProperties(true, ...propNames);
+  })
+}
+
+/**
+ * require properties listed in `propNames`
+ * @param  {...any} propNames 
+ */
 export function requirePropertiesMixin(...propNames) {
   return requireProperties(...propNames);
 }
 
+/**
+ * disallow updates to properties listed in `propNames`
+ * @param  {...any} propNames 
+ */
 export function freezePropertiesMixin(...propNames) {
   return freezeProperties(false, ...propNames);
 }
 
+/**
+ * encyrpt properties listed in `propNames`
+ * @param  {...any} propNames 
+ */
 export function encryptPropertiesMixin(...propNames) {
   return encryptProperties(...propNames);
 }
 
+/**
+ * hash passwords listed in `propNames`
+ * @param  {...any} propNames 
+ */
 export function hashPasswordsMixin(...propNames) {
   return hashPasswords(hash, ...propNames);
+}
+
+/**
+ * only allow properties listed in `propNames`
+ * @param  {...any} propNames 
+ */
+export function allowPropertiesMixin(...propNames) {
+  return allowProperties(false, ...propNames);
 }
 
 // Implement GDPR across models

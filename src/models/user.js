@@ -4,7 +4,8 @@ import onUpdate from './on-update';
 import {
   requirePropertiesMixin,
   freezePropertiesMixin,
-  hashPasswordsMixin
+  allowPropertiesMixin,
+  hashPasswordsMixin,
 } from './mixins'
 
 /**
@@ -43,9 +44,17 @@ export default {
       'userId',
       'userName'
     ),
+    allowPropertiesMixin(
+      'userName',
+      'password',
+      'firstName',
+      'lastName',
+      'userId',
+      'email'
+    ),
     hashPasswordsMixin(
       'password'
-    )
+    ),
   ],
 
   ...onUpdate

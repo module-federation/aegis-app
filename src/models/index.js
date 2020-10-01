@@ -1,8 +1,8 @@
 import GlobalMixins from './mixins';
 import { uuid } from './utils';
 
-import { default as user } from './user';
-import { default as order } from './order';
+import User from './user';
+import Order from './order';
 
 /**
  * @callback onUpdate
@@ -27,12 +27,12 @@ function make(module, dependencies) {
   module.mixins = module.mixins.concat(GlobalMixins);
 }
 
-make(user, { uuid });
-make(order, {});
+make(User, { uuid });
+make(Order, {});
 
 export {
-  user,
-  order
+  User,
+  Order
 }
 
 
