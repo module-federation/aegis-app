@@ -13,6 +13,11 @@ import { hash, encrypt } from './utils';
  */
 
 /**
+ * use to acccess previous version of the model
+ */
+export const PREVMODEL = Symbol('prevModel');
+
+/**
  *
  */
 export const mixinType = {
@@ -23,7 +28,7 @@ export const mixinType = {
 /**
  * 
  */
-export const mixinTypes = {
+export const mixinSets = {
   [mixinType.pre]: Symbol('preUpdateMixins'),
   [mixinType.post]: Symbol('postUpdateMixins')
 }
@@ -38,11 +43,11 @@ export const mixinTypes = {
  * @param {mixinFunction} cb mixin function
  */
 function updateMixins(type, o, name, cb) {
-  if (!mixinTypes[type]) {
+  if (!mixinSets[type]) {
     throw new Error('invalid mixin set');
   }
 
-  const mixinSet = o[mixinTypes[type]] || new Map();
+  const mixinSet = o[mixinSets[type]] || new Map();
   // mixinSet.toJSON = () => void 0; // don't show this
 
   if (!mixinSet.has(name)) {
@@ -50,7 +55,7 @@ function updateMixins(type, o, name, cb) {
 
     return {
       ...o,
-      [mixinTypes[type]]: mixinSet
+      [mixinSets[type]]: mixinSet
     }
   }
   return o;
@@ -80,14 +85,18 @@ const encryptProperties = (...propNames) => (o) => {
 }
 
 /**
- * Functional mixin that prevents properties from being updated
+ * Functional mixin that prevents properties from being updated.
+ * Accepts a property name or a function that returns a property name.
  * @param {boolean} isUpdate - set to true on update
  * @param  {...string} propNames - names of properties to freeze
  */
 const freezeProperties = (isUpdate, ...propNames) => (o) => {
   const preventUpdates = () => {
+    const conditionalp = propNames.map(p => {
+      return typeof p === 'function' ? p(o) : p;
+    });
     const intersection = Object.keys(o)
-      .filter(key => propNames.includes(key));
+      .filter(key => conditionalp.includes(key));
 
     if (intersection?.length > 0) {
       throw new Error(`cannot update readonly properties: ${intersection}`);
@@ -163,13 +172,20 @@ const allowProperties = (isUpdate, ...propNames) => (o) => {
 }
 
 /**
+ * @callback isValid
+ * @param {Object} o - the property owner
+ * @param {*} propVal - the property value
+ * @returns {boolean} - true if valid
+ */
+
+/**
  * @typedef {{
  *  propName:string,
- *  isValid:function(*):boolean,
- *  values:any[],
- *  regex:string,
- *  typeof:string,
- *  length:number
+ *  isValid?:isValid,
+ *  values?:any[],
+ *  regex?:string,
+ *  typeof?:string,
+ *  length?:number
  * }[]} validations 
  */
 
@@ -184,25 +200,37 @@ const validatePropertyValues = (validations) => (o) => {
       return false;
     }
     if (v.isValid) {
-      return !v.isValid(propVal);
+      if (!v.isValid(o, propVal)) {
+        return true;
+      }
     }
     if (v.values?.length > 0) {
-      return !v.values.includes(propVal);
+      if (!v.values.includes(propVal)) {
+        return true;
+      }
     }
     if (v.typeof) {
-      return typeof propVal !== v.typeof;
+      if (typeof propVal !== v.typeof) {
+        return true;
+      }
     }
     if (v.length) {
-      return propVal.length > v.length;
+      if (propVal.length > v.length) {
+        return true;
+      }
     }
     if (v.regex) {
-      return !new RegExp(v.regex).test(propVal);
+      if (!new RegExp(v.regex).test(propVal)) {
+        return true;
+      }
     }
     return false;
   });
 
   if (invalid?.length > 0) {
-    throw new Error(`invalid value for ${invalid}`);
+    throw new Error(
+      `invalid value for ${[...invalid.map(v => v.propName)]}`
+    );
   }
 
   return updateMixins(

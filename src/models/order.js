@@ -3,7 +3,8 @@
 import {
   requirePropertiesMixin,
   freezePropertiesMixin,
-  validatePropertyValuesMixin
+  validatePropertyValuesMixin,
+  PREVMODEL
 } from './mixins';
 
 import onUpdate from './on-update';
@@ -41,7 +42,13 @@ export default {
     ),
     freezePropertiesMixin(
       'customerId',
-      'items'
+      // conditionally readonly
+      (o) => (
+        !['PENDING']
+          .includes(o[PREVMODEL].orderStatus)
+          ? 'items'
+          : ''
+      ),
     ),
     validatePropertyValuesMixin([
       {
@@ -51,8 +58,19 @@ export default {
           'APPROVED',
           'CANCELED',
           'COMPLETE'
-        ],
+        ]
       },
+      {
+        propName: 'total',
+        isValid: (o, val) => {
+          if (o.items?.length > 0) {
+            o.total = o.items.reduce(
+              (tot, item) => tot += item.price, 0
+            );
+          }
+          return true;
+        }
+      }
     ])
   ],
 
@@ -62,6 +80,7 @@ export default {
     if (model.orderStatus !== 'COMPLETE') {
       throw new Error('order status incomplete');
     }
+    return model;
   }
 }
 
