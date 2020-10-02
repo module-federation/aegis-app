@@ -118,7 +118,11 @@ const freezeProperties = (isUpdate, ...propNames) => (o) => {
  * @param  {...string} propNames - required property names
  */
 const requireProperties = (...propNames) => (o) => {
-  const missing = propNames.filter(key => !o[key]);
+  const conditionalp = propNames.map(
+    p => typeof p === 'function' ? p(o) : p
+  );
+  const missing = conditionalp.filter(key => !o[key]);
+
   if (missing?.length > 0) {
     throw new Error(`missing required properties: ${missing}`);
   }

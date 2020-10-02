@@ -12,7 +12,6 @@ import {
  * @type {import('./index').ModelConfig}
  */
 export default {
-
   modelName: 'user',
   factory: ({ uuid }) => {
 

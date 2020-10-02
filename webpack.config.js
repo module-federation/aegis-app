@@ -45,9 +45,6 @@ var serverConfig = {
       },
       shared: {
         ...sharedDependencies,
-        // uuid: {
-        //   eager: true
-        // }
       }
     }),
   ]

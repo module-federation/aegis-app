@@ -5,8 +5,24 @@ import User from './user';
 import Order from './order';
 
 /**
+ * @typedef {Object} Model
+ * @property {Symbol} id
+ * @property {Symbol} modelName
+ * @property {Symbol} createTime
+ * @property {Symbol} onUpdate
+ */
+
+/**
  * @callback onUpdate
- * @param {model: Model, changes: Object} changes
+ * @param {Model} model
+ * @param {Object} changes
+ * @returns {Model}
+ */
+
+/**
+ * @callback onDelete
+ * @param {Model} model
+ * @returns {Model}
  */
 
 /**
@@ -16,6 +32,10 @@ import Order from './order';
  * @property {Array<import("./mixins").mixinFunction>} [mixins]
  * @property {onUpdate} [onUpdate]
  * @property {onDelete} [onDelete]
+ * property {Schema} [schema]
+ * property {Relation} [relations]
+ * property {UseCase} [useCases]
+ * property {Controller} [controllers]
  */
 
 /**

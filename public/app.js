@@ -2,8 +2,8 @@
   const messages = document.querySelector('#messages');
   const wsButton = document.querySelector('#wsButton');
   const wsSendButton = document.querySelector('#wsSendButton');
-  const logout = document.querySelector('#logout');
-  const login = document.querySelector('#login');
+  const logoutButton = document.querySelector('#logout');
+  const loginButton = document.querySelector('#login');
   const clearButton = document.querySelector('#clear');
 
   function showMessage(message) {
@@ -17,7 +17,7 @@
       : Promise.reject(new Error('Unexpected response'));
   }
 
-  login.onclick = function () {
+  loginButton.onclick = function () {
     fetch('/login', { method: 'POST', credentials: 'same-origin' })
       .then(handleResponse)
       .then(showMessage)
@@ -26,7 +26,7 @@
       });
   };
 
-  logout.onclick = function () {
+  logoutButton.onclick = function () {
     fetch('/logout', { method: 'DELETE', credentials: 'same-origin' })
       .then(handleResponse)
       .then(showMessage)
