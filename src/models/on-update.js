@@ -1,29 +1,19 @@
 
 'use strict'
-import { compose } from './utils';
-import {
-  mixinType,
-  mixinSets,
-  PREVMODEL
-} from './mixins';
 
-const PREMIXINS = mixinSets[mixinType.pre];
-const POSTMIXINS = mixinSets[mixinType.post];
+import { processUpdate } from './mixins';
 
+/**
+ * Callback invoked on update. 
+ */
 export default {
-  onUpdate: (model, changes) => {
-    changes[PREVMODEL] = model; // keep history
-
-    const updates = model[PREMIXINS]
-      ? compose(...model[PREMIXINS].values())(changes)
-      : changes;
-
-    const updated = { ...model, ...updates };
-
-    return model[POSTMIXINS]
-      ? compose(...model[POSTMIXINS].values())(updated)
-      : updated;
-  }
+  /**
+   * Callback invoked on update
+   * @param model - current model
+   * @param changes - object containing changes
+   * @returns updated model
+   */
+  onUpdate: (model, changes) => processUpdate(model, changes)
 }
 
 

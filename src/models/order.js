@@ -12,16 +12,24 @@ import onUpdate from './on-update';
 
 const checkItems = function (items) {
   if (!items) {
-    throw new Error('no items');
+    throw new Error('order contains no items');
   }
   const _items = Array.isArray(items) ? items : [items];
 
-  if (_items.length < 1
-    || !_items.every(i => typeof i['price'] === 'number')
-    || !_items.every(i => i['name'])
+  if (_items.length > 0 &&
+    (_items.every(i => i['name'] &&
+      typeof i['price'] === 'number'))
   ) {
-    throw new Error('order items invalid');
+    return _items;
   }
+  throw new Error('order items invalid');
+}
+
+const calcTotal = function (items) {
+  const _items = checkItems(items);
+  return _items.reduce((total, item) => {
+    return total += item.price
+  }, 0);
 }
 
 /**
@@ -33,9 +41,8 @@ export default {
   factory: () => {
     return function createOrder({ customerId, items }) {
       checkItems(items);
-
       return Object.freeze({
-        total: items.reduce((tot, item) => tot += item.price, 0),
+        total: calcTotal(items),
         customerId,
         items,
         orderStatus: 'PENDING'
@@ -50,20 +57,25 @@ export default {
     ),
     freezePropertiesMixin(
       'customerId',
-      (o) => ( // conditionally frozen
-        o[PREVMODEL].orderStatus === 'COMPLETE'
-          ? 'orderStatus'
-          : ''
-      ),
-      (o) => ( // conditionally frozen
-        o[PREVMODEL].orderStatus !== 'PENDING'
+      (o) => {
+        if (!o[PREVMODEL]?.orderStatus) return null;
+        // can't change status if canceled or complete 
+        return ['COMPLETE', 'CANCELED'].includes(
+          o[PREVMODEL].orderStatus
+        ) ? 'orderStatus'
+          : null
+      },
+      (o) => {
+        if (!o[PREVMODEL]?.orderStatus) return null;
+        // can't edit items once approved
+        return o[PREVMODEL].orderStatus !== 'PENDING'
           ? 'items'
-          : ''
-      ),
+          : null
+      },
     ),
     validatePropertyValuesMixin([
       {
-        propName: 'orderStatus',
+        propKey: 'orderStatus',
         values: [
           'PENDING',
           'APPROVED',
@@ -71,25 +83,25 @@ export default {
           'COMPLETE'
         ],
         isValid: (o, propVal) => {
-          if (!o[PREVMODEL]) return true;
+          if (!o[PREVMODEL]?.orderStatus) return true;
+          // Can't change back to pending once approved
           return !(propVal === 'PENDING' &&
             o[PREVMODEL].orderStatus === 'APPROVED')
         }
       },
       {
-        propName: 'items',
+        propKey: 'items',
         isValid: (o, propVal) => {
           checkItems(propVal);
           return true;
         }
       },
       {
-        propName: 'total',
+        propKey: 'total',
         isValid: (o, propVal) => {
           if (o.items?.length > 0) {
-            o.total = o.items.reduce(
-              (tot, item) => tot += item.price, 0
-            );
+            // New total if items are updated
+            o.total = calcTotal(o.items);
           }
           return true;
         }
@@ -106,16 +118,13 @@ export default {
   ...onUpdate,
 
   onDelete: (model) => {
-    if (model.orderStatus !== 'COMPLETE') {
+    // Can't delete orders that are still being processed
+    if (!['COMPLETE', 'CANCELED'].includes(model.orderStatus)) {
       throw new Error('order status incomplete');
     }
     return model;
   },
 
-  // schema: {},
-  // relations: {},
-  // useCases: {},
-  // controllers: {}
 }
 
 

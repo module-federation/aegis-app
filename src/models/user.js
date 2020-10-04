@@ -1,4 +1,5 @@
 'use strict'
+
 import onUpdate from './on-update';
 
 import {
@@ -12,6 +13,7 @@ import {
  * @type {import('./index').ModelConfig}
  */
 export default {
+
   modelName: 'user',
   factory: ({ uuid }) => {
 

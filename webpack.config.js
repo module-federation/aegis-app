@@ -6,6 +6,7 @@ const sharedDependencies = require('./package.json').dependencies;
 
 var serverConfig = {
   target: httpNode,
+  // target: 'async-node',
   entry: [path.resolve(__dirname, "src/index.js")],
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -15,39 +16,39 @@ var serverConfig = {
   externals: nodeExternals({
     allowlist: [/webpack\/container/],
   }),
-  resolve: {
-    extensions: [".js"],
+    resolve: {
+  extensions: [".js"],
   },
-  mode: 'development',
+mode: 'development',
   module: {
-    rules: [
-      {
-        test: /\.js?$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env'],
-          }
+  rules: [
+    {
+      test: /\.js?$/,
+      exclude: /node_modules/,
+      use: {
+        loader: 'babel-loader',
+        options: {
+          presets: ['@babel/preset-env'],
         }
-      },
-    ]
-  },
-  plugins: [
-    new ModuleFederationPlugin({
-      name: "fedmonserv",
-      library: { type: "commonjs-module" },
-      filename: "remoteEntry.js",
-      exposes: {
-        "./service1": "./src/services/service1",
-        "./publish-event": "./src/services/publish-event",
-        "./models": "./src/models",
-      },
-      shared: {
-        ...sharedDependencies,
       }
-    }),
+    },
   ]
+},
+plugins: [
+  new ModuleFederationPlugin({
+    name: "fedmonserv",
+    library: { type: "commonjs-module" },
+    filename: "remoteEntry.js",
+    exposes: {
+      "./service1": "./src/services/service1",
+      "./publish-event": "./src/services/publish-event",
+      "./models": "./src/models",
+    },
+    shared: {
+      ...sharedDependencies,
+    }
+  }),
+]
 }
 
 module.exports = [serverConfig]

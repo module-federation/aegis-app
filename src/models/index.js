@@ -27,15 +27,11 @@ import Order from './order';
 
 /**
  * @typedef {Object} ModelConfig
- * @property {string} modelName
- * @property {function(...args): any} factory
- * @property {Array<import("./mixins").mixinFunction>} [mixins]
- * @property {onUpdate} [onUpdate]
- * @property {onDelete} [onDelete]
- * property {Schema} [schema]
- * property {Relation} [relations]
- * property {UseCase} [useCases]
- * property {Controller} [controllers]
+ * @property {string} modelName name of model
+ * @property {function(...args): any} factory factory function that returns model
+ * @property {Array<import("./mixins").mixinFunction>} [mixins] mixed into model
+ * @property {onUpdate} [onUpdate] function called when model is updated
+ * @property {onDelete} [onDelete] function called when model is deleted
  */
 
 /**

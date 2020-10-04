@@ -1,4 +1,10 @@
-import { hash, encrypt } from './utils';
+'use strict'
+
+import {
+  hash,
+  encrypt,
+  compose
+} from './utils';
 
 /**
  * @callback mixinFunction
@@ -13,7 +19,7 @@ import { hash, encrypt } from './utils';
  */
 
 /**
- * use to acccess previous version of the model
+ * Key to access previous version of the model
  */
 export const PREVMODEL = Symbol('prevModel');
 
@@ -34,9 +40,38 @@ export const mixinSets = {
 }
 
 /**
+ * Set of pre mixins
+ */
+const PREMIXINS = mixinSets[mixinType.pre];
+/**
+ * Set of post mixins
+ */
+const POSTMIXINS = mixinSets[mixinType.post];
+
+/**
+ * Apply any pre and post mixins and return the result.
+ * 
+ * @param {*} model - current model
+ * @param {*} changes - object containing changes
+ */
+export function processUpdate(model, changes) {
+  changes[PREVMODEL] = model; // keep history
+
+  const updates = model[PREMIXINS]
+    ? compose(...model[PREMIXINS].values())(changes)
+    : changes;
+
+  const updated = { ...model, ...updates };
+
+  return model[POSTMIXINS]
+    ? compose(...model[POSTMIXINS].values())(updated)
+    : updated;
+}
+
+/**
  * Store mixins for execution on update
  * @param {mixinType} type 
- * run before changes or after
+ * run before changes are applied or afterward
  * @param {*} o  Object containing changes to apply (pre) 
  * or new object after changes have been applied (post)
  * @param {string} name `Function.name` 
@@ -44,7 +79,7 @@ export const mixinSets = {
  */
 function updateMixins(type, o, name, cb) {
   if (!mixinSets[type]) {
-    throw new Error('invalid mixin set');
+    throw new Error('invalid mixin type');
   }
 
   const mixinSet = o[mixinSets[type]] || new Map();
@@ -61,21 +96,30 @@ function updateMixins(type, o, name, cb) {
   return o;
 }
 
+function getConditionalProps(o, ...propKeys) {
+  return propKeys.map(key => {
+    return typeof key === 'function' ? key(o) : key;
+  });
+}
+
 /**
  * Functional mixin that encrypts the properties specified in `propNames`  
- * @param  {...string} propNames - The properties to encrypt
+ * @param  {Array<string | function(*):string>} propKeys - 
+ * Names (or functions that return names) of properties to encrypt
  */
-const encryptProperties = (...propNames) => (o) => {
+const encryptProperties = (...propKeys) => (o) => {
+  const keys = getConditionalProps(o, ...propKeys);
+
   const encryptProps = () => {
-    return propNames.map(p => o[p]
-      ? { [p]: encrypt(o[p]) }
+    return keys.map(key => o[key]
+      ? { [key]: encrypt(o[key]) }
       : {})
       .reduce((p, c) => ({ ...c, ...p }));
   }
 
   const mixins = updateMixins(
     mixinType.pre, o, encryptProperties.name,
-    () => encryptProperties(...propNames)
+    () => encryptProperties(...propKeys)
   );
 
   return {
@@ -87,16 +131,15 @@ const encryptProperties = (...propNames) => (o) => {
 /**
  * Functional mixin that prevents properties from being updated.
  * Accepts a property name or a function that returns a property name.
- * @param {boolean} isUpdate - set to true on update
- * @param  {...string} propNames - names of properties to freeze
+ * @param {boolean} isUpdate - set to false on create and true on update
+ * @param  {Array<string | function(*):string>} propKeys - names of properties to freeze
  */
-const freezeProperties = (isUpdate, ...propNames) => (o) => {
+const freezeProperties = (isUpdate, ...propKeys) => (o) => {
+  const keys = getConditionalProps(o, ...propKeys);
+
   const preventUpdates = () => {
-    const conditionalp = propNames.map(p => {
-      return typeof p === 'function' ? p(o) : p;
-    });
     const intersection = Object.keys(o)
-      .filter(key => conditionalp.includes(key));
+      .filter(key => keys.includes(key));
 
     if (intersection?.length > 0) {
       throw new Error(`cannot update readonly properties: ${intersection}`);
@@ -109,19 +152,18 @@ const freezeProperties = (isUpdate, ...propNames) => (o) => {
 
   return updateMixins(
     mixinType.pre, o, freezeProperties.name,
-    () => freezeProperties(true, ...propNames)
+    () => freezeProperties(true, ...propKeys)
   );
 }
 
 /** 
  * Functional mixin that enforces required fields 
- * @param  {...string} propNames - required property names
+ * @param {Array<string | function(*):string>} propKeys - 
+ * required property names
  */
-const requireProperties = (...propNames) => (o) => {
-  const conditionalp = propNames.map(
-    p => typeof p === 'function' ? p(o) : p
-  );
-  const missing = conditionalp.filter(key => !o[key]);
+const requireProperties = (...propKeys) => (o) => {
+  const keys = getConditionalProps(o, ...propKeys);
+  const missing = keys.filter(key => !o[key]);
 
   if (missing?.length > 0) {
     throw new Error(`missing required properties: ${missing}`);
@@ -132,19 +174,21 @@ const requireProperties = (...propNames) => (o) => {
 /**
  * Functional mixin that hashes passwords
  * @param {*} hash hash algorithm
- * @param  {...any} propNames name of password props
+ * @param  {Array<string | function(*):string>} propKeys name of password props
  */
-const hashPasswords = (hash, ...propNames) => (o) => {
+const hashPasswords = (hash, ...propKeys) => (o) => {
+  const keys = getConditionalProps(o, ...propKeys);
+
   function hashPwds() {
-    return propNames.map(p => o[p]
-      ? { [p]: hash(o[p]) }
+    return keys.map(key => o[key]
+      ? { [key]: hash(o[key]) }
       : {})
       .reduce((p, c) => ({ ...c, ...p }));
   }
 
   const mixins = updateMixins(
     mixinType.pre, o, hashPasswords.name,
-    () => hashPasswords(hash, ...propNames)
+    () => hashPasswords(hash, ...propKeys)
   );
 
   return {
@@ -155,10 +199,14 @@ const hashPasswords = (hash, ...propNames) => (o) => {
 
 const internalPropList = [];
 
-const allowProperties = (isUpdate, ...propNames) => (o) => {
+const allowProperties = (isUpdate, ...propKeys) => (o) => {
+  const keys = getConditionalProps(o, ...propKeys);
+
   function rejectUnknownProps() {
-    const allowList = propNames.concat(internalPropList);
-    const unknownProps = Object.keys(o).filter(k => !allowList.includes(k))
+    const allowList = keys.concat(internalPropList);
+    const unknownProps = Object.keys(o).filter(
+      key => !allowList.includes(key)
+    );
 
     if (unknownProps?.length > 0) {
       throw new Error(`invalid properties: ${unknownProps}`);
@@ -171,7 +219,7 @@ const allowProperties = (isUpdate, ...propNames) => (o) => {
 
   return updateMixins(
     mixinType.pre, o, allowProperties.name,
-    () => allowProperties(true, ...propNames)
+    () => allowProperties(true, ...propKeys)
   );
 }
 
@@ -184,7 +232,7 @@ const allowProperties = (isUpdate, ...propNames) => (o) => {
 
 /**
  * @typedef {{
- *  propName:string,
+ *  propKey:string,
  *  isValid?:isValid,
  *  values?:any[],
  *  regex?:string,
@@ -199,7 +247,7 @@ const allowProperties = (isUpdate, ...propNames) => (o) => {
  */
 const validatePropertyValues = (validations) => (o) => {
   const invalid = validations.filter(v => {
-    const propVal = o[v.propName];
+    const propVal = o[v.propKey];
     if (!propVal) {
       return false;
     }
@@ -233,7 +281,7 @@ const validatePropertyValues = (validations) => (o) => {
 
   if (invalid?.length > 0) {
     throw new Error(
-      `invalid value for ${[...invalid.map(v => v.propName)]}`
+      `invalid value for ${[...invalid.map(v => v.propKey)]}`
     );
   }
 
@@ -244,43 +292,48 @@ const validatePropertyValues = (validations) => (o) => {
 }
 
 /**
- * require properties listed in `propNames`
- * @param  {...any} propNames 
+ * require properties listed in `propKeys`
+ * @param  {Array<string | function(*):string>} propKeys -
+ * list of names (or functions that return names) of properties
  */
-export function requirePropertiesMixin(...propNames) {
-  return requireProperties(...propNames);
+export function requirePropertiesMixin(...propKeys) {
+  return requireProperties(...propKeys);
 }
 
 /**
- * disallow updates to properties listed in `propNames`
- * @param  {...any} propNames 
+ * Prevent updates to properties listed in `propKeys`
+ * @param  {Array<string | function(*):string>} propKeys - 
+ * list of names (or functions that return names) of properties 
  */
-export function freezePropertiesMixin(...propNames) {
-  return freezeProperties(false, ...propNames);
+export function freezePropertiesMixin(...propKeys) {
+  return freezeProperties(false, ...propKeys);
 }
 
 /**
- * encyrpt properties listed in `propNames`
- * @param  {...any} propNames 
+ * encyrpt properties listed in `propKeys`
+ * @param  {Array<string | function(*):string>} propKeys -
+ * list of names (or functions that return names) of properties
  */
-export function encryptPropertiesMixin(...propNames) {
-  return encryptProperties(...propNames);
+export function encryptPropertiesMixin(...propKeys) {
+  return encryptProperties(...propKeys);
 }
 
 /**
- * hash passwords listed in `propNames`
- * @param  {...any} propNames 
+ * hash passwords listed in `propKeys`
+ * @param  {Array<string | function(*):string>} propKeys -
+ * list of names (or functions that return names) of properties
  */
-export function hashPasswordsMixin(...propNames) {
-  return hashPasswords(hash, ...propNames);
+export function hashPasswordsMixin(...propKeys) {
+  return hashPasswords(hash, ...propKeys);
 }
 
 /**
- * only allow properties listed in `propNames`
- * @param  {...any} propNames 
+ * only allow properties listed in `propKeys`
+ * @param  {Array<string | function(*):string>} propKeys -
+ * list of names (or functions that return names) of properties
  */
-export function allowPropertiesMixin(...propNames) {
-  return allowProperties(false, ...propNames);
+export function allowPropertiesMixin(...propKeys) {
+  return allowProperties(false, ...propKeys);
 }
 
 /**
