@@ -1,3 +1,5 @@
+'use strict'
+
 import GlobalMixins from './mixins';
 import { uuid } from './utils';
 
@@ -28,19 +30,23 @@ import Order from './order';
 /**
  * @typedef {Object} ModelConfig
  * @property {string} modelName name of model
- * @property {function(...args): any} factory factory function that returns model
+ * @property {function(...args): any} factory factory function that creates model
  * @property {Array<import("./mixins").mixinFunction>} [mixins] mixed into model
- * @property {onUpdate} [onUpdate] function called when model is updated
- * @property {onDelete} [onDelete] function called when model is deleted
+ * @property {onUpdate} [onUpdate] function called to handle model update request
+ * @property {onDelete} [onDelete] function called before model is deleted
+ * @property {Array<function({
+ *  eventName:string, 
+ *  eventData:any[]
+ * }):Promise<void>>} [eventHandlers] callbacks invoked when model events are emitted
  */
 
 /**
- * @param {ModelConfig} module 
+ * @param {ModelConfig} model 
  * @param {*} dependencies 
  */
-function make(module, dependencies) {
-  module.factory = module.factory(dependencies);
-  module.mixins = module.mixins.concat(GlobalMixins);
+function make(model, dependencies) {
+  model.factory = model.factory(dependencies);
+  model.mixins = model.mixins.concat(GlobalMixins);
 }
 
 make(User, { uuid });

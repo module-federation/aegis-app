@@ -35,7 +35,7 @@ const calcTotal = function (items) {
 /**
  * @type {import('./index').ModelConfig}
  */
-export default {
+const Order = {
   modelName: 'order',
 
   factory: () => {
@@ -125,6 +125,16 @@ export default {
     return model;
   },
 
+  eventHandlers: [
+    ({ eventName, ...rest }) => {
+      console.log({
+        eventHandler: 'Order',
+        eventName: eventName,
+        eventData: { ...rest }
+      });
+    }
+  ]
 }
 
+export default Order
 

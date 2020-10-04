@@ -4,9 +4,9 @@
 import { processUpdate } from './mixins';
 
 /**
- * Callback invoked on update. 
+ * Callback invoked to handle model update request. 
  */
-export default {
+const onUpdate = {
   /**
    * Callback invoked on update
    * @param model - current model
@@ -15,5 +15,7 @@ export default {
    */
   onUpdate: (model, changes) => processUpdate(model, changes)
 }
+
+export default onUpdate;
 
 

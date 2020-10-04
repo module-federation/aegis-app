@@ -32,7 +32,7 @@ export const mixinType = {
 }
 
 /**
- * 
+ * Stored mixins - use private symbol as key to prevent overwrite
  */
 export const mixinSets = {
   [mixinType.pre]: Symbol('preUpdateMixins'),
@@ -96,6 +96,13 @@ function updateMixins(type, o, name, cb) {
   return o;
 }
 
+/**
+ * Execute any functions in `propKeys` and return keys
+ * @param {*} o - Object to compose
+ * @param  {Array<string | function(*):string>} propKeys - 
+ * Names (or functions that return names) of properties
+ * @returns {string[]}
+ */
 function getConditionalProps(o, ...propKeys) {
   return propKeys.map(key => {
     return typeof key === 'function' ? key(o) : key;
@@ -292,7 +299,7 @@ const validatePropertyValues = (validations) => (o) => {
 }
 
 /**
- * require properties listed in `propKeys`
+ * Require properties listed in `propKeys`
  * @param  {Array<string | function(*):string>} propKeys -
  * list of names (or functions that return names) of properties
  */
@@ -310,7 +317,7 @@ export function freezePropertiesMixin(...propKeys) {
 }
 
 /**
- * encyrpt properties listed in `propKeys`
+ * Encyrpt properties listed in `propKeys`
  * @param  {Array<string | function(*):string>} propKeys -
  * list of names (or functions that return names) of properties
  */
@@ -319,7 +326,7 @@ export function encryptPropertiesMixin(...propKeys) {
 }
 
 /**
- * hash passwords listed in `propKeys`
+ * Hash passwords listed in `propKeys`
  * @param  {Array<string | function(*):string>} propKeys -
  * list of names (or functions that return names) of properties
  */
@@ -328,7 +335,7 @@ export function hashPasswordsMixin(...propKeys) {
 }
 
 /**
- * only allow properties listed in `propKeys`
+ * Only allow properties listed in `propKeys`
  * @param  {Array<string | function(*):string>} propKeys -
  * list of names (or functions that return names) of properties
  */
@@ -346,7 +353,9 @@ export function validatePropertyValuesMixin(validations) {
   return validatePropertyValues(validations);
 }
 
-// Implement GDPR across models
+/**
+ * Implement GDPR encryption requirement across models
+ */
 const encryptPersonalInfo = encryptProperties(
   'lastName',
   'address',
