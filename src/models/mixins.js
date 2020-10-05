@@ -83,7 +83,6 @@ function updateMixins(type, o, name, cb) {
   }
 
   const mixinSet = o[mixinSets[type]] || new Map();
-  // mixinSet.toJSON = () => void 0; // don't show this
 
   if (!mixinSet.has(name)) {
     mixinSet.set(name, cb());
@@ -206,6 +205,11 @@ const hashPasswords = (hash, ...propKeys) => (o) => {
 
 const internalPropList = [];
 
+/**
+ * 
+ * @param {*} isUpdate 
+ * @param  {...any} propKeys 
+ */
 const allowProperties = (isUpdate, ...propKeys) => (o) => {
   const keys = getConditionalProps(o, ...propKeys);
 
@@ -243,14 +247,64 @@ const allowProperties = (isUpdate, ...propKeys) => (o) => {
  *  isValid?:isValid,
  *  values?:any[],
  *  regex?:string,
- *  typeof?:string,
  *  length?:number
- * }[]} validations 
+ *  maxNum?:number
+ *  typeof?:string
+ * }} validation 
  */
 
 /**
  * 
- * @param {validations} validations
+ */
+const validator = {
+  tests: {
+    isValid: {
+      pass: (v, o, propVal) => v.isValid(o, propVal)
+    },
+    values: {
+      pass: (v, o, propVal) => v.values.includes(propVal)
+    },
+    regex: {
+      pass: (v, o, propVal) => new RegExp(v.regex).test(propVal)
+    },
+    typeof: {
+      pass: (v, o, propVal) => typeof propVal === v.typeof
+    },
+    maxNum: {
+      pass: (v, o, propVal) => typeof propVal === 'number'
+        ? propVal < v.maxNum
+        : true
+    },
+    length: {
+      pass: (v, o, propVal) => {
+        return (typeof propVal === 'string' || Array.isArray(propVal))
+          ? propVal.length < v.length
+          : true
+      }
+    },
+  },
+  /**
+   * Returns true if test passes (valid)
+   * @param {validation} v
+   * @param {Object} o
+   * @param {*} propVal
+   * @returns {boolean} true if tests pass
+   */
+  isValid: (v, o, propVal) => {
+    const tests = validator.tests;
+    const failures = Object.keys(tests).filter((key) => {
+      if (v[key]) { // enabled
+        return !tests[key].pass(v, o, propVal);
+      }
+      return false;
+    });
+    return !(failures?.length > 0);
+  }
+}
+
+/**
+ * 
+ * @param {validation[]} validations
  */
 const validatePropertyValues = (validations) => (o) => {
   const invalid = validations.filter(v => {
@@ -258,32 +312,7 @@ const validatePropertyValues = (validations) => (o) => {
     if (!propVal) {
       return false;
     }
-    if (v.isValid) {
-      if (!v.isValid(o, propVal)) {
-        return true;
-      }
-    }
-    if (v.values?.length > 0) {
-      if (!v.values.includes(propVal)) {
-        return true;
-      }
-    }
-    if (v.typeof) {
-      if (typeof propVal !== v.typeof) {
-        return true;
-      }
-    }
-    if (v.length) {
-      if (propVal.length > v.length) {
-        return true;
-      }
-    }
-    if (v.regex) {
-      if (!new RegExp(v.regex).test(propVal)) {
-        return true;
-      }
-    }
-    return false;
+    return !validator.isValid(v, o, propVal);
   });
 
   if (invalid?.length > 0) {
@@ -347,7 +376,7 @@ export function allowPropertiesMixin(...propKeys) {
  * Validate property values are members of a list, 
  * match a regular expression, are of a certain length, or type,
  * or satisfy a custom validation function.
- * @param {validations} validations 
+ * @param {validation[]} validations 
  */
 export function validatePropertyValuesMixin(validations) {
   return validatePropertyValues(validations);

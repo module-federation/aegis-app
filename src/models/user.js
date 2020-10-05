@@ -7,12 +7,12 @@ import {
   freezePropertiesMixin,
   allowPropertiesMixin,
   hashPasswordsMixin,
-} from './mixins'
+} from './mixins';
 
 /**
  * @type {import('./index').ModelConfig}
  */
-export default {
+const User = {
 
   modelName: 'user',
   factory: ({ uuid }) => {
@@ -63,4 +63,4 @@ export default {
 
 }
 
-
+export default User;

@@ -104,7 +104,8 @@ const Order = {
             o.total = calcTotal(o.items);
           }
           return true;
-        }
+        },
+        maxNum: 99999
       },
     ]),
     allowPropertiesMixin(
