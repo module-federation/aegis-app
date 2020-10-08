@@ -3,15 +3,16 @@ import crypto from 'crypto';
 export function compose(...funcs) {
   return function (initVal) {
     return funcs.reduceRight(
-      (val, func) => func(val), 
+      (val, func) => func(val),
       initVal
     );
   }
 }
 
+export const key = crypto.randomBytes(32);
+export const iv = crypto.randomBytes(16);
+
 export function encrypt(text) {
-  const key = crypto.randomBytes(32);
-  const iv = crypto.randomBytes(16);
   let cipher = crypto.createCipheriv(
     'aes-256-cbc', Buffer.from(key), iv
   );

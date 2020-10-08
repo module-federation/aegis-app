@@ -5,10 +5,13 @@ import {
   freezePropertiesMixin,
   validatePropertyValuesMixin,
   allowPropertiesMixin,
+  updatePropertyValuesMixin,
   PREVMODEL
 } from './mixins';
 
 import onUpdate from './on-update';
+
+const MAXPRICE = 99999;
 
 const checkItems = function (items) {
   if (!items) {
@@ -16,9 +19,8 @@ const checkItems = function (items) {
   }
   const _items = Array.isArray(items) ? items : [items];
 
-  if (_items.length > 0 &&
-    (_items.every(i => i['name'] &&
-      typeof i['price'] === 'number'))
+  if (_items.length > 0 && (_items.every(i => i['name'] &&
+    typeof i['price'] === 'number' && i['price'] < MAXPRICE))
   ) {
     return _items;
   }
@@ -73,6 +75,17 @@ const Order = {
           : null
       },
     ),
+    updatePropertyValuesMixin([
+      {
+        propKey: 'items',
+        update: (o, propVal) => {
+          // New total if items are updated
+          return {
+            total: calcTotal(propVal)
+          };
+        }
+      }
+    ]),
     validatePropertyValuesMixin([
       {
         propKey: 'orderStatus',
@@ -90,23 +103,9 @@ const Order = {
         }
       },
       {
-        propKey: 'items',
-        isValid: (o, propVal) => {
-          checkItems(propVal);
-          return true;
-        }
-      },
-      {
         propKey: 'total',
-        isValid: (o, propVal) => {
-          if (o.items?.length > 0) {
-            // New total if items are updated
-            o.total = calcTotal(o.items);
-          }
-          return true;
-        },
-        maxNum: 99999
-      },
+        maxNum: MAXPRICE
+      }
     ]),
     allowPropertiesMixin(
       'customerId',

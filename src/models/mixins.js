@@ -124,7 +124,9 @@ const encryptProperties = (...propKeys) => (o) => {
   }
 
   const mixins = updateMixins(
-    mixinType.pre, o, encryptProperties.name,
+    mixinType.pre,
+    o,
+    encryptProperties.name,
     () => encryptProperties(...propKeys)
   );
 
@@ -148,7 +150,9 @@ const freezeProperties = (isUpdate, ...propKeys) => (o) => {
       .filter(key => keys.includes(key));
 
     if (intersection?.length > 0) {
-      throw new Error(`cannot update readonly properties: ${intersection}`);
+      throw new Error(
+        `cannot update readonly properties: ${intersection}`
+      );
     }
   }
 
@@ -157,7 +161,9 @@ const freezeProperties = (isUpdate, ...propKeys) => (o) => {
   }
 
   return updateMixins(
-    mixinType.pre, o, freezeProperties.name,
+    mixinType.pre,
+    o,
+    freezeProperties.name,
     () => freezeProperties(true, ...propKeys)
   );
 }
@@ -170,7 +176,6 @@ const freezeProperties = (isUpdate, ...propKeys) => (o) => {
 const requireProperties = (...propKeys) => (o) => {
   const keys = getConditionalProps(o, ...propKeys);
   const missing = keys.filter(key => !o[key]);
-
   if (missing?.length > 0) {
     throw new Error(`missing required properties: ${missing}`);
   }
@@ -193,7 +198,9 @@ const hashPasswords = (hash, ...propKeys) => (o) => {
   }
 
   const mixins = updateMixins(
-    mixinType.pre, o, hashPasswords.name,
+    mixinType.pre,
+    o,
+    hashPasswords.name,
     () => hashPasswords(hash, ...propKeys)
   );
 
@@ -229,7 +236,9 @@ const allowProperties = (isUpdate, ...propKeys) => (o) => {
   }
 
   return updateMixins(
-    mixinType.pre, o, allowProperties.name,
+    mixinType.pre,
+    o,
+    allowProperties.name,
     () => allowProperties(true, ...propKeys)
   );
 }
@@ -292,13 +301,12 @@ const validator = {
    */
   isValid: (v, o, propVal) => {
     const tests = validator.tests;
-    const failures = Object.keys(tests).filter((key) => {
+    return Object.keys(tests).every(key => {
       if (v[key]) { // enabled
-        return !tests[key].pass(v, o, propVal);
+        return tests[key].pass(v, o, propVal);
       }
-      return false;
+      return true;
     });
-    return !(failures?.length > 0);
   }
 }
 
@@ -322,9 +330,54 @@ const validatePropertyValues = (validations) => (o) => {
   }
 
   return updateMixins(
-    mixinType.post, o, validatePropertyValues.name,
+    mixinType.post,
+    o,
+    validatePropertyValues.name,
     () => validatePropertyValues(validations)
   );
+}
+
+/**
+ * @callback updaterFn 
+ * @param {Object} o  
+ * @param  {*} propVal 
+ * @returns {Object} object with updated property
+ */
+
+/**
+ * @typedef updater
+ * @property {string} propKey property being updated 
+ * @property {updaterFn} update return new object with updated property
+ */
+
+/**
+ * 
+ * @param {updater[]} updaters 
+ */
+const updatePropertyValues = (isUpdate, updaters) => (o) => {
+  function updateProperties() {
+    if (isUpdate) {
+      const updates = updaters.filter(u => o[u.propKey]);
+      if (updates?.length > 0) {
+        return updates
+          .map(u => u.update(o, o[u.propKey]))
+          .reduce((p, c) => ({ ...p, ...c }));
+      }
+    }
+    return {};
+  }
+
+  const mixins = updateMixins(
+    mixinType.pre,
+    o,
+    updatePropertyValues.name,
+    () => updatePropertyValues(true, updaters)
+  );
+
+  return {
+    ...mixins,
+    ...updateProperties()
+  }
 }
 
 /**
@@ -383,6 +436,15 @@ export function validatePropertyValuesMixin(validations) {
 }
 
 /**
+ * Update properties. Triggered by update to property listed
+ * in `updater.propKey`.
+ * @param {updater[]} updaters 
+ */
+export function updatePropertyValuesMixin(updaters) {
+  return updatePropertyValues(false, updaters);
+}
+
+/**
  * Implement GDPR encryption requirement across models
  */
 const encryptPersonalInfo = encryptProperties(
@@ -404,5 +466,3 @@ const GlobalMixins = [
 ];
 
 export default GlobalMixins;
-
-
