@@ -4,9 +4,9 @@
 const session = require('express-session');
 const express = require('express');
 const http = require('http');
-const uuid = require('uuid');
 const bodyParser = require("body-parser");
 const WebSocket = require('ws');
+const { uuid } = require('./models/utils');
 
 const app = express();
 const map = new Map();
@@ -33,7 +33,7 @@ app.use(bodyParser.json());
 
 app.post('/login', function (req, res) {
   // "Log in" user and set userId to session.
-  const id = uuid.v4();
+  const id = uuid();
   console.log(`Updating session for user ${id}`);
   req.session.userId = id;
   res.send({ result: 'OK', message: 'Session updated' });

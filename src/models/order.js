@@ -10,7 +10,7 @@ import {
   PREVMODEL
 } from './mixins';
 
-const MAXORDER = 99999;
+const MAXORDER = 100000;
 
 const checkItems = function (items) {
   if (!items) {
@@ -38,13 +38,17 @@ const calcTotal = function (items) {
  */
 const Order = {
   modelName: 'order',
+  endpoint: 'orders',
 
   factory: () => {
-    return function createOrder({ customerId, items }) {
+    return function createOrder({
+      customerId, items, vendorEmail
+    }) {
       checkItems(items);
       return Object.freeze({
         total: calcTotal(items),
         customerId,
+        vendorEmail,
         items,
         orderStatus: 'PENDING'
       });
@@ -98,14 +102,19 @@ const Order = {
       },
       {
         propKey: 'total',
-        maxNum: MAXORDER
+        maxnum: MAXORDER
+      },
+      {
+        propKey: 'vendorEmail',
+        regex: 'email'
       }
     ]),
     allowPropertiesMixin(
       'customerId',
       'items',
       'orderStatus',
-      'total'
+      'total',
+      'vendorEmail'
     )
   ],
 

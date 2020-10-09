@@ -14,6 +14,7 @@ import {
  */
 const User = {
   modelName: 'user',
+  endpoint: 'users',
 
   factory: ({ uuid }) => {
     return function createUser({
@@ -21,6 +22,7 @@ const User = {
       password,
       firstName,
       lastName,
+      phone,
       email
     } = {}) {
       return Object.freeze({
@@ -29,6 +31,7 @@ const User = {
         userName,
         firstName,
         lastName,
+        phone,
         email
       });
     }
@@ -50,6 +53,7 @@ const User = {
       'firstName',
       'lastName',
       'userId',
+      'phone',
       'email'
     ),
     hashPasswordsMixin(

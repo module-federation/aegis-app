@@ -30,6 +30,7 @@ import Order from './order';
 /**
  * @typedef {Object} ModelConfig
  * @property {string} modelName name of model (case-insenstive)
+ * @property {string} endpoint name of uri to use (plural of modelName)
  * @property {function(...args): any} factory factory function that creates model
  * @property {Array<import("./mixins").mixinFunction>} [mixins] functional mixins
  * @property {onUpdate} [onUpdate] function called to handle model update request
@@ -37,15 +38,30 @@ import Order from './order';
  * @property {Array<function({
  *  eventName:string, 
  *  [x: string]:any[]
- * }):Promise<void>>} [eventHandlers] callbacks invoked when model events occur
+ * }):Promise<void>>} [eventHandlers] callbacks invoked when model events occur,
  */
+
+const requiredProperties = [
+  'modelName', 'endpoint', 'factory'
+];
+
+function validateModel(model) {
+  const missing = requiredProperties.filter(p => !model[p]);
+  if (missing?.length > 0) {
+    throw new Error(
+      `missing required properties: ${missing} > ${Object.entries(model)}`
+    );
+  }
+}
 
 /**
  * @param {ModelConfig} model 
  * @param {*} dependencies 
  */
 function make(model, dependencies) {
+  validateModel(model);
   model.factory = model.factory(dependencies);
+  model.mixins = model.mixins || [];
   model.mixins = model.mixins.concat(GlobalMixins);
 }
 

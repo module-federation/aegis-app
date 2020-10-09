@@ -103,10 +103,8 @@ function updateMixins(type, o, name, cb) {
  * Names (or functions that return names) of properties
  * @returns {string[]} list of (resolved) property keys
  */
-function getConditionalProps(o, ...propKeys) {
-  return propKeys.map(key => {
-    return typeof key === 'function' ? key(o) : key;
-  });
+function getDynamicProps(o, ...propKeys) {
+  return propKeys.map(k => typeof k === 'function' ? k(o) : k);
 }
 
 /**
@@ -115,7 +113,7 @@ function getConditionalProps(o, ...propKeys) {
  * Names (or functions that return names) of properties to encrypt
  */
 const encryptProperties = (...propKeys) => (o) => {
-  const keys = getConditionalProps(o, ...propKeys);
+  const keys = getDynamicProps(o, ...propKeys);
 
   const encryptProps = () => {
     return keys.map(key => o[key]
@@ -145,7 +143,7 @@ const encryptProperties = (...propKeys) => (o) => {
  */
 const freezeProperties = (isUpdate, ...propKeys) => (o) => {
   const preventUpdates = () => {
-    const keys = getConditionalProps(o, ...propKeys);
+    const keys = getDynamicProps(o, ...propKeys);
     const mutations = Object.keys(o)
       .filter(key => keys.includes(key));
 
@@ -174,7 +172,7 @@ const freezeProperties = (isUpdate, ...propKeys) => (o) => {
  * required property names
  */
 const requireProperties = (...propKeys) => (o) => {
-  const keys = getConditionalProps(o, ...propKeys);
+  const keys = getDynamicProps(o, ...propKeys);
   const missing = keys.filter(key => !o[key]);
   if (missing?.length > 0) {
     throw new Error(`missing required properties: ${missing}`);
@@ -188,7 +186,7 @@ const requireProperties = (...propKeys) => (o) => {
  * @param  {Array<string | function(*):string>} propKeys name of password props
  */
 const hashPasswords = (hash, ...propKeys) => (o) => {
-  const keys = getConditionalProps(o, ...propKeys);
+  const keys = getDynamicProps(o, ...propKeys);
 
   function hashPwds() {
     return keys.map(key => o[key]
@@ -219,7 +217,7 @@ const internalPropList = [];
  */
 const allowProperties = (isUpdate, ...propKeys) => (o) => {
   function rejectUnknownProps() {
-    const keys = getConditionalProps(o, ...propKeys);
+    const keys = getDynamicProps(o, ...propKeys);
     const allowList = keys.concat(internalPropList);
     const unknownProps = Object.keys(o).filter(
       key => !allowList.includes(key)
@@ -254,43 +252,53 @@ const allowProperties = (isUpdate, ...propKeys) => (o) => {
  *  propKey:string,
  *  isValid?:isValid,
  *  values?:any[],
- *  regex?:string,
- *  length?:number
- *  maxNum?:number
+ *  regex?:'email'|'ipv4Addr'|string,
+ *  maxlen?:number
+ *  maxnum?:number
  *  typeof?:string
  * }} validation 
  */
+
+/**
+ * regular expressions to use with regex property validator
+ */
+export const RegEx = {
+  email: /(.+)@(.+){2,}\.(.+){2,}/,
+  ipv4Address: /^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])$/,
+  ipv6Address: /^((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*::((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*|((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4})){7}$/,
+  phone: /^[1-9]\d{2}-\d{3}-\d{4}/,
+  test: (expr, val) => {
+    const _expr = Object.keys(RegEx).includes(expr) && typeof expr !== 'function'
+      ? RegEx[expr]
+      : expr;
+    return _expr.test(val);
+  }
+}
 
 /**
  * 
  */
 const validator = {
   tests: {
-    isValid: (v, o, propVal) => v.isValid(o, propVal),
-    values: (v, o, propVal) => v.values.includes(propVal),
-    regex: (v, o, propVal) => new RegExp(v.regex).test(propVal),
-    typeof: (v, o, propVal) => typeof propVal === v.typeof,
-    maxNum: (v, o, propVal) => typeof propVal === 'number'
-      ? propVal < v.maxNum
-      : true,
-    length: (v, o, propVal) => {
-      return (typeof propVal === 'string' || Array.isArray(propVal))
-        ? propVal.length < v.length
-        : true
-    }
+    isValid: (v, o, propVal) => v(o, propVal),
+    values: (v, o, propVal) => v.includes(propVal),
+    regex: (v, o, propVal) => RegEx.test(v, propVal),
+    typeof: (v, o, propVal) => v === typeof propVal,
+    maxnum: (v, o, propVal) => v > propVal,
+    maxlen: (v, o, propVal) => v > propVal.length
   },
   /**
-   * Returns true if tests pass (valid)
-   * @param {validation} v
-   * @param {Object} o
-   * @param {*} propVal
+   * Returns true if tests pass
+   * @param {validation} v validation spec
+   * @param {Object} o object to compose
+   * @param {*} propVal value of property to validate
    * @returns {boolean} true if tests pass
    */
   isValid: (v, o, propVal) => {
     const tests = validator.tests;
     return Object.keys(tests).every(key => {
       if (v[key]) { // enabled
-        return tests[key](v, o, propVal);
+        return tests[key](v[key], o, propVal);
       }
       return true;
     });
@@ -431,15 +439,22 @@ export function updatePropertiesMixin(updaters) {
   return updateProperties(false, updaters);
 }
 
+const checkFormat = (propKey, expr) => (o) => {
+  if (o[propKey] && !RegEx.test(expr, o[propKey])) {
+    throw new Error(`invalid ${propKey}`);
+  }
+  return propKey;
+}
+
 /**
  * Implement GDPR encryption requirement across models
  */
 const encryptPersonalInfo = encryptProperties(
   'lastName',
   'address',
-  'email',
-  'phone',
-  'mobile',
+  checkFormat('email', 'email'), // check format first
+  checkFormat('phone', 'phone'),
+  checkFormat('mobile', 'phone'),
   'creditCard',
   'ccv',
   'ssn'

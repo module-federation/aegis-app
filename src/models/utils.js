@@ -21,14 +21,6 @@ export function encrypt(text) {
   return encrypted.toString('hex');
 }
 
-export function requireParams(params) {
-  Object.keys(params).forEach(key => {
-    if (!params[key]) {
-      throw new Error(`param ${key} missing or invalid`);
-    }
-  });
-}
-
 export function hash(data) {
   return crypto.createHash('sha1').update(data).digest('hex');
 }

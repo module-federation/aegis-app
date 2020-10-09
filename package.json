@@ -6,7 +6,6 @@
   "scripts": {
     "build": "npm run clean && webpack --config webpack.config.js",
     "build-dev": "babel src -d dist",
-    "start-webpack": "webpack-dev-server",
     "restart": "npm run build && npm run start",
     "start": "node dist/main.js",
     "clean": "rm -rf dist",
