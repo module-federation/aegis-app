@@ -146,12 +146,12 @@ const encryptProperties = (...propKeys) => (o) => {
 const freezeProperties = (isUpdate, ...propKeys) => (o) => {
   const preventUpdates = () => {
     const keys = getConditionalProps(o, ...propKeys);
-    const intersection = Object.keys(o)
+    const mutations = Object.keys(o)
       .filter(key => keys.includes(key));
 
-    if (intersection?.length > 0) {
+    if (mutations?.length > 0) {
       throw new Error(
-        `cannot update readonly properties: ${intersection}`
+        `cannot update readonly properties: ${mutations}`
       );
     }
   }
@@ -218,9 +218,8 @@ const internalPropList = [];
  * @param  {...any} propKeys 
  */
 const allowProperties = (isUpdate, ...propKeys) => (o) => {
-  const keys = getConditionalProps(o, ...propKeys);
-
   function rejectUnknownProps() {
+    const keys = getConditionalProps(o, ...propKeys);
     const allowList = keys.concat(internalPropList);
     const unknownProps = Object.keys(o).filter(
       key => !allowList.includes(key)
@@ -267,33 +266,21 @@ const allowProperties = (isUpdate, ...propKeys) => (o) => {
  */
 const validator = {
   tests: {
-    isValid: {
-      pass: (v, o, propVal) => v.isValid(o, propVal)
-    },
-    values: {
-      pass: (v, o, propVal) => v.values.includes(propVal)
-    },
-    regex: {
-      pass: (v, o, propVal) => new RegExp(v.regex).test(propVal)
-    },
-    typeof: {
-      pass: (v, o, propVal) => typeof propVal === v.typeof
-    },
-    maxNum: {
-      pass: (v, o, propVal) => typeof propVal === 'number'
-        ? propVal < v.maxNum
+    isValid: (v, o, propVal) => v.isValid(o, propVal),
+    values: (v, o, propVal) => v.values.includes(propVal),
+    regex: (v, o, propVal) => new RegExp(v.regex).test(propVal),
+    typeof: (v, o, propVal) => typeof propVal === v.typeof,
+    maxNum: (v, o, propVal) => typeof propVal === 'number'
+      ? propVal < v.maxNum
+      : true,
+    length: (v, o, propVal) => {
+      return (typeof propVal === 'string' || Array.isArray(propVal))
+        ? propVal.length < v.length
         : true
-    },
-    length: {
-      pass: (v, o, propVal) => {
-        return (typeof propVal === 'string' || Array.isArray(propVal))
-          ? propVal.length < v.length
-          : true
-      }
-    },
+    }
   },
   /**
-   * Returns true if test passes (valid)
+   * Returns true if tests pass (valid)
    * @param {validation} v
    * @param {Object} o
    * @param {*} propVal
@@ -303,7 +290,7 @@ const validator = {
     const tests = validator.tests;
     return Object.keys(tests).every(key => {
       if (v[key]) { // enabled
-        return tests[key].pass(v, o, propVal);
+        return tests[key](v, o, propVal);
       }
       return true;
     });

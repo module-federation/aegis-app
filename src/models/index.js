@@ -31,13 +31,13 @@ import Order from './order';
  * @typedef {Object} ModelConfig
  * @property {string} modelName name of model (case-insenstive)
  * @property {function(...args): any} factory factory function that creates model
- * @property {Array<import("./mixins").mixinFunction>} [mixins] mixed into model
+ * @property {Array<import("./mixins").mixinFunction>} [mixins] functional mixins
  * @property {onUpdate} [onUpdate] function called to handle model update request
  * @property {onDelete} [onDelete] function called before model is deleted
  * @property {Array<function({
  *  eventName:string, 
- *  eventData:any[]
- * }):Promise<void>>} [eventHandlers] callbacks invoked when model events are emitted
+ *  [x: string]:any[]
+ * }):Promise<void>>} [eventHandlers] callbacks invoked when model events occur
  */
 
 /**

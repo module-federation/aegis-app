@@ -6,12 +6,11 @@ import {
   validatePropertiesMixin,
   updatePropertiesMixin,
   allowPropertiesMixin,
+  processUpdate,
   PREVMODEL
 } from './mixins';
 
-import onUpdate from './on-update';
-
-const MAXPRICE = 99999;
+const MAXORDER = 99999;
 
 const checkItems = function (items) {
   if (!items) {
@@ -20,7 +19,7 @@ const checkItems = function (items) {
   const _items = Array.isArray(items) ? items : [items];
 
   if (_items.length > 0 && (_items.every(i => i['name'] &&
-    typeof i['price'] === 'number' && i['price'] < MAXPRICE))
+    typeof i['price'] === 'number' && i['price'] < MAXORDER))
   ) {
     return _items;
   }
@@ -61,9 +60,8 @@ const Order = {
       'customerId',
       (o) => {
         // can't change status if canceled or complete 
-        return ['COMPLETE', 'CANCELED'].includes(
-          o[PREVMODEL].orderStatus
-        ) ? 'orderStatus'
+        return ['COMPLETE', 'CANCELED'].includes(o[PREVMODEL].orderStatus)
+          ? 'orderStatus'
           : null
       },
       (o) => {
@@ -76,12 +74,10 @@ const Order = {
     updatePropertiesMixin([
       {
         propKey: 'items',
-        update: (o, propVal) => {
+        update: (o, propVal) => ({
           // New total if items are updated
-          return {
-            total: calcTotal(propVal)
-          };
-        }
+          total: calcTotal(propVal)
+        })
       }
     ]),
     validatePropertiesMixin([
@@ -102,7 +98,7 @@ const Order = {
       },
       {
         propKey: 'total',
-        maxNum: MAXPRICE
+        maxNum: MAXORDER
       }
     ]),
     allowPropertiesMixin(
@@ -113,7 +109,7 @@ const Order = {
     )
   ],
 
-  ...onUpdate,
+  onUpdate: processUpdate,
 
   onDelete: (model) => {
     // Can't delete orders that are still being processed
