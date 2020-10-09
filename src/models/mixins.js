@@ -7,6 +7,7 @@ import {
 } from './utils';
 
 /**
+ * Functional mixin
  * @callback mixinFunction
  * @param {Object} o Object to compose
  * @returns {Object} Composed object
@@ -24,7 +25,7 @@ import {
 export const PREVMODEL = Symbol('prevModel');
 
 /**
- *
+ * Process mixin pre or post update
  */
 export const mixinType = {
   pre: Symbol('pre'),
@@ -100,7 +101,7 @@ function updateMixins(type, o, name, cb) {
  * @param {*} o - Object to compose
  * @param  {Array<string | function(*):string>} propKeys - 
  * Names (or functions that return names) of properties
- * @returns {string[]}
+ * @returns {string[]} list of (resolved) property keys
  */
 function getConditionalProps(o, ...propKeys) {
   return propKeys.map(key => {
@@ -143,9 +144,8 @@ const encryptProperties = (...propKeys) => (o) => {
  * @param  {Array<string | function(*):string>} propKeys - names of properties to freeze
  */
 const freezeProperties = (isUpdate, ...propKeys) => (o) => {
-  const keys = getConditionalProps(o, ...propKeys);
-
   const preventUpdates = () => {
+    const keys = getConditionalProps(o, ...propKeys);
     const intersection = Object.keys(o)
       .filter(key => keys.includes(key));
 
@@ -314,7 +314,7 @@ const validator = {
  * 
  * @param {validation[]} validations
  */
-const validatePropertyValues = (validations) => (o) => {
+const validateProperties = (validations) => (o) => {
   const invalid = validations.filter(v => {
     const propVal = o[v.propKey];
     if (!propVal) {
@@ -332,8 +332,8 @@ const validatePropertyValues = (validations) => (o) => {
   return updateMixins(
     mixinType.post,
     o,
-    validatePropertyValues.name,
-    () => validatePropertyValues(validations)
+    validateProperties.name,
+    () => validateProperties(validations)
   );
 }
 
@@ -354,8 +354,8 @@ const validatePropertyValues = (validations) => (o) => {
  * 
  * @param {updater[]} updaters 
  */
-const updatePropertyValues = (isUpdate, updaters) => (o) => {
-  function updateProperties() {
+const updateProperties = (isUpdate, updaters) => (o) => {
+  function updateProps() {
     if (isUpdate) {
       const updates = updaters.filter(u => o[u.propKey]);
       if (updates?.length > 0) {
@@ -370,13 +370,13 @@ const updatePropertyValues = (isUpdate, updaters) => (o) => {
   const mixins = updateMixins(
     mixinType.pre,
     o,
-    updatePropertyValues.name,
-    () => updatePropertyValues(true, updaters)
+    updateProperties.name,
+    () => updateProperties(true, updaters)
   );
 
   return {
     ...mixins,
-    ...updateProperties()
+    ...updateProps()
   }
 }
 
@@ -431,8 +431,8 @@ export function allowPropertiesMixin(...propKeys) {
  * or satisfy a custom validation function.
  * @param {validation[]} validations 
  */
-export function validatePropertyValuesMixin(validations) {
-  return validatePropertyValues(validations);
+export function validatePropertiesMixin(validations) {
+  return validateProperties(validations);
 }
 
 /**
@@ -440,8 +440,8 @@ export function validatePropertyValuesMixin(validations) {
  * in `updater.propKey`.
  * @param {updater[]} updaters 
  */
-export function updatePropertyValuesMixin(updaters) {
-  return updatePropertyValues(false, updaters);
+export function updatePropertiesMixin(updaters) {
+  return updateProperties(false, updaters);
 }
 
 /**

@@ -18,18 +18,18 @@ import Order from './order';
  * @callback onUpdate
  * @param {Model} model
  * @param {Object} changes
- * @returns {Model}
+ * @returns {Model} updated model
  */
 
 /**
  * @callback onDelete
  * @param {Model} model
- * @returns {Model}
+ * @returns {Model} updated model
  */
 
 /**
  * @typedef {Object} ModelConfig
- * @property {string} modelName name of model
+ * @property {string} modelName name of model (case-insenstive)
  * @property {function(...args): any} factory factory function that creates model
  * @property {Array<import("./mixins").mixinFunction>} [mixins] mixed into model
  * @property {onUpdate} [onUpdate] function called to handle model update request

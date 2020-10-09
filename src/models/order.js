@@ -3,9 +3,9 @@
 import {
   requirePropertiesMixin,
   freezePropertiesMixin,
-  validatePropertyValuesMixin,
+  validatePropertiesMixin,
+  updatePropertiesMixin,
   allowPropertiesMixin,
-  updatePropertyValuesMixin,
   PREVMODEL
 } from './mixins';
 
@@ -60,7 +60,6 @@ const Order = {
     freezePropertiesMixin(
       'customerId',
       (o) => {
-        if (!o[PREVMODEL]?.orderStatus) return null;
         // can't change status if canceled or complete 
         return ['COMPLETE', 'CANCELED'].includes(
           o[PREVMODEL].orderStatus
@@ -68,14 +67,13 @@ const Order = {
           : null
       },
       (o) => {
-        if (!o[PREVMODEL]?.orderStatus) return null;
         // can't edit items once approved
         return o[PREVMODEL].orderStatus !== 'PENDING'
           ? 'items'
           : null
       },
     ),
-    updatePropertyValuesMixin([
+    updatePropertiesMixin([
       {
         propKey: 'items',
         update: (o, propVal) => {
@@ -86,7 +84,7 @@ const Order = {
         }
       }
     ]),
-    validatePropertyValuesMixin([
+    validatePropertiesMixin([
       {
         propKey: 'orderStatus',
         values: [
