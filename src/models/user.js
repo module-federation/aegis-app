@@ -13,10 +13,9 @@ import {
  * @type {import('./index').ModelConfig}
  */
 const User = {
-
   modelName: 'user',
-  factory: ({ uuid }) => {
 
+  factory: ({ uuid }) => {
     return function createUser({
       userName,
       password,
@@ -24,7 +23,6 @@ const User = {
       lastName,
       email
     } = {}) {
-
       return Object.freeze({
         userId: uuid(),
         password,
