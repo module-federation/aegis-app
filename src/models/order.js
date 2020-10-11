@@ -10,14 +10,13 @@ import {
   PREVMODEL
 } from './mixins';
 
-const MAXORDER = 100000;
+const MAXORDER = 99999.99;
 
 const checkItems = function (items) {
   if (!items) {
     throw new Error('order contains no items');
   }
   const _items = Array.isArray(items) ? items : [items];
-
   if (_items.length > 0 && (_items.every(i => i['name'] &&
     typeof i['price'] === 'number' && i['price'] < MAXORDER))
   ) {
@@ -33,6 +32,50 @@ const calcTotal = function (items) {
   }, 0);
 }
 
+function freezeOnApproval(o, propKey) {
+  return o[PREVMODEL].orderStatus !== 'PENDING' ? propKey : null;
+}
+
+/**
+ * No status changes once order has been canceled or completed 
+ * @param {*} o 
+ * @param {*} propKey 
+ */
+function freezeOnCompletion(o, propKey) {
+  return ['COMPLETE', 'CANCELED'].includes(o[PREVMODEL].orderStatus)
+    ? propKey
+    : null
+}
+
+/**
+ * Value required in order to complete order
+ * @param {*} o 
+ * @param {*} propKey 
+ */
+function requiredForCompletion(o, propKey) {
+  if (!o.orderStatus) return;
+  return o.orderStatus !== 'PENDING' ? propKey : null;
+}
+
+/**
+ * Can't change back to pending once approved
+ */
+function statusChangeValid(o, propVal) {
+  if (!o[PREVMODEL]?.orderStatus) return true;
+  return !(propVal === 'PENDING' &&
+    o[PREVMODEL].orderStatus === 'APPROVED')
+}
+
+/** 
+ * Don't delete orders before they're done processing.
+ */
+function readyToDelete(model) {
+  if (!['COMPLETE', 'CANCELED'].includes(model.orderStatus)) {
+    throw new Error('order status incomplete');
+  }
+  return model;
+}
+
 /**
  * @type {import('./index').ModelConfig}
  */
@@ -42,13 +85,14 @@ const Order = {
 
   factory: () => {
     return function createOrder({
-      customerId, items, vendorEmail
+      customerId, items, shippingAddress, creditCardNumber
     }) {
       checkItems(items);
       return Object.freeze({
         total: calcTotal(items),
         customerId,
-        vendorEmail,
+        shippingAddress,
+        creditCardNumber,
         items,
         orderStatus: 'PENDING'
       });
@@ -58,22 +102,16 @@ const Order = {
   mixins: [
     requirePropertiesMixin(
       'customerId',
-      'items'
+      'items',
+      'creditCardNumber',
+      (o) => requiredForCompletion(o, 'shippingAddress')
     ),
     freezePropertiesMixin(
       'customerId',
-      (o) => {
-        // can't change status if canceled or complete 
-        return ['COMPLETE', 'CANCELED'].includes(o[PREVMODEL].orderStatus)
-          ? 'orderStatus'
-          : null
-      },
-      (o) => {
-        // can't edit items once approved
-        return o[PREVMODEL].orderStatus !== 'PENDING'
-          ? 'items'
-          : null
-      },
+      (o) => freezeOnCompletion(o, 'orderStatus'),
+      (o) => freezeOnApproval(o, 'items'),
+      (o) => freezeOnApproval(o, 'creditCardNumber'),
+      (o) => freezeOnApproval(o, 'shippingAddress')
     ),
     updatePropertiesMixin([
       {
@@ -94,19 +132,12 @@ const Order = {
           'COMPLETE'
         ],
         isValid: (o, propVal) => {
-          if (!o[PREVMODEL]?.orderStatus) return true;
-          // Can't change back to pending once approved
-          return !(propVal === 'PENDING' &&
-            o[PREVMODEL].orderStatus === 'APPROVED')
+          return statusChangeValid(o, propVal)
         }
       },
       {
         propKey: 'total',
         maxnum: MAXORDER
-      },
-      {
-        propKey: 'vendorEmail',
-        regex: 'email'
       }
     ]),
     allowPropertiesMixin(
@@ -114,19 +145,14 @@ const Order = {
       'items',
       'orderStatus',
       'total',
-      'vendorEmail'
+      'creditCardNumber',
+      'shippingAddress'
     )
   ],
 
   onUpdate: processUpdate,
 
-  onDelete: (model) => {
-    // Can't delete orders that are still being processed
-    if (!['COMPLETE', 'CANCELED'].includes(model.orderStatus)) {
-      throw new Error('order status incomplete');
-    }
-    return model;
-  },
+  onDelete: (model) => readyToDelete(model),
 
   eventHandlers: [
     ({ eventName, ...rest }) => {

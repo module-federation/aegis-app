@@ -1,12 +1,12 @@
 'use strict'
 
-import onUpdate from './on-update';
-
 import {
   requirePropertiesMixin,
   freezePropertiesMixin,
   allowPropertiesMixin,
   hashPasswordsMixin,
+  processUpdate,
+  DECRYPT
 } from './mixins';
 
 /**
@@ -61,8 +61,16 @@ const User = {
     ),
   ],
 
-  ...onUpdate
+  onUpdate: processUpdate,
 
+  eventHandlers: [
+    ({ model }) => {
+      if (!model && !model[DECRYPT]) return;
+      console.log('decrypted: %s', {
+        ...model[DECRYPT](model)
+      });
+    }
+  ]
 }
 
 export default User;

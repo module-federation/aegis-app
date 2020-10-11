@@ -5,9 +5,8 @@
   "main": "./dist/main.js",
   "scripts": {
     "build": "npm run clean && webpack --config webpack.config.js",
-    "build-dev": "babel src -d dist",
-    "restart": "npm run build && npm run start",
     "start": "node dist/main.js",
+    "restart": "npm run build && npm run start",
     "clean": "rm -rf dist",
     "test": "open http://localhost:8060"
   },

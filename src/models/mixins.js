@@ -3,6 +3,7 @@
 import {
   hash,
   encrypt,
+  decrypt,
   compose
 } from './utils';
 
@@ -97,7 +98,7 @@ function updateMixins(type, o, name, cb) {
 }
 
 /**
- * Execute any functions in `propKeys` and return keys
+ * Execute any functions in `propKeys` and return key names
  * @param {*} o - Object to compose
  * @param  {Array<string | function(*):string>} propKeys - 
  * Names (or functions that return names) of properties
@@ -108,9 +109,23 @@ function getDynamicProps(o, ...propKeys) {
 }
 
 /**
- * Functional mixin that encrypts the properties specified in `propNames`  
+ * Key to access `decrypt` function.
+ */
+export const DECRYPT = Symbol('decrypt');
+
+const decryptProps = (...keys) => (o) => {
+  const target = o;
+  return keys.map(key => target[key]
+    ? { [key]: decrypt(target[key]) }
+    : {})
+    .reduce((p, c) => ({ ...c, ...p }));
+}
+
+/**
+ * Functional mixin that encrypts the properties specified in `propNames`
  * @param  {Array<string | function(*):string>} propKeys - 
  * Names (or functions that return names) of properties to encrypt
+ * @returns {mixinFunction}
  */
 const encryptProperties = (...propKeys) => (o) => {
   const keys = getDynamicProps(o, ...propKeys);
@@ -123,15 +138,14 @@ const encryptProperties = (...propKeys) => (o) => {
   }
 
   const mixins = updateMixins(
-    mixinType.pre,
-    o,
-    encryptProperties.name,
+    mixinType.pre, o, encryptProperties.name,
     () => encryptProperties(...propKeys)
   );
 
   return {
     ...mixins,
-    ...encryptProps()
+    ...encryptProps(),
+    [DECRYPT]: decryptProps(...keys)
   }
 }
 
@@ -159,9 +173,7 @@ const freezeProperties = (isUpdate, ...propKeys) => (o) => {
   }
 
   return updateMixins(
-    mixinType.pre,
-    o,
-    freezeProperties.name,
+    mixinType.pre, o, freezeProperties.name,
     () => freezeProperties(true, ...propKeys)
   );
 }
@@ -173,11 +185,16 @@ const freezeProperties = (isUpdate, ...propKeys) => (o) => {
  */
 const requireProperties = (...propKeys) => (o) => {
   const keys = getDynamicProps(o, ...propKeys);
-  const missing = keys.filter(key => !o[key]);
+
+  const missing = keys.filter(key => key && !o[key]);
   if (missing?.length > 0) {
     throw new Error(`missing required properties: ${missing}`);
   }
-  return o;
+
+  return updateMixins(
+    mixinType.post, o, requireProperties.name,
+    () => requireProperties(...propKeys)
+  );
 }
 
 /**
@@ -196,9 +213,7 @@ const hashPasswords = (hash, ...propKeys) => (o) => {
   }
 
   const mixins = updateMixins(
-    mixinType.pre,
-    o,
-    hashPasswords.name,
+    mixinType.pre, o, hashPasswords.name,
     () => hashPasswords(hash, ...propKeys)
   );
 
@@ -219,6 +234,7 @@ const allowProperties = (isUpdate, ...propKeys) => (o) => {
   function rejectUnknownProps() {
     const keys = getDynamicProps(o, ...propKeys);
     const allowList = keys.concat(internalPropList);
+
     const unknownProps = Object.keys(o).filter(
       key => !allowList.includes(key)
     );
@@ -233,9 +249,7 @@ const allowProperties = (isUpdate, ...propKeys) => (o) => {
   }
 
   return updateMixins(
-    mixinType.pre,
-    o,
-    allowProperties.name,
+    mixinType.pre, o, allowProperties.name,
     () => allowProperties(true, ...propKeys)
   );
 }
@@ -246,13 +260,15 @@ const allowProperties = (isUpdate, ...propKeys) => (o) => {
  * @param {*} propVal - the property value
  * @returns {boolean} - true if valid
  */
-
+/**
+ * @typedef {'email'|'phone'|'ipv4Address'|'ipv6Address'|'creditCard'|'/expr/'} regexType
+ */
 /**
  * @typedef {{
  *  propKey:string,
  *  isValid?:isValid,
  *  values?:any[],
- *  regex?:'email'|'ipv4Addr'|string,
+ *  regex?:regexType,
  *  maxlen?:number
  *  maxnum?:number
  *  typeof?:string
@@ -267,8 +283,12 @@ export const RegEx = {
   ipv4Address: /^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])$/,
   ipv6Address: /^((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*::((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*|((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4})){7}$/,
   phone: /^[1-9]\d{2}-\d{3}-\d{4}/,
+  creditCard: /^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/,
+  ssn: /^(?!666|000|9\\d{2})\\d{3}-(?!00)\\d{2}-(?!0{4})\\d{4}$/,
+
   test: (expr, val) => {
-    const _expr = Object.keys(RegEx).includes(expr) && typeof expr !== 'function'
+    const _expr = Object.keys(RegEx).includes(expr)
+      && typeof expr !== 'function'
       ? RegEx[expr]
       : expr;
     return _expr.test(val);
@@ -284,8 +304,8 @@ const validator = {
     values: (v, o, propVal) => v.includes(propVal),
     regex: (v, o, propVal) => RegEx.test(v, propVal),
     typeof: (v, o, propVal) => v === typeof propVal,
-    maxnum: (v, o, propVal) => v > propVal,
-    maxlen: (v, o, propVal) => v > propVal.length
+    maxnum: (v, o, propVal) => v + 1 > propVal,
+    maxlen: (v, o, propVal) => v + 1 > propVal.length
   },
   /**
    * Returns true if tests pass
@@ -325,9 +345,7 @@ const validateProperties = (validations) => (o) => {
   }
 
   return updateMixins(
-    mixinType.post,
-    o,
-    validateProperties.name,
+    mixinType.post, o, validateProperties.name,
     () => validateProperties(validations)
   );
 }
@@ -350,9 +368,11 @@ const validateProperties = (validations) => (o) => {
  * @param {updater[]} updaters 
  */
 const updateProperties = (isUpdate, updaters) => (o) => {
+
   function updateProps() {
     if (isUpdate) {
       const updates = updaters.filter(u => o[u.propKey]);
+
       if (updates?.length > 0) {
         return updates
           .map(u => u.update(o, o[u.propKey]))
@@ -363,9 +383,7 @@ const updateProperties = (isUpdate, updaters) => (o) => {
   }
 
   const mixins = updateMixins(
-    mixinType.pre,
-    o,
-    updateProperties.name,
+    mixinType.pre, o, updateProperties.name,
     () => updateProperties(true, updaters)
   );
 
@@ -394,7 +412,8 @@ export function freezePropertiesMixin(...propKeys) {
 }
 
 /**
- * Encyrpt properties listed in `propKeys`
+ * Encyrpt properties listed in `propKeys` and add a function
+ * to the object to `decrypt`.
  * @param  {Array<string | function(*):string>} propKeys -
  * list of names (or functions that return names) of properties
  */
@@ -439,7 +458,12 @@ export function updatePropertiesMixin(updaters) {
   return updateProperties(false, updaters);
 }
 
-const checkFormat = (propKey, expr) => (o) => {
+/**
+ * 
+ * @param {*} propKey 
+ * @param {*} expr 
+ */
+export const checkFormat = (propKey, expr) => (o) => {
   if (o[propKey] && !RegEx.test(expr, o[propKey])) {
     throw new Error(`invalid ${propKey}`);
   }
@@ -452,12 +476,13 @@ const checkFormat = (propKey, expr) => (o) => {
 const encryptPersonalInfo = encryptProperties(
   'lastName',
   'address',
-  checkFormat('email', 'email'), // check format first
+  'shippingAddress',
+  'billingAddress',
+  checkFormat('email', 'email'),
   checkFormat('phone', 'phone'),
   checkFormat('mobile', 'phone'),
-  'creditCard',
-  'ccv',
-  'ssn'
+  checkFormat('creditCardNumber', 'creditCard'),
+  checkFormat('ssn', 'ssn')
 );
 
 /**

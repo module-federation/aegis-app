@@ -1,3 +1,5 @@
+'use strict'
+
 import crypto from 'crypto';
 
 export function compose(...funcs) {
@@ -9,16 +11,24 @@ export function compose(...funcs) {
   }
 }
 
-export const key = crypto.randomBytes(32);
-export const iv = crypto.randomBytes(16);
+const passwd = 'secret';
+const algo = 'aes-192-cbc';
+const key = crypto.scryptSync(passwd, 'salt', 24);
+const iv = Buffer.alloc(16, 0);
 
 export function encrypt(text) {
-  let cipher = crypto.createCipheriv(
-    'aes-256-cbc', Buffer.from(key), iv
-  );
-  let encrypted = cipher.update(text);
-  encrypted = Buffer.concat([encrypted, cipher.final()]);
-  return encrypted.toString('hex');
+  const cipher = crypto.createCipheriv(algo, key, iv);
+  let encrypted = cipher.update(text, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+  return encrypted
+}
+
+export function decrypt(cipherText) {
+  console.log('decrypt(%s)', cipherText);
+  const decipher = crypto.createDecipheriv(algo, key, iv);
+  let decrypted = decipher.update(cipherText, 'hex', 'utf8');
+  decrypted += decipher.final('utf8');
+  return decrypted;
 }
 
 export function hash(data) {
