@@ -130,7 +130,6 @@ async function handleStatusChange(order) {
 const Order = {
   modelName: 'order',
   endpoint: 'orders',
-
   factory: function ({
     validateAddress,
     authorizePayment,
@@ -250,11 +249,8 @@ const Order = {
       'trackShipment'
     )
   ],
-
   onUpdate: processUpdate,
-
   onDelete: (model) => readyToDelete(model),
-
   eventHandlers: [
     async ({ model, eventName, changes, ...rest }) => {
       console.log({
