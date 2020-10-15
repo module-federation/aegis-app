@@ -1,8 +1,22 @@
 'use strict'
 
-import GlobalMixins from './mixins';
-import { uuid } from './utils';
+import GlobalMixins from './mixins'
 
+// Dependencies
+import validateAddress from '../services/address-service';
+import { uuid } from '../lib/utils';
+import {
+  authorizePayment,
+  completePayment,
+  refundPayment
+} from '../services/payment-service';
+import {
+  shipOrder,
+  trackShipment,
+  verifyDelivery
+} from '../services/shipping-service';
+
+// Models
 import User from './user';
 import Order from './order';
 
@@ -18,31 +32,36 @@ import Order from './order';
  * @callback onUpdate
  * @param {Model} model
  * @param {Object} changes
- * @returns {Model} updated model
+ * @returns {Model | Error} updated model or throw
  */
 
 /**
  * @callback onDelete
  * @param {Model} model
- * @returns {Model} updated model
+ * @returns {Model | Error} updated model or throw
  */
 
 /**
- * @typedef {Object} ModelConfig
+ * @typedef {Object} ModelSpecification Specify model data and behavior 
  * @property {string} modelName name of model (case-insenstive)
- * @property {string} endpoint name of uri to use (plural of modelName)
+ * @property {string} endpoint URI reference (e.g. plural of `modelName`)
  * @property {function(...args): any} factory factory function that creates model
  * @property {Array<import("./mixins").mixinFunction>} [mixins] functional mixins
- * @property {onUpdate} [onUpdate] function called to handle model update request
- * @property {onDelete} [onDelete] function called before model is deleted
+ * @property {onUpdate} [onUpdate] function called to handle update requests
+ * @property {onDelete} [onDelete] function called before deletion
  * @property {Array<function({
- *  eventName:string, 
- *  [x: string]:any[]
- * }):Promise<void>>} [eventHandlers] callbacks invoked when model events occur,
+ *  eventName:string,
+ *  eventType:string,
+ *  eventTime:string,
+ *  modelName:string,
+ *  model:Model
+ * }):Promise<void>>} [eventHandlers] callbacks invoked when model events occur
  */
 
 const requiredProperties = [
-  'modelName', 'endpoint', 'factory'
+  'modelName',
+  'endpoint',
+  'factory'
 ];
 
 function validateModel(model) {
@@ -55,18 +74,27 @@ function validateModel(model) {
 }
 
 /**
- * @param {ModelConfig} model 
+ * @param {ModelSpecification} modelSpec 
  * @param {*} dependencies 
  */
-function make(model, dependencies) {
-  validateModel(model);
-  model.factory = model.factory(dependencies);
-  model.mixins = model.mixins || [];
-  model.mixins = model.mixins.concat(GlobalMixins);
+function make(modelSpec, dependencies) {
+  validateModel(modelSpec);
+  modelSpec.dependencies = dependencies || {};
+  const mixins = modelSpec.mixins || [];
+  modelSpec.mixins = mixins.concat(GlobalMixins);
 }
 
 make(User, { uuid });
-make(Order, {});
+make(Order, {
+  validateAddress,
+  authorizePayment,
+  completePayment,
+  refundPayment,
+  shipOrder,
+  trackShipment,
+  verifyDelivery,
+  uuid
+});
 
 export {
   User,

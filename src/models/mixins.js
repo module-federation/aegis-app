@@ -5,7 +5,7 @@ import {
   encrypt,
   decrypt,
   compose
-} from './utils';
+} from '../lib/utils';
 
 /**
  * Functional mixin
@@ -109,23 +109,10 @@ function getDynamicProps(o, ...propKeys) {
 }
 
 /**
- * Key to access `decrypt` function.
- */
-export const DECRYPT = Symbol('decrypt');
-
-const decryptProps = (...keys) => (o) => {
-  const target = o;
-  return keys.map(key => target[key]
-    ? { [key]: decrypt(target[key]) }
-    : {})
-    .reduce((p, c) => ({ ...c, ...p }));
-}
-
-/**
  * Functional mixin that encrypts the properties specified in `propNames`
  * @param  {Array<string | function(*):string>} propKeys - 
  * Names (or functions that return names) of properties to encrypt
- * @returns {mixinFunction}
+ * @returns {mixinFunction} mixin function
  */
 const encryptProperties = (...propKeys) => (o) => {
   const keys = getDynamicProps(o, ...propKeys);
@@ -143,9 +130,14 @@ const encryptProperties = (...propKeys) => (o) => {
   );
 
   return {
+    decrypt() {
+      return keys.map(key => this[key]
+        ? { [key]: decrypt(this[key]) }
+        : {})
+        .reduce((p, c) => ({ ...c, ...p }));
+    },
     ...mixins,
-    ...encryptProps(),
-    [DECRYPT]: decryptProps(...keys)
+    ...encryptProps()
   }
 }
 
@@ -223,7 +215,7 @@ const hashPasswords = (hash, ...propKeys) => (o) => {
   }
 }
 
-const internalPropList = [];
+const internalPropList = ['decrypt'];
 
 /**
  * 
@@ -231,6 +223,7 @@ const internalPropList = [];
  * @param  {...any} propKeys 
  */
 const allowProperties = (isUpdate, ...propKeys) => (o) => {
+
   function rejectUnknownProps() {
     const keys = getDynamicProps(o, ...propKeys);
     const allowList = keys.concat(internalPropList);
@@ -254,32 +247,13 @@ const allowProperties = (isUpdate, ...propKeys) => (o) => {
   );
 }
 
-/**
- * @callback isValid
- * @param {Object} o - the property owner
- * @param {*} propVal - the property value
- * @returns {boolean} - true if valid
- */
-/**
- * @typedef {'email'|'phone'|'ipv4Address'|'ipv6Address'|'creditCard'|'/expr/'} regexType
- */
-/**
- * @typedef {{
- *  propKey:string,
- *  isValid?:isValid,
- *  values?:any[],
- *  regex?:regexType,
- *  maxlen?:number
- *  maxnum?:number
- *  typeof?:string
- * }} validation 
- */
+
 
 /**
- * regular expressions to use with regex property validator
+ * Test regular expressions
  */
 export const RegEx = {
-  email: /(.+)@(.+){2,}\.(.+){2,}/,
+  email: /^(.+)@(.+){2,}\.(.+){2,}$/,
   ipv4Address: /^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])$/,
   ipv6Address: /^((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*::((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*|((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4})){7}$/,
   phone: /^[1-9]\d{2}-\d{3}-\d{4}/,
@@ -296,9 +270,32 @@ export const RegEx = {
 }
 
 /**
- * 
+ * @callback isValid
+ * @param {Object} o - the property owner
+ * @param {*} propVal - the property value
+ * @returns {boolean} - true if valid
  */
-const validator = {
+
+/**
+ * @typedef {'email'|'phone'|'ipv4Address'|'ipv6Address'|'creditCard'|'ssn'|RegExp} regexType
+ */
+
+/**
+ * @typedef {{
+ *  propKey:string,
+ *  isValid?:isValid,
+ *  values?:any[],
+ *  regex?:regexType,
+ *  maxlen?:number
+ *  maxnum?:number
+ *  typeof?:string
+ * }} validation 
+ */
+
+/**
+ * Run validation tests
+ */
+const Validator = {
   tests: {
     isValid: (v, o, propVal) => v(o, propVal),
     values: (v, o, propVal) => v.includes(propVal),
@@ -314,11 +311,10 @@ const validator = {
    * @param {*} propVal value of property to validate
    * @returns {boolean} true if tests pass
    */
-  isValid: (v, o, propVal) => {
-    const tests = validator.tests;
-    return Object.keys(tests).every(key => {
+  isValid (v, o, propVal) {
+    return Object.keys(this.tests).every(key => {
       if (v[key]) { // enabled
-        return tests[key](v[key], o, propVal);
+        return this.tests[key](v[key], o, propVal);
       }
       return true;
     });
@@ -335,7 +331,7 @@ const validateProperties = (validations) => (o) => {
     if (!propVal) {
       return false;
     }
-    return !validator.isValid(v, o, propVal);
+    return !Validator.isValid(v, o, propVal);
   });
 
   if (invalid?.length > 0) {
@@ -354,21 +350,20 @@ const validateProperties = (validations) => (o) => {
  * @callback updaterFn 
  * @param {Object} o  
  * @param  {*} propVal 
- * @returns {Object} object with updated property
+ * @returns {Object} object with updated properties
  */
 
 /**
  * @typedef updater
  * @property {string} propKey property being updated 
- * @property {updaterFn} update return new object with updated property
+ * @property {updaterFn} update return new object with updated properties
  */
 
 /**
- * 
+ * @param {boolean} isUpdate false on create, true on update
  * @param {updater[]} updaters 
  */
 const updateProperties = (isUpdate, updaters) => (o) => {
-
   function updateProps() {
     if (isUpdate) {
       const updates = updaters.filter(u => o[u.propKey]);
@@ -450,24 +445,38 @@ export function validatePropertiesMixin(validations) {
 }
 
 /**
- * Update properties. Triggered by update to property listed
- * in `updater.propKey`.
- * @param {updater[]} updaters 
+ * React to property updates. Run callbacks in `updaters` 
+ * when a request to update associated properties is received.
+ * @param {updater[]} updaters - callbacks to run
+ * @returns {mixinFunction} mixin function
  */
 export function updatePropertiesMixin(updaters) {
   return updateProperties(false, updaters);
 }
 
 /**
- * 
+ * Return dynamic property function 
  * @param {*} propKey 
- * @param {*} expr 
+ * @param {regexType} expr 
+ * @returns {function(any):any} dynamic property func
  */
-export const checkFormat = (propKey, expr) => (o) => {
+export const checkFormatDynamic = (propKey, expr) => (o) => {
   if (o[propKey] && !RegEx.test(expr, o[propKey])) {
     throw new Error(`invalid ${propKey}`);
   }
   return propKey;
+}
+
+/**
+ * 
+ * @param {string} value 
+ * @param {regexType} expr
+ */
+export const checkFormat = (value, expr) => {
+  if (value && !RegEx.test(expr, value)) {
+    const x = expr instanceof RegExp ? value : expr
+    throw new Error(`${x} invalid`);
+  }
 }
 
 /**
@@ -478,11 +487,11 @@ const encryptPersonalInfo = encryptProperties(
   'address',
   'shippingAddress',
   'billingAddress',
-  checkFormat('email', 'email'),
-  checkFormat('phone', 'phone'),
-  checkFormat('mobile', 'phone'),
-  checkFormat('creditCardNumber', 'creditCard'),
-  checkFormat('ssn', 'ssn')
+  checkFormatDynamic('email', 'email'),
+  checkFormatDynamic('phone', 'phone'),
+  checkFormatDynamic('mobile', 'phone'),
+  checkFormatDynamic('creditCardNumber', 'creditCard'),
+  checkFormatDynamic('ssn', 'ssn')
 );
 
 /**

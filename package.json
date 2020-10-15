@@ -15,11 +15,13 @@
   "dependencies": {
     "express": "^4.17.1",
     "express-session": "^1.17.1",
+    "smartystreets-javascript-sdk": "^1.6.0",
     "ws": "^7.3.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",
     "@babel/core": "^7.11.1",
+    "@babel/polyfill": "^7.11.5",
     "@babel/preset-env": "^7.11.0",
     "babel-loader": "^8.1.0",
     "express-cli": "0.0.1",

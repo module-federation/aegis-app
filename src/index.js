@@ -6,7 +6,7 @@ const express = require('express');
 const http = require('http');
 const bodyParser = require("body-parser");
 const WebSocket = require('ws');
-const { uuid } = require('./models/utils');
+const { uuid } = require('./lib/utils');
 
 const app = express();
 const map = new Map();

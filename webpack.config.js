@@ -1,20 +1,27 @@
 var path = require('path')
-const ModuleFederationPlugin = require('webpack').container.ModuleFederationPlugin;
+const ModuleFederationPlugin = require('webpack')
+  .container.ModuleFederationPlugin;
 const nodeExternals = require('webpack-node-externals');
 const httpNode = require('./webpack/http-node');
-const sharedDependencies = require('./package.json').dependencies;
+const deps = require('./package.json').dependencies;
 
 var serverConfig = {
   target: httpNode,
-  entry: [path.resolve(__dirname, 'src/index.js')],
+  entry: ['@babel/polyfill', path.resolve(__dirname, 'src/index.js')],
   output: {
     path: path.resolve(__dirname, 'dist'),
     publicPath: 'http://localhost:8060',
     libraryTarget: 'commonjs',
   },
-  externals: nodeExternals({
-    allowlist: [/webpack\/container/],
-  }),
+  // externals: nodeExternals({
+  //   allowlist: [
+  //     /webpack\/container/,
+  //     'smartystreets-javascript-sdk',
+  //     /axios/,
+  //     'follow-redirects',
+  //     'is-retry-allowed'
+  //   ],
+  // }),
   devtool: 'source-map',
   resolve: {
     extensions: ['.js'],
@@ -45,7 +52,10 @@ var serverConfig = {
         './models': './src/models',
       },
       shared: {
-        ...sharedDependencies,
+        //...deps,
+        'smartystreets-javascript-sdk': {
+          eager: true
+        }
       }
     }),
   ]

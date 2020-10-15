@@ -6,18 +6,18 @@ import {
   allowPropertiesMixin,
   hashPasswordsMixin,
   processUpdate,
-  DECRYPT
 } from './mixins';
 
 /**
- * @type {import('./index').ModelConfig}
+ * @type {import('./index').ModelSpecification}
  */
 const User = {
   modelName: 'user',
   endpoint: 'users',
 
-  factory: ({ uuid }) => {
-    return function createUser({
+  factory: function ({ uuid }) {
+    console.log('User factory function called.');
+    return async function createUser({
       userName,
       password,
       firstName,
@@ -25,6 +25,7 @@ const User = {
       phone,
       email
     } = {}) {
+      console.log(`User async function called: ${userName}, ${password}, ${firstName}`);
       return Object.freeze({
         userId: uuid(),
         password,
@@ -65,10 +66,9 @@ const User = {
 
   eventHandlers: [
     ({ model }) => {
-      if (!model && !model[DECRYPT]) return;
-      console.log('decrypted: %s', {
-        ...model[DECRYPT](model)
-      });
+      if (model?.decrypt) {
+        console.log(model.decrypt());
+      }
     }
   ]
 }
