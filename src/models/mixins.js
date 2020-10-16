@@ -259,11 +259,15 @@ export const RegEx = {
   phone: /^[1-9]\d{2}-\d{3}-\d{4}/,
   creditCard: /^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/,
   ssn: /^(?!666|000|9\\d{2})\\d{3}-(?!00)\\d{2}-(?!0{4})\\d{4}$/,
-
-  test: (expr, val) => {
-    const _expr = Object.keys(RegEx).includes(expr)
+  /**
+   * 
+   * @param {regexType} expr 
+   * @param {*} val 
+   */
+  test (expr, val) {
+    const _expr = Object.keys(this).includes(expr)
       && typeof expr !== 'function'
-      ? RegEx[expr]
+      ? this[expr]
       : expr;
     return _expr.test(val);
   }
@@ -311,7 +315,7 @@ const Validator = {
    * @param {*} propVal value of property to validate
    * @returns {boolean} true if tests pass
    */
-  isValid (v, o, propVal) {
+  isValid(v, o, propVal) {
     return Object.keys(this.tests).every(key => {
       if (v[key]) { // enabled
         return this.tests[key](v[key], o, propVal);

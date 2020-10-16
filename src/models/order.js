@@ -12,6 +12,24 @@ import {
 } from './mixins'
 
 const MAXORDER = 99999.99;
+const orderItems = 'orderItems';
+const customerInfo = 'customerInfo';
+const shippingAddress = 'shippingAddress';
+const billingAddress = 'billingAddress';
+const proofOfDelivery = 'proofOfDelivery';
+const creditCardNumber = 'creditCardNumber';
+const paymentAuthorization = 'paymentAuthorization';
+const signatureRequired = 'signatureRequired';
+const orderStatus = 'orderStatus';
+const orderTotal = 'orderTotal';
+
+const OrderStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  SHIPPING: 'SHIPPING',
+  COMPLETE: 'COMPLETE',
+  CANCELED: 'CANCELED'
+}
 
 const checkItems = function (items) {
   if (!items) {
@@ -21,7 +39,8 @@ const checkItems = function (items) {
     ? items
     : [items];
 
-  if (_items.every(i => i['name']
+  if (_items.length > 0 
+    && _items.every(i => i['itemId']
     && typeof i['price'] === 'number'
   )) {
     return _items;
@@ -43,7 +62,7 @@ const calcTotal = function (items) {
  * @returns {string | null} the key or `null`
  */
 const freezeOnApproval = (propKey) => (o) => {
-  return o[PREVMODEL].orderStatus !== 'PENDING'
+  return o[PREVMODEL].orderStatus !== OrderStatus.PENDING
     ? propKey
     : null;
 }
@@ -56,8 +75,8 @@ const freezeOnApproval = (propKey) => (o) => {
  */
 const freezeOnCompletion = (propKey) => (o) => {
   return [
-    'COMPLETE',
-    'CANCELED'
+    OrderStatus.COMPLETE,
+    OrderStatus.CANCELED
   ].includes(o[PREVMODEL].orderStatus)
     ? propKey
     : null;
@@ -71,33 +90,60 @@ const freezeOnCompletion = (propKey) => (o) => {
  */
 const requiredForCompletion = (propKey) => (o) => {
   if (!o.orderStatus) return;
-  return o.orderStatus === 'COMPLETE'
+  return o.orderStatus === OrderStatus.COMPLETE
     ? propKey
     : void 0;
 }
 
+const invalidStatusChange = (from, to) => (o, propVal) => {
+  return propVal === to && o[PREVMODEL].orderStatus === from;
+}
+
+const invalidStatusChanges = [
+  // Can't change back to pending once approved
+  invalidStatusChange(OrderStatus.APPROVED, OrderStatus.PENDING),
+  // Can't change back to pending once shipped
+  invalidStatusChange(OrderStatus.SHIPPING, OrderStatus.PENDING),
+  // Can't change back to approved once shipped
+  invalidStatusChange(OrderStatus.SHIPPING, orderStatus.APPROVED),
+  // Can't change directly to shipping from pending
+  invalidStatusChange(OrderStatus.PENDING, OrderStatus.SHIPPING),
+  // Can't change directly to complete from pending
+  invalidStatusChange(OrderStatus.PENDING, OrderStatus.COMPLETE)
+];
+
 /**
- * Can't change back to pending once approved
+ * Check that status changes are valid
  */
-const statusChangeValid = () => (o, propVal) => {
+const statusChangeValid = (o, propVal) => {
   if (!o[PREVMODEL]?.orderStatus) return true;
-  return !(propVal === 'PENDING' &&
-    o[PREVMODEL].orderStatus === 'APPROVED')
+
+  if (invalidStatusChanges.some(i => i(o, propVal))) {
+    throw new Error('invalid status change');
+  }
+  return true;
 }
 
 /** 
  * Don't delete orders before they're complete.
  */
 function readyToDelete(model) {
-  if (!['COMPLETE', 'CANCELED'].includes(model.orderStatus)) {
+  if (![
+    OrderStatus.COMPLETE,
+    OrderStatus.CANCELED
+  ].includes(model.orderStatus)) {
     throw new Error('order status incomplete');
   }
   return model;
 }
 
 async function shipOrder(order) {
-  await order.completePayment();
-  await order.shipOrder();
+  try {
+    await order.completePayment();
+    await order.shipOrder();
+  } catch (error) {
+    throw new Error(error);
+  }
 }
 
 async function trackShipment(order) {
@@ -113,11 +159,11 @@ async function verifyDelivery(order) {
 }
 
 const OrderActions = {
-  PENDING: () => void 0,
-  APPROVED: shipOrder,
-  SHIPPING: trackShipment,
-  CANCELED: refundPayment,
-  COMPLETE: verifyDelivery
+  [OrderStatus.PENDING]: () => void 0,
+  [OrderStatus.APPROVED]: shipOrder,
+  [OrderStatus.SHIPPING]: trackShipment,
+  [OrderStatus.CANCELED]: refundPayment,
+  [OrderStatus.COMPLETE]: verifyDelivery
 }
 
 async function handleStatusChange(order) {
@@ -146,7 +192,7 @@ const Order = {
       shippingAddress,
       billingAddress,
       creditCardNumber, //TODO paymentInfo: { creditCard, paypal, blockchain }
-      requireSignature = false
+      signatureRequired = false
     }) {
       checkItems(orderItems);
       checkFormat(creditCardNumber, 'creditCard');
@@ -179,87 +225,71 @@ const Order = {
         orderItems,
         creditCardNumber,
         billingAddress,
-        requireSignature,
+        signatureRequired,
         proofOfDelivery: null,
         shippingAddress: shipAddr,
         paymentAuthorization: payAuth,
-        total: calcTotal(orderItems),
-        orderStatus: 'PENDING',
-        orderId: uuid()
+        orderTotal: calcTotal(orderItems),
+        orderStatus: OrderStatus.PENDING,
+        orderNo: uuid()
       });
     }
   },
   mixins: [
     requirePropertiesMixin(
-      'customerInfo',
-      'orderItems',
-      'creditCardNumber',
-      'shippingAddress',
-      'billingAddress',
-      requiredForCompletion('proofOfDelivery')
+      customerInfo,
+      orderItems,
+      creditCardNumber,
+      shippingAddress,
+      billingAddress,
+      requiredForCompletion(proofOfDelivery)
     ),
     freezePropertiesMixin(
-      'customerInfo',
-      freezeOnApproval('items'),
-      freezeOnApproval('creditCardNumber'),
-      freezeOnApproval('shippingAddress'),
-      freezeOnApproval('billingAddress'),
-      freezeOnCompletion('orderStatus'),
+      customerInfo,
+      freezeOnApproval(orderItems),
+      freezeOnApproval(creditCardNumber),
+      freezeOnApproval(shippingAddress),
+      freezeOnApproval(billingAddress),
+      freezeOnCompletion(orderStatus),
     ),
     updatePropertiesMixin([
       {
         // Recalc total
-        propKey: 'orderItems',
+        propKey: orderItems,
         update: (o, propVal) => ({
-          total: calcTotal(propVal)
+          orderTotal: calcTotal(propVal)
         }),
       }
     ]),
     validatePropertiesMixin([
       {
-        propKey: 'orderStatus',
-        values: [
-          'PENDING',
-          'APPROVED',
-          'SHIPPING',
-          'CANCELED',
-          'COMPLETE'
-        ],
+        propKey: orderStatus,
+        values: Object.values(OrderStatus),
         isValid: statusChangeValid,
       },
       {
-        propKey: 'total',
+        propKey: orderTotal,
         maxnum: MAXORDER
       }
     ]),
     allowPropertiesMixin(
-      'customerInfo',
-      'orderItems',
-      'orderStatus',
-      'total',
-      'creditCardNumber',
-      'shippingAddress',
-      'billingAddress',
-      'paymentAuthorization',
-      'completePayment',
-      'signatureRequired',
-      'proofOfDelivery',
-      'refundPayment',
-      'shipOrder',
-      'trackShipment'
+      orderItems,
+      customerInfo,
+      shippingAddress,
+      billingAddress,
+      proofOfDelivery,
+      creditCardNumber,
+      paymentAuthorization,
+      signatureRequired,
+      orderStatus,
+      orderTotal,
     )
   ],
   onUpdate: processUpdate,
   onDelete: (model) => readyToDelete(model),
   eventHandlers: [
-    async ({ model, eventName, changes, ...rest }) => {
-      console.log({
-        eventName: eventName,
-        eventHandler: 'Order.handleStatusChange',
-        modelData: { ...model },
-        eventData: { ...rest }
-      });
-      if (model.decrypt) {
+    async ({ model, changes }) => {
+      if (model?.decrypt) {
         console.log(model.decrypt());
       }
       if (changes?.orderStatus) {
