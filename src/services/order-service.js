@@ -6,8 +6,6 @@ const orderServiceUrl = 'http://localhost:8070/api/orders';
 
 class OrderService {
 
-  _orderId;
-
   get orderId() {
     return this._orderId;
   }

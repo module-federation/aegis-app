@@ -1,9 +1,7 @@
 var path = require('path')
 const ModuleFederationPlugin = require('webpack')
   .container.ModuleFederationPlugin;
-const nodeExternals = require('webpack-node-externals');
 const httpNode = require('./webpack/http-node');
-const deps = require('./package.json').dependencies;
 
 var serverConfig = {
   target: httpNode,
@@ -13,15 +11,6 @@ var serverConfig = {
     publicPath: 'http://localhost:8060',
     libraryTarget: 'commonjs',
   },
-  // externals: nodeExternals({
-  //   allowlist: [
-  //     /webpack\/container/,
-  //     'smartystreets-javascript-sdk',
-  //     /axios/,
-  //     'follow-redirects',
-  //     'is-retry-allowed'
-  //   ],
-  // }),
   devtool: 'source-map',
   resolve: {
     extensions: ['.js'],
@@ -43,16 +32,22 @@ var serverConfig = {
   },
   plugins: [
     new ModuleFederationPlugin({
-      name: 'fedmonserv',
+      name: 'orderService',
       library: { type: 'commonjs-module' },
       filename: 'remoteEntry.js',
       exposes: {
         './service1': './src/services/service1',
         './publish-event': './src/services/publish-event',
         './models': './src/models',
+        './order-service': '/src/services/order-service',
+        './paymentService': '/src/services/real-payment-service',
+        './shippingService': '/src/services/real-shipping-service',
+        './address-service': '/src/services/address-service'
       },
       shared: {
-        //...deps,
+        'axios': {
+          eager: true
+        },
         'smartystreets-javascript-sdk': {
           eager: true
         }

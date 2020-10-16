@@ -39,10 +39,10 @@ const checkItems = function (items) {
     ? items
     : [items];
 
-  if (_items.length > 0 
+  if (_items.length > 0
     && _items.every(i => i['itemId']
-    && typeof i['price'] === 'number'
-  )) {
+      && typeof i['price'] === 'number'
+    )) {
     return _items;
   }
   throw new Error('order items invalid');
@@ -184,7 +184,7 @@ const Order = {
     shipOrder,
     trackShipment,
     verifyDelivery,
-    uuid
+    uuid,
   }) {
     return async function createOrder({
       customerInfo,
@@ -199,12 +199,12 @@ const Order = {
       const shipAddr = await validateAddress(
         shippingAddress
       );
-      const payAuth = await authorizePayment(
+      const payAuth = await authorizePayment({
         customerInfo,
         creditCardNumber,
         billingAddress,
-        calcTotal(orderItems)
-      );
+        totalCharge: calcTotal(orderItems)
+      });
       return Object.freeze({
         completePayment() {
           return completePayment(this);
