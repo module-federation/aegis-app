@@ -8,6 +8,7 @@
     "start": "node dist/main.js",
     "restart": "npm run build && npm run start",
     "clean": "rm -rf dist",
+    "pretest": "node src/services/order-service-spec.js",
     "test": "open http://localhost:8060"
   },
   "author": "Tyson Midboe",
@@ -26,7 +27,7 @@
     "@babel/preset-env": "^7.11.0",
     "babel-loader": "^8.1.0",
     "express-cli": "0.0.1",
-    "webpack": "^5.0.0-beta.25",
+    "webpack": "^5.0.0-beta.28",
     "webpack-cli": "^3.3.12",
     "webpack-node-externals": "^2.5.2"
   }

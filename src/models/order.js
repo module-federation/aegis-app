@@ -22,7 +22,6 @@ const paymentAuthorization = 'paymentAuthorization';
 const signatureRequired = 'signatureRequired';
 const orderStatus = 'orderStatus';
 const orderTotal = 'orderTotal';
-
 const OrderStatus = {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
@@ -105,7 +104,7 @@ const invalidStatusChanges = [
   // Can't change back to pending once shipped
   invalidStatusChange(OrderStatus.SHIPPING, OrderStatus.PENDING),
   // Can't change back to approved once shipped
-  invalidStatusChange(OrderStatus.SHIPPING, orderStatus.APPROVED),
+  invalidStatusChange(OrderStatus.SHIPPING, OrderStatus.APPROVED),
   // Can't change directly to shipping from pending
   invalidStatusChange(OrderStatus.PENDING, OrderStatus.SHIPPING),
   // Can't change directly to complete from pending
@@ -158,6 +157,14 @@ async function verifyDelivery(order) {
   await order.verifyDelivery();
 }
 
+const Adapters = {
+  verifyDelivery: (order) => order,
+  refundPayment: (order) => order,
+  trackShipment: (order) => order,
+  shipOrder: (order) => order,
+  completePayment: (order) => order
+}
+
 const OrderActions = {
   [OrderStatus.PENDING]: () => void 0,
   [OrderStatus.APPROVED]: shipOrder,
@@ -207,19 +214,24 @@ const Order = {
       });
       return Object.freeze({
         completePayment() {
-          return completePayment(this);
+          const args = Adapters.completePayment(this);
+          return completePayment(args);
         },
         refundPayment() {
-          return refundPayment(this);
+          const args = Adapters.refundPayment(this);
+          return refundPayment(args);
         },
         shipOrder() {
-          return shipOrder(this);
+          const args = Adapters.shipOrder(this);
+          return shipOrder(args);
         },
         trackShipment() {
-          return trackShipment(this);
+          const args = Adapters.trackShipment(this);
+          return trackShipment(args);
         },
         verifyDelivery() {
-          return verifyDelivery(this);
+          const args = Adapters.verifyDelivery(this);
+          return verifyDelivery(args);
         },
         customerInfo,
         orderItems,

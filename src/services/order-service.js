@@ -2,7 +2,7 @@
 
 const axios = require('axios');
 
-const orderServiceUrl = 'http://localhost:8070/api/orders';
+const orderServiceUrl = 'http://localhost:8070/api/orders/';
 
 class OrderService {
 
@@ -60,7 +60,7 @@ class OrderService {
 
   async submitOrder(orderId = this.orderId) {
     return axios.patch(
-      orderServiceUrl + '/' + orderId,
+      orderServiceUrl + orderId,
       { orderStatus: 'APPROVED' },
     ).then((response) => {
       this.orderId = response.data.modelId;
@@ -73,7 +73,7 @@ class OrderService {
 
   async shipOrder(orderId = this.orderId) {
     return axios.patch(
-      orderServiceUrl + '/' + orderId,
+      orderServiceUrl + orderId,
       { orderStatus: 'SHIPPING' },
     ).then((response) => {
       this.orderId = response.data.modelId;
@@ -89,7 +89,7 @@ class OrderService {
       throw new Error('require proof of delivery');
     }
     return axios.patch(
-      orderServiceUrl + '/' + orderId,
+      orderServiceUrl + orderId,
       { orderStatus: 'COMPLETE', proofOfDelivery: pod },
     ).then((response) => {
       this.orderId = response.data.modelId;
@@ -105,7 +105,7 @@ class OrderService {
       throw new Error('reason required to cancel');
     }
     return axios.patch(
-      orderServiceUrl + '/' + orderId,
+      orderServiceUrl + orderId,
       { orderStatus: 'CANCELED' },
     ).then((response) => {
       this.orderId = response.data.modelId;

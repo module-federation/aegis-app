@@ -1,15 +1,13 @@
 'use strict'
 
-
-
-export async function shipOrder(order) {
-  console.log('REAL shipping order...');
+export async function shipOrder(args) {
+  console.log(`REAL shipping order...${args}`);
 }
 
-export async function trackShipment() {
-  console.log('REAL track shipment...');
+export async function trackShipment(args) {
+  console.log(`REAL track shipment...${args}`);
 }
 
-export async function verifyDelivery() {
-  console.log('REAL verify delivery order...');
+export async function verifyDelivery(args) {
+  console.log(`REAL verify delivery order...${args}`);
 }

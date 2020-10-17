@@ -1,5 +1,5 @@
 'use strict'
 
-export async function authorizePayment(paymentInfo) {
-  console.log(`REAL authorizing creditcard:  ${{ ...paymentInfo }}`);
+export async function authorizePayment(args) {
+  console.log(`REAL authorizing creditcard: ${{ args }}`);
 }
