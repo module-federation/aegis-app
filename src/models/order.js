@@ -117,8 +117,9 @@ const invalidStatusChanges = [
  * Check that status changes are valid
  */
 const statusChangeValid = (o, propVal) => {
-  if (!o[PREVMODEL]?.orderStatus) return true;
-
+  if (!o[PREVMODEL]?.orderStatus) {
+    return true;
+  }
   if (invalidStatusChanges.some(i => i(o, propVal))) {
     throw new Error('invalid status change');
   }
@@ -159,22 +160,24 @@ async function verifyDelivery(order) {
   await order.verifyDelivery();
 }
 
+/**
+ * interface adapter
+ * @param {function(*):any} fn adapted func
+ */
 const Adapter = function (fn) {
   const Adapters = {
     verifyDelivery: (fn) => fn(this.orderNo),
     refundPayment: (fn) => fn(this.orderNo),
     trackShipment: (fn) => fn(this.orderNo),
-    shipOrder: (fn) => fn(this.orderNo),
+    shipOrder: (fn) => {
+      return fn(this.decrypt().shippingAddress);
+    },
     completePayment: (fn) => {
-      decrypted = this.decrypt();
-      const {
-        orderNo,
-        paymentAuthorization
-      } = this;
+      const decrypted = this.decrypt();
       return fn({
-        order: orderNo,
+        transId: this.orderNo,
         creditCard: decrypted.creditCardNumber,
-        auth: paymentAuthorization
+        auth: this.paymentAuthorization
       });
     }
   }
@@ -214,7 +217,7 @@ const Order = {
       orderItems,
       shippingAddress,
       billingAddress,
-      creditCardNumber, //TODO paymentInfo: { creditCard, paypal, blockchain }
+      creditCardNumber,
       signatureRequired = false
     }) {
       checkItems(orderItems);
@@ -299,27 +302,24 @@ const Order = {
         maxnum: MAXORDER
       }
     ]),
-    allowPropertiesMixin(
-      orderItems,
-      customerInfo,
-      shippingAddress,
-      billingAddress,
-      proofOfDelivery,
-      creditCardNumber,
-      paymentAuthorization,
-      signatureRequired,
-      orderStatus,
-      orderTotal,
-      cancelReason
-    )
+    // allowPropertiesMixin(
+    //   orderItems,
+    //   customerInfo,
+    //   shippingAddress,
+    //   billingAddress,
+    //   proofOfDelivery,
+    //   creditCardNumber,
+    //   paymentAuthorization,
+    //   signatureRequired,
+    //   orderStatus,
+    //   orderTotal,
+    //   cancelReason
+    // )
   ],
   onUpdate: processUpdate,
   onDelete: (model) => readyToDelete(model),
   eventHandlers: [
     async ({ model, changes }) => {
-      if (model?.decrypt) {
-        console.log(model.decrypt());
-      }
       if (changes?.orderStatus) {
         await handleStatusChange(model);
       }
