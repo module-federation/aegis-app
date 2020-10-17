@@ -1,5 +1,6 @@
 'use strict'
 
+import { decrypt } from '../lib/utils';
 import {
   requirePropertiesMixin,
   freezePropertiesMixin,
@@ -165,12 +166,14 @@ const Adapter = function (fn) {
     trackShipment: (fn) => fn(this.orderNo),
     shipOrder: (fn) => fn(this.orderNo),
     completePayment: (fn) => {
+      decrypted = this.decrypt();
       const {
-        creditCardNumber,
+        orderNo,
         paymentAuthorization
       } = this;
       return fn({
-        creditCard: creditCardNumber,
+        order: orderNo,
+        creditCard: decrypted.creditCardNumber,
         auth: paymentAuthorization
       });
     }
