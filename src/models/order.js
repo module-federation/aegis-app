@@ -22,6 +22,7 @@ const paymentAuthorization = 'paymentAuthorization';
 const signatureRequired = 'signatureRequired';
 const orderStatus = 'orderStatus';
 const orderTotal = 'orderTotal';
+const cancelReason = 'cancelReason';
 const OrderStatus = {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
@@ -157,12 +158,24 @@ async function verifyDelivery(order) {
   await order.verifyDelivery();
 }
 
-const Adapters = {
-  verifyDelivery: (order) => order,
-  refundPayment: (order) => order,
-  trackShipment: (order) => order,
-  shipOrder: (order) => order,
-  completePayment: (order) => order
+const Adapter = function (fn) {
+  const Adapters = {
+    verifyDelivery: (fn) => fn(this.orderNo),
+    refundPayment: (fn) => fn(this.orderNo),
+    trackShipment: (fn) => fn(this.orderNo),
+    shipOrder: (fn) => fn(this.orderNo),
+    completePayment: (fn) => {
+      const {
+        creditCardNumber,
+        paymentAuthorization
+      } = this;
+      return fn({
+        creditCard: creditCardNumber,
+        auth: paymentAuthorization
+      });
+    }
+  }
+  return Adapters[fn.name](fn);
 }
 
 const OrderActions = {
@@ -213,25 +226,24 @@ const Order = {
         totalCharge: calcTotal(orderItems)
       });
       return Object.freeze({
+        adapter(fn) {
+          const adptr = Adapter.bind(this);
+          return adptr(fn);
+        },
         completePayment() {
-          const args = Adapters.completePayment(this);
-          return completePayment(args);
+          return this.adapter(completePayment);
         },
         refundPayment() {
-          const args = Adapters.refundPayment(this);
-          return refundPayment(args);
+          return this.adapter(refundPayment);
         },
         shipOrder() {
-          const args = Adapters.shipOrder(this);
-          return shipOrder(args);
+          return this.adapter(shipOrder);
         },
         trackShipment() {
-          const args = Adapters.trackShipment(this);
-          return trackShipment(args);
+          return this.adapter(trackShipment);
         },
         verifyDelivery() {
-          const args = Adapters.verifyDelivery(this);
-          return verifyDelivery(args);
+          return this.adapter(verifyDelivery);
         },
         customerInfo,
         orderItems,
@@ -295,6 +307,7 @@ const Order = {
       signatureRequired,
       orderStatus,
       orderTotal,
+      cancelReason
     )
   ],
   onUpdate: processUpdate,

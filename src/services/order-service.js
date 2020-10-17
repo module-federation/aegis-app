@@ -106,7 +106,7 @@ class OrderService {
     }
     return axios.patch(
       orderServiceUrl + orderId,
-      { orderStatus: 'CANCELED' },
+      { orderStatus: 'CANCELED', cancelReason: reason },
     ).then((response) => {
       this.orderId = response.data.modelId;
       return this;
