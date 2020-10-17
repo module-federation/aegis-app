@@ -7,11 +7,14 @@ const http = require('http');
 const bodyParser = require("body-parser");
 const WebSocket = require('ws');
 const { uuid } = require('./lib/utils');
+require('dotenv').config();
 
 const app = express();
 const map = new Map();
 const API_ROOT = "/api";
 const PORT = 8060;
+
+
 
 // list the models we expose to host through module federation
 import * as models from './models';

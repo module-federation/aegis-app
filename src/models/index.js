@@ -3,8 +3,10 @@
 import GlobalMixins from './mixins'
 
 // Dependencies
-import validateAddress from '../services/address-service';
 import { uuid } from '../lib/utils';
+import {
+  validateAddress
+} from '../services/address-service';
 import {
   authorizePayment,
   completePayment,

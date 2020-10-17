@@ -162,7 +162,7 @@ async function verifyDelivery(order) {
 
 /**
  * interface adapter
- * @param {function(*):any} fn adapted func
+ * @param {function(*):any} fn adapted func or obj
  */
 const Adapter = function (fn) {
   const Adapters = {
@@ -222,9 +222,7 @@ const Order = {
     }) {
       checkItems(orderItems);
       checkFormat(creditCardNumber, 'creditCard');
-      const shipAddr = await validateAddress(
-        shippingAddress
-      );
+      const shipAddr = await validateAddress(shippingAddress);
       const payAuth = await authorizePayment({
         customerInfo,
         creditCardNumber,

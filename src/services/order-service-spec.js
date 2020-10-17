@@ -1,6 +1,24 @@
 'use strict'
 
+const disableTests = true;
+
 const OrderService = require('./order-service').OrderService;
+
+const orderInfo = {
+  customerInfo: 'user1',
+  billingAddress: '9612 Park Ave S, Bloomington, MN 55408',
+  shippingAddress: '9612 Park Ave S, Bloomington, MN 55408',
+  creditCardNumber: '378282246310005'
+}
+const os = new OrderService(orderInfo);
+os.addOrderItem('item1', 90.22)
+  .addOrderItem('item2', 87.60)
+  .createOrder()
+  .then(os => console.log(`success: order ${os.orderId}`))
+  .catch(e => console.error(e.message));
+
+
+
 
 function runGoodTest() {
   const orderInfo = {
@@ -92,11 +110,13 @@ function runMissingBillAddrTest() {
     .catch(e => console.error(e.message));
 }
 
-runGoodTest();
-runBadCredCardTest();
-runOutOfOrder();
-runExceedMaxOrderTest();
-runMissingBillAddrTest();
+if (!disableTests) {
+  runGoodTest();
+  runBadCredCardTest();
+  runOutOfOrder();
+  runExceedMaxOrderTest();
+  runMissingBillAddrTest();
+}
 
 async function processOrder(fn, ...args) {
   const os = new OrderService();
@@ -104,6 +124,9 @@ async function processOrder(fn, ...args) {
 }
 
 (async () => {
+
+  if (disableTests) return;
+
   const orderInfo = {
     customerInfo: 'user1',
     billingAddress: '223',

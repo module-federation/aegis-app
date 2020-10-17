@@ -39,10 +39,10 @@ var serverConfig = {
         './service1': './src/services/service1',
         './publish-event': './src/services/publish-event',
         './models': './src/models',
-        './order-service': '/src/services/order-service',
+        './orderService': '/src/services/order-service',
         './paymentService': '/src/services/real-payment-service',
         './shippingService': '/src/services/real-shipping-service',
-        './address-service': '/src/services/address-service'
+        './addressService': '/src/services/real-address-service'
       },
       shared: {
         'axios': {
