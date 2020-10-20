@@ -8,8 +8,10 @@
     "start": "node dist/main.js",
     "restart": "npm run build && npm run start",
     "clean": "rm -rf dist",
-    "pretest": "node src/services/order-service-spec.js",
-    "test": "open http://localhost:8060"
+    "compile": "babel src -d dist/src && babel test -d dist/test",
+    "prepublish": "npm run compile",
+    "test": "mocha dist/test --recursive -r esm -r 'babel-register'",
+    "demo": "open http://localhost:8060"
   },
   "author": "Tyson Midboe",
   "license": "MIT",
@@ -27,7 +29,10 @@
     "@babel/polyfill": "^7.11.5",
     "@babel/preset-env": "^7.11.0",
     "babel-loader": "^8.1.0",
+    "babel-register": "^6.26.0",
+    "esm": "^3.2.25",
     "express-cli": "0.0.1",
+    "mocha": "^8.2.0",
     "webpack": "^5.0.0-beta.28",
     "webpack-cli": "^3.3.12",
     "webpack-node-externals": "^2.5.2"

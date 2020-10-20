@@ -38,6 +38,9 @@ export async function validateAddress(address) {
   try {
     const response = await client.send(lookup);
     const candidate = response.lookups[0].result[0];
+    if (!candidate) {
+      throw new Error('invalid address');
+    }
     const address = [
       candidate.deliveryLine1,
       candidate.deliveryLine2,

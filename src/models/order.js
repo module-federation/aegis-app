@@ -192,7 +192,7 @@ const OrderActions = {
   [OrderStatus.COMPLETE]: verifyDelivery
 }
 
-async function handleStatusChange(order) {
+export async function handleStatusChange(order) {
   await OrderActions[order.orderStatus](order);
 }
 

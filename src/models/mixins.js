@@ -264,9 +264,9 @@ export const RegEx = {
    * @param {regexType} expr 
    * @param {*} val 
    */
-  test (expr, val) {
+  test(expr, val) {
     const _expr = Object.keys(this).includes(expr)
-      && typeof expr !== 'function'
+      && this[expr] instanceof RegExp
       ? this[expr]
       : expr;
     return _expr.test(val);

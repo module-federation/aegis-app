@@ -4,6 +4,9 @@ const axios = require('axios');
 
 const orderServiceUrl = 'http://localhost:8070/api/orders/';
 
+const compose = require('../lib/utils').compose;
+
+
 class OrderService {
 
   get orderId() {
@@ -23,29 +26,49 @@ class OrderService {
     orderItems = [],
     creditCardNumber,
     shippingAddress,
-    billingAddress
+    billingAddress,
+    local = false,
   } = {}) {
     this.orderInfo = {
       customerInfo,
       orderItems,
       creditCardNumber,
       shippingAddress,
-      billingAddress
+      billingAddress,
     };
+    this.local = local;
+
+    if (local) {
+      const Order = require('../models').Order;
+      Order.factory(Order.dependencies)
+        .then(createOrder => createOrder(this.orderInfo))
+        .then(order => {
+          this.order = compose(...Order.mixins)(order);
+        });
+    }
   }
 
-  addOrderItem(itemId, price) {
+  async handleStatusChange(status) {
+    this.order.orderStatus = status;
+    await require('../models/order').handleStatusChange(this.order);
+  }
+
+  addOrderItem(itemId, price, qty = 1) {
     if (typeof itemId !== 'string') {
       throw new Error('must include item id');
     }
     if (typeof price !== 'number') {
       throw new Error('price must be a number')
     }
-    this.orderInfo.orderItems.push({ itemId, price });
+    this.orderInfo.orderItems.push({ itemId, price, qty });
     return this;
   }
 
   async createOrder() {
+    if (this.local) {
+      this.orderId = this.order.orderNo;
+      return this;
+    }
     return axios.post(
       orderServiceUrl,
       this.orderInfo
@@ -59,6 +82,10 @@ class OrderService {
   }
 
   async submitOrder(orderId = this.orderId) {
+    if (this.local) {
+      await this.handleStatusChange('APPROVED');
+      return this;
+    }
     return axios.patch(
       orderServiceUrl + orderId,
       { orderStatus: 'APPROVED' },
@@ -72,6 +99,10 @@ class OrderService {
   }
 
   async shipOrder(orderId = this.orderId) {
+    if (this.local) {
+      await this.handleStatusChange('SHIPPING');
+      return this;
+    }
     return axios.patch(
       orderServiceUrl + orderId,
       { orderStatus: 'SHIPPING' },
@@ -88,6 +119,10 @@ class OrderService {
     if (!pod) {
       throw new Error('require proof of delivery');
     }
+    if (this.local) {
+      await this.handleStatusChange('COMPLETE');
+      return this;
+    }
     return axios.patch(
       orderServiceUrl + orderId,
       { orderStatus: 'COMPLETE', proofOfDelivery: pod },
@@ -103,6 +138,10 @@ class OrderService {
   async cancelOrder(reason, orderId = this.orderId) {
     if (!reason) {
       throw new Error('reason required to cancel');
+    }
+    if (this.local) {
+      await this.handleStatusChange('CANCELED');
+      return this;
     }
     return axios.patch(
       orderServiceUrl + orderId,
