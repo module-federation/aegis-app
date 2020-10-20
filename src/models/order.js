@@ -1,6 +1,5 @@
 'use strict'
 
-import { decrypt } from '../lib/utils';
 import {
   requirePropertiesMixin,
   freezePropertiesMixin,
@@ -11,6 +10,8 @@ import {
   checkFormat,
   PREVMODEL,
 } from './mixins'
+
+import { InterfaceAdapter } from '../lib/adapter';
 
 const MAXORDER = 99999.99;
 const orderItems = 'orderItems';
@@ -90,7 +91,9 @@ const freezeOnCompletion = (propKey) => (o) => {
  * @returns {string | void} the key or `void`
  */
 const requiredForCompletion = (propKey) => (o) => {
-  if (!o.orderStatus) return;
+  if (!o.orderStatus) {
+    return;
+  }
   return o.orderStatus === OrderStatus.COMPLETE
     ? propKey
     : void 0;
@@ -160,30 +163,6 @@ async function verifyDelivery(order) {
   await order.verifyDelivery();
 }
 
-/**
- * interface adapter
- * @param {function(*):any} fn adapted func or obj
- */
-const Adapter = function (fn) {
-  const Adapters = {
-    verifyDelivery: (fn) => fn(this.orderNo),
-    refundPayment: (fn) => fn(this.orderNo),
-    trackShipment: (fn) => fn(this.orderNo),
-    shipOrder: (fn) => {
-      return fn(this.decrypt().shippingAddress);
-    },
-    completePayment: (fn) => {
-      const decrypted = this.decrypt();
-      return fn({
-        transId: this.orderNo,
-        creditCard: decrypted.creditCardNumber,
-        auth: this.paymentAuthorization
-      });
-    }
-  }
-  return Adapters[fn.name](fn);
-}
-
 const OrderActions = {
   [OrderStatus.PENDING]: () => void 0,
   [OrderStatus.APPROVED]: shipOrder,
@@ -220,6 +199,7 @@ const Order = {
       creditCardNumber,
       signatureRequired = false
     }) {
+      let adapter;
       checkItems(orderItems);
       checkFormat(creditCardNumber, 'creditCard');
       const shipAddr = await validateAddress(shippingAddress);
@@ -230,36 +210,57 @@ const Order = {
         totalCharge: calcTotal(orderItems)
       });
       return Object.freeze({
-        adapter(fn) {
-          const adptr = Adapter.bind(this);
-          return adptr(fn);
+        makeAdapter() {
+          if (!adapter) {
+            adapter = InterfaceAdapter(this);
+            adapter.add(completePayment, function (fn) {
+              return fn(this.decrypt().creditCardNumber);
+            });
+            adapter.add(refundPayment, function (fn) {
+              return fn(this.decrypt().creditCardNumber);
+            });
+            adapter.add(shipOrder, function (fn) {
+              return fn(this.decrypt().shippingAddress);
+            });
+            adapter.add(trackShipment, function (fn) {
+              return fn(this.decrypt().shippingAddress);
+            });
+            adapter.add(verifyDelivery, function (fn) {
+              return fn(this.signatureRequired);
+            });
+          }
+          return adapter;
+        },
+        callAdapter(iface) {
+          return this.makeAdapter().invoke(iface);
         },
         completePayment() {
-          return this.adapter(completePayment);
+          return this.callAdapter(completePayment);
         },
         refundPayment() {
-          return this.adapter(refundPayment);
+          return this.callAdapter(refundPayment);
         },
         shipOrder() {
-          return this.adapter(shipOrder);
+          return this.callAdapter(shipOrder);
         },
         trackShipment() {
-          return this.adapter(trackShipment);
+          return this.callAdapter(trackShipment);
         },
         verifyDelivery() {
-          return this.adapter(verifyDelivery);
+          return this.callAdapter(verifyDelivery);
         },
         customerInfo,
         orderItems,
         creditCardNumber,
         billingAddress,
         signatureRequired,
-        proofOfDelivery: null,
+        [proofOfDelivery]: null,
         shippingAddress: shipAddr,
-        paymentAuthorization: payAuth,
-        orderTotal: calcTotal(orderItems),
-        orderStatus: OrderStatus.PENDING,
-        orderNo: uuid()
+        [paymentAuthorization]: payAuth,
+        [orderTotal]: calcTotal(orderItems),
+        [orderStatus]: OrderStatus.PENDING,
+        orderNo: uuid(),
+        cancelReason,
       });
     }
   },
@@ -315,7 +316,7 @@ const Order = {
     // )
   ],
   onUpdate: processUpdate,
-  onDelete: (model) => readyToDelete(model),
+  onDelete: model => readyToDelete(model),
   eventHandlers: [
     async ({ model, changes }) => {
       if (changes?.orderStatus) {

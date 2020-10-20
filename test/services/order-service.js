@@ -1,7 +1,5 @@
 'use strict'
 
-const disableTests = true;
-
 var assert = require('assert');
 
 const OrderService = require('../../src/services/order-service').OrderService;
@@ -87,7 +85,7 @@ describe('OrderService', function () {
       assert.strictEqual(errorMsg, ERRORMSG);
     });
   });
-  describe('#deliverOrder()', function () {
+  describe('#completeOrder()', function () {
     it('full order lifecycle succeeds', async function () {
       const orderInfo = {
         customerInfo: 'user1',
@@ -137,6 +135,8 @@ async function processOrder(fn, ...args) {
   const os = new OrderService();
   await os[fn](...args).catch(e => console.error(e.message));
 }
+
+const disableTests = true;
 
 (async () => {
 

@@ -35,23 +35,28 @@ export async function validateAddress(address) {
   lookup.street = address;
   lookup.maxCandidates = 1;
 
+  let response;
   try {
-    const response = await client.send(lookup);
-    const candidate = response.lookups[0].result[0];
-    if (!candidate) {
-      throw new Error('invalid address');
-    }
-    const address = [
-      candidate.deliveryLine1,
-      candidate.deliveryLine2,
-      candidate.lastLine
-    ].join(' ');
-    console.log(`address: ${address}`);
-    if (!address) {
-      throw new Error('invalid address');
-    }
-    return address;
+    response = await client.send(lookup);
   } catch (error) {
     throw new Error(error);
   }
+
+  const candidate = response.lookups[0].result[0];
+  if (!candidate) {
+    throw new Error('invalid address');
+  }
+
+  const validatedAddress = [
+    candidate.deliveryLine1,
+    candidate.deliveryLine2,
+    candidate.lastLine
+  ].join(' ');
+
+  console.log(`address: ${validatedAddress}`);
+
+  if (!validatedAddress) {
+    throw new Error('invalid address');
+  }
+  return validatedAddress;
 }

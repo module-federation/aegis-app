@@ -1,13 +1,13 @@
 'use strict'
 
-export async function authorizePayment(model) {
-  console.log('mock authorizing credit card....');
+export async function authorizePayment() {
+  console.log('authorizing payment...');
 }
 
-export async function completePayment(model) {
+export async function completePayment() {
   console.log('completing payment...');
 }
 
-export async function refundPayment(model) {
+export async function refundPayment() {
   console.log('refunding payment...');
 }

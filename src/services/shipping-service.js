@@ -1,6 +1,6 @@
 'use strict'
 
-export async function shipOrder(order) {
+export async function shipOrder() {
   console.log('shipping order...');
 }
 
