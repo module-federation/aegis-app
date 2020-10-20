@@ -8,8 +8,7 @@
     "start": "node dist/main.js",
     "restart": "npm run build && npm run start",
     "clean": "rm -rf dist",
-    "compile": "babel src -d dist/src && babel test -d dist/test",
-    "prepublish": "npm run compile",
+    "compile": "babel src -d dist",
     "test": "mocha",
     "test:int": "mocha src/services",
     "demo": "open http://localhost:8060"
