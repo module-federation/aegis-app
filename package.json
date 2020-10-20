@@ -10,7 +10,8 @@
     "clean": "rm -rf dist",
     "compile": "babel src -d dist/src && babel test -d dist/test",
     "prepublish": "npm run compile",
-    "test": "mocha dist/test --recursive -r esm -r 'babel-register'",
+    "test": "mocha",
+    "test:int": "mocha src/services",
     "demo": "open http://localhost:8060"
   },
   "author": "Tyson Midboe",
@@ -28,6 +29,7 @@
     "@babel/core": "^7.11.1",
     "@babel/polyfill": "^7.11.5",
     "@babel/preset-env": "^7.11.0",
+    "@babel/register": "^7.12.1",
     "babel-loader": "^8.1.0",
     "babel-register": "^6.26.0",
     "esm": "^3.2.25",

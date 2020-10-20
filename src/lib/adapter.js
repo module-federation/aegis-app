@@ -7,9 +7,9 @@
 
 /**
  * Adapter for external interfaces.
- * @param {*} thisObj - adaptee object (this)
+ * @param {*} adaptee - adaptee object (this)
  */
-const InterfaceAdapter = function (thisObj) {
+const InterfaceAdapter = function (adaptee) {
   const adapters = new Map();
   return {
     /**
@@ -25,7 +25,7 @@ const InterfaceAdapter = function (thisObj) {
      * @param {function | object} iface - external interface
      */
     invoke(iface) {
-      return adapters.get(iface).call(thisObj, iface);
+      return adapters.get(iface).call(adaptee, iface);
     }
   }
 }

@@ -21,10 +21,10 @@ const billingAddress = 'billingAddress';
 const proofOfDelivery = 'proofOfDelivery';
 const creditCardNumber = 'creditCardNumber';
 const paymentAuthorization = 'paymentAuthorization';
-const signatureRequired = 'signatureRequired';
 const orderStatus = 'orderStatus';
 const orderTotal = 'orderTotal';
 const cancelReason = 'cancelReason';
+const orderNo = 'orderNo';
 const OrderStatus = {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
@@ -254,13 +254,13 @@ const Order = {
         creditCardNumber,
         billingAddress,
         signatureRequired,
-        [proofOfDelivery]: null,
         shippingAddress: shipAddr,
         [paymentAuthorization]: payAuth,
         [orderTotal]: calcTotal(orderItems),
         [orderStatus]: OrderStatus.PENDING,
-        orderNo: uuid(),
-        cancelReason,
+        [proofOfDelivery]: null,
+        [cancelReason]: null,
+        [orderNo]: uuid(),
       });
     }
   },

@@ -61,8 +61,8 @@ class OrderService {
   async createOrder() {
     if (this.local) {
       const Order = require('../models').Order;
-      this.order = await Order.factory(Order.dependencies)
-        .then(createOrder => createOrder(this.orderInfo))
+      const createOrder = Order.factory(Order.dependencies);
+      this.order = await createOrder(this.orderInfo)
         .then(order => compose(...Order.mixins)(order));
       this.orderId = this.order.orderId;
       return this;
