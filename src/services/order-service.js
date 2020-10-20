@@ -37,15 +37,6 @@ class OrderService {
       billingAddress,
     };
     this.local = local;
-
-    if (local) {
-      const Order = require('../models').Order;
-      Order.factory(Order.dependencies)
-        .then(createOrder => createOrder(this.orderInfo))
-        .then(order => {
-          this.order = compose(...Order.mixins)(order);
-        });
-    }
   }
 
   async handleStatusChange(status) {
@@ -58,7 +49,10 @@ class OrderService {
       throw new Error('must include item id');
     }
     if (typeof price !== 'number') {
-      throw new Error('price must be a number')
+      throw new Error('price must be a number');
+    }
+    if (typeof qty !== 'number') {
+      throw new Error('qty must be a number');
     }
     this.orderInfo.orderItems.push({ itemId, price, qty });
     return this;
@@ -66,7 +60,11 @@ class OrderService {
 
   async createOrder() {
     if (this.local) {
-      this.orderId = this.order.orderNo;
+      const Order = require('../models').Order;
+      this.order = await Order.factory(Order.dependencies)
+        .then(createOrder => createOrder(this.orderInfo))
+        .then(order => compose(...Order.mixins)(order));
+      this.orderId = this.order.orderId;
       return this;
     }
     return axios.post(
