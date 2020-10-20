@@ -10,7 +10,7 @@
     "clean": "rm -rf dist",
     "compile": "babel src -d dist",
     "test": "mocha",
-    "test:int": "mocha src/services",
+    "test:intgrn": "mocha src/services/order-service-remote",
     "demo": "open http://localhost:8060"
   },
   "author": "Tyson Midboe",

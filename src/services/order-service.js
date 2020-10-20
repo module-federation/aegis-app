@@ -6,7 +6,10 @@ const orderServiceUrl = 'http://localhost:8070/api/orders/';
 
 const compose = require('../lib/utils').compose;
 
-
+/**
+ * Calls the order service remotely (via REST).
+ * Calls locally for testing purposes (local: true).
+ */
 class OrderService {
 
   get orderId() {
@@ -36,10 +39,11 @@ class OrderService {
       shippingAddress,
       billingAddress,
     };
-    this.local = local;
+    this.local = local || false;
   }
 
   async handleStatusChange(status) {
+    require('../models/order').statusChangeValid(this.order, status);
     this.order.orderStatus = status;
     await require('../models/order').handleStatusChange(this.order);
   }

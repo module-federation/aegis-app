@@ -119,7 +119,7 @@ const invalidStatusChanges = [
 /**
  * Check that status changes are valid
  */
-const statusChangeValid = (o, propVal) => {
+export const statusChangeValid = (o, propVal) => {
   if (!o[PREVMODEL]?.orderStatus) {
     return true;
   }

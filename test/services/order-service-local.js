@@ -6,7 +6,7 @@ const OrderService = require('../../src/services/order-service').OrderService;
 
 describe('OrderService', function () {
   describe('#createOrder()', function () {
-    it('should create an order', async function () {
+    it('should create order with correct total', async function () {
       const orderInfo = {
         customerInfo: 'user1',
         billingAddress: '9612 Park Ave S, Bloomington, MN 55408',
@@ -78,48 +78,25 @@ describe('OrderService', function () {
       assert.strictEqual(errorMsg, 'missing required properties: billingAddress');
     });
   });
-  // describe('#completeOrder()', function () {
-  // it('full order lifecycle succeeds', async function () {
-  //   const orderInfo = {
-  //     customerInfo: 'user1',
-  //     billingAddress: '9612 Park Ave S, Bloomington, MN 55408',
-  //     shippingAddress: '9612 Park Ave S, Bloomington, MN 55408',
-  //     creditCardNumber: '378282246310005'
-  //   }
-  //   const os = new OrderService(orderInfo);
-  //   let orderId = null;
-  //   order = await os.addOrderItem('item1', 90.22)
-  //     .addOrderItem('item2', 87.60)
-  //     .createOrder()
-  //     .submitOrder()
-  //     .shipOrder()
-  //     .deliverOrder({ file: 'sig.img', url: '' });
-  //   assert.ok(order);
-  // });
-  // it('run out of order fails', async function () {
-  //   let errorMsg;
-  // try {
-  // const orderInfo = {
-  //   customerInfo: 'user1',
-  //   billingAddress: '223',
-  //   shippingAddress: '12343',
-  //   creditCardNumber: '378282246310005'
-  // }
-  // const os = new OrderService(orderInfo);
-  // await os.addOrderItem('item1', 90.22)
-  //   .addOrderItem('item2', 87.60)
-  //   .createOrder()
-  //    .then(os => os.shipOrder())
-  //         .then(os => os.submitOrder())
-  //         .then(os => os.deliverOrder({ file: 'sig.img', url: '' }))
-  //         .then(os => console.log(`Success: ${os.orderId} complete`))
-  //         .catch(e => { throw e });
-  //     } catch (e) {
-  //       errorMsg = e.message;
-  //     }
-  //     assert.strictEqual(errorMsg, ERRORMSG);
-  //   });
-  // });
+  describe('#completeOrder()', function () {
+    it('full order lifecycle succeeds', async function () {
+      const orderInfo = {
+        customerInfo: 'user1',
+        billingAddress: '9612 Park Ave S, Bloomington, MN 55408',
+        shippingAddress: '9612 Park Ave S, Bloomington, MN 55408',
+        creditCardNumber: '378282246310005',
+        local: true
+      }
+      const os = new OrderService(orderInfo);
+      await os.addOrderItem('item1', 90.22)
+        .addOrderItem('item2', 87.60)
+        .createOrder()
+        .then(os => os.submitOrder())
+        .then(os => os.shipOrder())
+        .then(os => os.deliverOrder({ url: 'http://custsig.sig.io/:id' }));
+      assert.strictEqual(os.order.orderStatus, 'COMPLETE');
+    });
+  });
 });
 
 async function processOrder(fn, ...args) {
@@ -151,6 +128,9 @@ const disableTests = true;
 
 
 (async () => {
+
+  if (disableTests) return;
+
   const orderInfo = {
     customerInfo: 'user1',
     billingAddress: '9612 Park Ave S, Bloomington, MN 55408',
@@ -162,5 +142,6 @@ const disableTests = true;
   await os.addOrderItem('item1', 90.22)
     .addOrderItem('item2', 87.60)
     .createOrder();
+
   console.log(os.orderId);
 })();

@@ -50,7 +50,7 @@ describe('OrderService', function () {
         customerInfo: 'user1',
         billingAddress: '9612 Park Ave S, Bloomington, MN 55408',
         shippingAddress: '9612 Park Ave S, Bloomington, MN 55408',
-        creditCardNumber: '37828224631000'
+        creditCardNumber: '37828224631000',
       }
       const os = new OrderService(orderInfo);
       try {
@@ -70,7 +70,7 @@ describe('OrderService', function () {
         customerInfo: 'user1',
         // billingAddress: '9612 Park Ave S, Bloomington, MN 55408',
         shippingAddress: '9612 Park Ave S, Bloomington, MN 55408',
-        creditCardNumber: '378282246310005'
+        creditCardNumber: '378282246310005',
       }
       const os = new OrderService(orderInfo);
       try {
@@ -91,7 +91,7 @@ describe('OrderService', function () {
         customerInfo: 'user1',
         billingAddress: '9612 Park Ave S, Bloomington, MN 55408',
         shippingAddress: '9612 Park Ave S, Bloomington, MN 55408',
-        creditCardNumber: '378282246310005'
+        creditCardNumber: '378282246310005',
       }
       const os = new OrderService(orderInfo);
       let orderId = null;
@@ -112,7 +112,7 @@ describe('OrderService', function () {
           customerInfo: 'user1',
           billingAddress: '223',
           shippingAddress: '12343',
-          creditCardNumber: '378282246310005'
+          creditCardNumber: '378282246310005',
         }
         const os = new OrderService(orderInfo);
         await os.addOrderItem('item1', 90.22)
