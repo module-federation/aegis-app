@@ -11,3 +11,7 @@ export async function trackShipment() {
 export async function verifyDelivery() {
   console.log('verify delivery order...');
 }
+
+export async function subscribe(filter) {
+
+}

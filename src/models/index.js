@@ -3,14 +3,22 @@
 import GlobalMixins from './mixins'
 
 // Dependencies
-import { uuid } from '../lib/utils';
+import {
+  uuid
+} from '../lib/utils';
+import {
+  CustomerService,
+} from '../services/customer-service';
+import {
+  CatalogService
+} from '../services/catalog-service'
 import {
   validateAddress
 } from '../services/address-service';
 import {
   authorizePayment,
   completePayment,
-  refundPayment
+  refundPayment,
 } from '../services/payment-service';
 import {
   shipOrder,
@@ -95,7 +103,9 @@ make(Order, {
   shipOrder,
   trackShipment,
   verifyDelivery,
-  uuid
+  CustomerService,
+  CatalogService,
+  uuid,
 });
 
 export {

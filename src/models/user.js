@@ -48,15 +48,15 @@ const User = {
       'userId',
       'userName'
     ),
-    allowPropertiesMixin(
-      'userName',
-      'password',
-      'firstName',
-      'lastName',
-      'userId',
-      'phone',
-      'email'
-    ),
+    // allowPropertiesMixin(
+    //   'userName',
+    //   'password',
+    //   'firstName',
+    //   'lastName',
+    //   'userId',
+    //   'phone',
+    //   'email'
+    // ),
     hashPasswordsMixin(
       'password'
     ),

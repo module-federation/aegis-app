@@ -157,6 +157,9 @@ class OrderService {
     });
   }
 
+  async subscribe(filter) {
+
+  }
 }
 
 module.exports.OrderService = OrderService;

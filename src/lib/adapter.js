@@ -1,11 +1,6 @@
 'use strict'
 
 /**
- * @callback adapter
- * @param {function | object} iface the external interface
- */
-
-/**
  * Adapter for external interfaces.
  * @param {*} adaptee - adaptee object (this)
  */
@@ -14,17 +9,17 @@ const InterfaceAdapter = function (adaptee) {
   return {
     /**
      * Add adapter logic
-     * @param {function | object} iface - external interface
-     * @param {adapter} adapter - adapter logic
+     * @param {function | string} iface - external interface
+     * @param {function(Function):Promise<any>} adapter - adapter logic
      */
     add(iface, adapter) {
       adapters.set(iface, adapter);
     },
     /**
      * Invoke adapter logic
-     * @param {function | object} iface - external interface
+     * @param {function | string} iface - external interface
      */
-    invoke(iface) {
+    async invoke(iface) {
       return adapters.get(iface).call(adaptee, iface);
     }
   }

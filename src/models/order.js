@@ -5,7 +5,6 @@ import {
   freezePropertiesMixin,
   validatePropertiesMixin,
   updatePropertiesMixin,
-  allowPropertiesMixin,
   processUpdate,
   checkFormat,
   PREVMODEL,
@@ -21,6 +20,7 @@ const billingAddress = 'billingAddress';
 const proofOfDelivery = 'proofOfDelivery';
 const creditCardNumber = 'creditCardNumber';
 const paymentAuthorization = 'paymentAuthorization';
+const customerId = 'customerId';
 const orderStatus = 'orderStatus';
 const orderTotal = 'orderTotal';
 const cancelReason = 'cancelReason';
@@ -175,6 +175,11 @@ export async function handleStatusChange(order) {
   await OrderActions[order.orderStatus](order);
 }
 
+function orderShipped(msg, order) {
+  console.log(msg);
+  order.trackShipment();
+}
+
 /**
  * @type {import('./index').ModelSpecification}
  */
@@ -189,6 +194,9 @@ const Order = {
     shipOrder,
     trackShipment,
     verifyDelivery,
+    CustomerService,
+    CatalogService,
+    consumeEvents,
     uuid,
   }) {
     return async function createOrder({
@@ -202,6 +210,11 @@ const Order = {
       let adapter;
       checkItems(orderItems);
       checkFormat(creditCardNumber, 'creditCard');
+      const custSrv = new CustomerService();
+      const custId = await custSrv.findCustomer(customerInfo);
+      if (!custId) {
+        throw new Error('no customer found: %s', customerInfo);
+      }
       const shipAddr = await validateAddress(shippingAddress);
       const payAuth = await authorizePayment({
         customerInfo,
@@ -209,30 +222,35 @@ const Order = {
         billingAddress,
         totalCharge: calcTotal(orderItems)
       });
+      // consume shipping events
+      consumeEvents('shipping', function (eventSource) {
+        eventSource.subscribe('orderShipped', orderShipped);
+      });
       return Object.freeze({
-        makeAdapter() {
-          if (!adapter) {
-            adapter = InterfaceAdapter(this);
-            adapter.add(completePayment, function (fn) {
-              return fn(this.decrypt().creditCardNumber);
-            });
-            adapter.add(refundPayment, function (fn) {
-              return fn(this.decrypt().creditCardNumber);
-            });
-            adapter.add(shipOrder, function (fn) {
-              return fn(this.decrypt().shippingAddress);
-            });
-            adapter.add(trackShipment, function (fn) {
-              return fn(this.decrypt().shippingAddress);
-            });
-            adapter.add(verifyDelivery, function (fn) {
-              return fn(this.signatureRequired);
-            });
-          }
+        loadAdapters(adapter) {
+          adapter.add(completePayment, function (fn) {
+            return fn(this.decrypt().creditCardNumber);
+          });
+          adapter.add(refundPayment, function (fn) {
+            return fn(this.decrypt().creditCardNumber);
+          });
+          adapter.add(shipOrder, function (fn) {
+            return fn(this.decrypt().shippingAddress);
+          });
+          adapter.add(trackShipment, function (fn) {
+            return fn(this.decrypt().shippingAddress);
+          });
+          adapter.add(verifyDelivery, function (fn) {
+            return fn(this.signatureRequired);
+          });
           return adapter;
         },
         callAdapter(iface) {
-          return this.makeAdapter().invoke(iface);
+          if (!adapter) {
+            const iface = InterfaceAdapter(this);
+            adapter = this.loadAdapters(iface);
+          }
+          return adapter.invoke(iface);
         },
         completePayment() {
           return this.callAdapter(completePayment);
@@ -255,6 +273,7 @@ const Order = {
         billingAddress,
         signatureRequired,
         shippingAddress: shipAddr,
+        [customerId]: custId,
         [paymentAuthorization]: payAuth,
         [orderTotal]: calcTotal(orderItems),
         [orderStatus]: OrderStatus.PENDING,
@@ -267,6 +286,7 @@ const Order = {
   mixins: [
     requirePropertiesMixin(
       customerInfo,
+      customerId,
       orderItems,
       creditCardNumber,
       shippingAddress,
@@ -301,19 +321,6 @@ const Order = {
         maxnum: MAXORDER
       }
     ]),
-    // allowPropertiesMixin(
-    //   orderItems,
-    //   customerInfo,
-    //   shippingAddress,
-    //   billingAddress,
-    //   proofOfDelivery,
-    //   creditCardNumber,
-    //   paymentAuthorization,
-    //   signatureRequired,
-    //   orderStatus,
-    //   orderTotal,
-    //   cancelReason
-    // )
   ],
   onUpdate: processUpdate,
   onDelete: model => readyToDelete(model),
