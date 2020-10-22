@@ -247,8 +247,6 @@ const allowProperties = (isUpdate, ...propKeys) => (o) => {
   );
 }
 
-
-
 /**
  * Test regular expressions
  */

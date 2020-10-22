@@ -32,6 +32,7 @@ const OrderStatus = {
   COMPLETE: 'COMPLETE',
   CANCELED: 'CANCELED'
 }
+const consumers = [];
 
 const checkItems = function (items) {
   if (!items) {
@@ -142,10 +143,34 @@ function readyToDelete(model) {
   return model;
 }
 
+function orderShipped({ message, topic, consumer }) {
+  const order = this;
+  console.log(message);
+  order.trackShipment();
+  order.orderStatus = OrderStatus.SHIPPING;
+  handleStatusChange(order);
+  // unsubscribe
+  consumer.unsubscribe(topic, order.orderNo);
+}
+
 async function shipOrder(order) {
   try {
     await order.completePayment();
     await order.shipOrder();
+    // listen for shipping events
+    try {
+      await order.consumeEvents(
+        'shipping', orderShipped
+      ).then(consumer => {
+        console.log(
+          consumer.getSubscriptions()
+        );
+      });
+    } catch (e) {
+      // consumeEvents is on
+      // the host, not here
+      console.error(e.message);
+    }
   } catch (error) {
     throw new Error(error);
   }
@@ -175,11 +200,6 @@ export async function handleStatusChange(order) {
   await OrderActions[order.orderStatus](order);
 }
 
-function orderShipped(msg, order) {
-  console.log(msg);
-  order.trackShipment();
-}
-
 /**
  * @type {import('./index').ModelSpecification}
  */
@@ -195,7 +215,7 @@ const Order = {
     trackShipment,
     verifyDelivery,
     CustomerService,
-    CatalogService,
+    // CatalogService,
     consumeEvents,
     uuid,
   }) {
@@ -222,10 +242,6 @@ const Order = {
         billingAddress,
         totalCharge: calcTotal(orderItems)
       });
-      // consume shipping events
-      consumeEvents('shipping', function (eventSource) {
-        eventSource.subscribe('orderShipped', orderShipped);
-      });
       return Object.freeze({
         loadAdapters(adapter) {
           adapter.add(completePayment, function (fn) {
@@ -235,7 +251,10 @@ const Order = {
             return fn(this.decrypt().creditCardNumber);
           });
           adapter.add(shipOrder, function (fn) {
-            return fn(this.decrypt().shippingAddress);
+            return fn({
+              lineItem: this.orderItems.map(i => ({ id: i.itemId })),
+              shipAddr: this.decrypt().shippingAddress,
+            });
           });
           adapter.add(trackShipment, function (fn) {
             return fn(this.decrypt().shippingAddress);
@@ -266,6 +285,14 @@ const Order = {
         },
         verifyDelivery() {
           return this.callAdapter(verifyDelivery);
+        },
+        consumeEvents(topic, handler) {
+          const self = this;
+          return consumeEvents(topic, this.orderNo,
+            function (eventData) {
+              handler.call(self, eventData);
+            }
+          );
         },
         customerInfo,
         orderItems,
@@ -334,4 +361,3 @@ const Order = {
 }
 
 export default Order
-
