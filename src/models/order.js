@@ -32,7 +32,6 @@ const OrderStatus = {
   COMPLETE: 'COMPLETE',
   CANCELED: 'CANCELED'
 }
-const consumers = [];
 
 const checkItems = function (items) {
   if (!items) {
@@ -143,28 +142,24 @@ function readyToDelete(model) {
   return model;
 }
 
-function orderShipped({ message, topic, consumer }) {
+async function orderShipped({ message, consumer }) {
   const order = this;
   console.log(message);
   order.trackShipment();
   order.orderStatus = OrderStatus.SHIPPING;
-  handleStatusChange(order);
-  // unsubscribe
-  consumer.unsubscribe(topic, order.orderNo);
+  await handleStatusChange(order);
+  consumer.unsubscribe(); // unsubscribe
 }
 
 async function shipOrder(order) {
   try {
     await order.completePayment();
     await order.shipOrder();
-    // listen for shipping events
-    try {
+    try { // listen for shipping events
       await order.consumeEvents(
         'shipping', orderShipped
       ).then(consumer => {
-        console.log(
-          consumer.getSubscriptions()
-        );
+        console.log(consumer.getSubscriptions());
       });
     } catch (e) {
       // consumeEvents is on
@@ -215,7 +210,6 @@ const Order = {
     trackShipment,
     verifyDelivery,
     CustomerService,
-    // CatalogService,
     consumeEvents,
     uuid,
   }) {

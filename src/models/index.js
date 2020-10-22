@@ -31,8 +31,27 @@ import User from './user';
 import Order from './order';
 
 /**
+ * @callback eventHandler
+ * @param {string} topic
+ * @param {{
+ *  message:{value:string},
+ *  topic:string,
+ *  partiton:string
+ * }} message
+ * 
+ */
+
+/**
+ * Function passed at runtime by
+ * host to listen for service events
+ * @callback consumeEvent
+ * @param {string} topic
+ * @param {eventHandler} callback
+ */
+
+/**
  * @typedef {Object} Model
- * @property {Symbol} id
+ * @property {Symbol} id 
  * @property {Symbol} modelName
  * @property {Symbol} createTime
  * @property {Symbol} onUpdate
@@ -68,6 +87,9 @@ import Order from './order';
  * }):Promise<void>>} [eventHandlers] callbacks invoked when model events occur
  */
 
+/**
+ * 
+ */
 const requiredProperties = [
   'modelName',
   'endpoint',
