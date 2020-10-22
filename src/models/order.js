@@ -288,11 +288,16 @@ const Order = {
         },
         consumeEvents(topic, handler) {
           const self = this;
-          return consumeEvents(topic, this.orderNo,
-            function (eventData) {
-              handler.call(self, eventData);
-            }
-          );
+          try {
+            return consumeEvents(topic, this.orderNo,
+              function (eventData) {
+                handler.call(self, eventData);
+              }
+            );
+          } catch (e) {
+            // consumeEvents is on the host
+            console.error(e.message);
+          }
         },
         customerInfo,
         orderItems,
