@@ -125,8 +125,8 @@ make(Order, {
   shipOrder,
   trackShipment,
   verifyDelivery,
-  CustomerService,
-  CatalogService,
+  // CustomerService,
+  // CatalogService,
   uuid,
 });
 

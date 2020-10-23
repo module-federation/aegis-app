@@ -10,8 +10,6 @@ import {
   PREVMODEL,
 } from './mixins'
 
-import { InterfaceAdapter } from '../lib/adapter';
-
 const MAXORDER = 99999.99;
 const orderItems = 'orderItems';
 const customerInfo = 'customerInfo';
@@ -145,10 +143,9 @@ function readyToDelete(model) {
 async function orderShipped({ message, consumer }) {
   const order = this;
   console.log(message);
-  order.trackShipment();
   order.orderStatus = OrderStatus.SHIPPING;
   await handleStatusChange(order);
-  consumer.unsubscribe(); // unsubscribe
+  consumer.unsubscribe(); // unsubscribe'
 }
 
 async function shipOrder(order) {
@@ -156,14 +153,8 @@ async function shipOrder(order) {
     await order.completePayment();
     await order.shipOrder();
     try { // listen for shipping events
-      await order.consumeEvents(
-        'shipping', orderShipped
-      ).then(consumer => {
-        console.log(consumer.getSubscriptions());
-      });
-    } catch (e) {
-      // consumeEvents is on
-      // the host, not here
+      await order.consumeEvents('shipping', orderShipped);
+    } catch (e) { // consumeEvents is on the host, not here
       console.error(e.message);
     }
   } catch (error) {
@@ -201,18 +192,49 @@ export async function handleStatusChange(order) {
 const Order = {
   modelName: 'order',
   endpoint: 'orders',
-  factory: function ({
-    validateAddress,
-    authorizePayment,
-    completePayment,
-    refundPayment,
-    shipOrder,
-    trackShipment,
-    verifyDelivery,
-    CustomerService,
-    consumeEvents,
-    uuid,
-  }) {
+  factory: function (dependencies) {
+    /**
+     * The adapters below handle the microservice
+     * interfaces that are passed in as dependencies.
+     * When this model is loaded on the host, the real 
+     * interfaces, which are exposed elsewhere as 
+     * federated modules, seemlessly overwrite 
+     * the stubs used for testing in this repo.
+     */
+    function interfaceAdapters() {
+      const adapters = {
+        shipOrder(fn) {
+          return fn(this.decrypt().shippingAddress);
+        },
+        trackShipment(fn) {
+          return fn(this.decrypt().shippingAddress);
+        },
+        verifyDelivery(fn) {
+          return fn(this.decrypt().shippingAddress);
+        },
+        completePayment(fn) {
+          return fn(this.decrypt().creditCardNumber);
+        },
+        refundPayment(fn) {
+          return fn(this.decrypt().creditCardNumber);
+        },
+        authorizePayment(fn) {
+          return fn(this.decrypt().creditCardNumber);
+        },
+        consumeEvents(fn) {
+          return fn(topic, this.orderNo, (event) => handler.call(event));
+        },
+      }
+      return Object.keys(adapters).map(function (key) {
+        return {
+          [key]() {
+            return adapters[key].call(this, dependencies[key]);
+          }
+        }
+      }).reduce(function (p, c) {
+        return { ...c, ...p };
+      });
+    }
     return async function createOrder({
       customerInfo,
       orderItems,
@@ -221,14 +243,13 @@ const Order = {
       creditCardNumber,
       signatureRequired = false
     }) {
-      let adapter;
       checkItems(orderItems);
       checkFormat(creditCardNumber, 'creditCard');
-      const custSrv = new CustomerService();
-      const custId = await custSrv.findCustomer(customerInfo);
-      if (!custId) {
-        throw new Error('no customer found: %s', customerInfo);
-      }
+      const {
+        uuid,
+        validateAddress,
+        authorizePayment
+      } = dependencies;
       const shipAddr = await validateAddress(shippingAddress);
       const payAuth = await authorizePayment({
         customerInfo,
@@ -236,70 +257,14 @@ const Order = {
         billingAddress,
         totalCharge: calcTotal(orderItems)
       });
-      return Object.freeze({
-        loadAdapters(adapter) {
-          adapter.add(completePayment, function (fn) {
-            return fn(this.decrypt().creditCardNumber);
-          });
-          adapter.add(refundPayment, function (fn) {
-            return fn(this.decrypt().creditCardNumber);
-          });
-          adapter.add(shipOrder, function (fn) {
-            return fn({
-              lineItem: this.orderItems.map(i => ({ id: i.itemId })),
-              shipAddr: this.decrypt().shippingAddress,
-            });
-          });
-          adapter.add(trackShipment, function (fn) {
-            return fn(this.decrypt().shippingAddress);
-          });
-          adapter.add(verifyDelivery, function (fn) {
-            return fn(this.signatureRequired);
-          });
-          return adapter;
-        },
-        callAdapter(iface) {
-          if (!adapter) {
-            const iface = InterfaceAdapter(this);
-            adapter = this.loadAdapters(iface);
-          }
-          return adapter.invoke(iface);
-        },
-        completePayment() {
-          return this.callAdapter(completePayment);
-        },
-        refundPayment() {
-          return this.callAdapter(refundPayment);
-        },
-        shipOrder() {
-          return this.callAdapter(shipOrder);
-        },
-        trackShipment() {
-          return this.callAdapter(trackShipment);
-        },
-        verifyDelivery() {
-          return this.callAdapter(verifyDelivery);
-        },
-        consumeEvents(topic, handler) {
-          const self = this;
-          try {
-            return consumeEvents(topic, this.orderNo,
-              function (eventData) {
-                handler.call(self, eventData);
-              }
-            );
-          } catch (e) {
-            // consumeEvents is on the host
-            console.error(e.message);
-          }
-        },
+      const order = Object.freeze({
         customerInfo,
         orderItems,
         creditCardNumber,
         billingAddress,
         signatureRequired,
         shippingAddress: shipAddr,
-        [customerId]: custId,
+        [customerId]: null,
         [paymentAuthorization]: payAuth,
         [orderTotal]: calcTotal(orderItems),
         [orderStatus]: OrderStatus.PENDING,
@@ -307,12 +272,15 @@ const Order = {
         [cancelReason]: null,
         [orderNo]: uuid(),
       });
+      return {
+        ...order,
+        ...interfaceAdapters.call(this)
+      }
     }
   },
   mixins: [
     requirePropertiesMixin(
       customerInfo,
-      customerId,
       orderItems,
       creditCardNumber,
       shippingAddress,

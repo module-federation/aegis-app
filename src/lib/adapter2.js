@@ -15,16 +15,8 @@ const InterfaceAdapter = function (adaptee) {
     add(iface, adapter) {
       adapters.set(iface, adapter);
     },
-    /**
-     * 
-     */
-    getAdapters(dependencies) {
-      return [...adapters.keys()].map(iface => ({
-        [iface.name]: () => adapters[iface].call(
-          adaptee, dependencies[iface]
-      )})).reduce((p, c) => {
-        return { ...c, ...p };
-      });
+    createFunctions() {
+      adapters.forEach((adapter, iface) => adaptee[iface] = () => adapter(iface));
     },
     /**
      * Invoke adapter logic
