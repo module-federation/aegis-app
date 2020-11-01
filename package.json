@@ -10,8 +10,9 @@
     "clean": "rm -rf dist",
     "compile": "babel src -d dist",
     "test": "mocha",
-    "test:intgrn": "mocha src/services/order-service-remote",
-    "demo": "open http://localhost:8060"
+    "test:remote": "mocha src/services/order-service-remote",
+    "demo": "open http://localhost:8060",
+    "event": "node src/lib/kafka-producer.js"
   },
   "author": "Tyson Midboe",
   "license": "MIT",
@@ -20,6 +21,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
+    "kafkajs": "^1.14.0",
     "smartystreets-javascript-sdk": "^1.6.0",
     "ws": "^7.3.1"
   },
@@ -34,6 +36,7 @@
     "esm": "^3.2.25",
     "express-cli": "0.0.1",
     "mocha": "^8.2.0",
+    "nodemon-webpack-plugin": "^4.3.2",
     "webpack": "^5.0.0-beta.28",
     "webpack-cli": "^3.3.12",
     "webpack-node-externals": "^2.5.2"

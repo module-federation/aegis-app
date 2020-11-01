@@ -1,17 +1,17 @@
 'use strict'
 
-export async function shipOrder() {
-  console.log('shipping order...');
-}
+export const Shipping = {
 
-export async function trackShipment() {
-  console.log('track shipment...');
-}
+  async shipOrder() {
+    console.log('test shipping order');
+  },
 
-export async function verifyDelivery() {
-  console.log('verify delivery order...');
-}
+  async trackShipment(orderNo) {
+    console.log('test track shipment %s', orderNo);
+  },
 
-export async function subscribe(filter) {
+  async verifyDelivery(orderNo) {
+    console.log('test verify delivery order %s', orderNo);
+  }
 
 }

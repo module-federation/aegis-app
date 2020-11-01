@@ -104,7 +104,7 @@ async function processOrder(fn, ...args) {
   await os[fn](...args).catch(e => console.error(e.message));
 }
 
-const disableTests = true;
+const disableTests = false;
 
 (async () => {
 

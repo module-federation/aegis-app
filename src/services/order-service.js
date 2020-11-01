@@ -30,7 +30,6 @@ class OrderService {
     creditCardNumber,
     shippingAddress,
     billingAddress,
-    local = false,
   } = {}) {
     this.orderInfo = {
       customerInfo,
@@ -39,7 +38,6 @@ class OrderService {
       shippingAddress,
       billingAddress,
     };
-    this.local = local || false;
   }
 
   async handleStatusChange(status) {
@@ -65,22 +63,13 @@ class OrderService {
   async createOrder() {
     if (this.local) {
       const Order = require('../models').Order;
+      console.log(Order.dependencies);
       const createOrder = Order.factory(Order.dependencies);
       this.order = await createOrder(this.orderInfo)
         .then(order => compose(...Order.mixins)(order));
       this.orderId = this.order.orderId;
       return this;
     }
-    return axios.post(
-      orderServiceUrl,
-      this.orderInfo
-    ).then((response) => {
-      this.orderId = response.data.modelId;
-      return this;
-    }, (error) => {
-      console.error(error.response.data);
-      throw new Error(error);
-    });
   }
 
   async submitOrder(orderId = this.orderId) {
@@ -125,26 +114,14 @@ class OrderService {
       await this.handleStatusChange('COMPLETE');
       return this;
     }
-    return axios.patch(
-      orderServiceUrl + orderId,
-      { orderStatus: 'COMPLETE', proofOfDelivery: pod },
-    ).then((response) => {
-      this.orderId = response.data.modelId;
-      return this;
-    }, (error) => {
-      console.error(error.response.data);
-      throw new Error(error);
-    });
+
   }
 
   async cancelOrder(reason, orderId = this.orderId) {
     if (!reason) {
       throw new Error('reason required to cancel');
     }
-    if (this.local) {
-      await this.handleStatusChange('CANCELED');
-      return this;
-    }
+
     return axios.patch(
       orderServiceUrl + orderId,
       { orderStatus: 'CANCELED', cancelReason: reason },

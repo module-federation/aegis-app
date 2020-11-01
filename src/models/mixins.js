@@ -109,7 +109,7 @@ function getDynamicProps(o, ...propKeys) {
 }
 
 /**
- * Functional mixin that encrypts the properties specified in `propNames`
+ * Functional mixin that encrypts the properties specified in `propKeys`
  * @param  {Array<string | function(*):string>} propKeys - 
  * Names (or functions that return names) of properties to encrypt
  * @returns {mixinFunction} mixin function
@@ -247,6 +247,40 @@ const allowProperties = (isUpdate, ...propKeys) => (o) => {
   );
 }
 
+// export function makePorts(ports, adapters) {
+//   if (!ports || !adapters) {
+//     return;
+//   }
+//   return Object.keys(ports).map(function (port) {
+//     return {
+//       async [port](...args) {
+//         return adapters[port]({
+//           model: this,
+//           parms: args
+//         });
+//       }
+//     }
+//   }).reduce((p, c) => ({ ...c, ...p }));
+// }
+
+// export const makePortsMixin = (ports, adapters) => o => {
+//   return {
+//     ...o,
+//     ...makePorts.call(
+//       this,
+//       ports,
+//       adapters
+//     )
+//   }
+// }
+
+export const callMethod = (fn, ...args) => (o) => {
+  return {
+    ...o,
+    ...o[fn](...args)
+  }
+}
+
 /**
  * Test regular expressions
  */
@@ -356,9 +390,10 @@ const validateProperties = (validations) => (o) => {
  */
 
 /**
- * @typedef updater
- * @property {string} propKey property being updated 
- * @property {updaterFn} update return new object with updated properties
+ * @typedef {{
+ * propKey: string,
+ * update: updaterFn
+ * }} updater
  */
 
 /**
@@ -441,6 +476,7 @@ export function allowPropertiesMixin(...propKeys) {
  * match a regular expression, are of a certain length, or type,
  * or satisfy a custom validation function.
  * @param {validation[]} validations 
+ * @returns {mixinFunction} mixin function
  */
 export function validatePropertiesMixin(validations) {
   return validateProperties(validations);

@@ -1,13 +1,17 @@
 'use strict'
 
-export async function authorizePayment(args) {
-  console.log(`REAL authorizing payment: ${args}`);
-}
+export const Payment = {
 
-export async function completePayment(args) {
-  console.log(`REAL completing payment...${args}`);
-}
+  async authorizePayment(args) {
+    console.log(`REAL authorizing payment: ${args}`);
+  },
 
-export async function refundPayment(args) {
-  console.log(`REAL refunding payment...${args}`);
+  async completePayment({ model }) {
+    console.log(`REAL completing payment...${model}`);
+  },
+
+  async refundPayment({ model }) {
+    console.log(`REAL refunding payment...${model}`);
+  }
+
 }

@@ -1,15 +1,16 @@
 'use strict'
+export const Address = {
+  /**
+   * 
+   * @param {string} address US street address
+   */
+  async validateAddress(address) {
+    console.log('test validating address...');
 
-/**
- * 
- * @param {string} address US street address
- */
-export async function validateAddress(address) {
-  console.log('validating address...');
+    if (!address) {
+      throw new Error('no address provided');
+    }
 
-  if (!address) {
-    throw new Error('no address provided');
+    return address;
   }
-
-  return address;
 }

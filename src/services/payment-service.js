@@ -1,18 +1,23 @@
 'use strict'
 
-export async function authorizePayment(creditCardNumber) {
-  console.log('authorizing payment...%s', creditCardNumber);
-}
+export const Payment = {
 
-export async function completePayment(creditCardNumber) {
-  console.log('completing payment...%s', creditCardNumber);
-}
+  async authorizePayment(data) {
+    console.log('TEST authorizing payment...%s', data);
+  },
 
-export async function refundPayment(creditCardNumber) {
-  console.log('refunding payment...%s', creditCardNumber);
-}
+  async completePayment({ model }) {
+    console.log(
+      'TEST completing payment...%s',
+      model.decrypt().creditCardNumber
+    );
+  },
 
-export async function subscribe(filter) {
-
+  async refundPayment({ model }) {
+    console.log(
+      'test refunding payment...%s',
+      model.decrypt().creditCardNumber
+    );
+  },
 }
 

@@ -2,6 +2,8 @@ var path = require('path')
 const ModuleFederationPlugin = require('webpack')
   .container.ModuleFederationPlugin;
 const httpNode = require('./webpack/http-node');
+const NodemonPlugin = require('nodemon-webpack-plugin');
+
 
 var serverConfig = {
   target: httpNode,
@@ -31,6 +33,7 @@ var serverConfig = {
     ]
   },
   plugins: [
+    new NodemonPlugin(),
     new ModuleFederationPlugin({
       name: 'orderService',
       library: { type: 'commonjs-module' },
@@ -39,6 +42,7 @@ var serverConfig = {
         './service1': './src/services/service1',
         './publish-event': './src/services/publish-event',
         './models': './src/models',
+        './adapters': './src/adapters',
         './orderService': '/src/services/order-service',
         './paymentService': '/src/services/real-payment-service',
         './shippingService': '/src/services/real-shipping-service',

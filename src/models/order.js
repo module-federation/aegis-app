@@ -9,6 +9,26 @@ import {
   checkFormat,
   PREVMODEL,
 } from './mixins'
+import { makePorts } from './make-ports'
+
+/**
+ * @typedef {string|RegExp} topic
+ * @typedef {function(string)} eventCallback
+ * @typedef {import('../adapters/index').adapterFunction} adapterFunction
+ * @typedef {string} id
+ * @typedef {Object} Order
+ * @property {function(topic,eventCallback)} listen
+ * @property {import('../adapters/event-adapter').notifyType} notify
+ * @property {adapterFunction} completePayment
+ * @property {adapterFunction} verifyDelivery
+ * @property {adapterFunction} trackShipment
+ * @property {adapterFunction} refundPayment
+ * @property {adapterFunction} authorizePayment
+ * @property {import('../adapters/shipping-adapter').shipOrder} shipOrder
+ * @property {string} orderNo
+ * @property {function()} decrypt
+ * @property {'APPROVED'|'SHIPPING'|'CANCELED'|'COMPLETED'} orderStatus
+ */
 
 const MAXORDER = 99999.99;
 const orderItems = 'orderItems';
@@ -140,50 +160,41 @@ function readyToDelete(model) {
   return model;
 }
 
-async function orderShipped({ message, consumer }) {
+async function orderShipped(event) {
   const order = this;
-  console.log(message);
-  order.orderStatus = OrderStatus.SHIPPING;
-  await handleStatusChange(order);
-  consumer.unsubscribe(); // unsubscribe'
-}
-
-async function shipOrder(order) {
-  try {
-    await order.completePayment();
-    await order.shipOrder();
-    try { // listen for shipping events
-      await order.consumeEvents('shipping', orderShipped);
-    } catch (e) { // consumeEvents is on the host, not here
-      console.error(e.message);
-    }
-  } catch (error) {
-    throw new Error(error);
-  }
-}
-
-async function trackShipment(order) {
-  await order.trackShipment();
-}
-
-async function refundPayment(order) {
-  await order.refundPayment();
-}
-
-async function verifyDelivery(order) {
-  await order.verifyDelivery();
+  console.log({ order, event });
+  await handleStatusChange({
+    ...order,
+    orderStatus: OrderStatus.SHIPPING
+  });
 }
 
 const OrderActions = {
   [OrderStatus.PENDING]: () => void 0,
-  [OrderStatus.APPROVED]: shipOrder,
-  [OrderStatus.SHIPPING]: trackShipment,
-  [OrderStatus.CANCELED]: refundPayment,
-  [OrderStatus.COMPLETE]: verifyDelivery
+  /** @param {Order} order */
+  [OrderStatus.APPROVED]: async (order) => {
+    try {
+      await order.completePayment();
+      await order.listen({
+        topic: 'orderShipped', 
+        callback: orderShipped.bind(order),
+        id: order.orderNo
+      });
+      await order.shipOrder();
+    } catch (error) {
+      throw new Error(error);
+    }
+  },
+  /** @param {Order} order */
+  [OrderStatus.SHIPPING]: async (order) => order.trackShipment(),
+  /** @param {Order} order */
+  [OrderStatus.CANCELED]: async (order) => order.refundPayment(),
+  /** @param {Order} order */
+  [OrderStatus.COMPLETE]: async (order) => order.verifyDelivery()
 }
 
 export async function handleStatusChange(order) {
-  await OrderActions[order.orderStatus](order);
+  return OrderActions[order.orderStatus](order);
 }
 
 /**
@@ -192,49 +203,45 @@ export async function handleStatusChange(order) {
 const Order = {
   modelName: 'order',
   endpoint: 'orders',
+  ports: {
+    listen: {
+      service: 'Event',
+      type: 'inbound',
+    },
+    notify: {
+      service: 'Event',
+      type: 'outbound',
+    },
+    shipOrder: {
+      service: 'Shipping',
+      type: 'outbound',
+    },
+    trackShipment: {
+      service: 'Shipping',
+      type: 'outbound'
+    },
+    verifyDelivery: {
+      service: 'Shipping',
+      type: 'outbound'
+    },
+    validateAddress: {
+      service: 'Address',
+      type: 'outbound'
+    },
+    authorizePayment: {
+      service: 'Payment',
+      type: 'outbound'
+    },
+    refundPayment: {
+      service: 'Payment',
+      type: 'outbound'
+    },
+    completePayment: {
+      service: 'Payment',
+      type: 'outbound',
+    },
+  },
   factory: function (dependencies) {
-    /**
-     * The adapters below handle the microservice
-     * interfaces that are passed in as dependencies.
-     * When this model is loaded on the host, the real 
-     * interfaces, which are exposed elsewhere as 
-     * federated modules, seemlessly overwrite 
-     * the stubs used for testing in this repo.
-     */
-    function interfaceAdapters() {
-      const adapters = {
-        shipOrder(fn) {
-          return fn(this.decrypt().shippingAddress);
-        },
-        trackShipment(fn) {
-          return fn(this.decrypt().shippingAddress);
-        },
-        verifyDelivery(fn) {
-          return fn(this.decrypt().shippingAddress);
-        },
-        completePayment(fn) {
-          return fn(this.decrypt().creditCardNumber);
-        },
-        refundPayment(fn) {
-          return fn(this.decrypt().creditCardNumber);
-        },
-        authorizePayment(fn) {
-          return fn(this.decrypt().creditCardNumber);
-        },
-        consumeEvents(fn) {
-          return fn(topic, this.orderNo, (event) => handler.call(event));
-        },
-      }
-      return Object.keys(adapters).map(function (key) {
-        return {
-          [key]() {
-            return adapters[key].call(this, dependencies[key]);
-          }
-        }
-      }).reduce(function (p, c) {
-        return { ...c, ...p };
-      });
-    }
     return async function createOrder({
       customerInfo,
       orderItems,
@@ -257,7 +264,7 @@ const Order = {
         billingAddress,
         totalCharge: calcTotal(orderItems)
       });
-      const order = Object.freeze({
+      const order = {
         customerInfo,
         orderItems,
         creditCardNumber,
@@ -270,12 +277,9 @@ const Order = {
         [orderStatus]: OrderStatus.PENDING,
         [proofOfDelivery]: null,
         [cancelReason]: null,
-        [orderNo]: uuid(),
-      });
-      return {
-        ...order,
-        ...interfaceAdapters.call(this)
-      }
+        [orderNo]: uuid()
+      };
+      return Object.freeze(order);
     }
   },
   mixins: [
