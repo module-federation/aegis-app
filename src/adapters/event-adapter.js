@@ -29,5 +29,5 @@ export function listen(service) {
  * @returns {function(topic, eventData)}
  */
 export function notify(service) {
-  return async ({ args: [topic, event] }) => service.notify(topic, event);
+  return async ({ parms: [topic, message] }) => service.notify(topic, message);
 }

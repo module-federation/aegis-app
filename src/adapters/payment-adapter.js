@@ -33,7 +33,7 @@ export function completePayment(service) {
  * @type {adapterFactory}
  */
 export function refundPayment(service) {
-  return async function ({ model, args }) {
-    service.refundPayment({ model, args });
+  return async function ({ model: order, parms }) {
+    service.refundPayment({ model, parms });
   }
 } 

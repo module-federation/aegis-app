@@ -2,8 +2,8 @@
 
 export const Shipping = {
 
-  async shipOrder() {
-    console.log('REAL shipping order');
+  async shipOrder(order) {
+    console.log('REAL shipping order %s', { ...order });
   },
 
   async trackShipment(orderNo) {

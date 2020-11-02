@@ -9,7 +9,6 @@ import {
   checkFormat,
   PREVMODEL,
 } from './mixins'
-import { makePorts } from './make-ports'
 
 /**
  * @typedef {string|RegExp} topic
@@ -160,13 +159,20 @@ function readyToDelete(model) {
   return model;
 }
 
-async function orderShipped(event) {
-  const order = this;
-  console.log({ order, event });
-  await handleStatusChange({
-    ...order,
+async function geoLocate({ message, subscription }) {
+  // locate shipment
+
+}
+
+async function orderShipped({ message, subscription }) {
+  console.log({ order: subscription.getModel(), message, subscription });
+  const order = {
+    ...subscription.getModel(),
     orderStatus: OrderStatus.SHIPPING
-  });
+  };
+  order.save();
+  subscription.unsubscribe();
+  await handleStatusChange(order);
 }
 
 const OrderActions = {
@@ -175,18 +181,13 @@ const OrderActions = {
   [OrderStatus.APPROVED]: async (order) => {
     try {
       await order.completePayment();
-      await order.listen({
-        topic: 'orderShipped', 
-        callback: orderShipped.bind(order),
-        id: order.orderNo
-      });
-      await order.shipOrder();
+      await order.shipOrder(orderShipped);
     } catch (error) {
       throw new Error(error);
     }
   },
   /** @param {Order} order */
-  [OrderStatus.SHIPPING]: async (order) => order.trackShipment(),
+  [OrderStatus.SHIPPING]: async (order) => order.trackShipment(geoLocate),
   /** @param {Order} order */
   [OrderStatus.CANCELED]: async (order) => order.refundPayment(),
   /** @param {Order} order */
@@ -211,6 +212,10 @@ const Order = {
     notify: {
       service: 'Event',
       type: 'outbound',
+    },
+    save: {
+      service: 'Persistence',
+      type: 'outbound'
     },
     shipOrder: {
       service: 'Shipping',

@@ -5,8 +5,11 @@ import { Event } from '../services'
 /**
  * @typedef {string|RegExp} topic
  * @callback eventCallback
- * @param {topic} topic
- * @param {*} eventData
+ * @param {string} message
+ * @param {{
+ *  getModel:function():object,
+ *  unsubscribe:function()
+ * }} subscription
  * @typedef {eventCallback} shipOrderType
  * @param topic,
  * @param eventCallback
@@ -18,7 +21,7 @@ import { Event } from '../services'
  * @typedef {import('../models/order').Order} Order
  * @typedef {ShippingAdapter} service 
  * @typedef {{
- *  listen:function(topic,eventCallback)
+ *  listen:function(topic,RegExp,eventCallback)
  *  notify:function(topic,eventCallback)
  * }} event
  * @callback adapterFactory
@@ -34,12 +37,14 @@ import { Event } from '../services'
 export function shipOrder(service) {
 
   return async function ({ model: order, parms: [callback] }) {
-    console.log('shipOrder -> listen: %s', order.orderNo);
     if (callback) {
       await order.listen({
         topic: 'orderShipped',
-        callback,
+        callback: callback,
+        model: order,
+        filter: order.orderNo,
         id: order.orderNo,
+        once: true
       });
     }
     await service.shipOrder({
