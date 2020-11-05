@@ -44,9 +44,10 @@ var serverConfig = {
         './models': './src/models',
         './adapters': './src/adapters',
         './orderService': '/src/services/order-service',
-        './paymentService': '/src/services/real-payment-service',
-        './shippingService': '/src/services/real-shipping-service',
-        './addressService': '/src/services/real-address-service'
+        './eventService': '/src/services-prod/event-service',
+        './paymentService': '/src/services-prod/payment-service',
+        './shippingService': '/src/services-prod/shipping-service',
+        './addressService': '/src/services-prod/address-service'
       },
       shared: {
         'axios': {

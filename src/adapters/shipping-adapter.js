@@ -47,10 +47,12 @@ export function shipOrder(service) {
         once: true
       });
     }
+
     await service.shipOrder({
       creditCard: order.decrypt().creditCardNumber,
       shippingAddress: order.decrypt().shippingAddress,
-      billingAddress: order.billingAddress
+      items: order.orderItems,
+      orderNum: order.orderNo
     });
   }
 }

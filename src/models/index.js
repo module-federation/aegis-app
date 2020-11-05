@@ -68,7 +68,7 @@ function validateModel(model) {
 }
 
 function makeAdapters(ports) {
-  if (!ports) {
+  if (!ports || !adapters || !services) {
     return;
   }
   return Object.keys(ports).map(port => {
@@ -76,10 +76,12 @@ function makeAdapters(ports) {
       return;
     }
     try {
-      return {
-        [port]: adapters[port](
-          services[ports[port].service]
-        )
+      if (adapters[port] && services[ports[port].service]) {
+        return {
+          [port]: adapters[port](
+            services[ports[port].service]
+          )
+        }
       }
     } catch (e) {
       console.warn(e.message);
@@ -98,7 +100,8 @@ function makeModel(model, dependencies) {
     ...dependencies,
     ...makeAdapters(model.ports)
   };
-  model.mixins = model.mixins.concat(GlobalMixins);
+  const mixins = model.mixins || {}
+  model.mixins = mixins.concat(GlobalMixins);
 }
 
 makeModel(User, { uuid });
