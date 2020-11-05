@@ -16,11 +16,17 @@
  */
 
 /**
- * @type {Map<any,Map<string,*>>}
+ * @type {Map<any,Map<string,Subscription>>}
  */
 const subscriptions = new Map();
 
 /**
+ * @typedef {{
+ *  getSubscriptions:function(),
+ *  unsubscribe:function(),
+ *  filter:function(string),
+ *  getModel:function():Order
+ * }} Subscription
  * @typedef {string} message
  * @typedef {string|RegExp} topic 
  * @param {{
@@ -31,6 +37,7 @@ const subscriptions = new Map();
  *  once:boolean,
  *  model:object
  * }} options
+ * @returns {Subscription}
  */
 const Subscription = function ({
   id, callback, topic, filter, once, model
@@ -49,6 +56,10 @@ const Subscription = function ({
 
     getModel() {
       return model;
+    },
+
+    getSubscriptions() {
+      return [...subscriptions.entries()];
     },
 
     /**

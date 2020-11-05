@@ -1,7 +1,5 @@
 'use strict'
 
-import { Event } from '../services'
-
 /**
  * @typedef {string|RegExp} topic
  * @callback eventCallback
@@ -61,8 +59,19 @@ export function shipOrder(service) {
  * @type {adapterFactory}
  */
 export function trackShipment(service) {
-  return async function ({ model }) {
-    return service.trackShipment(model.orderNo);
+
+  return async function ({ model: order, parms: [callback] }) {
+    if (callback) {
+      order.listen({
+        topic: 'orderShipped',
+        callback: callback,
+        model: order,
+        filter: order.orderNo,
+        id: order.orderNo,
+        once: true
+      });
+    }
+    return service.trackShipment(order.orderNo);
   }
 }
 

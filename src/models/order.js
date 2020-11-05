@@ -15,6 +15,7 @@ import {
  * @typedef {function(string)} eventCallback
  * @typedef {import('../adapters/index').adapterFunction} adapterFunction
  * @typedef {string} id
+ * 
  * @typedef {Object} Order
  * @property {function(topic,eventCallback)} listen
  * @property {import('../adapters/event-adapter').notifyType} notify
@@ -22,8 +23,10 @@ import {
  * @property {adapterFunction} verifyDelivery
  * @property {adapterFunction} trackShipment
  * @property {adapterFunction} refundPayment
- * @property {adapterFunction} authorizePayment
- * @property {import('../adapters/shipping-adapter').shipOrder} shipOrder
+ * @property {adapterFunction} authorizePayment - verify payment info credit
+ * @property {import('../adapters/shipping-adapter').shipOrder} shipOrder -
+ * calls shipping service to request that order be shipped
+ * @property {function()} save - saves order
  * @property {string} orderNo
  * @property {function()} decrypt
  * @property {'APPROVED'|'SHIPPING'|'CANCELED'|'COMPLETED'} orderStatus
@@ -159,18 +162,42 @@ function readyToDelete(model) {
   return model;
 }
 
-async function geoLocate({ message, subscription }) {
-  // locate shipment
-
+/**
+ * Callback invoked by shipping service once order has arrived.
+ * @param {*} param0 
+ */
+async function orderArrived({ message, subscription }) {
+  console.log({
+    event: 'order arrived',
+    message,
+    subscription: subscription.getSubscriptions()
+  });
+  const order = {
+    ...subscription.getModel(),
+    orderStatus: OrderStatus.COMPLETE
+  };
+  //order.notify('orderShipped', 'order delivered');
+  order.save();
+  await handleStatusChange(order);
 }
 
+/**
+ * Callback invoked by shipping adapter when order is shipped.
+ * @param {{ message:string, 
+ *  subscription:{ getModel:function():Order }
+ * }} param0 
+ */
 async function orderShipped({ message, subscription }) {
-  console.log({ order: subscription.getModel(), message, subscription });
+  console.log({
+    event: 'order shipped',
+    message,
+    subscription: subscription.getSubscriptions()
+  });
   const order = {
     ...subscription.getModel(),
     orderStatus: OrderStatus.SHIPPING
   };
-  order.save();
+  order.save()
   subscription.unsubscribe();
   await handleStatusChange(order);
 }
@@ -187,7 +214,7 @@ const OrderActions = {
     }
   },
   /** @param {Order} order */
-  [OrderStatus.SHIPPING]: async (order) => order.trackShipment(geoLocate),
+  [OrderStatus.SHIPPING]: async (order) => order.trackShipment(orderArrived),
   /** @param {Order} order */
   [OrderStatus.CANCELED]: async (order) => order.refundPayment(),
   /** @param {Order} order */
@@ -226,6 +253,10 @@ const Order = {
       type: 'outbound'
     },
     verifyDelivery: {
+      service: 'Shipping',
+      type: 'outbound'
+    },
+    cancelShipment: {
       service: 'Shipping',
       type: 'outbound'
     },

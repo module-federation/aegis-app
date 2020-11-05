@@ -10,16 +10,20 @@ export const Shipping = {
     Event.notify('orderShipped', order.orderNum);
   },
 
-  async trackShipment(orderNo) {
-    console.log('REAL track shipment %s', orderNo);
-    Event.notify('orderShipped', { 
-      orderNo: order.orderNo, 
+  async trackShipment(orderNum) {
+    console.log('REAL track shipment %s', orderNum);
+    Event.notify('orderShipped', JSON.stringify({
+      orderNum: orderNum,
       trackingId: uuid()
-    });
+    }));
   },
 
-  async verifyDelivery(orderNo) {
-    console.log('REAL verify delivery order %s', orderNo);
-  }
+  async verifyDelivery(orderNum) {
+    console.log('REAL verify delivery order %s', orderNum);
+  },
+
+  async cancelShipment(orderNum) {
+    console.log('REAL cancel shipment %s', orderNum);
+  },
 
 }
