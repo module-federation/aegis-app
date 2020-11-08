@@ -3,9 +3,9 @@
 /**
  * @typedef {import('../models/order').Order} Order
  * @typedef {{
- * authorizePayment:function(),
- * completePaymet:function(),
- * refundPayment:function()
+ * authorizePayment:function():Promise<string>,
+ * completePaymet:function():Promise<void>,
+ * refundPayment:function():Promise<void>
  * }} service 
  * @callback adapterFactory
  * @param {service} service
@@ -16,9 +16,8 @@
  * @type {adapterFactory}
  */
 export function authorizePayment(service) {
-  return async function (data) {
-    console.log('authorizePayment adapter');
-    service.authorizePayment(data);
+  return async function ({ model: order }) {
+    return service.authorizePayment(order);
   }
 }
 /**

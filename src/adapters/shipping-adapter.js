@@ -28,24 +28,32 @@
  * @returns {function({model:Order,parms:[eventCallback]})} 
  */
 
+import { ORDERTOPIC } from './event-adapter'
+
+
 /**
  * 
  * @type {adapterFactory}
  */
 export function shipOrder(service) {
-
   return async function ({ model: order, parms: [callback] }) {
     if (callback) {
       await order.listen({
-        topic: 'orderShipped',
-        callback: callback,
+        topic: ORDERTOPIC,
+        once: true,
         model: order,
-        filter: order.orderNo,
         id: order.orderNo,
-        once: true
+        filter: order.orderNo,
+        callback: ({ message, subscription }) => {
+          console.info({
+            event: 'order shipped',
+            message,
+            subscribers: subscription.getSubscriptions()
+          });
+          return callback({ message, order: subscription.getModel() });
+        },
       });
     }
-
     await service.shipOrder({
       creditCard: order.decrypt().creditCardNumber,
       shippingAddress: order.decrypt().shippingAddress,
@@ -59,19 +67,25 @@ export function shipOrder(service) {
  * @type {adapterFactory}
  */
 export function trackShipment(service) {
-
   return async function ({ model: order, parms: [callback] }) {
     if (callback) {
-      order.listen({
-        topic: 'orderShipped',
-        callback: callback,
+      await order.listen({
+        topic: ORDERTOPIC,
+        once: true,
         model: order,
         filter: order.orderNo,
-        id: order.orderNo,
-        once: true
+        callback: ({ message, subscription }) => {
+          console.info({
+            event: 'orderArrived',
+            message,
+            subscribers: subscription.getSubscriptions()
+          });
+          return callback({ message, order: subscription.getModel() });
+        },
       });
     }
-    return service.trackShipment(order.orderNo);
+    const trackingId = await service.trackShipment(order.orderNo);
+    return order.update({ trackingId });
   }
 }
 
@@ -80,7 +94,26 @@ export function trackShipment(service) {
  * @type {adapterFactory}
  */
 export function verifyDelivery(service) {
-  return async function (orderParam) {
-    return service.verifyDelivery(orderParam.model.orderNo);
+  return async function ({ model: order, parms: [callback] }) {
+    if (callback) {
+      await order.listen({
+        topic: ORDERTOPIC,
+        once: true,
+        model: order,
+        filter: order.orderNo,
+        callback: ({ message, subscription }) => {
+          console.info({
+            event: 'proofOfDelivery',
+            message,
+            subscribers: subscription.getSubscriptions()
+          });
+          return callback({
+            response: JSON.parse(message),
+            order: subscription.getModel()
+          });
+        },
+      });
+    }
+    return service.verifyDelivery(order.trackingId);
   }
 }

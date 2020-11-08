@@ -18,7 +18,7 @@ export const Address = {
   // Documentation for input fields can be found at:
   // https://smartystreets.com/docs/us-street-api#input-fields
 
-  async validateAddress (address) {
+  async validateAddress(address) {
     console.log(`REAL validating address...${address}`);
 
     if (!address) {
@@ -59,6 +59,9 @@ export const Address = {
     if (!validatedAddress) {
       throw new Error('invalid address');
     }
-    return validatedAddress;
+    return {
+      address: validatedAddress,
+      isSingleFamily: false
+    }
   }
 }

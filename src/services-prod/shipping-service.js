@@ -12,18 +12,23 @@ export const Shipping = {
 
   async trackShipment(orderNum) {
     console.log('REAL track shipment %s', orderNum);
+    const trackingId = uuid();
     Event.notify('orderShipped', JSON.stringify({
-      orderNum: orderNum,
-      trackingId: uuid()
+      orderNum, trackingId
+    }));
+    return trackingId;
+  },
+
+  async verifyDelivery(trackingId) {
+    console.log('REAL verify delivery, trackingId: %s', trackingId);
+    const proofOfDelivery = `http://shipping.service.com/?proof=${trackingId}`;
+    Event.notify('orderShipped', JSON.stringify({
+      orderNum, proofOfDelivery
     }));
   },
 
-  async verifyDelivery(orderNum) {
-    console.log('REAL verify delivery order %s', orderNum);
-  },
-
-  async cancelShipment(orderNum) {
-    console.log('REAL cancel shipment %s', orderNum);
+  async cancelShipment(trackingId) {
+    console.log('REAL cancel shipment %s', trackingId);
   },
 
 }

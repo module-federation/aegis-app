@@ -11,6 +11,6 @@ export const Address = {
       throw new Error('no address provided');
     }
 
-    return address;
+    return { address, isSingleFamily: false };
   }
 }

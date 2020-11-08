@@ -55,6 +55,7 @@ const POSTMIXINS = mixinSets[mixinType.post];
  * 
  * @param {*} model - current model
  * @param {*} changes - object containing changes
+ * @returns {import('.').Model} updated model
  */
 export function processUpdate(model, changes) {
   changes[PREVMODEL] = model; // keep history
@@ -246,33 +247,6 @@ const allowProperties = (isUpdate, ...propKeys) => (o) => {
     () => allowProperties(true, ...propKeys)
   );
 }
-
-// export function makePorts(ports, adapters) {
-//   if (!ports || !adapters) {
-//     return;
-//   }
-//   return Object.keys(ports).map(function (port) {
-//     return {
-//       async [port](...args) {
-//         return adapters[port]({
-//           model: this,
-//           parms: args
-//         });
-//       }
-//     }
-//   }).reduce((p, c) => ({ ...c, ...p }));
-// }
-
-// export const makePortsMixin = (ports, adapters) => o => {
-//   return {
-//     ...o,
-//     ...makePorts.call(
-//       this,
-//       ports,
-//       adapters
-//     )
-//   }
-// }
 
 export const callMethod = (fn, ...args) => (o) => {
   return {

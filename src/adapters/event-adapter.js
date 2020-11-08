@@ -20,6 +20,9 @@
  */
 const subscriptions = new Map();
 
+export const ORDERTOPIC = 'orderChannel';
+
+
 /**
  * @typedef {{
  *  getSubscriptions:function(),
@@ -27,8 +30,10 @@ const subscriptions = new Map();
  *  filter:function(string),
  *  getModel:function():Order
  * }} Subscription
+ * 
  * @typedef {string} message
  * @typedef {string|RegExp} topic 
+ * 
  * @param {{
  *  id:string,
  *  callback:function(message,Subscription),
@@ -90,10 +95,10 @@ const Subscription = function ({
 export function listen(service) {
 
   return async function ({
-    model, parms: [{ topic, callback, filter, once, id }]
+    model, parms: [{ id, callback, topic, filter, once }]
   }) {
     const subscription = Subscription({
-      id, topic, callback, filter, once, model
+      id, callback, topic, filter, once, model
     });
 
     if (subscriptions.has(topic)) {

@@ -4,6 +4,7 @@ export const Payment = {
 
   async authorizePayment(data) {
     console.log('TEST authorizing payment...%s', data);
+    return { authorization: '1234' }
   },
 
   async completePayment({ model }) {

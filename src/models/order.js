@@ -19,24 +19,29 @@ import {
  * @typedef {Object} Order
  * @property {function(topic,eventCallback)} listen
  * @property {import('../adapters/event-adapter').notifyType} notify
+ * @property {adapterFunction} validateAddress
  * @property {adapterFunction} completePayment
- * @property {adapterFunction} verifyDelivery
+ * @property {adapterFunction} verifyDelivery - verify the order was received by the customer
  * @property {adapterFunction} trackShipment
  * @property {adapterFunction} refundPayment
- * @property {adapterFunction} authorizePayment - verify payment info credit
+ * @property {adapterFunction} authorizePayment - verify payment info, credit avail
  * @property {import('../adapters/shipping-adapter').shipOrder} shipOrder -
- * calls shipping service to request that order be shipped
- * @property {function()} save - saves order
+ * calls shipping service to request, or emits event to indicate, that order be shipped
+ * @property {function(Order):Promise<void>} save - saves order
+ * @property {function():Promise<Order>} find - finds order
+ * @property {string} shippingAddress
  * @property {string} orderNo
+ * @property {string} trackingId
  * @property {function()} decrypt
+ * @property {function(*):Promise<Order>} update 
  * @property {'APPROVED'|'SHIPPING'|'CANCELED'|'COMPLETED'} orderStatus
  */
 
 const MAXORDER = 99999.99;
 const orderItems = 'orderItems';
 const customerInfo = 'customerInfo';
-const shippingAddress = 'shippingAddress';
 const billingAddress = 'billingAddress';
+const shippingAddress = 'shippingAddress'
 const proofOfDelivery = 'proofOfDelivery';
 const creditCardNumber = 'creditCardNumber';
 const paymentAuthorization = 'paymentAuthorization';
@@ -44,6 +49,7 @@ const customerId = 'customerId';
 const orderStatus = 'orderStatus';
 const orderTotal = 'orderTotal';
 const cancelReason = 'cancelReason';
+const trackingId = 'trackingId';
 const orderNo = 'orderNo';
 const OrderStatus = {
   PENDING: 'PENDING',
@@ -163,22 +169,58 @@ function readyToDelete(model) {
 }
 
 /**
- * Callback invoked by shipping service once order has arrived.
- * @param {*} param0 
+ * 
+ * @param {Order} order 
+ * @returns {Order}
  */
-async function orderArrived({ message, subscription }) {
-  console.log({
-    event: 'order arrived',
-    message,
-    subscription: subscription.getSubscriptions()
-  });
-  const order = {
-    ...subscription.getModel(),
-    orderStatus: OrderStatus.COMPLETE
-  };
-  //order.notify('orderShipped', 'order delivered');
-  order.save();
-  await handleStatusChange(order);
+async function findOrder(order) {
+  const current = order.find();
+  if (!current) {
+    return order;
+  }
+  return current;
+}
+
+/**
+ * 
+ * @param {Order} order 
+ * @param {*} changes 
+ */
+async function updateOrder(order, changes) {
+  const current = await findOrder(order);
+  const updated = processUpdate(current, changes);
+  await updated.save();
+  return updated;
+}
+
+async function deliveryVerified({ proofOfDelivery, order }) {
+  const func = deliveryVerified.name;
+  try {
+    await order.completePayment();
+    const changes = {
+      orderStatus: OrderStatus.COMPLETE,
+      proofOfDelivery
+    };
+    const updated = await order.update(changes);
+    await handleStatusChange(updated);
+  } catch (error) {
+    console.error({ func, error, order });
+    throw new Error(error);
+  }
+}
+
+/**
+ * Callback invoked by shipping adapter once order has arrived.
+ * @param {{order:Order}} order  
+ */
+async function orderReceived({ order }) {
+  const func = orderReceived.name;
+  try {
+    await order.verifyDelivery(deliveryVerified);
+  } catch (error) {
+    console.error({ func, error, order });
+    throw new Error(error);
+  }
 }
 
 /**
@@ -187,38 +229,96 @@ async function orderArrived({ message, subscription }) {
  *  subscription:{ getModel:function():Order }
  * }} param0 
  */
-async function orderShipped({ message, subscription }) {
-  console.log({
-    event: 'order shipped',
-    message,
-    subscription: subscription.getSubscriptions()
-  });
-  const order = {
-    ...subscription.getModel(),
-    orderStatus: OrderStatus.SHIPPING
-  };
-  order.save()
-  subscription.unsubscribe();
-  await handleStatusChange(order);
+async function orderShipped({ order }) {
+  const func = orderShipped.name;
+  try {
+    const changes = { orderStatus: OrderStatus.SHIPPING };
+    const updated = await order.update(changes);
+    await handleStatusChange(updated);
+  } catch (error) {
+    console.error({ func, error, order });
+    throw new Error(error);
+  }
 }
 
+/**
+ * in stock, ready for pickup
+ * @param {{order: Order }} param0 
+ */
+async function orderFilled({ order, pickupAddress }) {
+  const func = orderFilled.name
+  try {
+    const updated = await order.update({ pickupAddress });
+    await updated.shipOrder(orderShipped);
+  } catch (error) {
+    console.error({ func, error, order });
+    throw new Error(error);
+  }
+}
+
+/**
+ * Implements the order service workflow.
+ */
 const OrderActions = {
-  [OrderStatus.PENDING]: () => void 0,
+
   /** @param {Order} order */
-  [OrderStatus.APPROVED]: async (order) => {
+  [OrderStatus.PENDING]: async (order) => {
+    const func = OrderStatus.PENDING;
     try {
-      await order.completePayment();
-      await order.shipOrder(orderShipped);
+      const addrRsp = await order.validateAddress();
+      const payment = await order.authorizePayment();
+      const { address, isSingleFamily } = addrRsp;
+      order.update({
+        shippingAddress: address,
+        paymentAuthorization: payment,
+        signatureRequired: !isSingleFamily
+      });
     } catch (error) {
+      console.error({ func, error, order });
       throw new Error(error);
     }
   },
+
   /** @param {Order} order */
-  [OrderStatus.SHIPPING]: async (order) => order.trackShipment(orderArrived),
+  [OrderStatus.APPROVED]: async (order) => {
+    const func = OrderStatus.PENDING;
+    try {
+      await order.fillOrder(orderFilled);
+    } catch (error) {
+      console.error({ func, error, order });
+      throw new Error(error);
+    }
+  },
+
   /** @param {Order} order */
-  [OrderStatus.CANCELED]: async (order) => order.refundPayment(),
+  [OrderStatus.SHIPPING]: async (order) => {
+    const func = OrderStatus.SHIPPING;
+    try {
+      await order.trackShipment(orderReceived);
+    } catch (error) {
+      console.error({ func, error, order });
+      throw new Error(error);
+    }
+  },
+
   /** @param {Order} order */
-  [OrderStatus.COMPLETE]: async (order) => order.verifyDelivery()
+  [OrderStatus.CANCELED]: async (order) => {
+    const func = OrderStatus.SHIPPING;
+    try {
+      //await order.returnOrder(orderReturned);
+      await order.refundPayment();
+    } catch (error) {
+      console.error({ func, error, order });
+      throw new Error(error);
+    }
+  },
+
+  /** @param {Order} order */
+  [OrderStatus.COMPLETE]: async (order) => {
+    // await order.surveyCustomer();
+    console.log('customer sentiment')
+    return;
+  }
 }
 
 export async function handleStatusChange(order) {
@@ -244,8 +344,24 @@ const Order = {
       service: 'Persistence',
       type: 'outbound'
     },
+    find: {
+      service: 'Persistence',
+      type: 'outbound'
+    },
     shipOrder: {
       service: 'Shipping',
+      type: 'outbound',
+    },
+    authorizePayment: {
+      service: 'Payment',
+      type: 'outbound'
+    },
+    refundPayment: {
+      service: 'Payment',
+      type: 'outbound'
+    },
+    completePayment: {
+      service: 'Payment',
       type: 'outbound',
     },
     trackShipment: {
@@ -264,18 +380,10 @@ const Order = {
       service: 'Address',
       type: 'outbound'
     },
-    authorizePayment: {
-      service: 'Payment',
+    fillOrder: {
+      service: 'Inventory',
       type: 'outbound'
-    },
-    refundPayment: {
-      service: 'Payment',
-      type: 'outbound'
-    },
-    completePayment: {
-      service: 'Payment',
-      type: 'outbound',
-    },
+    }
   },
   factory: function (dependencies) {
     return async function createOrder({
@@ -288,32 +396,24 @@ const Order = {
     }) {
       checkItems(orderItems);
       checkFormat(creditCardNumber, 'creditCard');
-      const {
-        uuid,
-        validateAddress,
-        authorizePayment
-      } = dependencies;
-      const shipAddr = await validateAddress(shippingAddress);
-      const payAuth = await authorizePayment({
-        customerInfo,
-        creditCardNumber,
-        billingAddress,
-        totalCharge: calcTotal(orderItems)
-      });
       const order = {
         customerInfo,
         orderItems,
         creditCardNumber,
         billingAddress,
         signatureRequired,
-        shippingAddress: shipAddr,
+        shippingAddress,
         [customerId]: null,
-        [paymentAuthorization]: payAuth,
+        [paymentAuthorization]: null,
         [orderTotal]: calcTotal(orderItems),
         [orderStatus]: OrderStatus.PENDING,
         [proofOfDelivery]: null,
+        [trackingId]: null,
         [cancelReason]: null,
-        [orderNo]: uuid()
+        [orderNo]: dependencies.uuid(),
+        async update(changes) {
+          return updateOrder(this, changes);
+        }
       };
       return Object.freeze(order);
     }
@@ -359,9 +459,10 @@ const Order = {
   onUpdate: processUpdate,
   onDelete: model => readyToDelete(model),
   eventHandlers: [
-    async ({ model, changes }) => {
-      if (changes?.orderStatus) {
-        await handleStatusChange(model);
+    async ({ model: order, eventName, changes }) => {
+      if (changes?.orderStatus || eventName === 'CREATEORDER') {
+        order.save();
+        await handleStatusChange(order);
       }
     }
   ]
