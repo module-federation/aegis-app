@@ -16,23 +16,27 @@
  * @type {adapterFactory}
  */
 export function authorizePayment(service) {
-  return async function ({ model: order }) {
-    return service.authorizePayment(order);
+  return async function ({ model: order, resolve }) {
+    console.log(authorizePayment);
+    const paymentAuthorization = await service.authorizePayment(order);
+    order.update({ paymentAuthorization }).then(order => resolve(order));
   }
 }
 /**
  * @type {adapterFactory}
  */
 export function completePayment(service) {
-  return async function ({ model }) {
-    service.completePayment({ model });
+  return async function ({ model: order, resolve, args: [callback] }) {
+    await service.completePayment({ order });
+    callback({ order, resolve });
   }
 }
 /**
  * @type {adapterFactory}
  */
 export function refundPayment(service) {
-  return async function ({ model: order, parms }) {
-    service.refundPayment({ model, parms });
+  return async function ({ model: order, resolve }) {
+    await service.refundPayment({ order });
+    resolve(order);
   }
 } 

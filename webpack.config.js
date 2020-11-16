@@ -39,15 +39,16 @@ var serverConfig = {
       library: { type: 'commonjs-module' },
       filename: 'remoteEntry.js',
       exposes: {
-        './service1': './src/services/service1',
-        './publish-event': './src/services/publish-event',
+        './service1': './src/services-mock/service1',
+        './publish-event': './src/services-mock/publish-event',
         './models': './src/models',
         './adapters': './src/adapters',
         './orderService': '/src/services/order-service',
-        './eventService': '/src/services-prod/event-service',
-        './paymentService': '/src/services-prod/payment-service',
-        './shippingService': '/src/services-prod/shipping-service',
-        './addressService': '/src/services-prod/address-service'
+        './eventService': '/src/services/event-service',
+        './paymentService': '/src/services/payment-service',
+        './shippingService': '/src/services/shipping-service',
+        './addressService': '/src/services/address-service',
+        './inventoryService': '/src/services/inventory-service'
       },
       shared: {
         'axios': {

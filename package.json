@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "./dist/main.js",
+  "installConfig": {
+    "pnp": false
+  },
   "scripts": {
     "build": "npm run clean && webpack --config webpack.config.js",
     "start": "node dist/main.js",
@@ -23,6 +26,7 @@
     "express-session": "^1.17.1",
     "kafkajs": "^1.14.0",
     "smartystreets-javascript-sdk": "^1.6.0",
+    "webpack": "^5.0.0-beta.28",
     "ws": "^7.3.1"
   },
   "devDependencies": {
@@ -37,7 +41,6 @@
     "express-cli": "0.0.1",
     "mocha": "^8.2.0",
     "nodemon-webpack-plugin": "^4.3.2",
-    "webpack": "^5.0.0-beta.28",
     "webpack-cli": "^3.3.12",
     "webpack-node-externals": "^2.5.2"
   }

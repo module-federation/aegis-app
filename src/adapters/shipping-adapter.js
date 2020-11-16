@@ -28,38 +28,39 @@
  * @returns {function({model:Order,parms:[eventCallback]})} 
  */
 
-import { ORDERTOPIC } from './event-adapter'
-
-
 /**
  * 
  * @type {adapterFactory}
  */
 export function shipOrder(service) {
-  return async function ({ model: order, parms: [callback] }) {
-    if (callback) {
-      await order.listen({
-        topic: ORDERTOPIC,
-        once: true,
-        model: order,
-        id: order.orderNo,
-        filter: order.orderNo,
-        callback: ({ message, subscription }) => {
-          console.info({
-            event: 'order shipped',
-            message,
-            subscribers: subscription.getSubscriptions()
-          });
-          return callback({ message, order: subscription.getModel() });
-        },
-      });
-    }
-    await service.shipOrder({
-      creditCard: order.decrypt().creditCardNumber,
-      shippingAddress: order.decrypt().shippingAddress,
-      items: order.orderItems,
-      orderNum: order.orderNo
+
+  return async function ({ model: order, resolve, args: [callback, options] }) {
+
+    await order.listen({
+      once: true,
+      model: order,
+      id: order.orderNo,
+      topic: 'orderChannel',
+      filter: order.orderNo,
+      callback: async ({ message, subscription }) => {
+        const event = JSON.parse(message);
+        console.log(event);
+        const eventName = event.eventName;
+        const shipmentId = event.eventData.shipmentId;
+        callback({ order, shipmentId, eventName, resolve });
+      }
     });
+
+    await service.shipOrder({
+      shipTo: order.decrypt().shippingAddress,
+      shipFrom: order.pickupAddress,
+      lineItems: order.orderItems,
+      externalId: order.orderNo
+    });
+
+    if (options?.resolve) {
+      resolve(order);
+    }
   }
 }
 
@@ -67,25 +68,29 @@ export function shipOrder(service) {
  * @type {adapterFactory}
  */
 export function trackShipment(service) {
-  return async function ({ model: order, parms: [callback] }) {
-    if (callback) {
-      await order.listen({
-        topic: ORDERTOPIC,
-        once: true,
-        model: order,
-        filter: order.orderNo,
-        callback: ({ message, subscription }) => {
-          console.info({
-            event: 'orderArrived',
-            message,
-            subscribers: subscription.getSubscriptions()
-          });
-          return callback({ message, order: subscription.getModel() });
-        },
-      });
+  return async function ({ model: order, resolve, args: [callback, options] }) {
+
+    console.log('order.shipmentId %s', order.shipmentId);
+    await order.listen({
+      once: false,
+      model: order,
+      id: order.orderNo,
+      topic: 'orderChannel',
+      filter: order.shipmentId,
+      callback: ({ message }) => {
+        const event = JSON.parse(message);
+        console.log(event);
+        const trackingId = event.eventData.trackingId;
+        const trackingStatus = event.eventData.trackingStatus;
+        callback({ order, trackingId, trackingStatus, resolve });
+      }
+    });
+
+    await service.trackShipment(order.shipmentId);
+
+    if (options?.resolve) {
+      resolve(order);
     }
-    const trackingId = await service.trackShipment(order.orderNo);
-    return order.update({ trackingId });
   }
 }
 
@@ -94,26 +99,27 @@ export function trackShipment(service) {
  * @type {adapterFactory}
  */
 export function verifyDelivery(service) {
-  return async function ({ model: order, parms: [callback] }) {
-    if (callback) {
-      await order.listen({
-        topic: ORDERTOPIC,
-        once: true,
-        model: order,
-        filter: order.orderNo,
-        callback: ({ message, subscription }) => {
-          console.info({
-            event: 'proofOfDelivery',
-            message,
-            subscribers: subscription.getSubscriptions()
-          });
-          return callback({
-            response: JSON.parse(message),
-            order: subscription.getModel()
-          });
-        },
-      });
+  return async function ({ model: order, resolve, args: [callback, options] }) {
+
+    order.listen({
+      once: true,
+      model: order,
+      id: order.orderNo,
+      topic: 'orderChannel',
+      filter: order.trackingId,
+      callback: ({ message }) => {
+        const event = JSON.parse(message);
+        console.log(event);
+        const eventName = event.eventData.eventName;
+        const proofOfDelivery = event.eventData.proofOfDelivery;
+        callback({ order, proofOfDelivery, eventName, resolve });
+      }
+    });
+
+    await service.verifyDelivery(order.trackingId);
+
+    if (options?.resolve) {
+      resolve(order);
     }
-    return service.verifyDelivery(order.trackingId);
   }
-}
+} 

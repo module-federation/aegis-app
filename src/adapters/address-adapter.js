@@ -11,16 +11,16 @@
  * @returns {function({model:Order})} - verified/corrected address
  */
 
-
-
 /**
  * 
  * @type {adapterFactory} 
  */
 export function validateAddress(service) {
-  return async function ({ model: order }) {
-    return service.validateAddress(
+  return async function ({ model: order, resolve }) {
+    console.log(validateAddress)
+    const shippingAddress = await service.validateAddress(
       order.decrypt().shippingAddress
     );
+    order.update({ shippingAddress }).then(order => resolve(order));
   }
 }

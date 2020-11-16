@@ -45,7 +45,7 @@ import GlobalMixins from './mixins'
 
 // Dependencies
 import { uuid } from '../lib/utils';
-import * as services from '../services'
+import * as services from '../services-mock'
 import * as adapters from '../adapters'
 
 // Models
@@ -68,7 +68,7 @@ function validateModel(model) {
 }
 
 function makeAdapters(ports) {
-  if (!ports || !adapters || !services) {
+  if (!ports || !adapters) {
     return;
   }
   return Object.keys(ports).map(port => {
@@ -76,7 +76,7 @@ function makeAdapters(ports) {
       return;
     }
     try {
-      if (adapters[port] && services[ports[port].service]) {
+      if (adapters[port]) {
         return {
           [port]: adapters[port](
             services[ports[port].service]

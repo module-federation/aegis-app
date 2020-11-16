@@ -1,7 +1,11 @@
 'use strict'
 
+import { Event } from '../services/event-service';
+
 /**
- * @typedef {import('../models/order').Order} Order
+ * @typedef {{
+ *  getModel:import('../models').Model,
+ * }} Subscription
  * @typedef {string|RegExp} topic
  * @callback eventHandler
  * @param {string} eventData
@@ -16,33 +20,21 @@
  */
 
 /**
- * @type {Map<any,Map<string,Subscription>>}
+ * @type {Map<any,Map<string,*>>}
  */
 const subscriptions = new Map();
 
-export const ORDERTOPIC = 'orderChannel';
-
-
 /**
- * @typedef {{
- *  getSubscriptions:function(),
- *  unsubscribe:function(),
- *  filter:function(string),
- *  getModel:function():Order
- * }} Subscription
- * 
  * @typedef {string} message
  * @typedef {string|RegExp} topic 
- * 
  * @param {{
  *  id:string,
  *  callback:function(message,Subscription),
  *  topic:topic,
- *  filter:RegExp,
+ *  filter:string|RegExp,
  *  once:boolean,
  *  model:object
  * }} options
- * @returns {Subscription}
  */
 const Subscription = function ({
   id, callback, topic, filter, once, model
@@ -76,43 +68,46 @@ const Subscription = function ({
         const regex = new RegExp(filter);
 
         if (regex.test(message)) {
-          await callback({ message, subscription: this });
-
           if (once) {
             this.unsubscribe();
           }
+          callback({ message, subscription: this });
         }
         return;
       }
-      await callback({ message, subscription: this });
+      callback({ message, subscription: this });
     }
   }
 }
 
 /**
+ *
  * @type {adapterFactory}
  */
-export function listen(service) {
-
+export function listen(service = Event) {
   return async function ({
-    model, parms: [{ id, callback, topic, filter, once }]
+    model, resolve, args: [{ topic, callback, filter, once, id, options }]
   }) {
     const subscription = Subscription({
-      id, callback, topic, filter, once, model
+      id, topic, callback, filter, once, model
     });
 
     if (subscriptions.has(topic)) {
       subscriptions.get(topic).set(id, subscription);
+      resolve(subscription);
       return;
     }
 
     subscriptions.set(topic, new Map().set(id, subscription));
-    service.listen(topic, async function ({ topic, message }) {
-      subscriptions.get(topic).forEach(async subscription => {
-        subscription.filter(message);
+
+    if (!service.listening) {
+      service.listen(/Channel/, async function ({ topic, message }) {
+        subscriptions.get(topic).forEach(async subscription => {
+          subscription.filter(message);
+        });
       });
-    });
-    return subscription;
+    }
+    resolve(subscription);
   }
 }
 
@@ -120,8 +115,9 @@ export function listen(service) {
  * @type {adapterFactory}
  * @returns {function(topic, eventData)}
  */
-export async function notify(service) {
-  return async function ({ parms: [topic, message] }) {
-    service.notify(topic, message);
+export function notify(service = Event) {
+  return async function ({ model, resolve, args: [topic, message] }) {
+    await service.notify(topic, message);
+    resolve(model);
   }
 }

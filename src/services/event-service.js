@@ -1,21 +1,55 @@
 'use strict'
-const observers = new Map();
+
+import { Kafka } from 'kafkajs';
+
+const kafka = new Kafka({
+  clientId: 'fedmon',
+  brokers: ['localhost:9092']
+})
+
+const consumer = kafka.consumer({ groupId: 'test-group' });
+const producer = kafka.producer();
 
 export const Event = {
 
-  listen(topic, callback) {
-    console.log({ desc: 'test', topic, callback });
+  listening: false,
 
-    if (observers.has(topic)) {
-      observers.get(topic).push(callback);
-      return;
+  /**
+   * 
+   * @param {string|RegExp} topic 
+   * @param {function({message, topic})} callback 
+   */
+  async listen(topic, callback) {
+    try {
+      await consumer.connect();
+      await consumer.subscribe({ topic: topic, fromBeginning: true });
+      this.listening = true;
+      await consumer.run({
+        eachMessage: async ({ topic, message }) => callback({
+          topic, message: message.value.toString()
+        })
+      });
+    } catch (e) {
+      throw e;
     }
-    observers.set(topic, [callback]);
   },
 
-  async notify({ topic, event }) {
-    observers.get(topic).forEach(
-      async callback => callback(topic, event)
-    );
-  },
+  async notify(topic, message) {
+    await producer.connect()
+    await producer.send({
+      topic: topic,
+      messages: [
+        { value: message },
+      ],
+    });
+    await producer.disconnect();
+  }
 }
+
+
+
+
+
+
+
+

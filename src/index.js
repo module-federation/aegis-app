@@ -8,6 +8,7 @@ const bodyParser = require("body-parser");
 const WebSocket = require('ws');
 const { uuid } = require('./lib/utils');
 require('dotenv').config();
+// const Event = require('./services/event-service').Event;
 
 const app = express();
 const map = new Map();
@@ -19,6 +20,16 @@ const PORT = 8060;
 // list the models we expose to host through module federation
 import * as models from './models';
 Object.keys(models).forEach(key => console.log({ key, value: models[key] }))
+
+  // (async () => {
+  //   await Event.listen(/CommandChannel/, ({ topic, message }) => {
+  //     switch(topic) {
+  //       case 'inventoryCommandChannel':
+  //         Event.notify()
+  //     }
+  //   });
+  // })();
+
 
 // We need the same instance of the session parser in express and
 // WebSocket server.
@@ -110,6 +121,8 @@ wss.on('connection', function (ws, request) {
     map.delete(userId);
   });
 });
+
+
 
 // Start the server.
 server.listen(PORT, function () {

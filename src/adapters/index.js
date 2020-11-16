@@ -7,7 +7,8 @@ export * from './event-adapter'
 export * from './inventory-adapter'
 
 /**
- * @typedef {function(function(eventCallback))} adapterFunction
+ * @typedef {import('../models').Model} Model
+ * @typedef {function(function(eventCallback):Model)} adapterFunction
  */
 
 
