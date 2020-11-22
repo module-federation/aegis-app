@@ -105,7 +105,7 @@ function updateMixins(type, o, name, cb) {
  * Names (or functions that return names) of properties
  * @returns {string[]} list of (resolved) property keys
  */
-function getDynamicProps(o, ...propKeys) {
+function getConditionalProps(o, ...propKeys) {
   return propKeys.map(k => typeof k === 'function' ? k(o) : k);
 }
 
@@ -116,7 +116,7 @@ function getDynamicProps(o, ...propKeys) {
  * @returns {mixinFunction} mixin function
  */
 const encryptProperties = (...propKeys) => (o) => {
-  const keys = getDynamicProps(o, ...propKeys);
+  const keys = getConditionalProps(o, ...propKeys);
 
   const encryptProps = () => {
     return keys.map(key => o[key]
@@ -150,7 +150,8 @@ const encryptProperties = (...propKeys) => (o) => {
  */
 const freezeProperties = (isUpdate, ...propKeys) => (o) => {
   const preventUpdates = () => {
-    const keys = getDynamicProps(o, ...propKeys);
+    const keys = getConditionalProps(o, ...propKeys);
+
     const mutations = Object.keys(o)
       .filter(key => keys.includes(key));
 
@@ -177,7 +178,7 @@ const freezeProperties = (isUpdate, ...propKeys) => (o) => {
  * required property names
  */
 const requireProperties = (...propKeys) => (o) => {
-  const keys = getDynamicProps(o, ...propKeys);
+  const keys = getConditionalProps(o, ...propKeys);
 
   const missing = keys.filter(key => key && !o[key]);
   if (missing?.length > 0) {
@@ -196,7 +197,7 @@ const requireProperties = (...propKeys) => (o) => {
  * @param  {Array<string | function(*):string>} propKeys name of password props
  */
 const hashPasswords = (hash, ...propKeys) => (o) => {
-  const keys = getDynamicProps(o, ...propKeys);
+  const keys = getConditionalProps(o, ...propKeys);
 
   function hashPwds() {
     return keys.map(key => o[key]
@@ -226,7 +227,7 @@ const internalPropList = ['decrypt'];
 const allowProperties = (isUpdate, ...propKeys) => (o) => {
 
   function rejectUnknownProps() {
-    const keys = getDynamicProps(o, ...propKeys);
+    const keys = getConditionalProps(o, ...propKeys);
     const allowList = keys.concat(internalPropList);
 
     const unknownProps = Object.keys(o).filter(
@@ -284,13 +285,9 @@ export const RegEx = {
  * @param {Object} o - the property owner
  * @param {*} propVal - the property value
  * @returns {boolean} - true if valid
- */
-
-/**
+ * 
  * @typedef {'email'|'phone'|'ipv4Address'|'ipv6Address'|'creditCard'|'ssn'|RegExp} regexType
- */
-
-/**
+ * 
  * @typedef {{
  *  propKey:string,
  *  isValid?:isValid,
@@ -361,9 +358,7 @@ const validateProperties = (validations) => (o) => {
  * @param {Object} o  
  * @param  {*} propVal 
  * @returns {Object} object with updated properties
- */
-
-/**
+ * 
  * @typedef {{
  * propKey: string,
  * update: updaterFn
@@ -467,12 +462,12 @@ export function updatePropertiesMixin(updaters) {
 }
 
 /**
- * Return dynamic property function 
+ * Check the value of the property before returning its key.
  * @param {*} propKey 
  * @param {regexType} expr 
  * @returns {function(any):any} dynamic property func
  */
-export const checkFormatDynamic = (propKey, expr) => (o) => {
+export const withCorrectFormat = (propKey, expr) => (o) => {
   if (o[propKey] && !RegEx.test(expr, o[propKey])) {
     throw new Error(`invalid ${propKey}`);
   }
@@ -499,11 +494,11 @@ const encryptPersonalInfo = encryptProperties(
   'address',
   'shippingAddress',
   'billingAddress',
-  checkFormatDynamic('email', 'email'),
-  checkFormatDynamic('phone', 'phone'),
-  checkFormatDynamic('mobile', 'phone'),
-  checkFormatDynamic('creditCardNumber', 'creditCard'),
-  checkFormatDynamic('ssn', 'ssn')
+  withCorrectFormat('email', 'email'),
+  withCorrectFormat('phone', 'phone'),
+  withCorrectFormat('mobile', 'phone'),
+  withCorrectFormat('creditCardNumber', 'creditCard'),
+  withCorrectFormat('ssn', 'ssn')
 );
 
 /**

@@ -35,6 +35,7 @@
 export function shipOrder(service) {
 
   return async function ({ model: order, resolve, args: [callback, options] }) {
+    console.log(shipOrder.name);
 
     await order.listen({
       once: true,
@@ -42,21 +43,30 @@ export function shipOrder(service) {
       id: order.orderNo,
       topic: 'orderChannel',
       filter: order.orderNo,
-      callback: async ({ message, subscription }) => {
+      callback: async ({ message }) => {
         const event = JSON.parse(message);
         console.log(event);
-        const eventName = event.eventName;
         const shipmentId = event.eventData.shipmentId;
-        callback({ order, shipmentId, eventName, resolve });
+        callback({ order, shipmentId, resolve });
       }
     });
 
-    await service.shipOrder({
-      shipTo: order.decrypt().shippingAddress,
-      shipFrom: order.pickupAddress,
-      lineItems: order.orderItems,
-      externalId: order.orderNo
-    });
+    await order.notify('shippingChannel', JSON.stringify({
+      eventType: 'Command',
+      eventName: 'shipOrder',
+      eventTime: new Date().toUTCString(),
+      eventData: {
+        replyChannel: 'orderChannel',
+        commandName: 'shipOrder',
+        commandArgs: {
+          shipTo: order.decrypt().shippingAddress,
+          shipFrom: order.pickupAddress,
+          lineItems: order.orderItems,
+          externalId: order.orderNo
+        }
+      },
+      eventSource: 'orderService'
+    }));
 
     if (options?.resolve) {
       resolve(order);
@@ -70,13 +80,12 @@ export function shipOrder(service) {
 export function trackShipment(service) {
   return async function ({ model: order, resolve, args: [callback, options] }) {
 
-    console.log('order.shipmentId %s', order.shipmentId);
     await order.listen({
       once: false,
       model: order,
       id: order.orderNo,
       topic: 'orderChannel',
-      filter: order.shipmentId,
+      filter: order.orderNo,
       callback: ({ message }) => {
         const event = JSON.parse(message);
         console.log(event);
@@ -86,7 +95,21 @@ export function trackShipment(service) {
       }
     });
 
-    await service.trackShipment(order.shipmentId);
+    await order.notify('shippingChannel', JSON.stringify({
+      eventData: {
+        commandArgs: {
+          shipmentId: order.shipmentId,
+          externalId: order.orderNo,
+          trackingId: order.trackingId
+        },
+        commandName: 'trackShipment',
+        replyChannel: 'orderChannel',
+      },
+      eventType: 'Command',
+      eventName: 'trackShipment',
+      eventTime: new Date().toUTCString(),
+      eventSource: 'orderService'
+    }));
 
     if (options?.resolve) {
       resolve(order);
@@ -106,17 +129,29 @@ export function verifyDelivery(service) {
       model: order,
       id: order.orderNo,
       topic: 'orderChannel',
-      filter: order.trackingId,
+      filter: order.orderNo,
       callback: ({ message }) => {
         const event = JSON.parse(message);
         console.log(event);
-        const eventName = event.eventData.eventName;
         const proofOfDelivery = event.eventData.proofOfDelivery;
-        callback({ order, proofOfDelivery, eventName, resolve });
+        callback({ order, proofOfDelivery, resolve });
       }
     });
 
-    await service.verifyDelivery(order.trackingId);
+    await order.notify('shippingChannel', JSON.stringify({
+      eventData: {
+        commandArgs: {
+          trackingId: order.trackingId,
+          externalId: order.orderNo
+        },
+        replyChannel: 'orderChannel',
+        commandName: 'verifyDelivery',
+      },
+      eventType: 'Command',
+      eventName: 'verifyDelivery',
+      eventTime: new Date().toUTCString(),
+      eventSource: 'orderService'
+    }));
 
     if (options?.resolve) {
       resolve(order);

@@ -25,7 +25,7 @@ export const Inventory = {
         callback: ({ message }) => {
           const event = JSON.parse(message);
           const warehouse_addr = '1234 warehouse dr, dock 2';
-          const externalId = event.eventData.commandArguments.externalId;
+          const externalId = event.eventData.commandArgs.externalId;
           sendEvent(order, {
             topic: event.eventData.replyChannel,
             eventName: 'orderFilled',

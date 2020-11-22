@@ -1,34 +1,14 @@
 'use strict'
 
+import { response } from 'express';
+
 const axios = require('axios');
 
-class OrderAdapter {
-  get orderId() {
-    return this._orderId;
-  }
-  set orderId(value) {
-    this._orderId = value;
-  }
-  get orderInfo() {
-    return this._orderInfo;
-  }
-  set orderInfo(value) {
-    this._orderInfo = value;
-  }
-  get order() {
-    return this._order;
-  }
-  set order(value) {
-    this._order = value;
-  }
-  get adapter() {
-    return this._adapter;
-  }
-  set adapter(value) {
-    this._adapter = value;
-  }
+export class OrderAdapter {
 
-  constructor({
+  constructor() { }
+
+  addOrder({
     customerInfo,
     orderItems = [],
     creditCardNumber,
@@ -41,7 +21,8 @@ class OrderAdapter {
       creditCardNumber,
       shippingAddress,
       billingAddress,
-    };
+    }
+    return this;
   }
 
   addOrderItem(itemId, price, qty = 1) {
@@ -58,27 +39,11 @@ class OrderAdapter {
     return this;
   }
 
-  createOrder() {
+  async createOrder() {
     throw new Error('unimplemented abstract method');
   }
 
-  submitOrder() {
-    throw new Error('unimplemented abstract method');
-  }
-
-  fillOrder() {
-    throw new Error('unimplemented abstract method');
-  }
-
-  shipOrder() {
-    throw new Error('unimplemented abstract method');
-  }
-
-  trackShipment() {
-    throw new Error('unimplemented abstract method');
-  }
-
-  verifyDelivery() {
+  async submitOrder(orderId = this.orderId) {
     throw new Error('unimplemented abstract method');
   }
 
@@ -91,57 +56,61 @@ class OrderAdapter {
   }
 }
 
-export class LocalOrderAdapter extends OrderAdapter {
-  /**
-   * @override 
-   */
-  createOrder() {
-    const Order = require('../models').Order;
-    const createOrder = Order.factory(Order.dependencies);
-    this.order = await createOrder(this.orderInfo)
-      .then(order => compose(...Order.mixins)(order));
-    this.orderId = this.order.orderId;
-    return this;
-  }
+// export class LocalOrderAdapter extends OrderAdapter {
+//   /**
+//    * @override 
+//    */
+//   createOrder() {
+//     const Order = require('../models').Order;
+//     const createOrder = Order.factory(Order.dependencies);
+//     this.order = await createOrder(this.orderInfo)
+//       .then(order => compose(...Order.mixins)(order));
+//     this.orderId = this.order.orderId;
+//     return this;
+//   }
 
-  async handleStatusChange(status) {
-    require('../models/order').statusChangeValid(this.order, status);
-    await require('../models/order').handleStatusChange({
-      ...this.order,
-      orderStatus: status,
-    });
-  }
+//   async handleStatusChange(status) {
+//     require('../models/order').statusChangeValid(this.order, status);
+//     await require('../models/order').handleStatusChange({
+//       ...this.order,
+//       orderStatus: status,
+//     });
+//   }
 
-  submitOrder() {
-    await this.handleStatusChange('APPROVED');
-    return this;
-  }
+//   submitOrder() {
+//     await this.handleStatusChange('APPROVED');
+//     return this;
+//   }
 
-  fillOrder() {
-  }
-  shipOrder() {
-  }
-  trackShipment() {
-  }
-  verifyDelivery() {
-  }
-  completeOrder() {
-  }
-  cancelOrder() {
-    await this.handleStatusChange('CANCELED');
-    return this;
-  }
-}
+//   fillOrder() {
+//   }
+//   shipOrder() {
+//   }
+//   trackShipment() {
+//   }
+//   verifyDelivery() {
+//   }
+//   completeOrder() {
+//   }
+//   cancelOrder() {
+//     await this.handleStatusChange('CANCELED');
+//     return this;
+//   }
+// }
 
 export class RestOrderAdapter extends OrderAdapter {
+
+  constructor(url) {
+    super();
+    this.url = url;
+  }
   /**
    * @override 
    */
-  createOrder() {
+  async createOrder() {
     return axios.post(
-      orderServiceUrl,
-      this.orderInfo
-    ).then((response) => {
+      this.url, this.orderInfo
+    ).then(response => {
       this.orderId = response.data.modelId;
       return this;
     }, (error) => {
@@ -150,21 +119,36 @@ export class RestOrderAdapter extends OrderAdapter {
     });
   }
 
-  submitOrder() {
-    if (this.local) {
-      await this.handleStatusChange('APPROVED');
-      return this;
-    }
+  /**
+   * @override
+   * @param {*} orderId 
+   */
+  async submitOrder(orderId = this.orderId) {
     return axios.patch(
-      orderServiceUrl + orderId,
+      this.url + orderId,
       { orderStatus: 'APPROVED' },
+    ).then(() => this, error => {
+      console.error(error.response.data);
+      throw new Error(error);
+    });
+  }
+
+  async getOrder(orderId = this.orderId) {
+    return axios.get(
+      this.url + orderId
     ).then((response) => {
-      this.orderId = response.data.modelId;
-      return this;
+      console.log(response.data);
+      this.order = response.data.model;
+      return this.order;
     }, (error) => {
       console.error(error.response.data);
       throw new Error(error);
     });
+  }
+
+  async getOrderStatus(orderId = this.orderId) {
+    const order = await this.getOrder(orderId);
+    return order.orderStatus;
   }
 
   fillOrder() {
@@ -173,7 +157,7 @@ export class RestOrderAdapter extends OrderAdapter {
 
   shipOrder() {
     return axios.patch(
-      orderServiceUrl + orderId,
+      this.url + orderId,
       { orderStatus: 'SHIPPING' },
     ).then((response) => {
       this.orderId = response.data.modelId;
@@ -194,7 +178,7 @@ export class RestOrderAdapter extends OrderAdapter {
 
   completeOrder() {
     return axios.patch(
-      orderServiceUrl + orderId,
+      this.url + orderId,
       { orderStatus: 'COMPLETE', proofOfDelivery: pod },
     ).then((response) => {
       this.orderId = response.data.modelId;
@@ -207,7 +191,7 @@ export class RestOrderAdapter extends OrderAdapter {
 
   cancelOrder() {
     return axios.patch(
-      orderServiceUrl + orderId,
+      this.url + orderId,
       { orderStatus: 'CANCELED', cancelReason: reason },
     ).then((response) => {
       this.orderId = response.data.modelId;

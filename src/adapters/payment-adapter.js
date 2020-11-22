@@ -1,5 +1,7 @@
 'use strict'
 
+import { response } from 'express';
+
 /**
  * @typedef {import('../models/order').Order} Order
  * @typedef {{
@@ -16,10 +18,9 @@
  * @type {adapterFactory}
  */
 export function authorizePayment(service) {
-  return async function ({ model: order, resolve }) {
-    console.log(authorizePayment);
+  return async function ({ model: order, resolve, args: [callback] }) {
     const paymentAuthorization = await service.authorizePayment(order);
-    order.update({ paymentAuthorization }).then(order => resolve(order));
+    callback({ order, paymentAuthorization, resolve });
   }
 }
 /**
@@ -34,9 +35,9 @@ export function completePayment(service) {
 /**
  * @type {adapterFactory}
  */
-export function refundPayment(service) {
-  return async function ({ model: order, resolve }) {
+export default function refundPayment(service) {
+  return async function ({ model: order, resolve, args: [callback] }) {
     await service.refundPayment({ order });
-    resolve(order);
+    callback({ order, resolve });
   }
 } 

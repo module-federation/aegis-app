@@ -25,34 +25,28 @@
  * @callback adapterFactory
  * @param {service} service
  * @param {event} event
- * @returns {function({model:Order,parms:[eventCallback]})} 
+ * @returns {function({
+ * model:Order,
+ * resolve:function()
+ * ,args:[
+ * eventCallback, 
+ * options:{}]
+ * })}
+   
+ }]})} 
  *
  */
-
-
-function logEvent({
-  subscription,
-  eventInfo: {
-    eventName,
-    eventData,
-    eventSource
-  }
-}) {
-  console.info({
-    eventName,
-    eventSource,
-    eventData,
-    subscriptions: subscription.getSubscriptions()
-  });
-}
 
 /**
  * @type {adapterFactory}
  */
 export function fillOrder(service) {
 
-  return async function ({ model: order, resolve, args: [callback, options] }) {
-    service.fillOrder(order);
+  return async function ({
+    model: order,
+    resolve,
+    args: [callback, options]
+  }) {
 
     await order.listen({
       once: true,
@@ -60,12 +54,19 @@ export function fillOrder(service) {
       id: order.orderNo,
       topic: 'orderChannel',
       filter: order.orderNo,
-      callback: async ({ message }) => {
+      callback: async ({
+        message
+      }) => {
         const event = JSON.parse(message);
-        console.log(event);
+        console.log('recieved event: ', event);
         const eventName = event.eventName;
         const pickupAddress = event.eventData.warehouse_addr;
-        callback({ order, pickupAddress, eventName, resolve });
+        callback({
+          order,
+          pickupAddress,
+          eventName,
+          resolve
+        });
       }
     });
 
@@ -75,7 +76,7 @@ export function fillOrder(service) {
       eventData: {
         replyChannel: 'orderChannel',
         commandName: 'fillOrder',
-        commandArguments: {
+        commandArgs: {
           lineItems: order.orderItems,
           externalId: order.orderNo
         }

@@ -56,6 +56,9 @@ var serverConfig = {
         },
         'smartystreets-javascript-sdk': {
           eager: true
+        },
+        'kafkajs': {
+          eager: true
         }
       }
     }),

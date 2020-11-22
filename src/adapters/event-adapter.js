@@ -86,7 +86,7 @@ const Subscription = function ({
  */
 export function listen(service = Event) {
   return async function ({
-    model, resolve, args: [{ topic, callback, filter, once, id, options }]
+    model, resolve, args: [{ topic, callback, filter, once, id }]
   }) {
     const subscription = Subscription({
       id, topic, callback, filter, once, model
@@ -102,9 +102,11 @@ export function listen(service = Event) {
 
     if (!service.listening) {
       service.listen(/Channel/, async function ({ topic, message }) {
-        subscriptions.get(topic).forEach(async subscription => {
-          subscription.filter(message);
-        });
+        if (subscriptions.has(topic)) {
+          subscriptions.get(topic).forEach(async subscription => {
+            subscription.filter(message);
+          });
+        }
       });
     }
     resolve(subscription);
@@ -117,6 +119,8 @@ export function listen(service = Event) {
  */
 export function notify(service = Event) {
   return async function ({ model, resolve, args: [topic, message] }) {
+    console.log('sending...');
+    console.log({ topic, message });
     await service.notify(topic, message);
     resolve(model);
   }

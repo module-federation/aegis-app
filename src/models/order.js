@@ -1,16 +1,14 @@
 'use strict'
 
-import { authorizePayment, fillOrder, trackShipment } from '../adapters';
-import { compose } from '../lib/utils';
 import {
+  validatePropertiesMixin,
   requirePropertiesMixin,
   freezePropertiesMixin,
-  validatePropertiesMixin,
   updatePropertiesMixin,
   processUpdate,
   checkFormat,
   PREVMODEL,
-} from './mixins'
+} from './mixins';
 
 /**
  * @typedef {string|RegExp} topic
@@ -69,13 +67,12 @@ const checkItems = function (items) {
   if (!items) {
     throw new Error('order contains no items');
   }
-  const _items = Array.isArray(items)
-    ? items
-    : [items];
+  const _items = Array.isArray(items) ?
+    items : [items];
 
-  if (_items.length > 0
-    && _items.every(i => i['itemId']
-      && typeof i['price'] === 'number'
+  if (_items.length > 0 &&
+    _items.every(i => i['itemId'] &&
+      typeof i['price'] === 'number'
     )) {
     return _items;
   }
@@ -96,9 +93,9 @@ const calcTotal = function (items) {
  * @returns {string | null} the key or `null`
  */
 const freezeOnApproval = (propKey) => (o) => {
-  return o[PREVMODEL].orderStatus !== OrderStatus.PENDING
-    ? propKey
-    : null;
+  return o[PREVMODEL].orderStatus !== OrderStatus.PENDING ?
+    propKey :
+    null;
 }
 
 /**
@@ -111,9 +108,9 @@ const freezeOnCompletion = (propKey) => (o) => {
   return [
     OrderStatus.COMPLETE,
     OrderStatus.CANCELED
-  ].includes(o[PREVMODEL].orderStatus)
-    ? propKey
-    : null;
+  ].includes(o[PREVMODEL].orderStatus) ?
+    propKey :
+    null;
 }
 
 /**
@@ -126,9 +123,9 @@ const requiredForCompletion = (propKey) => (o) => {
   if (!o.orderStatus) {
     return;
   }
-  return o.orderStatus === OrderStatus.COMPLETE
-    ? propKey
-    : void 0;
+  return o.orderStatus === OrderStatus.COMPLETE ?
+    propKey :
+    void 0;
 }
 
 const invalidStatusChange = (from, to) => (o, propVal) => {
@@ -161,6 +158,15 @@ export const statusChangeValid = (o, propVal) => {
   return true;
 }
 
+/**
+ * Recalculate order total
+ * @param {object} o - the object (order)
+ * @param {number} propVal - the property value
+ */
+const recalcTotal = (o, propVal) => ({
+  orderTotal: calcTotal(propVal)
+})
+
 /** 
  * Don't delete orders before they're complete.
  */
@@ -175,7 +181,10 @@ function readyToDelete(model) {
 }
 
 function handleError(error, func) {
-  console.error({ func, error });
+  console.error({
+    func,
+    error
+  });
   throw new Error(error);
 }
 
@@ -204,9 +213,17 @@ async function updateOrder(order, changes) {
   return updated;
 }
 
-async function paymentCompleted({ order, resolve }) {
-  order.update({ orderStatus: OrderStatus.COMPLETE })
-    .then(order => handleStatusChange(order))
+/**
+ * 
+ * @param {*} param0 
+ */
+async function paymentCompleted({
+  order,
+  resolve
+}) {
+  order.update({
+    orderStatus: OrderStatus.COMPLETE
+  })
     .then(order => resolve(order))
     .catch(error => handleError(error, paymentCompleted.name))
 }
@@ -216,11 +233,37 @@ async function paymentCompleted({ order, resolve }) {
  * @param {*} param0 
  */
 async function deliveryVerified({
-  order, resolve, proofOfDelivery, trackingStatus
+  order,
+  proofOfDelivery,
+  trackingStatus
 }) {
-  order.update({ proofOfDelivery })
+  order.update({
+    proofOfDelivery
+  })
     .then(order => order.completePayment(paymentCompleted))
+    .then(order => handleStatusChange(order))
     .catch(error => handleError(error, deliveryVerified.name));
+}
+
+/**
+ * 
+ * @param {*} status 
+ * @param {*} resolve 
+ * @param {*} order 
+ */
+async function handleTrackingUpdate({
+  status,
+  order
+}) {
+  try {
+    if (status === 'orderDelivered') {
+      await order.verifyDelivery(deliveryVerified, {
+        resolve: true
+      });
+    }
+  } catch (error) {
+    handleError(error, handleTrackingUpdate.name);
+  }
 }
 
 /**
@@ -228,26 +271,39 @@ async function deliveryVerified({
  * @param {{order: Order }} param0 
  */
 async function trackingUpdate({
-  order, trackingId, trackingStatus, resolve
+  order,
+  trackingId,
+  trackingStatus,
+  resolve
 }) {
-  order.update({ trackingId, trackingStatus })
-    .then(async order => {
-      if (trackingStatus === 'orderDelivered') {
-        resolve(order);
-        await order.verifyDelivery(deliveryVerified, { resolve: true });
-      }
-    }).catch(error => handleError(error, trackingUpdate.name));
+  order.update({
+    trackingId,
+    trackingStatus
+  })
+    .then(order => handleTrackingUpdate({
+      trackingStatus,
+      order
+    }))
+    .catch(error => handleError(error, trackingUpdate.name));
 }
 
 /**
  * Callback invoked by shipping adapter when order is shipped.
  * @param {{
- *  message:string,
+ *  shipmentId:string,
+ *  resolve:function(),
  *  subscription:import('../adapters/event-adapter').Subscription 
- * }} param0 
+ * }} options 
  */
-async function orderShipped({ order, shipmentId, resolve }) {
-  const changes = { shipmentId, orderStatus: OrderStatus.SHIPPING };
+async function orderShipped({
+  order,
+  shipmentId,
+  resolve
+}) {
+  const changes = {
+    shipmentId,
+    orderStatus: OrderStatus.SHIPPING
+  };
   order.update(changes)
     .then(order => resolve(order))
     .catch(error => handleError(error, orderShipped.name));
@@ -255,13 +311,50 @@ async function orderShipped({ order, shipmentId, resolve }) {
 
 /**
  * In stock, ready for pickup
- * @param {{order: Order }} param0 
+ * @param {{ order: Order }} param0 
  */
-async function orderFilled({ order, pickupAddress }) {
-  order.update({ pickupAddress })
+async function orderFilled({
+  order,
+  pickupAddress
+}) {
+  order.update({
+    pickupAddress
+  })
     .then(order => order.shipOrder(orderShipped))
     .then(order => handleStatusChange(order))
     .catch(error => handleError(error, orderFilled.name));
+}
+
+function addressValidated({
+  order,
+  shippingAddress,
+  resolve
+}) {
+  order.update({
+    shippingAddress
+  })
+    .then(order => resolve(order))
+    .catch(error => handleError(error, addressValidated.name));
+}
+
+/**
+ * Called by adapter when port recevies response from payment service.
+ * @param {{ 
+ * order:Order, 
+ * paymentAuthorization:string, 
+ * resolve:function(Order) 
+ * }} param0 
+ */
+function paymentAuthorized({
+  order,
+  paymentAuthorization,
+  resolve
+}) {
+  order.update({
+    paymentAuthorization
+  })
+    .then(order => resolve(order)) // resolve promise
+    .catch(error => handleError(error, paymentAuthorized.name));
 }
 
 /**
@@ -277,11 +370,11 @@ const OrderActions = {
     const func = OrderStatus.PENDING;
     try {
       await Promise.all([
-        order.validateAddress(),
-        order.authorizePayment()
+        order.validateAddress(addressValidated),
+        order.authorizePayment(paymentAuthorized)
       ]);
     } catch (error) {
-      handleError(error, func);
+      handleError(error, OrderStatus.PENDING);
     }
   },
 
@@ -290,11 +383,12 @@ const OrderActions = {
    * @param {Order} order 
    */
   [OrderStatus.APPROVED]: async (order) => {
-    const func = OrderStatus.APPROVED;
     try {
-      await order.fillOrder(orderFilled, { resolve: true });
+      await order.fillOrder(orderFilled, {
+        resolve: true
+      });
     } catch (error) {
-      handleError(error, func);
+      handleError(error, OrderStatus.APPROVED);
     }
   },
 
@@ -304,11 +398,12 @@ const OrderActions = {
    */
   [OrderStatus.SHIPPING]: async (order) => {
     try {
-      await order.trackShipment(trackingUpdate, { resolve: true });
+      await order.trackShipment(trackingUpdate);
     } catch (error) {
       handleError(error, OrderStatus.SHIPPING);
     }
   },
+
   /** 
    * 
    * @param {Order} order 
@@ -326,8 +421,7 @@ const OrderActions = {
    * @param {Order} order 
    */
   [OrderStatus.COMPLETE]: async (order) => {
-    // await order.surveyCustomer();
-    console.log('customer sentiment');
+    console.log('do customer sentiment etc');
     return;
   }
 }
@@ -378,6 +472,7 @@ const Order = {
     completePayment: {
       service: 'Payment',
       type: 'outbound',
+      //disabled: true
     },
     trackShipment: {
       service: 'Shipping',
@@ -393,7 +488,8 @@ const Order = {
     },
     validateAddress: {
       service: 'Address',
-      type: 'outbound'
+      type: 'outbound',
+      //disabled: true
     },
     fillOrder: {
       service: 'Inventory',
@@ -445,34 +541,31 @@ const Order = {
       freezeOnApproval(billingAddress),
       freezeOnCompletion(orderStatus),
     ),
-    updatePropertiesMixin([
-      {
-        // Recalc total
-        propKey: orderItems,
-        update: (o, propVal) => ({
-          orderTotal: calcTotal(propVal)
-        }),
-      }
-    ]),
-    validatePropertiesMixin([
-      {
-        propKey: orderStatus,
-        values: Object.values(OrderStatus),
-        isValid: statusChangeValid,
-      },
-      {
-        propKey: orderTotal,
-        maxnum: MAXORDER
-      }
+    updatePropertiesMixin([{
+      propKey: orderItems,
+      update: recalcTotal
+    }]),
+    validatePropertiesMixin([{
+      propKey: orderStatus,
+      values: Object.values(OrderStatus),
+      isValid: statusChangeValid
+    },
+    {
+      propKey: orderTotal,
+      maxnum: MAXORDER
+    }
     ]),
   ],
   onUpdate: processUpdate,
   onDelete: model => readyToDelete(model),
   eventHandlers: [
     /** @param {{model:Order}} */
-    async ({ model: order, eventType, changes }) => {
+    async ({
+      model: order,
+      eventType,
+      changes
+    }) => {
       if (changes?.orderStatus || eventType === 'CREATE') {
-        await order.save();
         await handleStatusChange(order);
       }
     }

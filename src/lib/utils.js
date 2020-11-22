@@ -11,6 +11,14 @@ export function compose(...funcs) {
   }
 }
 
+export function composeAsync(...funcs) {
+  return function (initVal) {
+    return funcs.reduceRight(
+      (val, func) => val.then(func), Promise.resolve(initVal)
+    );
+  }
+}
+
 const passwd = 'secret';
 const algo = 'aes-192-cbc';
 const key = crypto.scryptSync(passwd, 'salt', 24);

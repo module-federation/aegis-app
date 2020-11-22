@@ -72,9 +72,6 @@ function makeAdapters(ports) {
     return;
   }
   return Object.keys(ports).map(port => {
-    if (port.disabled) {
-      return;
-    }
     try {
       if (adapters[port]) {
         return {
