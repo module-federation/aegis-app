@@ -252,11 +252,11 @@ async function deliveryVerified({
  * @param {*} order 
  */
 async function handleTrackingUpdate({
-  status,
+  trackingStatus,
   order
 }) {
   try {
-    if (status === 'orderDelivered') {
+    if (trackingStatus === 'orderDelivered') {
       await order.verifyDelivery(deliveryVerified, {
         resolve: true
       });

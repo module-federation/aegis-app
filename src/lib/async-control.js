@@ -11,4 +11,4 @@ export function controlAsync(generatorFunc) {
 
     handle(generator.next());
   }
-}
+}                                                                                                                                                                           

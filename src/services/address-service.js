@@ -7,12 +7,12 @@ const SmartyStreetsCore = SmartyStreetsSDK.core;
 const Lookup = SmartyStreetsSDK.usStreet.Lookup;
 
 // for Server-to-server requests, use this code:
-let enabled = process.env.SMARTY_ENABLED || false;
-let authId = process.env.SMARTY_AUTH_ID;
-let authToken = process.env.SMARTY_AUTH_TOKEN;
+const disabled = process.env.SMARTY_DISABLED || false;
+const authId = process.env.SMARTY_AUTH_ID;
+const authToken = process.env.SMARTY_AUTH_TOKEN;
 const credentials = new SmartyStreetsCore.StaticCredentials(authId, authToken);
 
-let client = SmartyStreetsCore.buildClient.usStreet(credentials);
+const client = SmartyStreetsCore.buildClient.usStreet(credentials);
 
 export const Address = {
   // Documentation for input fields can be found at:
@@ -26,7 +26,7 @@ export const Address = {
       return;
     }
 
-    if (!enabled) {
+    if (disabled) {
       console.log('address service disabled');
       return address;
     }
