@@ -17,7 +17,7 @@ describe('OrderService', function () {
         shippingAddress: '9612 Park Ave S, Bloomington, MN 55408',
         creditCardNumber: '378282246310005'
       }
-      const os = new OrderService(new RestOrderAdapter(url));
+      const os = new OrderService();
       const status = await os.addOrder(orderInfo)
         .addOrderItem('item1', 90.22)
         .addOrderItem('item2', 87.60)

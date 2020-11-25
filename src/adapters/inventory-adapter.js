@@ -1,5 +1,6 @@
 'use strict'
 
+
 /**
  * @typedef {string|RegExp} topic
  * @callback eventCallback
@@ -42,11 +43,11 @@
  */
 export function fillOrder(service) {
 
-  return async function ({
-    model: order,
-    resolve,
-    args: [callback, options]
-  }) {
+  return async function (options) {
+    const {
+      model: order,
+      args: [callback]
+    } = options;
 
     await order.listen({
       once: true,
@@ -59,14 +60,8 @@ export function fillOrder(service) {
       }) => {
         const event = JSON.parse(message);
         console.log('recieved event: ', event);
-        const eventName = event.eventName;
         const pickupAddress = event.eventData.warehouse_addr;
-        callback({
-          order,
-          pickupAddress,
-          eventName,
-          resolve
-        });
+        callback(options, pickupAddress);
       }
     });
 
@@ -84,9 +79,6 @@ export function fillOrder(service) {
       eventSource: 'orderService'
     }));
 
-    if (options?.resolve) {
-      resolve(order);
-    }
+    return handlePortOptions(options);
   }
-
 }

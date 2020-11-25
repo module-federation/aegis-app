@@ -8,7 +8,7 @@ import {
   processUpdate,
   checkFormat,
   PREVMODEL,
-} from './mixins';
+} from './mixins'
 
 /**
  * @typedef {string|RegExp} topic
@@ -63,6 +63,10 @@ const OrderStatus = {
   CANCELED: 'CANCELED'
 }
 
+/**
+ * 
+ * @param {*} items 
+ */
 const checkItems = function (items) {
   if (!items) {
     throw new Error('order contains no items');
@@ -79,6 +83,10 @@ const checkItems = function (items) {
   throw new Error('order items invalid');
 }
 
+/**
+ * 
+ * @param {*} items 
+ */
 const calcTotal = function (items) {
   const _items = checkItems(items);
   return _items.reduce((total, item) => {
@@ -148,7 +156,7 @@ const invalidStatusChanges = [
 /**
  * Check that status changes are valid
  */
-export const statusChangeValid = (o, propVal) => {
+const statusChangeValid = (o, propVal) => {
   if (!o[PREVMODEL]?.orderStatus) {
     return true;
   }
@@ -170,7 +178,7 @@ const recalcTotal = (o, propVal) => ({
 /** 
  * Don't delete orders before they're complete.
  */
-function readyToDelete(model) {
+export function readyToDelete(model) {
   if (![
     OrderStatus.COMPLETE,
     OrderStatus.CANCELED
@@ -180,12 +188,22 @@ function readyToDelete(model) {
   return model;
 }
 
+/**
+ * 
+ * @param {*} error 
+ * @param {*} func 
+ */
 function handleError(error, func) {
   console.error({
     func,
     error
   });
   throw new Error(error);
+}
+
+function resolvePromise(resolve, order) {
+  resolve(order);
+  return order;
 }
 
 /**
@@ -217,13 +235,9 @@ async function updateOrder(order, changes) {
  * 
  * @param {*} param0 
  */
-async function paymentCompleted({
-  order,
-  resolve
-}) {
-  order.update({
-    orderStatus: OrderStatus.COMPLETE
-  })
+async function paymentCompleted({ model: order, resolve }) {
+  order.update({ orderStatus: OrderStatus.COMPLETE })
+    .then(order => handleStatusChange(order))
     .then(order => resolve(order))
     .catch(error => handleError(error, paymentCompleted.name))
 }
@@ -232,24 +246,18 @@ async function paymentCompleted({
  * 
  * @param {*} param0 
  */
-async function deliveryVerified({
-  order,
-  proofOfDelivery,
-  trackingStatus
-}) {
-  order.update({
-    proofOfDelivery
-  })
+async function deliveryVerified({ model: order }, proofOfDelivery) {
+  order.update({ proofOfDelivery })
     .then(order => order.completePayment(paymentCompleted))
-    .then(order => handleStatusChange(order))
     .catch(error => handleError(error, deliveryVerified.name));
 }
 
 /**
  * 
- * @param {*} status 
- * @param {*} resolve 
- * @param {*} order 
+ * @param {{
+ * order:Order, 
+ * trackingStatus:'outForDelivery'|'orderDelivered'
+ * }} param0 
  */
 async function handleTrackingUpdate({
   trackingStatus,
@@ -257,9 +265,7 @@ async function handleTrackingUpdate({
 }) {
   try {
     if (trackingStatus === 'orderDelivered') {
-      await order.verifyDelivery(deliveryVerified, {
-        resolve: true
-      });
+      await order.verifyDelivery(deliveryVerified);
     }
   } catch (error) {
     handleError(error, handleTrackingUpdate.name);
@@ -270,20 +276,10 @@ async function handleTrackingUpdate({
  * Handle shipment tracking update
  * @param {{order: Order }} param0 
  */
-async function trackingUpdate({
-  order,
-  trackingId,
-  trackingStatus,
-  resolve
-}) {
-  order.update({
-    trackingId,
-    trackingStatus
-  })
-    .then(order => handleTrackingUpdate({
-      trackingStatus,
-      order
-    }))
+async function trackingUpdate(options, trackingId, trackingStatus) {
+  const { model: order } = options;
+  order.update({ trackingId, trackingStatus })
+    .then(order => handleTrackingUpdate({ trackingStatus, order }))
     .catch(error => handleError(error, trackingUpdate.name));
 }
 
@@ -296,10 +292,9 @@ async function trackingUpdate({
  * }} options 
  */
 async function orderShipped({
-  order,
-  shipmentId,
+  model: order,
   resolve
-}) {
+}, shipmentId) {
   const changes = {
     shipmentId,
     orderStatus: OrderStatus.SHIPPING
@@ -311,48 +306,37 @@ async function orderShipped({
 
 /**
  * In stock, ready for pickup
- * @param {{ order: Order }} param0 
+ * @param {{ model:Order, resolve:function(Order) }} options
  */
-async function orderFilled({
-  order,
-  pickupAddress
-}) {
-  order.update({
-    pickupAddress
-  })
+async function orderFilled(options, pickupAddress) {
+  const { model: order, resolve } = options;
+
+  order.update({ pickupAddress })
+    .then(order => resolvePromise(resolve, order))
     .then(order => order.shipOrder(orderShipped))
     .then(order => handleStatusChange(order))
     .catch(error => handleError(error, orderFilled.name));
 }
 
-function addressValidated({
-  order,
-  shippingAddress,
-  resolve
-}) {
-  order.update({
-    shippingAddress
-  })
+/**
+ * 
+ * @param {{ model:Order, resolve:function(Order) }} options
+ */
+function addressValidated(options, shippingAddress) {
+  const { model: order, resolve } = options;
+  order.update({ shippingAddress })
     .then(order => resolve(order))
     .catch(error => handleError(error, addressValidated.name));
 }
 
 /**
  * Called by adapter when port recevies response from payment service.
- * @param {{ 
- * order:Order, 
- * paymentAuthorization:string, 
- * resolve:function(Order) 
- * }} param0 
+ * @param {{ model:Order, resolve:function(Order) }} options
+ * @param {*} paymentAuthorization 
  */
-function paymentAuthorized({
-  order,
-  paymentAuthorization,
-  resolve
-}) {
-  order.update({
-    paymentAuthorization
-  })
+function paymentAuthorized(options, paymentAuthorization) {
+  const { model: order, resolve } = options;
+  order.update({ paymentAuthorization })
     .then(order => resolve(order)) // resolve promise
     .catch(error => handleError(error, paymentAuthorized.name));
 }
@@ -377,21 +361,17 @@ const OrderActions = {
       handleError(error, OrderStatus.PENDING);
     }
   },
-
   /** 
    * Fill the order and specify the pickup location  
    * @param {Order} order 
    */
   [OrderStatus.APPROVED]: async (order) => {
     try {
-      await order.fillOrder(orderFilled, {
-        resolve: true
-      });
+      order.fillOrder(orderFilled);
     } catch (error) {
       handleError(error, OrderStatus.APPROVED);
     }
   },
-
   /** 
    * 
    * @param {Order} order 
@@ -403,7 +383,6 @@ const OrderActions = {
       handleError(error, OrderStatus.SHIPPING);
     }
   },
-
   /** 
    * 
    * @param {Order} order 
@@ -415,7 +394,6 @@ const OrderActions = {
       handleError(error, OrderStatus.SHIPPING);
     }
   },
-
   /** 
    * 
    * @param {Order} order 
@@ -434,142 +412,210 @@ export async function handleStatusChange(order) {
   return OrderActions[order.orderStatus](order);
 }
 
-/**
- * @type {import('./index').ModelSpecification}
+/** 
+ * @param {{model:Order}} 
  */
-const Order = {
-  modelName: 'order',
-  endpoint: 'orders',
-  ports: {
-    listen: {
-      service: 'Event',
-      type: 'inbound',
-    },
-    notify: {
-      service: 'Event',
-      type: 'outbound',
-    },
-    save: {
-      service: 'Persistence',
-      type: 'outbound'
-    },
-    find: {
-      service: 'Persistence',
-      type: 'outbound'
-    },
-    shipOrder: {
-      service: 'Shipping',
-      type: 'outbound',
-    },
-    authorizePayment: {
-      service: 'Payment',
-      type: 'outbound'
-    },
-    refundPayment: {
-      service: 'Payment',
-      type: 'outbound'
-    },
-    completePayment: {
-      service: 'Payment',
-      type: 'outbound',
-      //disabled: true
-    },
-    trackShipment: {
-      service: 'Shipping',
-      type: 'outbound'
-    },
-    verifyDelivery: {
-      service: 'Shipping',
-      type: 'outbound'
-    },
-    cancelShipment: {
-      service: 'Shipping',
-      type: 'outbound'
-    },
-    validateAddress: {
-      service: 'Address',
-      type: 'outbound',
-      //disabled: true
-    },
-    fillOrder: {
-      service: 'Inventory',
-      type: 'outbound'
-    }
-  },
-  factory: function (dependencies) {
-    return async function createOrder({
-      customerInfo,
-      orderItems,
-      shippingAddress,
-      billingAddress,
-      creditCardNumber,
-      signatureRequired = false
-    }) {
-      checkItems(orderItems);
-      checkFormat(creditCardNumber, 'creditCard');
-      const order = {
-        customerInfo,
-        orderItems,
-        creditCardNumber,
-        billingAddress,
-        signatureRequired,
-        shippingAddress,
-        [orderTotal]: calcTotal(orderItems),
-        [orderStatus]: OrderStatus.PENDING,
-        [orderNo]: dependencies.uuid(),
-        async update(changes) {
-          return updateOrder(this, changes);
-        }
-      };
-      return Object.freeze(order);
-    }
-  },
-  mixins: [
-    requirePropertiesMixin(
-      customerInfo,
-      orderItems,
-      creditCardNumber,
-      shippingAddress,
-      billingAddress,
-      requiredForCompletion(proofOfDelivery)
-    ),
-    freezePropertiesMixin(
-      customerInfo,
-      freezeOnApproval(orderItems),
-      freezeOnApproval(creditCardNumber),
-      freezeOnApproval(shippingAddress),
-      freezeOnApproval(billingAddress),
-      freezeOnCompletion(orderStatus),
-    ),
-    updatePropertiesMixin([{
-      propKey: orderItems,
-      update: recalcTotal
-    }]),
-    validatePropertiesMixin([{
-      propKey: orderStatus,
-      values: Object.values(OrderStatus),
-      isValid: statusChangeValid
-    },
-    {
-      propKey: orderTotal,
-      maxnum: MAXORDER
-    }
-    ]),
-  ],
-  onUpdate: processUpdate,
-  onDelete: model => readyToDelete(model),
-  eventHandlers: [
-    /** @param {{model:Order}} */
-    async ({
-      model: order,
-      eventType,
-      changes
-    }) => {
-      if (changes?.orderStatus || eventType === 'CREATE') {
-        await handleStatusChange(order);
-      }
-    }
-  ]
+export async function handleOrderEvent({
+  model: order,
+  eventType,
+  changes
+}) {
+  if (changes?.orderStatus || eventType === 'CREATE') {
+    await handleStatusChange(order);
+  }
 }
 
-export default Order
+/**
+ * 
+ * @param {*} dependencies 
+ */
+export function orderFactory(dependencies) {
+  return async function createOrder({
+    customerInfo,
+    orderItems,
+    shippingAddress,
+    billingAddress,
+    creditCardNumber,
+    signatureRequired = false
+  }) {
+    checkItems(orderItems);
+    checkFormat(creditCardNumber, 'creditCard');
+    const order = {
+      customerInfo,
+      orderItems,
+      creditCardNumber,
+      billingAddress,
+      signatureRequired,
+      shippingAddress,
+      [orderTotal]: calcTotal(orderItems),
+      [orderStatus]: OrderStatus.PENDING,
+      [orderNo]: dependencies.uuid(),
+      async update(changes) {
+        return updateOrder(this, changes);
+      }
+    };
+    return Object.freeze(order);
+  }
+}
+
+export const orderMixins = [
+  requirePropertiesMixin(
+    customerInfo,
+    orderItems,
+    creditCardNumber,
+    shippingAddress,
+    billingAddress,
+    requiredForCompletion(proofOfDelivery)
+  ),
+  freezePropertiesMixin(
+    customerInfo,
+    freezeOnApproval(orderItems),
+    freezeOnApproval(creditCardNumber),
+    freezeOnApproval(shippingAddress),
+    freezeOnApproval(billingAddress),
+    freezeOnCompletion(orderStatus),
+  ),
+  updatePropertiesMixin([{
+    propKey: orderItems,
+    update: recalcTotal
+  }]),
+  validatePropertiesMixin([{
+    propKey: orderStatus,
+    values: Object.values(OrderStatus),
+    isValid: statusChangeValid
+  }, {
+    propKey: orderTotal,
+    maxnum: MAXORDER
+  }]),
+];
+
+export function timeoutCallback(port, order) {
+  console.error('timeoutCallback...', port, order);
+}
+// /**
+//  * @type {import('./index').ModelSpecification}
+//  */
+// const Order = {
+//   modelName: 'order',
+//   endpoint: 'orders',
+//   ports: {
+//     listen: {
+//       service: 'Event',
+//       type: 'inbound',
+//     },
+//     notify: {
+//       service: 'Event',
+//       timeout: 10000,
+//       type: 'outbound',
+//     },
+//     save: {
+//       service: 'Persistence',
+//       type: 'outbound'
+//     },
+//     find: {
+//       service: 'Persistence',
+//       type: 'outbound'
+//     },
+//     shipOrder: {
+//       service: 'Shipping',
+//       type: 'outbound',
+//     },
+//     authorizePayment: {
+//       service: 'Payment',
+//       type: 'outbound'
+//     },
+//     refundPayment: {
+//       service: 'Payment',
+//       type: 'outbound'
+//     },
+//     completePayment: {
+//       service: 'Payment',
+//       type: 'outbound',
+//       //disabled: true
+//     },
+//     trackShipment: {
+//       service: 'Shipping',
+//       type: 'outbound'
+//     },
+//     verifyDelivery: {
+//       service: 'Shipping',
+//       type: 'outbound'
+//     },
+//     cancelShipment: {
+//       service: 'Shipping',
+//       type: 'outbound'
+//     },
+//     validateAddress: {
+//       service: 'Address',
+//       type: 'outbound',
+//       //disabled: true
+//     },
+//     fillOrder: {
+//       service: 'Inventory',
+//       type: 'outbound'
+//     }
+//   },
+//   factory: function (dependencies) {
+//     return async function createOrder({
+//       customerInfo,
+//       orderItems,
+//       shippingAddress,
+//       billingAddress,
+//       creditCardNumber,
+//       signatureRequired = false
+//     }) {
+//       checkItems(orderItems);
+//       checkFormat(creditCardNumber, 'creditCard');
+//       const order = {
+//         customerInfo,
+//         orderItems,
+//         creditCardNumber,
+//         billingAddress,
+//         signatureRequired,
+//         shippingAddress,
+//         [orderTotal]: calcTotal(orderItems),
+//         [orderStatus]: OrderStatus.PENDING,
+//         [orderNo]: dependencies.uuid(),
+//         async update(changes) {
+//           return updateOrder(this, changes);
+//         }
+//       };
+//       return Object.freeze(order);
+//     }
+//   },
+//   mixins: [
+//     requirePropertiesMixin(
+//       customerInfo,
+//       orderItems,
+//       creditCardNumber,
+//       shippingAddress,
+//       billingAddress,
+//       requiredForCompletion(proofOfDelivery)
+//     ),
+//     freezePropertiesMixin(
+//       customerInfo,
+//       freezeOnApproval(orderItems),
+//       freezeOnApproval(creditCardNumber),
+//       freezeOnApproval(shippingAddress),
+//       freezeOnApproval(billingAddress),
+//       freezeOnCompletion(orderStatus),
+//     ),
+//     updatePropertiesMixin([{
+//       propKey: orderItems,
+//       update: recalcTotal
+//     }]),
+//     validatePropertiesMixin([{
+//       propKey: orderStatus,
+//       values: Object.values(OrderStatus),
+//       isValid: statusChangeValid
+//     },
+//     {
+//       propKey: orderTotal,
+//       maxnum: MAXORDER
+//     }
+//     ]),
+//   ],
+//   onUpdate: processUpdate,
+//   onDelete: model => readyToDelete(model),
+//   eventHandlers: [handleEvent]
+// }

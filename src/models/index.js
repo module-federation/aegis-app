@@ -7,6 +7,9 @@
  * @property {Symbol} createTime
  * @property {Symbol} onUpdate
  * 
+ * @typedef {string} service - name of the service object to inject in adapter
+ * @typedef {number} timeout - call to adapter will timeout after `timeout` milliseconds
+ * 
  * @callback onUpdate
  * @param {Model} model
  * @param {Object} changes
@@ -16,6 +19,20 @@
  * @param {Model} model
  * @returns {Model | Error} updated model or throw
  * 
+ * @typedef {{
+ *  [x: string]: {
+ *    service: service,
+ *    timeout?: timeout,
+ *    executeCallback?: boolean,
+ *    resolvePromise?: boolean,
+ *    errorCallback?: function(),
+ *    timeoutCallback?: function(),
+ *    type?:'inbound'|'outbound',
+ *    disabled?: boolean
+ *    adapter?: string
+ *  }
+ * }} port - input/output ports for the domain
+ * 
  * @typedef {Object} ModelSpecification Specify model data and behavior 
  * @property {string} modelName name of model (case-insenstive)
  * @property {string} endpoint URI reference (e.g. plural of `modelName`)
@@ -24,33 +41,29 @@
  * @property {Array<import("./mixins").mixinFunction>} [mixins] functional mixins
  * @property {onUpdate} [onUpdate] function called to handle update requests
  * @property {onDelete} [onDelete] function called before deletion
- * @property {{
- *  [x: string]: {
- *    service: string,
- *    type?:'inbound'|'outbound',
- *    disabled?: boolean
- *    adapter?: string
- *  }
- * }} [ports] input/output ports for the domain
+ * @property {port} [ports] input/output ports for the domain
  * @property {Array<function({
  *  eventName:string,
  *  eventType:string,
  *  eventTime:string,
  *  modelName:string,
  *  model:Model
- * }):Promise<void>>} [eventHandlers] callbacks invoked when model events occur 
+ * }):Promise<void>>} [eventHandlers] callbacks invoked when CRUD events occur 
  */
 
 import GlobalMixins from './mixins'
+import makeAdapters from './make-adapters'
 
 // Dependencies
-import { uuid } from '../lib/utils';
+import {
+  uuid
+} from '../lib/utils';
 import * as services from '../services-mock'
 import * as adapters from '../adapters'
 
 // Models
 import User from './user';
-import Order from './order';
+import Order from './order-config';
 
 const requiredProperties = [
   'modelName',
@@ -67,24 +80,7 @@ function validateModel(model) {
   }
 }
 
-function makeAdapters(ports) {
-  if (!ports || !adapters) {
-    return;
-  }
-  return Object.keys(ports).map(port => {
-    try {
-      if (adapters[port]) {
-        return {
-          [port]: adapters[port](
-            services[ports[port].service]
-          )
-        }
-      }
-    } catch (e) {
-      console.warn(e.message);
-    }
-  }).reduce((p, c) => ({ ...c, ...p }));
-}
+
 
 /**
  * 
@@ -95,14 +91,18 @@ function makeModel(model, dependencies) {
   validateModel(model);
   model.dependencies = {
     ...dependencies,
-    ...makeAdapters(model.ports)
+    ...makeAdapters(model.ports, adapters, services)
   };
   const mixins = model.mixins || {}
   model.mixins = mixins.concat(GlobalMixins);
 }
 
-makeModel(User, { uuid });
-makeModel(Order, { uuid });
+makeModel(User, {
+  uuid
+});
+makeModel(Order, {
+  uuid
+});
 
 export {
   User,

@@ -151,10 +151,6 @@ export class RestOrderAdapter extends OrderAdapter {
     return order.orderStatus;
   }
 
-  fillOrder() {
-
-  }
-
   shipOrder() {
     return axios.patch(
       this.url + orderId,
@@ -166,14 +162,6 @@ export class RestOrderAdapter extends OrderAdapter {
       console.error(error.response.data);
       throw new Error(error);
     });
-  }
-
-  trackShipment() {
-
-  }
-
-  verifyDelivery() {
-
   }
 
   completeOrder() {

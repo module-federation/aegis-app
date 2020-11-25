@@ -1,5 +1,7 @@
 'use strict'
 
+import handlePortOptions from '../models/handle-port-options';
+
 /**
  * @typedef {string|RegExp} topic
  * @callback eventCallback
@@ -34,8 +36,13 @@
  */
 export function shipOrder(service) {
 
-  return async function ({ model: order, resolve, args: [callback, options] }) {
+  return async function (options) {
     console.log(shipOrder.name);
+
+    const {
+      model: order,
+      args: [callback]
+    } = options;
 
     await order.listen({
       once: true,
@@ -43,11 +50,13 @@ export function shipOrder(service) {
       id: order.orderNo,
       topic: 'orderChannel',
       filter: order.orderNo,
-      callback: async ({ message }) => {
+      callback: async ({
+        message
+      }) => {
         const event = JSON.parse(message);
-        console.log(event);
+        console.log('received event...', event);
         const shipmentId = event.eventData.shipmentId;
-        callback({ order, shipmentId, resolve });
+        await callback(options, shipmentId);
       }
     });
 
@@ -68,9 +77,7 @@ export function shipOrder(service) {
       eventSource: 'orderService'
     }));
 
-    if (options?.resolve) {
-      resolve(order);
-    }
+    return handlePortOptions(options);
   }
 }
 
@@ -78,7 +85,12 @@ export function shipOrder(service) {
  * @type {adapterFactory}
  */
 export function trackShipment(service) {
-  return async function ({ model: order, resolve, args: [callback, options] }) {
+
+  return async function (options) {
+    const {
+      model: order,
+      args: [callback]
+    } = options;
 
     await order.listen({
       once: false,
@@ -86,34 +98,34 @@ export function trackShipment(service) {
       id: order.orderNo,
       topic: 'orderChannel',
       filter: order.orderNo,
-      callback: ({ message }) => {
+      callback: async function ({
+        message
+      }) {
         const event = JSON.parse(message);
-        console.log(event);
+        console.log('received event...', event);
         const trackingId = event.eventData.trackingId;
         const trackingStatus = event.eventData.trackingStatus;
-        callback({ order, trackingId, trackingStatus, resolve });
+        await callback(options, trackingId, trackingStatus);
       }
     });
 
     await order.notify('shippingChannel', JSON.stringify({
+      eventType: 'Command',
+      eventName: 'trackShipment',
+      eventTime: new Date().toUTCString(),
+      eventSource: 'orderService',
       eventData: {
+        replyChannel: 'orderChannel',
+        commandName: 'trackShipment',
         commandArgs: {
           shipmentId: order.shipmentId,
           externalId: order.orderNo,
           trackingId: order.trackingId
         },
-        commandName: 'trackShipment',
-        replyChannel: 'orderChannel',
       },
-      eventType: 'Command',
-      eventName: 'trackShipment',
-      eventTime: new Date().toUTCString(),
-      eventSource: 'orderService'
     }));
 
-    if (options?.resolve) {
-      resolve(order);
-    }
+    return handlePortOptions(options);
   }
 }
 
@@ -122,7 +134,11 @@ export function trackShipment(service) {
  * @type {adapterFactory}
  */
 export function verifyDelivery(service) {
-  return async function ({ model: order, resolve, args: [callback, options] }) {
+  return async function (options) {
+    const {
+      model: order,
+      args: [callback]
+    } = options;
 
     order.listen({
       once: true,
@@ -130,11 +146,13 @@ export function verifyDelivery(service) {
       id: order.orderNo,
       topic: 'orderChannel',
       filter: order.orderNo,
-      callback: ({ message }) => {
+      callback: async ({
+        message
+      }) => {
         const event = JSON.parse(message);
-        console.log(event);
+        console.log('received event...', event);
         const proofOfDelivery = event.eventData.proofOfDelivery;
-        callback({ order, proofOfDelivery, resolve });
+        await callback(options, proofOfDelivery);
       }
     });
 
@@ -153,8 +171,6 @@ export function verifyDelivery(service) {
       eventSource: 'orderService'
     }));
 
-    if (options?.resolve) {
-      resolve(order);
-    }
+    return handlePortOptions(options);
   }
-} 
+}
