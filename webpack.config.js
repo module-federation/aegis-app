@@ -46,9 +46,9 @@ var serverConfig = {
         './orderService': '/src/services/order-service',
         './eventService': '/src/services/event-service',
         './paymentService': '/src/services/payment-service',
-        './shippingService': '/src/services/shipping-service',
+      //'./shippingService': '/src/services/shipping-service',
         './addressService': '/src/services/address-service',
-        './inventoryService': '/src/services/inventory-service'
+      //'./inventoryService': '/src/services/inventory-service'
       },
       shared: {
         'axios': {

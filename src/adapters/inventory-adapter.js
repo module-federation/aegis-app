@@ -1,7 +1,5 @@
 'use strict'
 
-import handlePortOptions from '../models/handle-port-options'
-
 /**
  * @typedef {string|RegExp} topic
  * @callback eventCallback
