@@ -16,7 +16,7 @@ function sendEvent({ emitEvent, topic, eventData, eventSource, eventName }) {
       eventType: 'CommandResponse',
       eventSource: eventSource
     }));
-  }, 1000);
+  }, 2000);
 }
 
 function generateShippingEventData(event, externalId) {

@@ -64,8 +64,8 @@ export function fillOrder(service) {
             const event = JSON.parse(message);
             console.log('recieved event: ', event);
             const pickupAddress = event.eventData.warehouse_addr;
-            await callback(options, pickupAddress);
-            resolve(order);
+            const newOrder = await callback(options, pickupAddress);
+            resolve(newOrder);
           }
         });
 

@@ -209,6 +209,7 @@ function handleError(error, func) {
 async function findOrder(order) {
   const current = await order.find();
   if (!current) {
+    console.warn('no order found');
     return order;
   }
   return current;
@@ -258,7 +259,7 @@ export async function trackingUpdate(options, trackingId, trackingStatus) {
   const { model: order } = options;
   try {
     await order.update({ trackingId, trackingStatus });
-    return trackingStatus === 'orderDelivered';
+    return { doResolve: trackingStatus === 'orderDelivered', order };
   } catch (error) {
     handleError(error, trackingUpdate.name)
   }
@@ -471,7 +472,7 @@ export const orderMixins = [
   }]),
 ];
 
-export function timeoutCallback(port, order) {
+export function timeoutCallback({ port, model: order }) {
   console.error('timeoutCallback...', port, order);
 }
 

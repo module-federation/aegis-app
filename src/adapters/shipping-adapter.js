@@ -110,14 +110,14 @@ export function trackShipment(service) {
             console.log('received event...', event);
             const trackingId = event.eventData.trackingId;
             const trackingStatus = event.eventData.trackingStatus;
-            const doResolve = await callback(
+            const { doResolve, order: newOrder } = await callback(
               options,
               trackingId,
               trackingStatus
             );
             if (doResolve) {
               subscription.unsubscribe();
-              resolve(order);
+              resolve(newOrder);
             }
           }
         });
@@ -171,8 +171,8 @@ export function verifyDelivery(service) {
             const event = JSON.parse(message);
             console.log('received event...', event);
             const proofOfDelivery = event.eventData.proofOfDelivery;
-            await callback(options, proofOfDelivery);
-            resolve(order);
+            const newOrder = await callback(options, proofOfDelivery);
+            resolve(newOrder);
           }
         });
 

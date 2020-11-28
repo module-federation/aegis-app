@@ -22,8 +22,8 @@ export function authorizePayment(service) {
     return new Promise(async function (resolve, reject) {
       try {
         const paymentAuthorization = await service.authorizePayment(order);
-        await callback(options, paymentAuthorization);
-        resolve(order);
+        const newOrder = await callback(options, paymentAuthorization);
+        resolve(newOrder);
       } catch (error) {
         reject(error);
       }
@@ -35,9 +35,12 @@ export function authorizePayment(service) {
  */
 export function completePayment(service) {
   return async function (options) {
-    const { model: order, args: [callback] } = options;
-    await service.completePayment(order);
-    await callback(options);
+    return new Promise(async function (resolve, reject) {
+      const { model: order, args: [callback] } = options;
+      await service.completePayment(order);
+      const newOrder = await callback(options);
+      resolve(newOrder);
+    });
   }
 }
 /**
@@ -45,8 +48,11 @@ export function completePayment(service) {
  */
 export function refundPayment(service) {
   return async function (options) {
-    const { model: order, args: [callback] } = options;
-    await service.refundPayment(order);
-    await callback(options);
+    return new Promise(async function (resolve, reject) {
+      const { model: order, args: [callback] } = options;
+      await service.refundPayment(order);
+      const newOrder = await callback(options);
+      resolve(newOrder);
+    });
   }
 }
