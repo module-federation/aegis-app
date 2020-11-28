@@ -1,7 +1,6 @@
 'use strict'
 
 import {
-  orderMixins,
   orderFactory,
   readyToDelete,
   handleOrderEvent,
@@ -13,11 +12,22 @@ import {
   handleLatePickup,
   deliveryVerified,
   paymentCompleted,
-  timeoutCallback
+  timeoutCallback,
+  OrderStatus,
+  recalcTotal,
+  requiredForCompletion,
+  statusChangeValid,
+  freezeOnApproval,
+  freezeOnCompletion,
+  orderTotalValid
 } from './order';
 
 import {
-  processUpdate
+  processUpdate,
+  requirePropertiesMixin,
+  freezePropertiesMixin,
+  updatePropertiesMixin,
+  validatePropertiesMixin
 } from './mixins'
 
 /**
@@ -27,7 +37,38 @@ const Order = {
   modelName: 'order',
   endpoint: 'orders',
   factory: orderFactory,
-  mixins: orderMixins,
+  mixins: [
+    requirePropertiesMixin(
+      'customerInfo',
+      'orderItems',
+      'creditCardNumber',
+      'shippingAddress',
+      'billingAddress',
+      requiredForCompletion('proofOfDelivery')
+    ),
+    freezePropertiesMixin(
+      'orderNo',
+      'customerInfo',
+      freezeOnApproval('orderItems'),
+      freezeOnApproval('creditCardNumber'),
+      freezeOnApproval('shippingAddress'),
+      freezeOnApproval('billingAddress'),
+      freezeOnCompletion('orderStatus'),
+    ),
+    updatePropertiesMixin([{
+      propKey: 'orderItems',
+      update: recalcTotal
+    }]),
+    validatePropertiesMixin([{
+      propKey: 'orderStatus',
+      values: Object.values(OrderStatus),
+      isValid: statusChangeValid
+    }, {
+      propKey: 'orderTotal',
+      maxnum: 99999.99,
+      isValid: orderTotalValid
+    }])
+  ],
   onUpdate: processUpdate,
   onDelete: readyToDelete,
   eventHandlers: [handleOrderEvent],
@@ -55,7 +96,7 @@ const Order = {
       consumesEvent: 'validateAddress',
       producesEvent: 'addressValidated',
       callback: addressValidated,
-      disabled: false
+      disabled: true
     },
     authorizePayment: {
       service: 'Payment',
@@ -111,7 +152,7 @@ const Order = {
     refundPayment: {
       service: 'Payment',
       type: 'outbound'
-    },
+    }
   }
 }
 

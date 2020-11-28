@@ -40,7 +40,6 @@ import {
  */
 
 export const ORDERTOPIC = 'orderChannel';
-
 const MAXORDER = 99999.99;
 const orderItems = 'orderItems';
 const customerInfo = 'customerInfo';
@@ -55,7 +54,7 @@ const orderTotal = 'orderTotal';
 const cancelReason = 'cancelReason';
 const trackingId = 'trackingId';
 const orderNo = 'orderNo';
-const OrderStatus = {
+export const OrderStatus = {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
   SHIPPING: 'SHIPPING',
@@ -67,7 +66,7 @@ const OrderStatus = {
  * 
  * @param {*} items 
  */
-const checkItems = function (items) {
+export const checkItems = function (items) {
   if (!items) {
     throw new Error('order contains no items');
   }
@@ -87,7 +86,7 @@ const checkItems = function (items) {
  * 
  * @param {*} items 
  */
-const calcTotal = function (items) {
+export const calcTotal = function (items) {
   const _items = checkItems(items);
   return _items.reduce((total, item) => {
     return total += item.price
@@ -100,7 +99,7 @@ const calcTotal = function (items) {
  * @param {*} propKey 
  * @returns {string | null} the key or `null`
  */
-const freezeOnApproval = (propKey) => (o) => {
+export const freezeOnApproval = (propKey) => (o) => {
   return o[PREVMODEL].orderStatus !== OrderStatus.PENDING ?
     propKey :
     null;
@@ -112,7 +111,7 @@ const freezeOnApproval = (propKey) => (o) => {
  * @param {*} propKey 
  * @returns {string | null} the key or `null`
  */
-const freezeOnCompletion = (propKey) => (o) => {
+export const freezeOnCompletion = (propKey) => (o) => {
   return [
     OrderStatus.COMPLETE,
     OrderStatus.CANCELED
@@ -127,7 +126,7 @@ const freezeOnCompletion = (propKey) => (o) => {
  * @param {*} propKey
  * @returns {string | void} the key or `void`
  */
-const requiredForCompletion = (propKey) => (o) => {
+export const requiredForCompletion = (propKey) => (o) => {
   if (!o.orderStatus) {
     return;
   }
@@ -156,7 +155,7 @@ const invalidStatusChanges = [
 /**
  * Check that status changes are valid
  */
-const statusChangeValid = (o, propVal) => {
+export const statusChangeValid = (o, propVal) => {
   if (!o[PREVMODEL]?.orderStatus) {
     return true;
   }
@@ -166,12 +165,16 @@ const statusChangeValid = (o, propVal) => {
   return true;
 }
 
+export const orderTotalValid = (o, propVal) => {
+  return calcTotal(o.orderItems) === propVal;
+}
+
 /**
  * Recalculate order total
  * @param {object} o - the object (order)
  * @param {number} propVal - the property value
  */
-const recalcTotal = (o, propVal) => ({
+export const recalcTotal = (o, propVal) => ({
   orderTotal: calcTotal(propVal)
 })
 
@@ -232,36 +235,32 @@ async function updateOrder(order, changes) {
  * @param {*} param0 
  */
 export async function paymentCompleted({ model: order }) {
-  try {
-    return await order.update({ orderStatus: OrderStatus.COMPLETE });
-  } catch (error) {
-    handleError(error, paymentCompleted.name);
-  }
+  return order.update({ orderStatus: OrderStatus.COMPLETE });
 }
 
 /**
  * 
  * @param {*} param0 
  */
-export async function deliveryVerified({ model: order }, proofOfDelivery) {
-  try {
-    return await order.update({ proofOfDelivery });
-  } catch (error) {
-    handleError(error, deliveryVerified.name);
-  }
+export async function deliveryVerified(options, proofOfDelivery) {
+  const { model: order } = options;
+  return order.update({ proofOfDelivery });
 }
 
 /**
  * Handle shipment tracking update
  * @param {{order: Order }} param0 
  */
-export async function trackingUpdate(options, trackingId, trackingStatus) {
+export async function trackingUpdate(
+  options,
+  trackingId,
+  trackingStatus
+) {
   const { model: order } = options;
-  try {
-    await order.update({ trackingId, trackingStatus });
-    return { doResolve: trackingStatus === 'orderDelivered', order };
-  } catch (error) {
-    handleError(error, trackingUpdate.name)
+  await order.update({ trackingId, trackingStatus });
+  return {
+    done: trackingStatus === 'orderDelivered',
+    order
   }
 }
 
@@ -269,19 +268,15 @@ export async function trackingUpdate(options, trackingId, trackingStatus) {
  * Callback invoked by shipping adapter when order is shipped.
  * @param {{
  *  shipmentId:string,
- *  resolve:function(),
- *  subscription:import('../adapters/event-adapter').Subscription 
+ *  model:Order 
  * }} options 
  */
-export async function orderShipped({ model: order }, shipmentId) {
-  try {
-    return await order.update({
-      shipmentId,
-      orderStatus: OrderStatus.SHIPPING
-    });
-  } catch (error) {
-    handleError(error, orderShipped.name)
-  }
+export async function orderShipped(options, shipmentId) {
+  const { model: order } = options;
+  return order.update({
+    shipmentId,
+    orderStatus: OrderStatus.SHIPPING
+  });
 }
 
 /**
@@ -290,11 +285,7 @@ export async function orderShipped({ model: order }, shipmentId) {
  */
 export async function orderFilled(options, pickupAddress) {
   const { model: order } = options;
-  try {
-    return await order.update({ pickupAddress })
-  } catch (error) {
-    handleError(error, orderFilled.name)
-  }
+  return order.update({ pickupAddress });
 }
 
 /**
@@ -303,11 +294,7 @@ export async function orderFilled(options, pickupAddress) {
  */
 export async function addressValidated(options, shippingAddress) {
   const { model: order } = options;
-  try {
-    return await order.update({ shippingAddress });
-  } catch (error) {
-    handleError(error, addressValidated.name)
-  }
+  return order.update({ shippingAddress });
 }
 
 /**
@@ -317,11 +304,7 @@ export async function addressValidated(options, shippingAddress) {
  */
 export async function paymentAuthorized(options, paymentAuthorization) {
   const { model: order } = options;
-  try {
-    return await order.update({ paymentAuthorization });
-  } catch (error) {
-    handleError(error, paymentAuthorized.name)
-  }
+  return order.update({ paymentAuthorization });
 }
 
 /**
@@ -350,6 +333,7 @@ const OrderActions = {
    */
   [OrderStatus.APPROVED]: async (order) => {
     try {
+      // don't block the caller waiting for this 
       order.fillOrder(orderFilled);
     } catch (error) {
       handleError(error, OrderStatus.APPROVED);
@@ -361,7 +345,8 @@ const OrderActions = {
    */
   [OrderStatus.SHIPPING]: async (order) => {
     try {
-      await order.trackShipment(trackingUpdate);
+      // don't block the caller waiting for this
+      order.trackShipment(trackingUpdate);
     } catch (error) {
       handleError(error, OrderStatus.SHIPPING);
     }
@@ -440,37 +425,6 @@ export function orderFactory(dependencies) {
     return Object.freeze(order);
   }
 }
-
-export const orderMixins = [
-  requirePropertiesMixin(
-    customerInfo,
-    orderItems,
-    creditCardNumber,
-    shippingAddress,
-    billingAddress,
-    requiredForCompletion(proofOfDelivery)
-  ),
-  freezePropertiesMixin(
-    customerInfo,
-    freezeOnApproval(orderItems),
-    freezeOnApproval(creditCardNumber),
-    freezeOnApproval(shippingAddress),
-    freezeOnApproval(billingAddress),
-    freezeOnCompletion(orderStatus),
-  ),
-  updatePropertiesMixin([{
-    propKey: orderItems,
-    update: recalcTotal
-  }]),
-  validatePropertiesMixin([{
-    propKey: orderStatus,
-    values: Object.values(OrderStatus),
-    isValid: statusChangeValid
-  }, {
-    propKey: orderTotal,
-    maxnum: MAXORDER
-  }]),
-];
 
 export function timeoutCallback({ port, model: order }) {
   console.error('timeoutCallback...', port, order);

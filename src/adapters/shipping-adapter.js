@@ -110,12 +110,12 @@ export function trackShipment(service) {
             console.log('received event...', event);
             const trackingId = event.eventData.trackingId;
             const trackingStatus = event.eventData.trackingStatus;
-            const { doResolve, order: newOrder } = await callback(
+            const { done, order: newOrder } = await callback(
               options,
               trackingId,
               trackingStatus
             );
-            if (doResolve) {
+            if (done) {
               subscription.unsubscribe();
               resolve(newOrder);
             }
