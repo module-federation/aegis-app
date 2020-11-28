@@ -4,8 +4,16 @@ import {
   orderMixins,
   orderFactory,
   readyToDelete,
-  timeoutCallback,
-  handleOrderEvent
+  handleOrderEvent,
+  addressValidated,
+  paymentAuthorized,
+  orderFilled,
+  orderShipped,
+  trackingUpdate,
+  handleLatePickup,
+  deliveryVerified,
+  paymentCompleted,
+  timeoutCallback
 } from './order';
 
 import {
@@ -27,8 +35,7 @@ const Order = {
     listen: {
       service: 'Event',
       type: 'inbound',
-      timeout: 0,
-      resolvePromise: true,
+      timeout: 0
     },
     notify: {
       service: 'Event',
@@ -37,51 +44,65 @@ const Order = {
     save: {
       service: 'Persistence',
       type: 'outbound',
-      resolvePromise: true,
     },
     find: {
       service: 'Persistence',
       type: 'outbound',
-      resolvePromise: true,
     },
     validateAddress: {
       service: 'Address',
       type: 'outbound',
-      disabled: true,
-      resolvePromise: true,
+      consumesEvent: 'validateAddress',
+      producesEvent: 'addressValidated',
+      callback: addressValidated,
+      disabled: true
     },
     authorizePayment: {
       service: 'Payment',
       type: 'outbound',
-      resolvePromise: true
+      consumesEvent: 'authorizePayment',
+      producesEvent: 'paymentAuthorized',
+      callback: paymentAuthorized
     },
     fillOrder: {
       service: 'Inventory',
       type: 'outbound',
-      delegateCallback: true,
-      resolvePromise: true,
+      consumesEvent: 'fillOrder',
+      producesEvent: 'orderFilled',
+      timeout: 440000000,
+      callback: orderFilled
     },
     shipOrder: {
       service: 'Shipping',
       type: 'outbound',
-      delegateCallback: true,
-      timeout: 440000000
+      timeout: 440000000,
+      callback: orderShipped,
+      consumesEvent: 'orderFilled',
+      producesEvent: 'orderShipped',
+      timeoutCallback: handleLatePickup
     },
     trackShipment: {
       service: 'Shipping',
       type: 'outbound',
-      delegateCallback: true,
+      callback: trackingUpdate,
+      consumesEvent: 'orderShipped',
+      producesEvent: 'orderDelivered',
     },
     verifyDelivery: {
       service: 'Shipping',
       type: 'outbound',
-      delegateCallback: true,
       timeout: 10000,
-      timeoutCallback
+      callback: deliveryVerified,
+      consumesEvent: 'orderDelivered',
+      producesEvent: 'deliveryVerified'
     },
     completePayment: {
       service: 'Payment',
       type: 'outbound',
+      callback: paymentCompleted,
+      consumesEvent: 'deliveryVerified',
+      producesEvent: 'paymentCompleted',
+      timeoutCallback
     },
     cancelShipment: {
       service: 'Shipping',

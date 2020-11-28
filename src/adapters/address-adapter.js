@@ -18,7 +18,6 @@
 export function validateAddress(service) {
   return async function ({
     model: order,
-    resolve,
     args: [callback]
   }) {
     const shippingAddress = await service.validateAddress(
@@ -26,8 +25,7 @@ export function validateAddress(service) {
     );
     callback({
       order,
-      shippingAddress,
-      resolve
+      shippingAddress
     });
   }
 }

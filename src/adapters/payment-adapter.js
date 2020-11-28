@@ -12,16 +12,22 @@
  * @returns {function({model:Order,parms:any[]})} 
  */
 
-import handlePortOptions from '../models/handle-port-options'
-
 /**
  * @type {adapterFactory}
  */
 export function authorizePayment(service) {
+
   return async function (options) {
-    const { model: order } = options;
-    const paymentAuthorization = await service.authorizePayment(order);
-    return handlePortOptions(options, paymentAuthorization);
+    const { model: order, args: [callback] } = options;
+    return new Promise(async function (resolve, reject) {
+      try {
+        const paymentAuthorization = await service.authorizePayment(order);
+        await callback(options, paymentAuthorization);
+        resolve(order);
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 }
 /**
@@ -29,9 +35,9 @@ export function authorizePayment(service) {
  */
 export function completePayment(service) {
   return async function (options) {
-    const { model: order } = options;
+    const { model: order, args: [callback] } = options;
     await service.completePayment(order);
-    return handlePortOptions(options);
+    await callback(options);
   }
 }
 /**
@@ -39,8 +45,8 @@ export function completePayment(service) {
  */
 export function refundPayment(service) {
   return async function (options) {
-    const { model: order } = options;
-    await service.refundPayment({ order });
-    return handlePortOptions(options);
+    const { model: order, args: [callback] } = options;
+    await service.refundPayment(order);
+    await callback(options);
   }
 }

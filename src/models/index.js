@@ -23,10 +23,11 @@
  *  [x: string]: {
  *    service: service,
  *    timeout?: timeout,
- *    executeCallback?: boolean,
- *    resolvePromise?: boolean,
- *    errorCallback?: function(),
- *    timeoutCallback?: function(),
+ *    callback?: function({model: Model, port: string})
+ *    errorCallback?: function({model: Model, port: string, error:Error}),
+ *    timeoutCallback?: function({model: Model, port: string}),
+ *    consumesEvent?:string,
+ *    producesEvent?:string,
  *    type?:'inbound'|'outbound',
  *    disabled?: boolean
  *    adapter?: string
@@ -79,8 +80,6 @@ function validateModel(model) {
     );
   }
 }
-
-
 
 /**
  * 

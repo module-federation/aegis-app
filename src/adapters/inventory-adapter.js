@@ -1,5 +1,6 @@
 'use strict'
 
+import handlePortOptions from '../models/handle-port-options'
 
 /**
  * @typedef {string|RegExp} topic
@@ -49,36 +50,42 @@ export function fillOrder(service) {
       args: [callback]
     } = options;
 
-    await order.listen({
-      once: true,
-      model: order,
-      id: order.orderNo,
-      topic: 'orderChannel',
-      filter: order.orderNo,
-      callback: async ({
-        message
-      }) => {
-        const event = JSON.parse(message);
-        console.log('recieved event: ', event);
-        const pickupAddress = event.eventData.warehouse_addr;
-        callback(options, pickupAddress);
+    return new Promise(async function (resolve, reject) {
+      try {
+        await order.listen({
+          once: true,
+          model: order,
+          id: order.orderNo,
+          topic: 'orderChannel',
+          filter: order.orderNo,
+          callback: async ({
+            message
+          }) => {
+            const event = JSON.parse(message);
+            console.log('recieved event: ', event);
+            const pickupAddress = event.eventData.warehouse_addr;
+            await callback(options, pickupAddress);
+            resolve(order);
+          }
+        });
+
+        await order.notify('inventoryChannel', JSON.stringify({
+          eventType: 'Command',
+          eventTime: new Date().toUTCString(),
+          eventData: {
+            replyChannel: 'orderChannel',
+            commandName: 'fillOrder',
+            commandArgs: {
+              lineItems: order.orderItems,
+              externalId: order.orderNo
+            }
+          },
+          eventSource: 'orderService'
+        }));
+      } catch (error) {
+        reject(error);
+        throw new Error(error);
       }
     });
-
-    await order.notify('inventoryChannel', JSON.stringify({
-      eventType: 'Command',
-      eventTime: new Date().toUTCString(),
-      eventData: {
-        replyChannel: 'orderChannel',
-        commandName: 'fillOrder',
-        commandArgs: {
-          lineItems: order.orderItems,
-          externalId: order.orderNo
-        }
-      },
-      eventSource: 'orderService'
-    }));
-
-    return handlePortOptions(options);
   }
 }
