@@ -16,16 +16,11 @@
  * @type {adapterFactory} 
  */
 export function validateAddress(service) {
-  return async function ({
-    model: order,
-    args: [callback]
-  }) {
+  return async function (options) {
+    const { model: order, args: [callback] } = options;
     const shippingAddress = await service.validateAddress(
       order.decrypt().shippingAddress
     );
-    callback({
-      order,
-      shippingAddress
-    });
+    return callback(options, shippingAddress);
   }
 }

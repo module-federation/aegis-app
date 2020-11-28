@@ -54,8 +54,8 @@ export function shipOrder(service) {
             const event = JSON.parse(message);
             console.log('received event...', event);
             const shipmentId = event.eventData.shipmentId;
-            await callback(options, shipmentId);
-            resolve(order);
+            const newOrder = await callback(options, shipmentId);
+            resolve(newOrder);
           }
         });
 

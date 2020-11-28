@@ -1,6 +1,9 @@
 import http from 'http';
 
 export default function publishEvent(event) {
+  if (!event) {
+    return;
+  }
   const serialized = JSON.stringify(event);
 
   const options = {

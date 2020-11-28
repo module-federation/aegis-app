@@ -55,7 +55,7 @@ const Order = {
       consumesEvent: 'validateAddress',
       producesEvent: 'addressValidated',
       callback: addressValidated,
-      disabled: true
+      disabled: false
     },
     authorizePayment: {
       service: 'Payment',
