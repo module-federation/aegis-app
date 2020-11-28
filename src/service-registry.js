@@ -13,10 +13,10 @@ function sendEvent({ emitEvent, topic, eventData, eventSource, eventName }) {
       eventData,
       eventName,
       eventTime: new Date().toUTCString(),
-      eventType: 'CommandOutput',
+      eventType: 'CommandResponse',
       eventSource: eventSource
     }));
-  }, 3000);
+  }, 2000);
 }
 
 function generateShippingEventData(event, externalId) {

@@ -1,5 +1,7 @@
 'use strict'
 
+import handlePortOptions from '../models/handle-port-options'
+
 /**
  * @typedef {string|RegExp} topic
  * @callback eventCallback
@@ -42,51 +44,48 @@
  */
 export function fillOrder(service) {
 
-  return async function ({
-    model: order,
-    resolve,
-    args: [callback, options]
-  }) {
-
-    await order.listen({
-      once: true,
+  return async function (options) {
+    const {
       model: order,
-      id: order.orderNo,
-      topic: 'orderChannel',
-      filter: order.orderNo,
-      callback: async ({
-        message
-      }) => {
-        const event = JSON.parse(message);
-        console.log('recieved event: ', event);
-        const eventName = event.eventName;
-        const pickupAddress = event.eventData.warehouse_addr;
-        callback({
-          order,
-          pickupAddress,
-          eventName,
-          resolve
+      args: [callback]
+    } = options;
+
+    return new Promise(async function (resolve, reject) {
+      try {
+        await order.listen({
+          once: true,
+          model: order,
+          id: order.orderNo,
+          topic: 'orderChannel',
+          filter: order.orderNo,
+          callback: async ({
+            message
+          }) => {
+            const event = JSON.parse(message);
+            console.log('recieved event: ', event);
+            const pickupAddress = event.eventData.warehouse_addr;
+            const newOrder = await callback(options, pickupAddress);
+            resolve(newOrder);
+          }
         });
+
+        await order.notify('inventoryChannel', JSON.stringify({
+          eventType: 'Command',
+          eventTime: new Date().toUTCString(),
+          eventData: {
+            replyChannel: 'orderChannel',
+            commandName: 'fillOrder',
+            commandArgs: {
+              lineItems: order.orderItems,
+              externalId: order.orderNo
+            }
+          },
+          eventSource: 'orderService'
+        }));
+      } catch (error) {
+        reject(error);
+        throw new Error(error);
       }
     });
-
-    await order.notify('inventoryChannel', JSON.stringify({
-      eventType: 'Command',
-      eventTime: new Date().toUTCString(),
-      eventData: {
-        replyChannel: 'orderChannel',
-        commandName: 'fillOrder',
-        commandArgs: {
-          lineItems: order.orderItems,
-          externalId: order.orderNo
-        }
-      },
-      eventSource: 'orderService'
-    }));
-
-    if (options?.resolve) {
-      resolve(order);
-    }
   }
-
 }

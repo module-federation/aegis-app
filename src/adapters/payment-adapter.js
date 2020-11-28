@@ -1,7 +1,5 @@
 'use strict'
 
-import { response } from 'express';
-
 /**
  * @typedef {import('../models/order').Order} Order
  * @typedef {{
@@ -18,26 +16,43 @@ import { response } from 'express';
  * @type {adapterFactory}
  */
 export function authorizePayment(service) {
-  return async function ({ model: order, resolve, args: [callback] }) {
-    const paymentAuthorization = await service.authorizePayment(order);
-    callback({ order, paymentAuthorization, resolve });
+
+  return async function (options) {
+    const { model: order, args: [callback] } = options;
+    return new Promise(async function (resolve, reject) {
+      try {
+        const paymentAuthorization = await service.authorizePayment(order);
+        const newOrder = await callback(options, paymentAuthorization);
+        resolve(newOrder);
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 }
 /**
  * @type {adapterFactory}
  */
 export function completePayment(service) {
-  return async function ({ model: order, resolve, args: [callback] }) {
-    await service.completePayment({ order });
-    callback({ order, resolve });
+  return async function (options) {
+    return new Promise(async function (resolve, reject) {
+      const { model: order, args: [callback] } = options;
+      await service.completePayment(order);
+      const newOrder = await callback(options);
+      resolve(newOrder);
+    });
   }
 }
 /**
  * @type {adapterFactory}
  */
-export default function refundPayment(service) {
-  return async function ({ model: order, resolve, args: [callback] }) {
-    await service.refundPayment({ order });
-    callback({ order, resolve });
+export function refundPayment(service) {
+  return async function (options) {
+    return new Promise(async function (resolve, reject) {
+      const { model: order, args: [callback] } = options;
+      await service.refundPayment(order);
+      const newOrder = await callback(options);
+      resolve(newOrder);
+    });
   }
-} 
+}

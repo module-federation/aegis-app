@@ -71,11 +71,11 @@ const Subscription = function ({
           if (once) {
             this.unsubscribe();
           }
-          callback({ message, subscription: this });
+          await callback({ message, subscription: this });
         }
         return;
       }
-      callback({ message, subscription: this });
+      await callback({ message, subscription: this });
     }
   }
 }
@@ -86,7 +86,7 @@ const Subscription = function ({
  */
 export function listen(service = Event) {
   return async function ({
-    model, resolve, args: [{ topic, callback, filter, once, id }]
+    model, args: [{ topic, callback, filter, once, id }]
   }) {
     const subscription = Subscription({
       id, topic, callback, filter, once, model
@@ -94,8 +94,7 @@ export function listen(service = Event) {
 
     if (subscriptions.has(topic)) {
       subscriptions.get(topic).set(id, subscription);
-      resolve(subscription);
-      return;
+      return subscription;
     }
 
     subscriptions.set(topic, new Map().set(id, subscription));
@@ -109,7 +108,7 @@ export function listen(service = Event) {
         }
       });
     }
-    resolve(subscription);
+    return subscription;
   }
 }
 
@@ -119,9 +118,8 @@ export function listen(service = Event) {
  */
 export function notify(service = Event) {
   return async function ({ model, resolve, args: [topic, message] }) {
-    console.log('sending...');
-    console.log({ topic, message });
+    console.log('sending...', { topic, message });
     await service.notify(topic, message);
-    resolve(model);
+    return model;
   }
 }

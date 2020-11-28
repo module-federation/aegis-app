@@ -1,6 +1,6 @@
 'use strict'
 
-export function controlAsync(generatorFunc) {
+export default function controlAsync(generatorFunc) {
   return function () {
     const generator = generatorFunc.apply(this, arguments);
 
