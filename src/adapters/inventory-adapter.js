@@ -40,7 +40,7 @@
 /**
  * @type {adapterFactory}
  */
-export function fillOrder(service) {
+export function pickOrder(service) {
 
   return async function (options) {
     const {
@@ -72,7 +72,7 @@ export function fillOrder(service) {
           eventTime: new Date().toUTCString(),
           eventData: {
             replyChannel: 'orderChannel',
-            commandName: 'fillOrder',
+            commandName: 'pickOrder',
             commandArgs: {
               lineItems: order.orderItems,
               externalId: order.orderNo

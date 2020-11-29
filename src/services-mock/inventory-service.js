@@ -16,12 +16,12 @@ function sendEvent({ eventData, eventName }) {
 
 export const Inventory = {
 
-  async fillOrder({ externalId, lineItems }) {
+  async pickOrder({ externalId, lineItems }) {
     console.log('inventory items');
     console.log(lineItems);
     const pickupAddress = '1234 warehouse dr, dock2';
     sendEvent({
-      eventName: 'orderFilled',
+      eventName: 'orderPicked',
       eventData: { pickupAddress, externalId }
     });
   }

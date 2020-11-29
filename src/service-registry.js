@@ -58,7 +58,7 @@ dispatcher.registerCallback('inventoryChannel', ({ message, emitEvent }) => {
   sendEvent({
     emitEvent,
     topic: event.eventData.replyChannel,
-    eventName: 'orderFilled',
+    eventName: 'orderPicked',
     eventData: { warehouse_addr: warehouseAddress, externalId },
     eventSource: 'inventoryService'
   });

@@ -6,20 +6,24 @@ import {
   handleOrderEvent,
   addressValidated,
   paymentAuthorized,
-  orderFilled,
+  orderPicked,
   orderShipped,
   trackingUpdate,
   handleLatePickup,
   deliveryVerified,
   paymentCompleted,
-  timeoutCallback,
   OrderStatus,
   recalcTotal,
   requiredForCompletion,
   statusChangeValid,
   freezeOnApproval,
   freezeOnCompletion,
-  orderTotalValid
+  orderTotalValid,
+  returnInventory,
+  returnShipment,
+  refundPayment,
+  pickupReturns,
+  cancelPayment
 } from './order';
 
 import {
@@ -103,24 +107,27 @@ const Order = {
       type: 'outbound',
       consumesEvent: 'authorizePayment',
       producesEvent: 'paymentAuthorized',
-      callback: paymentAuthorized
+      callback: paymentAuthorized,
+      undo: cancelPayment
     },
-    fillOrder: {
+    pickOrder: {
       service: 'Inventory',
       type: 'outbound',
-      consumesEvent: 'fillOrder',
-      producesEvent: 'orderFilled',
+      consumesEvent: 'pickOrder',
+      producesEvent: 'orderPicked',
       timeout: 440000000,
-      callback: orderFilled
+      callback: orderPicked,
+      undo: returnInventory
     },
     shipOrder: {
       service: 'Shipping',
       type: 'outbound',
       timeout: 440000000,
       callback: orderShipped,
-      consumesEvent: 'orderFilled',
+      consumesEvent: 'orderPicked',
       producesEvent: 'orderShipped',
-      timeoutCallback: handleLatePickup
+      timeoutCallback: handleLatePickup,
+      undo: returnShipment
     },
     trackShipment: {
       service: 'Shipping',
@@ -135,7 +142,8 @@ const Order = {
       timeout: 10000,
       callback: deliveryVerified,
       consumesEvent: 'orderDelivered',
-      producesEvent: 'deliveryVerified'
+      producesEvent: 'deliveryVerified',
+      undo: pickupReturns
     },
     completePayment: {
       service: 'Payment',
@@ -143,7 +151,7 @@ const Order = {
       callback: paymentCompleted,
       consumesEvent: 'deliveryVerified',
       producesEvent: 'paymentCompleted',
-      timeoutCallback
+      undo: refundPayment
     },
     cancelShipment: {
       service: 'Shipping',

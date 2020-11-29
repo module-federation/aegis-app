@@ -23,7 +23,8 @@ import {
  * @property {adapterFunction} completePayment - completes payment for an authorized charge
  * @property {adapterFunction} verifyDelivery - verify the order was received by the customer
  * @property {adapterFunction} trackShipment
- * @property {adapterFunction} refundPayment
+ * @property {adapterFunction} refundPayment 
+ * @property {adapterFunction} compensate - undo all transactions
  * @property {function():Promise<Order>} fillOrder - pick the items and get them ready for shipment
  * @property {adapterFunction} authorizePayment - verify payment info, credit avail
  * @property {import('../adapters/shipping-adapter').} shipOrder
@@ -59,7 +60,8 @@ export const OrderStatus = {
   APPROVED: 'APPROVED',
   SHIPPING: 'SHIPPING',
   COMPLETE: 'COMPLETE',
-  CANCELED: 'CANCELED'
+  CANCELED: 'CANCELED',
+  COMPENSATE: 'COMPENSATE'
 }
 
 /**
@@ -244,6 +246,7 @@ export async function paymentCompleted({ model: order }) {
  */
 export async function deliveryVerified(options, proofOfDelivery) {
   const { model: order } = options;
+  order.compensate();
   return order.update({ proofOfDelivery });
 }
 
@@ -257,10 +260,9 @@ export async function trackingUpdate(
   trackingStatus
 ) {
   const { model: order } = options;
-  await order.update({ trackingId, trackingStatus });
   return {
     done: trackingStatus === 'orderDelivered',
-    order
+    order: await order.update({ trackingId, trackingStatus })
   }
 }
 
@@ -283,7 +285,7 @@ export async function orderShipped(options, shipmentId) {
  * In stock, ready for pickup
  * @param {{ model:Order, resolve:function(Order) }} options
  */
-export async function orderFilled(options, pickupAddress) {
+export async function orderPicked(options, pickupAddress) {
   const { model: order } = options;
   return order.update({ pickupAddress });
 }
@@ -303,6 +305,11 @@ export async function addressValidated(options, shippingAddress) {
  * @param {*} paymentAuthorization 
  */
 export async function paymentAuthorized(options, paymentAuthorization) {
+  const { model: order } = options;
+  return order.update({ paymentAuthorization });
+}
+
+export async function refundPayment(options, refund) {
   const { model: order } = options;
   return order.update({ paymentAuthorization });
 }
@@ -334,7 +341,7 @@ const OrderActions = {
   [OrderStatus.APPROVED]: async (order) => {
     try {
       // don't block the caller waiting for this 
-      order.fillOrder(orderFilled);
+      order.pickOrder(orderPicked);
     } catch (error) {
       handleError(error, OrderStatus.APPROVED);
     }
@@ -369,7 +376,11 @@ const OrderActions = {
   [OrderStatus.COMPLETE]: async (order) => {
     console.log('do customer sentiment etc');
     return;
-  }
+  },
+
+  [OrderStatus.COMPENSATE]: async (order) => {
+    order.compensate();
+  },
 }
 
 /**
@@ -432,4 +443,24 @@ export function timeoutCallback({ port, model: order }) {
 
 export function handleLatePickup({ model: order }) {
   console.log(handleLatePickup.name);
+}
+
+export async function returnInventory({ model }) {
+  console.log(returnInventory.name);
+}
+
+export async function returnShipment({ model }) {
+  console.log(returnShipment.name);
+}
+
+export async function pickupReturns({ model }) {
+  console.log(pickupReturns.name);
+}
+
+export async function cancelPayment({ model }) {
+  console.log(cancelPayment.name);
+}
+
+export async function compensate({ model }) {
+  model.compensate();
 }
