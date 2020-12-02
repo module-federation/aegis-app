@@ -22,7 +22,7 @@ import {
   returnInventory,
   returnShipment,
   refundPayment,
-  returnDelivery as returnDelivery,
+  returnDelivery,
   cancelPayment
 } from './order';
 
@@ -97,41 +97,42 @@ const Order = {
     validateAddress: {
       service: 'Address',
       type: 'outbound',
+      callback: addressValidated,
       consumesEvent: 'validateAddress',
       producesEvent: 'addressValidated',
-      callback: addressValidated,
       disabled: false
     },
     authorizePayment: {
       service: 'Payment',
       type: 'outbound',
+      callback: paymentAuthorized,
       consumesEvent: 'authorizePayment',
       producesEvent: 'paymentAuthorized',
-      callback: paymentAuthorized,
       undo: cancelPayment
     },
     pickOrder: {
       service: 'Inventory',
       type: 'outbound',
+      callback: orderPicked,
       consumesEvent: 'pickOrder',
       producesEvent: 'orderPicked',
       timeout: 440000000,
-      callback: orderPicked,
       undo: returnInventory
     },
     shipOrder: {
       service: 'Shipping',
       type: 'outbound',
       timeout: 440000000,
+      callback: orderShipped,
       consumesEvent: 'orderPicked',
       producesEvent: 'orderShipped',
-      callback: orderShipped,
       timeoutCallback: handleLatePickup,
       undo: returnShipment
     },
     trackShipment: {
       service: 'Shipping',
       type: 'outbound',
+      timeout: 440000000,
       callback: trackingUpdate,
       consumesEvent: 'orderShipped',
       producesEvent: 'orderDelivered',
