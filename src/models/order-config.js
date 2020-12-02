@@ -154,7 +154,7 @@ const Order = {
       consumesEvent: 'deliveryVerified',
       producesEvent: 'paymentCompleted',
       undo: refundPayment,
-      timeout: 1000,
+      timeout: 3000,
       timeoutCallback
     },
     cancelShipment: {

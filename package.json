@@ -13,9 +13,11 @@
     "restart": "npm run build && npm run start",
     "clean": "rm -rf dist",
     "transpile": "babel src -d dist",
-    "test": "mocha",
+    "test": "",
+    "test-remote": "mocha",
     "demo": "open http://localhost:8060",
-    "event": "node src/lib/kafka-producer.js"
+    "kafka-zookpr": "../kafka/bin/zookeeper-server-start.sh  ../kafka/config/zookeeper.properties",
+    "kafka-server": "../kafka/bin/kafka-server-start.sh ../kafka/config/server.properties"
   },
   "author": "Tyson Midboe",
   "license": "MIT",
