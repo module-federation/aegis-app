@@ -22,7 +22,7 @@ import {
   returnInventory,
   returnShipment,
   refundPayment,
-  pickupReturns,
+  returnDelivery as returnDelivery,
   cancelPayment
 } from './order';
 
@@ -100,7 +100,7 @@ const Order = {
       consumesEvent: 'validateAddress',
       producesEvent: 'addressValidated',
       callback: addressValidated,
-      disabled: true
+      disabled: false
     },
     authorizePayment: {
       service: 'Payment',
@@ -123,9 +123,9 @@ const Order = {
       service: 'Shipping',
       type: 'outbound',
       timeout: 440000000,
-      callback: orderShipped,
       consumesEvent: 'orderPicked',
       producesEvent: 'orderShipped',
+      callback: orderShipped,
       timeoutCallback: handleLatePickup,
       undo: returnShipment
     },
@@ -143,7 +143,7 @@ const Order = {
       callback: deliveryVerified,
       consumesEvent: 'orderDelivered',
       producesEvent: 'deliveryVerified',
-      undo: pickupReturns
+      undo: returnDelivery
     },
     completePayment: {
       service: 'Payment',
