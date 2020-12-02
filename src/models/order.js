@@ -24,7 +24,7 @@ import {
  * @property {adapterFunction} verifyDelivery - verify the order was received by the customer
  * @property {adapterFunction} trackShipment
  * @property {adapterFunction} refundPayment 
- * @property {adapterFunction} compensate - undo all transactions
+ * @property {adapterFunction} compensate - undo all transactions up to this point
  * @property {function():Promise<Order>} fillOrder - pick the items and get them ready for shipment
  * @property {adapterFunction} authorizePayment - verify payment info, credit avail
  * @property {import('../adapters/shipping-adapter').} shipOrder
@@ -32,11 +32,11 @@ import {
  * calls shipping service to request delivery
  * @property {function(Order):Promise<void>} save - saves order
  * @property {function():Promise<Order>} find - finds order
- * @property {string} shippingAddress
+ * @property {string} shippingAddress 
  * @property {string} orderNo = the order number
  * @property {string} trackingId - id given by tracking status for this `orderNo`
- * @property {function()} decrypt
- * @property {function(*):Promise<Order>} update 
+ * @property {function()} decrypt - decrypts encypted properties
+ * @property {function(*):Promise<Order>} update - update the order
  * @property {'APPROVED'|'SHIPPING'|'CANCELED'|'COMPLETED'} orderStatus
  */
 
@@ -232,12 +232,17 @@ async function updateOrder(order, changes) {
 }
 
 /**
- * 
- * @param {*} param0 
+ * Callback invoked by adapter when payment is complete
+ * @param {{model:Order}} options 
  */
 export async function paymentCompleted({ model: order }) {
-  order.compensate();
-  return order.update({ orderStatus: OrderStatus.COMPLETE });
+  return new Promise(function (resolve, reject) {
+    setTimeout(() => {
+      resolve(
+        order.update({ orderStatus: OrderStatus.COMPLETE })
+      );
+    }, 2000);
+  });
 }
 
 /**
@@ -252,7 +257,7 @@ export async function deliveryVerified(options, proofOfDelivery) {
 
 /**
  * Handle shipment tracking update
- * @param {{order: Order }} options 
+ * @param {{model: Order }} options 
  * @param {string} trackingId
  * @param {string} trackingStatus
  */
@@ -434,8 +439,22 @@ export function orderFactory(dependencies) {
   }
 }
 
+/**
+ * 
+ * @param {{model:Order}} param0 
+ */
+export function errorCallback({ port, model: order, error }) {
+  console.error('error...', port, error);
+  order.compensate();
+}
+
+/**
+ * 
+ * @param {{model:Order}} param0 
+ */
 export function timeoutCallback({ port, model: order }) {
-  console.error('timeoutCallback...', port, order);
+  console.error('timeout...', port);
+  order.compensate();
 }
 
 export function handleLatePickup({ model: order }) {

@@ -23,7 +23,8 @@ import {
   returnShipment,
   refundPayment,
   returnDelivery,
-  cancelPayment
+  cancelPayment,
+  timeoutCallback
 } from './order';
 
 import {
@@ -152,7 +153,9 @@ const Order = {
       callback: paymentCompleted,
       consumesEvent: 'deliveryVerified',
       producesEvent: 'paymentCompleted',
-      undo: refundPayment
+      undo: refundPayment,
+      timeout: 1000,
+      timeoutCallback
     },
     cancelShipment: {
       service: 'Shipping',
