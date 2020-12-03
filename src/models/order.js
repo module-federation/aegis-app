@@ -213,7 +213,6 @@ function handleError(error, func) {
 async function findOrder(order) {
   const current = await order.find();
   if (!current) {
-    console.warn('no order found');
     return order;
   }
   return current;
@@ -292,6 +291,9 @@ export async function orderShipped(options, shipmentId) {
  */
 export async function orderPicked(options, pickupAddress) {
   const { model: order } = options;
+  if (!pickupAddress) {
+    throw new Error('pickupAddress is missing');
+  }
   return order.update({ pickupAddress });
 }
 

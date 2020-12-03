@@ -151,32 +151,34 @@ export function trackShipment(service) {
  */
 export function verifyDelivery(service) {
 
-  return async function (options) {
+  return function (options) {
     const {
       model: order,
       args: [callback]
     } = options;
 
     return new Promise(async function (resolve, reject) {
-      try {
-        await order.listen({
-          once: true,
-          model: order,
-          id: order.orderNo,
-          topic: 'orderChannel',
-          filter: order.orderNo,
-          callback: async ({
-            message
-          }) => {
-            const event = JSON.parse(message);
-            console.log('received event...', event);
-            const proofOfDelivery = event.eventData.proofOfDelivery;
+      return order.listen({
+        once: true,
+        model: order,
+        id: order.orderNo,
+        topic: 'orderChannel',
+        filter: order.orderNo,
+        callback: async ({
+          message
+        }) => {
+          const event = JSON.parse(message);
+          console.log('received event...', event);
+          const proofOfDelivery = event.eventData.proofOfDelivery;
+          try {
             const newOrder = await callback(options, proofOfDelivery);
             resolve(newOrder);
+          } catch (e) {
+            reject(e);
           }
-        });
-
-        await order.notify('shippingChannel', JSON.stringify({
+        }
+      }).then(() => {
+        return order.notify('shippingChannel', JSON.stringify({
           eventData: {
             commandArgs: {
               trackingId: order.trackingId,
@@ -190,10 +192,7 @@ export function verifyDelivery(service) {
           eventTime: new Date().toUTCString(),
           eventSource: 'orderService'
         }));
-      } catch (error) {
-        reject(error);
-        throw new Error(error);
-      }
+      }).catch(error => { throw new Error(error); });
     });
   }
 }

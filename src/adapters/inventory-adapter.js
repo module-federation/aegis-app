@@ -42,32 +42,35 @@
  */
 export function pickOrder(service) {
 
-  return async function (options) {
+  return function (options) {
     const {
       model: order,
       args: [callback]
     } = options;
 
-    return new Promise(async function (resolve, reject) {
-      try {
-        await order.listen({
-          once: true,
-          model: order,
-          id: order.orderNo,
-          topic: 'orderChannel',
-          filter: order.orderNo,
-          callback: async ({
-            message
-          }) => {
-            const event = JSON.parse(message);
-            console.log('recieved event: ', event);
-            const pickupAddress = event.eventData.warehouse_addr;
+    return new Promise(function (resolve, reject) {
+      // start listening first then send the event
+      return order.listen({
+        once: true,
+        model: order,
+        id: order.orderNo,
+        topic: 'orderChannel',
+        filter: order.orderNo,
+        callback: async ({
+          message
+        }) => {
+          const event = JSON.parse(message);
+          console.log('recieved event: ', event);
+          const pickupAddress = event.eventData.warehouse_addr;
+          try {
             const newOrder = await callback(options, pickupAddress);
-            resolve(newOrder);
+            resolve(newOrder); // hold promise until we get an answer
+          } catch (error) {
+            reject(error);
           }
-        });
-
-        await order.notify('inventoryChannel', JSON.stringify({
+        }
+      }).then(() => {
+        return order.notify('inventoryChannel', JSON.stringify({
           eventType: 'Command',
           eventTime: new Date().toUTCString(),
           eventData: {
@@ -80,10 +83,7 @@ export function pickOrder(service) {
           },
           eventSource: 'orderService'
         }));
-      } catch (error) {
-        reject(error);
-        throw new Error(error);
-      }
+      }).catch((reason) => { throw new Error(reason) });
     });
   }
 }

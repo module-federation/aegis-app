@@ -53,14 +53,15 @@ function generateShippingMessage(emitEvent, event, externalId) {
 
 dispatcher.registerCallback('inventoryChannel', ({ message, emitEvent }) => {
   const event = JSON.parse(message);
-  const warehouseAddress = '1234 warehouse dr, dock 2';
+  const warehouseAddress = /*null;*/ '1234 warehouse dr, dock 2';
   const externalId = event.eventData.commandArgs.externalId;
+  const eventName = /*'outOfStock';*/ 'orderPicked';
   sendEvent({
     emitEvent,
     topic: event.eventData.replyChannel,
-    eventName: 'orderPicked',
+    eventName,
     eventData: { warehouse_addr: warehouseAddress, externalId },
-    eventSource: 'inventoryService'
+    eventSource: 'inventoryService/service-registry.js'
   });
 });
 
