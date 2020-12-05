@@ -40,7 +40,7 @@ export function shipOrder(service) {
       args: [callback]
     } = options;
 
-    return new Promise(async function (resolve, reject) {
+    return new Promise(function (resolve, reject) {
       return order.listen({
         once: true,
         model: order,
@@ -78,7 +78,7 @@ export function shipOrder(service) {
           eventSource: 'orderService'
         }));
       })
-    });
+    }).catch(error => { throw new Error(error); });
   }
 }
 
@@ -93,7 +93,7 @@ export function trackShipment(service) {
       args: [callback]
     } = options;
 
-    return new Promise(async function (resolve, reject) {
+    return new Promise(function (resolve, reject) {
       return order.listen({
         once: false,
         model: order,
