@@ -34,32 +34,34 @@
  */
 export function shipOrder(service) {
 
-  return async function (options) {
+  return function (options) {
     const {
       model: order,
       args: [callback]
     } = options;
 
     return new Promise(async function (resolve, reject) {
-      try {
-        await order.listen({
-          once: true,
-          model: order,
-          id: order.orderNo,
-          topic: 'orderChannel',
-          filter: order.orderNo,
-          callback: async ({
-            message
-          }) => {
+      return order.listen({
+        once: true,
+        model: order,
+        id: order.orderNo,
+        topic: 'orderChannel',
+        filter: order.orderNo,
+        callback: async ({
+          message
+        }) => {
+          try {
             const event = JSON.parse(message);
             console.log('received event...', event);
             const shipmentId = event.eventData.shipmentId;
             const newOrder = await callback(options, shipmentId);
             resolve(newOrder);
+          } catch (error) {
+            reject(error);
           }
-        });
-
-        await order.notify('shippingChannel', JSON.stringify({
+        }
+      }).then(() => {
+        return order.notify('shippingChannel', JSON.stringify({
           eventType: 'Command',
           eventName: 'shipOrder',
           eventTime: new Date().toUTCString(),
@@ -75,10 +77,7 @@ export function shipOrder(service) {
           },
           eventSource: 'orderService'
         }));
-      } catch (error) {
-        reject(error);
-        throw new Error(error);
-      }
+      })
     });
   }
 }
@@ -88,24 +87,24 @@ export function shipOrder(service) {
  */
 export function trackShipment(service) {
 
-  return async function (options) {
+  return function (options) {
     const {
       model: order,
       args: [callback]
     } = options;
 
     return new Promise(async function (resolve, reject) {
-      try {
-        await order.listen({
-          once: false,
-          model: order,
-          id: order.orderNo,
-          topic: 'orderChannel',
-          filter: order.orderNo,
-          callback: async function ({
-            message,
-            subscription
-          }) {
+      return order.listen({
+        once: false,
+        model: order,
+        id: order.orderNo,
+        topic: 'orderChannel',
+        filter: order.orderNo,
+        callback: async function ({
+          message,
+          subscription
+        }) {
+          try {
             const event = JSON.parse(message);
             console.log('received event...', event);
             const trackingId = event.eventData.trackingId;
@@ -119,10 +118,12 @@ export function trackShipment(service) {
               subscription.unsubscribe();
               resolve(newOrder);
             }
+          } catch (error) {
+            reject(error);
           }
-        });
-
-        await order.notify('shippingChannel', JSON.stringify({
+        }
+      }).then(() => {
+        return order.notify('shippingChannel', JSON.stringify({
           eventType: 'Command',
           eventName: 'trackShipment',
           eventTime: new Date().toUTCString(),
@@ -137,11 +138,8 @@ export function trackShipment(service) {
             },
           },
         }));
-      } catch (error) {
-        reject(error);
-        throw new Error(error);
-      }
-    });
+      });
+    }).catch(error => { throw new Error(error); });
   }
 }
 
@@ -167,10 +165,10 @@ export function verifyDelivery(service) {
         callback: async ({
           message
         }) => {
-          const event = JSON.parse(message);
-          console.log('received event...', event);
-          const proofOfDelivery = event.eventData.proofOfDelivery;
           try {
+            const event = JSON.parse(message);
+            console.log('received event...', event);
+            const proofOfDelivery = event.eventData.proofOfDelivery;
             const newOrder = await callback(options, proofOfDelivery);
             resolve(newOrder);
           } catch (e) {
@@ -192,7 +190,7 @@ export function verifyDelivery(service) {
           eventTime: new Date().toUTCString(),
           eventSource: 'orderService'
         }));
-      }).catch(error => { throw new Error(error); });
-    });
+      });
+    }).catch(error => { throw new Error(error); });
   }
 }
