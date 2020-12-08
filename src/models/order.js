@@ -251,6 +251,9 @@ export async function paymentCompleted({ model: order }) {
  */
 export async function deliveryVerified(options, proofOfDelivery) {
   const { model: order } = options;
+  if (!proofOfDelivery) {
+    throw new Error('proofOfDelivery missing');
+  }
   return order.update({ proofOfDelivery });
 }
 
@@ -266,6 +269,9 @@ export async function trackingUpdate(
   trackingStatus
 ) {
   const { model: order } = options;
+  if (!trackingId || !trackingStatus) {
+    throw new Error('trackingId or trackingStatus missing');
+  }
   return {
     done: trackingStatus === 'orderDelivered',
     order: await order.update({ trackingId, trackingStatus })
@@ -279,6 +285,9 @@ export async function trackingUpdate(
  */
 export async function orderShipped(options, shipmentId) {
   const { model: order } = options;
+  if (!shipmentId) {
+    throw new Error('shipmentId missing');
+  }
   return order.update({
     shipmentId,
     orderStatus: OrderStatus.SHIPPING
@@ -304,6 +313,9 @@ export async function orderPicked(options, pickupAddress) {
  */
 export async function addressValidated(options, shippingAddress) {
   const { model: order } = options;
+  if (!shippingAddress) {
+    throw new Error('shippingAddress is missing');
+  }
   return order.update({ shippingAddress });
 }
 
@@ -314,16 +326,22 @@ export async function addressValidated(options, shippingAddress) {
  */
 export async function paymentAuthorized(options, paymentAuthorization) {
   const { model: order } = options;
+  if (!paymentAuthorization) {
+    throw new Error('paymentAuthorization is missing');
+  }
   return order.update({ paymentAuthorization });
 }
 
 export async function refundPayment(options, receipt) {
   const { model: order } = options;
+  if (!receipt) {
+    throw new Error('receipt is missing');
+  }
   return order.update({ receipt });
 }
 
 /**
- * Controls the order service workflow.
+ * Starts the order service workflow.
  */
 const OrderActions = {
   /** 
@@ -355,7 +373,7 @@ const OrderActions = {
     }
   },
   /** 
-   * 
+   * Useful if we need to restart tracking
    * @param {Order} order 
    */
   [OrderStatus.SHIPPING]: async (order) => {
@@ -367,14 +385,14 @@ const OrderActions = {
     }
   },
   /** 
-   * 
+   * Start cancellation process
    * @param {Order} order 
    */
   [OrderStatus.CANCELED]: async (order) => {
     try {
-      await order.refundPayment();
+      order.compensate();
     } catch (error) {
-      handleError(error, OrderStatus.SHIPPING);
+      handleError(error, OrderStatus.CANCELED);
     }
   },
   /** 
@@ -409,8 +427,8 @@ export async function handleOrderEvent({
 }
 
 /**
- * 
- * @param {*} dependencies 
+ * Returns factory function for the Order model.
+ * @param {*} dependencies - inject dependencies
  */
 export function orderFactory(dependencies) {
   return async function createOrder({

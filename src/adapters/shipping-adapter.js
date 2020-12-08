@@ -155,7 +155,7 @@ export function verifyDelivery(service) {
       args: [callback]
     } = options;
 
-    return new Promise(async function (resolve, reject) {
+    return new Promise(function (resolve, reject) {
       return order.listen({
         once: true,
         model: order,
