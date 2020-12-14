@@ -66,14 +66,14 @@ import * as adapters from '../adapters'
 import User from './user';
 import Order from './order-config';
 
-const requiredProperties = [
+const requiredProps = [
   'modelName',
   'endpoint',
   'factory'
 ];
 
 function validateModel(model) {
-  const missing = requiredProperties.filter(p => !model[p]);
+  const missing = requiredProps.filter(p => !model[p]);
   if (missing?.length > 0) {
     throw new Error(
       `missing required properties: ${missing} > ${Object.entries(model)}`
