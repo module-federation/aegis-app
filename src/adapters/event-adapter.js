@@ -1,6 +1,6 @@
-'use strict'
+"use strict";
 
-import { Event } from '../services/event-service';
+import { Event } from "../services/event-service";
 
 /**
  * @typedef {{
@@ -9,14 +9,14 @@ import { Event } from '../services/event-service';
  * @typedef {string|RegExp} topic
  * @callback eventHandler
  * @param {string} eventData
- * @typedef {eventHandler} notifyType 
+ * @typedef {eventHandler} notifyType
  * @typedef {{
  * listen:function(topic, eventHandler),
  * notify:notifyType
- * }} EventService 
+ * }} EventService
  * @callback adapterFactory
  * @param {EventService} service
- * @returns {function(topic, eventHandler)} 
+ * @returns {function(topic, eventHandler)}
  */
 
 /**
@@ -26,7 +26,7 @@ const subscriptions = new Map();
 
 /**
  * @typedef {string} message
- * @typedef {string|RegExp} topic 
+ * @typedef {string|RegExp} topic
  * @param {{
  *  id:string,
  *  callback:function(message,Subscription),
@@ -36,9 +36,7 @@ const subscriptions = new Map();
  *  model:object
  * }} options
  */
-const Subscription = function ({
-  id, callback, topic, filter, once, model
-}) {
+const Subscription = function ({ id, callback, topic, filter, once, model }) {
   return {
     /**
      * unsubscribe from topic
@@ -61,7 +59,7 @@ const Subscription = function ({
 
     /**
      * Filter message and invoke callback
-     * @param {string} message 
+     * @param {string} message
      */
     async filter(message) {
       if (filter) {
@@ -76,9 +74,9 @@ const Subscription = function ({
         return;
       }
       await callback({ message, subscription: this });
-    }
-  }
-}
+    },
+  };
+};
 
 /**
  *
@@ -86,10 +84,16 @@ const Subscription = function ({
  */
 export function listen(service = Event) {
   return async function ({
-    model, args: [{ topic, callback, filter, once, id }]
+    model,
+    args: [{ topic, callback, filter, once, id }],
   }) {
     const subscription = Subscription({
-      id, topic, callback, filter, once, model
+      id,
+      topic,
+      callback,
+      filter,
+      once,
+      model,
     });
 
     if (subscriptions.has(topic)) {
@@ -102,14 +106,14 @@ export function listen(service = Event) {
     if (!service.listening) {
       service.listen(/Channel/, async function ({ topic, message }) {
         if (subscriptions.has(topic)) {
-          subscriptions.get(topic).forEach(async subscription => {
+          subscriptions.get(topic).forEach(async (subscription) => {
             subscription.filter(message);
           });
         }
       });
     }
     return subscription;
-  }
+  };
 }
 
 /**
@@ -118,8 +122,8 @@ export function listen(service = Event) {
  */
 export function notify(service = Event) {
   return async function ({ model, resolve, args: [topic, message] }) {
-    console.log('sending...', { topic, message });
+    console.log("sending...", { topic, message });
     await service.notify(topic, message);
     return model;
-  }
+  };
 }

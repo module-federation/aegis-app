@@ -1,9 +1,8 @@
-'use strict'
+"use strict";
 import { RestOrderAdapter } from "../adapters/order-adapter";
-const url = 'http://localhost:8070/api/orders/';//process.env.HOST_URL + '/api/orders/';
+const url = process.env.ORDER_SVC_URL || "http://localhost:8070/api/orders/";
 
 export class OrderService {
-
   constructor(adapter = RestOrderAdapter) {
     this.adapter = new adapter(url);
   }
@@ -25,7 +24,7 @@ export class OrderService {
   async createOrder() {
     try {
       await this.adapter.createOrder();
-      console.log('order created');
+      console.log("order created");
       return this;
     } catch (error) {
       throw new Error(error);
@@ -35,7 +34,7 @@ export class OrderService {
   async submitOrder(orderId = this.adapter.orderId) {
     try {
       await this.adapter.submitOrder(orderId);
-      console.log('order submitted');
+      console.log("order submitted");
       return this;
     } catch (error) {
       throw new Error(error);

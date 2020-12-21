@@ -1,4 +1,4 @@
-'use strict'
+"use strict";
 
 /**
  * @typedef {import('../models/order').Order} Order
@@ -6,19 +6,21 @@
  * authorizePayment:function():Promise<string>,
  * completePaymet:function():Promise<void>,
  * refundPayment:function():Promise<void>
- * }} service 
+ * }} service
  * @callback adapterFactory
  * @param {service} service
- * @returns {function({model:Order,parms:any[]})} 
+ * @returns {function({model:Order,parms:any[]})}
  */
 
 /**
  * @type {adapterFactory}
  */
 export function authorizePayment(service) {
-
   return async function (options) {
-    const { model: order, args: [callback] } = options;
+    const {
+      model: order,
+      args: [callback],
+    } = options;
     return new Promise(async function (resolve, reject) {
       try {
         const paymentAuthorization = await service.authorizePayment(order);
@@ -28,7 +30,7 @@ export function authorizePayment(service) {
         reject(error);
       }
     });
-  }
+  };
 }
 /**
  * @type {adapterFactory}
@@ -36,12 +38,15 @@ export function authorizePayment(service) {
 export function completePayment(service) {
   return async function (options) {
     return new Promise(async function (resolve, reject) {
-      const { model: order, args: [callback] } = options;
+      const {
+        model: order,
+        args: [callback],
+      } = options;
       await service.completePayment(order);
       const newOrder = await callback(options);
       resolve(newOrder);
     });
-  }
+  };
 }
 /**
  * @type {adapterFactory}
@@ -49,10 +54,13 @@ export function completePayment(service) {
 export function refundPayment(service) {
   return async function (options) {
     return new Promise(async function (resolve, reject) {
-      const { model: order, args: [callback] } = options;
+      const {
+        model: order,
+        args: [callback],
+      } = options;
       await service.refundPayment(order);
       const newOrder = await callback(options);
       resolve(newOrder);
     });
-  }
+  };
 }
