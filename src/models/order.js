@@ -1,6 +1,7 @@
 "use strict";
 
 import { processUpdate, checkFormat, PREVMODEL } from "./mixins";
+import { decrypt } from "../lib/utils";
 
 /**
  * @typedef {string|RegExp} topic
@@ -389,6 +390,17 @@ export async function handleOrderEvent({ model: order, eventType, changes }) {
   }
 }
 
+function makeDecrypt(encryptedValues) {
+  return function (obj) {
+    console.log("makeDecrypt", obj);
+    const key = Object.keys(obj)[0];
+    if (encryptedValues?.includes(key)) {
+      return decrypt(obj[key]);
+    }
+    return obj[key];
+  };
+}
+
 /**
  * Returns factory function for the Order model.
  * @param {*} dependencies - inject dependencies
@@ -397,20 +409,22 @@ export function orderFactory(dependencies) {
   return async function createOrder({
     customerInfo,
     orderItems,
-    shippingAddress,
-    billingAddress,
-    creditCardNumber,
+    shippingAddress = null,
+    billingAddress = null,
+    creditCardNumber = null,
     signatureRequired = false,
+    encryptedValues = [],
   }) {
     checkItems(orderItems);
-    checkFormat(creditCardNumber, "creditCard");
+    const decrypt = makeDecrypt(encryptedValues);
+    checkFormat(decrypt({ creditCardNumber }), "creditCard");
     const order = {
       customerInfo,
       orderItems,
-      creditCardNumber,
-      billingAddress,
       signatureRequired,
-      shippingAddress,
+      creditCardNumber: decrypt({ creditCardNumber }),
+      billingAddress: decrypt({ billingAddress }),
+      shippingAddress: decrypt({ shippingAddress }),
       [orderTotal]: calcTotal(orderItems),
       [orderStatus]: OrderStatus.PENDING,
       [orderNo]: dependencies.uuid(),

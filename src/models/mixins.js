@@ -129,6 +129,7 @@ const encryptProperties = (...propKeys) => (o) => {
         .map((key) => (this[key] ? { [key]: decrypt(this[key]) } : {}))
         .reduce((p, c) => ({ ...c, ...p }));
     },
+    encryptedValues: keys,
     ...mixins,
     ...encryptProps(),
   };

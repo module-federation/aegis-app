@@ -30,7 +30,7 @@ export function encrypt(text) {
 }
 
 export function decrypt(cipherText) {
-  // console.log('decrypt(%s)', cipherText);
+  console.log("decrypt(%s)", cipherText);
   const decipher = crypto.createDecipheriv(algo, key, iv);
   let decrypted = decipher.update(cipherText, "hex", "utf8");
   decrypted += decipher.final("utf8");
