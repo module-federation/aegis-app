@@ -2,15 +2,13 @@
 
 /**
  * @typedef {Object} Model
- * @property {Symbol} id
- * @property {Symbol} modelName
- * @property {Symbol} createTime
- * @property {Symbol} onUpdate
+ * @property {string} id
+ * @property {string} modelName
+ * @property {string} createTime
+ * @property {onUpdate} onUpdate
+ * @property {onDelete} onDelete
  *
- * @typedef {string} service - name of the service object to inject in adapter
- * @typedef {number} timeout - call to adapter will timeout after `timeout` milliseconds
- *
- * @callback onUpdate
+ * @callback onUpdate called to handle model updates
  * @param {Model} model
  * @param {Object} changes
  * @returns {Model | Error} updated model or throw
@@ -18,6 +16,9 @@
  * @callback onDelete
  * @param {Model} model
  * @returns {Model | Error} updated model or throw
+ *
+ * @typedef {string} service - name of the service object to inject in adapter
+ * @typedef {number} timeout - call to adapter will timeout after `timeout` milliseconds
  *
  * @typedef {{
  *  [x: string]: {
@@ -32,7 +33,16 @@
  *    disabled?: boolean
  *    adapter?: string
  *  }
- * }} port - input/output ports for the domain
+ * }} ports - input/output ports for the domain
+ *
+ * @typedef {string} key
+ * @typedef {*} value
+ * @typedef {{
+ *  on: "serialize" | "deserialize",
+ *  key: string | RegExp | "*" | (function(key,value):boolean)
+ *  type: "string" | "object" | "number" | "function" | "any" | (function(key,value):boolean)
+ *  value(key, value):value
+ * }} serializer
  *
  * @typedef {Object} ModelSpecification Specify model data and behavior
  * @property {string} modelName name of model (case-insenstive)
@@ -42,7 +52,7 @@
  * @property {Array<import("./mixins").mixinFunction>} [mixins] functional mixins
  * @property {onUpdate} [onUpdate] function called to handle update requests
  * @property {onDelete} [onDelete] function called before deletion
- * @property {port} [ports] input/output ports for the domain
+ * @property {ports} [ports] input/output ports for the domain
  * @property {Array<function({
  *  eventName:string,
  *  eventType:string,
@@ -50,6 +60,8 @@
  *  modelName:string,
  *  model:Model
  * }):Promise<void>>} [eventHandlers] callbacks invoked when CRUD events occur
+ * @property callbacks to execute during de/serialization of the model
+ * @property {serializer[]} serializers
  */
 
 import GlobalMixins from "./mixins";

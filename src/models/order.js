@@ -172,10 +172,7 @@ export function readyToDelete(model) {
  * @param {*} func
  */
 function handleError(error, func) {
-  console.error({
-    func,
-    error,
-  });
+  console.error({ func, error });
   throw new Error(error);
 }
 
@@ -271,7 +268,9 @@ export async function orderPicked(options, pickupAddress) {
   if (!pickupAddress) {
     throw new Error("pickupAddress is missing");
   }
-  return order.update({ pickupAddress });
+  return order.update({
+    pickupAddress,
+  });
 }
 
 /**
@@ -390,17 +389,6 @@ export async function handleOrderEvent({ model: order, eventType, changes }) {
   }
 }
 
-function makeDecrypt(encryptedValues) {
-  return function (obj) {
-    console.log("makeDecrypt", obj);
-    const key = Object.keys(obj)[0];
-    if (encryptedValues?.includes(key)) {
-      return decrypt(obj[key]);
-    }
-    return obj[key];
-  };
-}
-
 /**
  * Returns factory function for the Order model.
  * @param {*} dependencies - inject dependencies
@@ -413,18 +401,16 @@ export function orderFactory(dependencies) {
     billingAddress = null,
     creditCardNumber = null,
     signatureRequired = false,
-    encryptedValues = [],
   }) {
     checkItems(orderItems);
-    const decrypt = makeDecrypt(encryptedValues);
-    checkFormat(decrypt({ creditCardNumber }), "creditCard");
+    checkFormat(creditCardNumber, "creditCard");
     const order = {
       customerInfo,
       orderItems,
       signatureRequired,
-      creditCardNumber: decrypt({ creditCardNumber }),
-      billingAddress: decrypt({ billingAddress }),
-      shippingAddress: decrypt({ shippingAddress }),
+      creditCardNumber,
+      billingAddress,
+      shippingAddress,
       [orderTotal]: calcTotal(orderItems),
       [orderStatus]: OrderStatus.PENDING,
       [orderNo]: dependencies.uuid(),

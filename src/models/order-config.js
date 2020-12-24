@@ -35,6 +35,8 @@ import {
   validatePropertiesMixin,
 } from "./mixins";
 
+import { decrypt } from "../lib/utils";
+
 /**
  * @type {import('./index').ModelSpecification}
  */
@@ -171,6 +173,26 @@ const Order = {
       type: "outbound",
     },
   },
+  serializers: [
+    {
+      on: "deserialize",
+      key: "creditCardNumber",
+      type: "string",
+      value: (key, value) => decrypt(value),
+    },
+    {
+      on: "deserialize",
+      key: "shippingAddress",
+      type: "string",
+      value: (key, value) => decrypt(value),
+    },
+    {
+      on: "deserialize",
+      key: "billingAddress",
+      type: "string",
+      value: (key, value) => decrypt(value),
+    },
+  ],
 };
 
 export default Order;
