@@ -469,7 +469,7 @@ export const checkFormat = (value, expr) => {
 /**
  * Implement GDPR encryption requirement across models
  */
-const encryptPersonalInfo = encryptProperties(
+export const encryptPersonalInfo = encryptProperties(
   "lastName",
   "address",
   "shippingAddress",

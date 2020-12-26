@@ -15,7 +15,7 @@ function sendEvent({ emitEvent, topic, eventData, eventSource, eventName }) {
         eventData,
         eventName,
         eventTime: new Date().toUTCString(),
-        eventType: "CommandResponse",
+        eventType: "commandResponse",
         eventSource: eventSource,
       })
     );
@@ -47,7 +47,7 @@ const eventNames = {
 function generateShippingMessage(emitEvent, event, externalId) {
   return {
     emitEvent,
-    topic: event.eventData.replyChannel,
+    topic: event.eventData.commandResp,
     eventData: generateShippingEventData(event, externalId),
     eventName: eventNames[event.eventName],
     eventSource: "shippingService",

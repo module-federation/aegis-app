@@ -5,14 +5,17 @@
  * @callback eventCallback
  * @param {string} message
  * @param {{
- *  getModel:function():object,
  *  unsubscribe:function()
  * }} subscription
- * @typedef {eventCallback} shipOrderType
- * @param topic,
- * @param eventCallback
+ * @typedef {Object} shipOrderServiceType
+ * @property {string} serviceName
+ * @property {string} channel
+ * @property {function():function():import('../services/event-service').EventMessage} shipOrder
+ * @property {function():function():import('../services/event-service').EventMessage} trackShipment
+ * @property {function():function():import('../services/event-service').EventMessage} verifyDelivery
+ *
  * @typedef {{
- *  shipOrder:shipOrderType,
+ *  shipOrder:function(),
  *  trackShipment:function(),
  *  verifyDelivery:function()
  * }} ShippingAdapter
@@ -28,8 +31,12 @@
  * @returns {function({model:Order,parms:[eventCallback]})}
  */
 
+const respondOn = "orderChannel";
+const requester = "orderService";
+
 /**
  *
+ * @param {}
  * @type {adapterFactory}
  */
 export function shipOrder(service) {
@@ -47,12 +54,14 @@ export function shipOrder(service) {
           id: order.orderNo,
           topic: "orderChannel",
           filter: order.orderNo,
+
           callback: async ({ message }) => {
             try {
               const event = JSON.parse(message);
-              console.log("received event...", event);
-              const shipmentId = event.eventData.shipmentId;
-              const newOrder = await callback(options, shipmentId);
+              console.log("received event... ", event);
+
+              const shippingId = service.shipmentId(event);
+              const newOrder = await callback(options, shippingId);
               resolve(newOrder);
             } catch (error) {
               reject(error);
@@ -61,27 +70,22 @@ export function shipOrder(service) {
         })
         .then(() => {
           return order.notify(
-            "shippingChannel",
-            JSON.stringify({
-              eventType: "Command",
-              eventName: "shipOrder",
-              eventTime: new Date().toUTCString(),
-              eventData: {
-                replyChannel: "orderChannel",
-                commandName: "shipOrder",
-                commandArgs: {
-                  shipTo: order.decrypt().shippingAddress,
-                  shipFrom: order.pickupAddress,
-                  lineItems: order.orderItems,
-                  externalId: order.orderNo,
-                },
-              },
-              eventSource: "orderService",
-            })
+            service.channel,
+            JSON.stringify(
+              service.shipOrder({
+                shipTo: order.decrypt().shippingAddress,
+                shipFrom: order.pickupAddress,
+                lineItems: order.orderItems,
+                externalId: order.orderNo,
+                requester,
+                respondOn,
+              })
+            )
           );
+        })
+        .catch((error) => {
+          throw new Error(error);
         });
-    }).catch((error) => {
-      throw new Error(error);
     });
   };
 }
@@ -104,17 +108,20 @@ export function trackShipment(service) {
           id: order.orderNo,
           topic: "orderChannel",
           filter: order.orderNo,
+
           callback: async function ({ message, subscription }) {
             try {
               const event = JSON.parse(message);
               console.log("received event...", event);
-              const trackingId = event.eventData.trackingId;
-              const trackingStatus = event.eventData.trackingStatus;
+
+              const trackingId = service.trackingId(event);
+              const trackingStatus = service.trackingStatus(event);
               const { done, order: newOrder } = await callback(
                 options,
                 trackingId,
                 trackingStatus
               );
+
               if (done) {
                 subscription.unsubscribe();
                 resolve(newOrder);
@@ -126,22 +133,16 @@ export function trackShipment(service) {
         })
         .then(() => {
           return order.notify(
-            "shippingChannel",
-            JSON.stringify({
-              eventType: "Command",
-              eventName: "trackShipment",
-              eventTime: new Date().toUTCString(),
-              eventSource: "orderService",
-              eventData: {
-                replyChannel: "orderChannel",
-                commandName: "trackShipment",
-                commandArgs: {
-                  shipmentId: order.shipmentId,
-                  externalId: order.orderNo,
-                  trackingId: order.trackingId,
-                },
-              },
-            })
+            service.channel,
+            JSON.stringify(
+              service.trackShipment({
+                trackingId: order.trackingId,
+                shipmentId: order.shipmentId,
+                externalId: order.orderNo,
+                requester,
+                respondOn,
+              })
+            )
           );
         });
     }).catch((error) => {
@@ -169,11 +170,13 @@ export function verifyDelivery(service) {
           id: order.orderNo,
           topic: "orderChannel",
           filter: order.orderNo,
+
           callback: async ({ message }) => {
             try {
               const event = JSON.parse(message);
               console.log("received event...", event);
-              const proofOfDelivery = event.eventData.proofOfDelivery;
+
+              const proofOfDelivery = service.proofOfDelivery(event);
               const newOrder = await callback(options, proofOfDelivery);
               resolve(newOrder);
             } catch (e) {
@@ -183,21 +186,15 @@ export function verifyDelivery(service) {
         })
         .then(() => {
           return order.notify(
-            "shippingChannel",
-            JSON.stringify({
-              eventData: {
-                commandArgs: {
-                  trackingId: order.trackingId,
-                  externalId: order.orderNo,
-                },
-                replyChannel: "orderChannel",
-                commandName: "verifyDelivery",
-              },
-              eventType: "Command",
-              eventName: "verifyDelivery",
-              eventTime: new Date().toUTCString(),
-              eventSource: "orderService",
-            })
+            service.channel,
+            JSON.stringify(
+              service.verifyDelivery({
+                trackingId: order.trackingId,
+                externalId: order.orderNo,
+                requester,
+                respondOn,
+              })
+            )
           );
         });
     }).catch((error) => {

@@ -1,7 +1,11 @@
 "use strict";
 
-import { processUpdate, checkFormat, PREVMODEL } from "./mixins";
-import { decrypt } from "../lib/utils";
+import GlobalMixins, {
+  processUpdate,
+  checkFormat,
+  PREVMODEL,
+  encryptPersonalInfo,
+} from "./mixins";
 
 /**
  * @typedef {string|RegExp} topic

@@ -33,6 +33,7 @@ import {
   freezePropertiesMixin,
   updatePropertiesMixin,
   validatePropertiesMixin,
+  encryptPersonalInfo
 } from "./mixins";
 
 import { decrypt } from "../lib/utils";
@@ -83,6 +84,7 @@ const Order = {
   ],
   onUpdate: processUpdate,
   onDelete: readyToDelete,
+  onLoad: encryptPersonalInfo,
   eventHandlers: [handleOrderEvent],
   ports: {
     listen: {
@@ -192,6 +194,18 @@ const Order = {
       type: "string",
       value: (key, value) => decrypt(value),
     },
+    // {
+    //   on: "serialize",
+    //   key: "*",
+    //   type: "function",
+    //   value: (key, value) => value.toString(),
+    // },
+    // {
+    //   on: "deserialize",
+    //   key: (key, value) => key.indexOf("function ") === 0,
+    //   type: "string",
+    //   value: (key, value) => eval(`(${value})`),
+    // },
   ],
 };
 

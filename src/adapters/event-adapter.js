@@ -121,7 +121,7 @@ export function listen(service = Event) {
  * @returns {function(topic, eventData)}
  */
 export function notify(service = Event) {
-  return async function ({ model, resolve, args: [topic, message] }) {
+  return async function ({ model, args: [topic, message] }) {
     console.log("sending...", { topic, message });
     await service.notify(topic, message);
     return model;

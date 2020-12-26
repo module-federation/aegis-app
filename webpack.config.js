@@ -1,68 +1,67 @@
-var path = require('path')
-const ModuleFederationPlugin = require('webpack')
-  .container.ModuleFederationPlugin;
-const httpNode = require('./webpack/http-node');
-const NodemonPlugin = require('nodemon-webpack-plugin');
-
+var path = require("path");
+const ModuleFederationPlugin = require("webpack").container
+  .ModuleFederationPlugin;
+const httpNode = require("./webpack/http-node");
+const NodemonPlugin = require("nodemon-webpack-plugin");
 
 var serverConfig = {
   target: httpNode,
-  entry: ['@babel/polyfill', path.resolve(__dirname, 'src/index.js')],
+  entry: ["@babel/polyfill", path.resolve(__dirname, "src/index.js")],
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: 'http://localhost:8060',
-    libraryTarget: 'commonjs',
+    path: path.resolve(__dirname, "dist"),
+    publicPath: "http://localhost:8060",
+    libraryTarget: "commonjs",
   },
-  devtool: 'source-map',
+  devtool: "source-map",
   resolve: {
-    extensions: ['.js'],
+    extensions: [".js"],
   },
-  mode: 'development',
+  mode: "development",
   module: {
     rules: [
       {
         test: /\.js?$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
+          loader: "babel-loader",
           options: {
-            presets: ['@babel/preset-env'],
-          }
-        }
+            presets: ["@babel/preset-env"],
+          },
+        },
       },
-    ]
+    ],
   },
   plugins: [
     new NodemonPlugin(),
     new ModuleFederationPlugin({
-      name: 'orderService',
-      library: { type: 'commonjs-module' },
-      filename: 'remoteEntry.js',
+      name: "orderService",
+      library: { type: "commonjs-module" },
+      filename: "remoteEntry.js",
       exposes: {
-        './service1': './src/services-mock/service1',
-        './publish-event': './src/services-mock/publish-event',
-        './models': './src/models',
-        './adapters': './src/adapters',
-        './orderService': '/src/services/order-service',
-        './eventService': '/src/services/event-service',
-        './paymentService': '/src/services/payment-service',
-      //'./shippingService': '/src/services/shipping-service',
-        './addressService': '/src/services/address-service',
-      //'./inventoryService': '/src/services/inventory-service'
+        "./service1": "./src/services-mock/service1",
+        "./publish-event": "./src/services-mock/publish-event",
+        "./models": "./src/models",
+        "./adapters": "./src/adapters",
+        "./orderService": "/src/services/order-service",
+        "./eventService": "/src/services/event-service",
+        "./paymentService": "/src/services/payment-service",
+        "./shippingService": "/src/services/shipping-service",
+        "./addressService": "/src/services/address-service",
+        //'./inventoryService': '/src/services/inventory-service'
       },
       shared: {
-        'axios': {
-          eager: true
+        axios: {
+          eager: true,
         },
-        'smartystreets-javascript-sdk': {
-          eager: true
+        "smartystreets-javascript-sdk": {
+          eager: true,
         },
-        'kafkajs': {
-          eager: true
-        }
-      }
+        kafkajs: {
+          eager: true,
+        },
+      },
     }),
-  ]
-}
+  ],
+};
 
-module.exports = [serverConfig]
+module.exports = [serverConfig];
