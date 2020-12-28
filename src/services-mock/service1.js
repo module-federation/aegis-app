@@ -1,12 +1,12 @@
-import http from 'http';
+import http from "http";
 
 export default (handleResponse) => {
-  const url = 'http://localhost:8060/api/service1';
+  const url = "http://localhost:8060/api/service1";
   let body;
-  http.get(url, res => {
+  http.get(url, (res) => {
     res.setEncoding("utf8");
     body = "";
-    res.on("data", data => {
+    res.on("data", (data) => {
       body += data;
     });
     res.on("end", () => {
@@ -15,4 +15,4 @@ export default (handleResponse) => {
       handleResponse(body);
     });
   });
-}
+};

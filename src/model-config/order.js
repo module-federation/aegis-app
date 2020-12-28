@@ -119,7 +119,7 @@ export const Order = {
       callback: addressValidated,
       consumesEvent: "validateAddress",
       producesEvent: "addressValidated",
-      disabled: true,
+      // disabled: true,
     },
     authorizePayment: {
       service: "Payment",

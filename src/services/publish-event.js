@@ -1,4 +1,4 @@
-import http from 'http';
+import http from "http";
 
 export default function publishEvent(event) {
   if (!event) {
@@ -7,27 +7,27 @@ export default function publishEvent(event) {
   const serialized = JSON.stringify(event);
 
   const options = {
-    hostname: 'localhost',
+    hostname: "localhost",
     port: 8060,
-    path: '/api/publish',
-    method: 'POST',
+    path: "/api/publish",
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(serialized)
-    }
-  }
+      "Content-Type": "application/json",
+      "Content-Length": Buffer.byteLength(serialized),
+    },
+  };
 
   const req = http.request(options, (res) => {
-    res.setEncoding('utf8');
-    res.on('data', (chunk) => {
+    res.setEncoding("utf8");
+    res.on("data", (chunk) => {
       // console.log(`BODY: ${chunk}`);
     });
-    res.on('end', () => {
+    res.on("end", () => {
       // console.log('No more data in response.');
     });
   });
 
-  req.on('error', (e) => {
+  req.on("error", (e) => {
     console.error(`problem with request: ${e.message}`);
   });
 
