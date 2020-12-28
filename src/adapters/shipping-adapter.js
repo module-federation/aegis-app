@@ -40,7 +40,7 @@ const requester = "orderService";
  * @type {adapterFactory}
  */
 export function shipOrder(service) {
-  return function shipOrder(options) {
+  return async function shipOrder(options) {
     const {
       model: order,
       args: [callback],
@@ -95,7 +95,7 @@ export function shipOrder(service) {
  * @type {adapterFactory}
  */
 export function trackShipment(service) {
-  return function trackShipment(options) {
+  return async function trackShipmentAsync(options) {
     const {
       model: order,
       args: [callback],
@@ -157,7 +157,7 @@ export function trackShipment(service) {
  * @type {adapterFactory}
  */
 export function verifyDelivery(service) {
-  return function verifyDelivery(options) {
+  return async function verifyDeliveryAsync(options) {
     const {
       model: order,
       args: [callback],
