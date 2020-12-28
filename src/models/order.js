@@ -1,11 +1,6 @@
 "use strict";
 
-import GlobalMixins, {
-  processUpdate,
-  checkFormat,
-  PREVMODEL,
-  encryptPersonalInfo,
-} from "./mixins";
+import { processUpdate, checkFormat, PREVMODEL } from "./mixins";
 
 /**
  * @typedef {string|RegExp} topic
@@ -159,6 +154,15 @@ export const recalcTotal = (o, propVal) => ({
 });
 
 /**
+ * Updated signature requirement if `orderTotal` above certain value
+ * @param {object} o - the object (order)
+ * @param {number} propVal - the property value
+ */
+export const updateSignature = (o, propVal) => ({
+  signatureRequired: calcTotal(propVal) > 999.99 || o.signatureRequired,
+});
+
+/**
  * Don't delete orders before they're complete.
  */
 export function readyToDelete(model) {
@@ -184,26 +188,26 @@ function handleError(error, func) {
  * Get last saved copy
  * @param {Order} order
  * @returns {Promise<Order>}
- */
+ *
 async function findOrder(order) {
   const current = await order.find();
   if (!current) {
     return order;
   }
   return current;
-}
+}*/
 
 /**
  * Run update against validations
  * @param {Order} order
  * @param {*} changes
- */
+ *
 async function updateOrder(order, changes) {
   const current = await findOrder(order);
   const updated = processUpdate(current, changes);
   await updated.save();
   return updated;
-}
+}*/
 
 /**
  * Callback invoked by adapter when payment is complete
@@ -257,10 +261,7 @@ export async function orderShipped(options, shipmentId) {
   if (!shipmentId) {
     throw new Error("shipmentId missing");
   }
-  return order.update({
-    shipmentId,
-    orderStatus: OrderStatus.SHIPPING,
-  });
+  return order.update({ shipmentId, orderStatus: OrderStatus.SHIPPING });
 }
 
 /**
@@ -272,9 +273,7 @@ export async function orderPicked(options, pickupAddress) {
   if (!pickupAddress) {
     throw new Error("pickupAddress is missing");
   }
-  return order.update({
-    pickupAddress,
-  });
+  return order.update({ pickupAddress });
 }
 
 /**
@@ -401,26 +400,29 @@ export function orderFactory(dependencies) {
   return async function createOrder({
     customerInfo,
     orderItems,
-    shippingAddress = null,
     billingAddress = null,
+    shippingAddress = null,
     creditCardNumber = null,
-    signatureRequired = false,
+    requireSignature,
   }) {
-    checkItems(orderItems);
+    const total = calcTotal(orderItems);
     checkFormat(creditCardNumber, "creditCard");
     const order = {
       customerInfo,
       orderItems,
-      signatureRequired,
       creditCardNumber,
       billingAddress,
       shippingAddress,
-      [orderTotal]: calcTotal(orderItems),
+      signatureRequired:
+        typeof requireSignature === "boolean"
+          ? requireSignature
+          : total > 999.99,
+      [orderTotal]: total,
       [orderStatus]: OrderStatus.PENDING,
       [orderNo]: dependencies.uuid(),
-      async update(changes) {
-        return updateOrder(this, changes);
-      },
+      // async update(changes) {
+      //   return updateOrder(this, changes);
+      // },
     };
     return Object.freeze(order);
   };

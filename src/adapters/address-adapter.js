@@ -1,4 +1,4 @@
-'use strict'
+"use strict";
 
 /**
  * @typedef {import('../models/order').Order} Order
@@ -12,15 +12,18 @@
  */
 
 /**
- * 
- * @type {adapterFactory} 
+ *
+ * @type {adapterFactory}
  */
 export function validateAddress(service) {
   return async function (options) {
-    const { model: order, args: [callback] } = options;
+    const {
+      model: order,
+      args: [callback],
+    } = options;
     const shippingAddress = await service.validateAddress(
       order.decrypt().shippingAddress
     );
     return callback(options, shippingAddress);
-  }
+  };
 }

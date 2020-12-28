@@ -4,44 +4,55 @@ import {
   requirePropertiesMixin,
   freezePropertiesMixin,
   hashPasswordsMixin,
-  processUpdate,
 } from "./mixins";
 
-/**
- * @type {import('./index').ModelSpecification}
- */
-const User = {
-  modelName: "user",
-  endpoint: "users",
-
-  factory: function ({ uuid }) {
-    return async function createUser({
-      userName,
+export function userFactory({ uuid }) {
+  return async ({
+    userName,
+    password,
+    customerId,
+    firstName,
+    lastName,
+    phone,
+    email,
+  } = {}) =>
+    Object.freeze({
+      userId: uuid(),
       password,
+      userName,
+      customerId,
       firstName,
       lastName,
       phone,
       email,
-    } = {}) {
-      return Object.freeze({
-        userId: uuid(),
-        password,
-        userName,
-        firstName,
-        lastName,
-        phone,
-        email,
-      });
-    };
-  },
+    });
+}
 
-  mixins: [
-    requirePropertiesMixin("userName", "password", "firstName"),
-    freezePropertiesMixin("userId", "userName"),
-    hashPasswordsMixin("password"),
-  ],
+export const userMixins = [
+  requirePropertiesMixin("userName", "password", "firstName"),
+  freezePropertiesMixin("userId", "userName"),
+  hashPasswordsMixin("password"),
+];
 
-  onUpdate: processUpdate,
-};
-
-export default User;
+export function getUserSerializers({ decrypt }) {
+  return [
+    {
+      on: "deserialize",
+      key: "phone",
+      type: "string",
+      value: (key, value) => decrypt(value),
+    },
+    {
+      on: "deserialize",
+      key: "email",
+      type: "string",
+      value: (key, value) => decrypt(value),
+    },
+    {
+      on: "deserialize",
+      key: "lastName",
+      type: "string",
+      value: (key, value) => decrypt(value),
+    },
+  ];
+}

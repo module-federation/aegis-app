@@ -1,23 +1,5 @@
 "use strict";
 
-/**
- * @typedef {string} serviceName
- *
- * @typedef {Object} EventMessage
- * @property {serviceName} eventSource
- * @property {serviceName|"broadcast"} eventTarget
- * @property {"command"|"commandResponse"|"notification"} eventType
- * @property {string} eventName
- * @property {string} eventTime
- * @property {string} eventUuid
- * @property {CommandEvent|Object} eventData
- *
- * @typedef {Object} CommandEvent
- * @property {string} commandName
- * @property {string} commandResp
- * @property {object} commandArgs
- */
-
 import { Kafka } from "kafkajs";
 
 const kafka = new Kafka({

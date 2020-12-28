@@ -25,7 +25,9 @@ import {
   returnDelivery,
   cancelPayment,
   timeoutCallback,
-} from "./order";
+  handleStatusChange,
+  updateSignature,
+} from "../models/order";
 
 import {
   processUpdate,
@@ -33,25 +35,25 @@ import {
   freezePropertiesMixin,
   updatePropertiesMixin,
   validatePropertiesMixin,
-  encryptPersonalInfo
-} from "./mixins";
+} from "../models/mixins";
 
-import { decrypt } from "../lib/utils";
+import { uuid } from "../lib/utils";
 
 /**
- * @type {import('./index').ModelSpecification}
+ * @type {import('../models/index').ModelSpecification}
  */
-const Order = {
+export const Order = {
   modelName: "order",
   endpoint: "orders",
   factory: orderFactory,
+  dependencies: { uuid },
   mixins: [
     requirePropertiesMixin(
-      "customerInfo",
       "orderItems",
-      "creditCardNumber",
-      "shippingAddress",
+      "customerInfo",
       "billingAddress",
+      "shippingAddress",
+      "creditCardNumber",
       requiredForCompletion("proofOfDelivery")
     ),
     freezePropertiesMixin(
@@ -67,6 +69,10 @@ const Order = {
       {
         propKey: "orderItems",
         update: recalcTotal,
+      },
+      {
+        propKey: "orderItems",
+        update: updateSignature,
       },
     ]),
     validatePropertiesMixin([
@@ -84,7 +90,6 @@ const Order = {
   ],
   onUpdate: processUpdate,
   onDelete: readyToDelete,
-  onLoad: encryptPersonalInfo,
   eventHandlers: [handleOrderEvent],
   ports: {
     listen: {
@@ -101,6 +106,10 @@ const Order = {
       type: "outbound",
     },
     find: {
+      service: "Persistence",
+      type: "outbound",
+    },
+    update: {
       service: "Persistence",
       type: "outbound",
     },
@@ -175,38 +184,65 @@ const Order = {
       type: "outbound",
     },
   },
-  serializers: [
-    {
-      on: "deserialize",
-      key: "creditCardNumber",
-      type: "string",
-      value: (key, value) => decrypt(value),
+  relations: {
+    customer: {
+      modelName: "customer",
+      primaryKey: "custId",
+      foreignKey: "customerInfo",
+      type: "referencesOne",
     },
-    {
-      on: "deserialize",
-      key: "shippingAddress",
-      type: "string",
-      value: (key, value) => decrypt(value),
+  },
+  accessControlList: {
+    admin: {
+      allow: ["read", "delete", "decrypt"],
+      decrypt: (order) => ({ ...order, ...order.decrypt() }),
+      type: ["userRole", "custom"],
     },
-    {
-      on: "deserialize",
-      key: "billingAddress",
-      type: "string",
-      value: (key, value) => decrypt(value),
+    owner: {
+      allow: "*",
+      deny: "delete",
+      type: "userRole",
     },
-    // {
-    //   on: "serialize",
-    //   key: "*",
-    //   type: "function",
-    //   value: (key, value) => value.toString(),
-    // },
-    // {
-    //   on: "deserialize",
-    //   key: (key, value) => key.indexOf("function ") === 0,
-    //   type: "string",
-    //   value: (key, value) => eval(`(${value})`),
-    // },
-  ],
+    delegate: {
+      allow: "*",
+      deny: "delete",
+      type: "userRole",
+    },
+    approver: {
+      allow: [
+        "approve",
+        "deny",
+        (order) => order.status === OrderStatus.PENDING,
+      ],
+      approve: (order) =>
+        handleStatusChange(order.update({ orderStatus: OrderStatus.APPROVED })),
+      deny: (order) =>
+        handleStatusChange(order.update({ orderStatus: OrderStatus.CANCELED })),
+      type: ["userRole", "custom"],
+    },
+    customer: {
+      allow: "read",
+      type: "modelRelation",
+    },
+  },
+  // serializers: [
+  //   {
+  //     on: "deserialize",
+  //     key: "creditCardNumber",
+  //     type: "string",
+  //     value: (key, value) => decrypt(value),
+  //   },
+  //   {
+  //     on: "deserialize",
+  //     key: "shippingAddress",
+  //     type: "string",
+  //     value: (key, value) => decrypt(value),
+  //   },
+  //   {
+  //     on: "deserialize",
+  //     key: "billingAddress",
+  //     type: "string",
+  //     value: (key, value) => decrypt(value),
+  //   },
+  // ],
 };
-
-export default Order;
