@@ -39,9 +39,9 @@ var serverConfig = {
       filename: "remoteEntry.js",
       exposes: {
         "./service1": "./src/services-mock/service1",
-        "./publish-event": "./src/services-mock/publish-event",
         "./models": "./src/models",
         "./adapters": "./src/adapters",
+        "./publish-event": "./src/services/publish-event",
         "./orderService": "/src/services/order-service",
         "./eventService": "/src/services/event-service",
         "./paymentService": "/src/services/payment-service",

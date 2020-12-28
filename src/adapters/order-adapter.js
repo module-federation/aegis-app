@@ -1,12 +1,11 @@
-'use strict'
+"use strict";
 
-import { response } from 'express';
+import { response } from "express";
 
-const axios = require('axios');
+const axios = require("axios");
 
 export class OrderAdapter {
-
-  constructor() { }
+  constructor() {}
 
   addOrder({
     customerInfo,
@@ -21,44 +20,41 @@ export class OrderAdapter {
       creditCardNumber,
       shippingAddress,
       billingAddress,
-    }
+    };
     return this;
   }
 
   addOrderItem(itemId, price, qty = 1) {
-    if (typeof itemId !== 'string') {
-      throw new Error('must include item id');
+    if (![typeof price, typeof qty].indexOf("number") === 0) {
+      throw new Error("qty and price must be numbers");
     }
-    if (typeof price !== 'number') {
-      throw new Error('price must be a number');
-    }
-    if (typeof qty !== 'number') {
-      throw new Error('qty must be a number');
+    if (!itemId || typeof itemId !== "string") {
+      throw new Error("itemId must be a non-null string");
     }
     this.orderInfo.orderItems.push({ itemId, price, qty });
     return this;
   }
 
   async createOrder() {
-    throw new Error('unimplemented abstract method');
+    throw new Error("unimplemented abstract method");
   }
 
   async submitOrder(orderId = this.orderId) {
-    throw new Error('unimplemented abstract method');
+    throw new Error("unimplemented abstract method");
   }
 
   completeOrder() {
-    throw new Error('unimplemented abstract method');
+    throw new Error("unimplemented abstract method");
   }
 
   cancelOrder() {
-    throw new Error('unimplemented abstract method');
+    throw new Error("unimplemented abstract method");
   }
 }
 
 // export class LocalOrderAdapter extends OrderAdapter {
 //   /**
-//    * @override 
+//    * @override
 //    */
 //   createOrder() {
 //     const Order = require('../models').Order;
@@ -99,51 +95,52 @@ export class OrderAdapter {
 // }
 
 export class RestOrderAdapter extends OrderAdapter {
-
   constructor(url) {
     super();
     this.url = url;
   }
   /**
-   * @override 
+   * @override
    */
   async createOrder() {
-    return axios.post(
-      this.url, this.orderInfo
-    ).then(response => {
-      this.orderId = response.data.modelId;
-      return this;
-    }, (error) => {
-      console.error(error.response.data);
-      throw new Error(error);
-    });
+    return axios.post(this.url, this.orderInfo).then(
+      (response) => {
+        this.orderId = response.data.modelId;
+        return this;
+      },
+      (error) => {
+        console.error(error.response.data);
+        throw new Error(error);
+      }
+    );
   }
 
   /**
    * @override
-   * @param {*} orderId 
+   * @param {*} orderId
    */
   async submitOrder(orderId = this.orderId) {
-    return axios.patch(
-      this.url + orderId,
-      { orderStatus: 'APPROVED' },
-    ).then(() => this, error => {
-      console.error(error.response.data);
-      throw new Error(error);
-    });
+    return axios.patch(this.url + orderId, { orderStatus: "APPROVED" }).then(
+      () => this,
+      (error) => {
+        console.error(error.response.data);
+        throw new Error(error);
+      }
+    );
   }
 
   async getOrder(orderId = this.orderId) {
-    return axios.get(
-      this.url + orderId
-    ).then((response) => {
-      console.log(response.data);
-      this.order = response.data.model;
-      return this.order;
-    }, (error) => {
-      console.error(error.response.data);
-      throw new Error(error);
-    });
+    return axios.get(this.url + orderId).then(
+      (response) => {
+        console.log(response.data);
+        this.order = response.data.model;
+        return this.order;
+      },
+      (error) => {
+        console.error(error.response.data);
+        throw new Error(error);
+      }
+    );
   }
 
   async getOrderStatus(orderId = this.orderId) {
@@ -152,75 +149,65 @@ export class RestOrderAdapter extends OrderAdapter {
   }
 
   shipOrder() {
-    return axios.patch(
-      this.url + orderId,
-      { orderStatus: 'SHIPPING' },
-    ).then((response) => {
-      this.orderId = response.data.modelId;
-      return this;
-    }, (error) => {
-      console.error(error.response.data);
-      throw new Error(error);
-    });
+    return axios.patch(this.url + orderId, { orderStatus: "SHIPPING" }).then(
+      (response) => {
+        this.orderId = response.data.modelId;
+        return this;
+      },
+      (error) => {
+        console.error(error.response.data);
+        throw new Error(error);
+      }
+    );
   }
 
   completeOrder() {
-    return axios.patch(
-      this.url + orderId,
-      { orderStatus: 'COMPLETE', proofOfDelivery: pod },
-    ).then((response) => {
-      this.orderId = response.data.modelId;
-      return this;
-    }, (error) => {
-      console.error(error.response.data);
-      throw new Error(error);
-    });
+    return axios
+      .patch(this.url + orderId, {
+        orderStatus: "COMPLETE",
+        proofOfDelivery: pod,
+      })
+      .then(
+        (response) => {
+          this.orderId = response.data.modelId;
+          return this;
+        },
+        (error) => {
+          console.error(error.response.data);
+          throw new Error(error);
+        }
+      );
   }
 
   cancelOrder() {
-    return axios.patch(
-      this.url + orderId,
-      { orderStatus: 'CANCELED', cancelReason: reason },
-    ).then((response) => {
-      this.orderId = response.data.modelId;
-      return this;
-    }, (error) => {
-      console.error(error.response.data);
-      throw new Error(error);
-    });
+    return axios
+      .patch(this.url + orderId, {
+        orderStatus: "CANCELED",
+        cancelReason: reason,
+      })
+      .then(
+        (response) => {
+          this.orderId = response.data.modelId;
+          return this;
+        },
+        (error) => {
+          console.error(error.response.data);
+          throw new Error(error);
+        }
+      );
   }
 }
 
 export class GraphQlOrderAdapter extends OrderAdapter {
-
   /**
-   * @override 
+   * @override
    */
-  createOrder() {
-
-  }
-
-  submitOrder() {
-
-  }
-  fillOrder() {
-
-  }
-  shipOrder() {
-
-  }
-  trackShipment() {
-
-  }
-  verifyDelivery() {
-
-  }
-  completeOrder() {
-
-  }
-  cancelOrder() {
-
-  }
+  createOrder() {}
+  submitOrder() {}
+  fillOrder() {}
+  shipOrder() {}
+  trackShipment() {}
+  verifyDelivery() {}
+  completeOrder() {}
+  cancelOrder() {}
 }
-
-
