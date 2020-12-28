@@ -20,7 +20,7 @@
  *  verifyDelivery:function()
  * }} ShippingAdapter
  * @typedef {import('../models/order').Order} Order
- * @typedef {ShippingAdapter} service
+ * @typedef {shipOrderServiceType} service
  * @typedef {{
  *  listen:function(topic,RegExp,eventCallback)
  *  notify:function(topic,eventCallback)
@@ -40,7 +40,7 @@ const requester = "orderService";
  * @type {adapterFactory}
  */
 export function shipOrder(service) {
-  return function (options) {
+  return function shipOrder(options) {
     const {
       model: order,
       args: [callback],
@@ -76,6 +76,7 @@ export function shipOrder(service) {
                 shipTo: order.decrypt().shippingAddress,
                 shipFrom: order.pickupAddress,
                 lineItems: order.orderItems,
+                signature: order.signatureRequired,
                 externalId: order.orderNo,
                 requester,
                 respondOn,
@@ -94,7 +95,7 @@ export function shipOrder(service) {
  * @type {adapterFactory}
  */
 export function trackShipment(service) {
-  return function (options) {
+  return function trackShipment(options) {
     const {
       model: order,
       args: [callback],
@@ -156,7 +157,7 @@ export function trackShipment(service) {
  * @type {adapterFactory}
  */
 export function verifyDelivery(service) {
-  return function (options) {
+  return function verifyDelivery(options) {
     const {
       model: order,
       args: [callback],

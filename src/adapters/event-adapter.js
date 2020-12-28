@@ -1,6 +1,34 @@
 "use strict";
 
 import { Event } from "../services/event-service";
+/**
+ * @typedef {import('../models').Model} Model
+ * @typedef {string} serviceName
+ *
+ * @typedef {Object} EventMessage
+ * @property {serviceName} eventSource
+ * @property {serviceName|"broadcast"} eventTarget
+ * @property {"command"|"commandResponse"|"notification"|"import"} eventType
+ * @property {string} eventName
+ * @property {string} eventTime
+ * @property {string} eventUuid
+ * @property {NotificationEvent|ImportEvent|CommandEvent} eventData
+ *
+ * @typedef {object} ImportEvent
+ * @property {"service"|"model"|"adapter"} type
+ * @property {string} url
+ * @property {string} path
+ * @property {string} importRemote
+ *
+ * @typedef {object} NotificationEvent
+ * @property {string|} message
+ * @property {"utf8"|Uint32Array} encoding
+ * *
+ * @typedef {Object} CommandEvent
+ * @property {string} commandName
+ * @property {string} commandResp
+ * @property {*} commandArgs
+ */
 
 /**
  * @typedef {{

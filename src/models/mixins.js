@@ -114,6 +114,9 @@ const encryptProperties = (...propKeys) => (o) => {
   const keys = getConditionalProps(o, ...propKeys);
 
   const encryptProps = () => {
+    if (o.isLoading) {
+      return {};
+    }
     return keys
       .map((key) => (o[key] ? { [key]: encrypt(o[key]) } : {}))
       .reduce((p, c) => ({ ...c, ...p }));
@@ -187,6 +190,7 @@ const hashPasswords = (hash, ...propKeys) => (o) => {
   const keys = getConditionalProps(o, ...propKeys);
 
   function hashPwds() {
+    if (o.isLoading) return {};
     return keys
       .map((key) => (o[key] ? { [key]: hash(o[key]) } : {}))
       .reduce((p, c) => ({ ...c, ...p }));
@@ -448,6 +452,7 @@ export function updatePropertiesMixin(updaters) {
  * @returns {function(any):any} dynamic property func
  */
 export const withCorrectFormat = (propKey, expr) => (o) => {
+  if (o.isLoading) return propKey;
   if (o[propKey] && !RegEx.test(expr, o[propKey])) {
     throw new Error(`invalid ${propKey}`);
   }

@@ -2,6 +2,17 @@
 
 /**
  * @typedef {import('./event-service').EventMessage} EventMessage
+ *
+ * @typedef {import('./event-service').CommandEvent} CommandEvent
+ *
+ * @typedef {{shipTo}} CommandArgs
+ *
+ * @typedef {Object} shippingServiceType
+ * @property {string} serviceName
+ * @property {string} channel
+ * @property {function():ShipMessage} shipOrder
+ * @property {function():ShipMessage} trackShipment
+ * @property {function():ShipMessage} verifyDelivery
  */
 
 /**
@@ -14,23 +25,35 @@ export const Shipping = {
   /**
    *
    * @param {*} param0
-   * @returns {EventMessage}
+   * @returns {ShipMessage}
    */
-  shipOrder({ shipTo, shipFrom, lineItems, externalId, requester, respondOn }) {
+  shipOrder({
+    shipTo,
+    shipFrom,
+    lineItems,
+    signature,
+    externalId,
+    requester,
+    respondOn,
+  }) {
     return {
       eventSource: requester,
       eventTarget: this.serviceName,
       eventType: "command",
       eventName: this.shipOrder.name,
       eventTime: new Date().toUTCString(),
-      eventUuid: "",
+      eventUuid: externalId,
       eventData: {
-        commandName: "shipOrder",
+        commandName: this.shipOrder.name,
         commandResp: respondOn,
+        /**
+         * @type {CommandArgs}
+         */
         commandArgs: {
           shipTo,
           shipFrom,
           lineItems,
+          signature,
           externalId,
         },
       },
@@ -49,7 +72,7 @@ export const Shipping = {
       eventType: "command",
       eventName: this.trackShipment.name,
       eventTime: new Date().toUTCString(),
-      eventUuid: "",
+      eventUuid: externalId,
       eventData: {
         commandName: this.trackShipment.name,
         commandResp: respondOn,
@@ -74,7 +97,7 @@ export const Shipping = {
       eventType: "command",
       eventName: this.verifyDelivery.name,
       eventTime: new Date().getTime(),
-      eventUuid: "",
+      eventUuid: externalId,
       eventData: {
         commandName: this.verifyDelivery.name,
         commandResp: respondOn,
