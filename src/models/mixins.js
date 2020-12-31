@@ -3,16 +3,17 @@
 import { hash, encrypt, decrypt, compose } from "../lib/utils";
 
 /**
- * Functional mixin
- * @callback mixinFunction
+ * Functional mixin created by `functionalMixinFactory`
+ * @callback functionalMixin
  * @param {Object} o Object to compose
  * @returns {Object} Composed object
  */
 
 /**
+ * Functional mixin factory - partial application - returns mixin function
  * @callback functionalMixinFactory
- * @param {*} mixinFunctionParams params for mixin function
- * @returns {mixinFunction}
+ * @param {*} mixinParams params for mixin function
+ * @returns {functionalMixin}
  */
 
 /**
@@ -73,7 +74,7 @@ export function processUpdate(model, changes) {
  * @param {*} o  Object containing changes to apply (pre)
  * or new object after changes have been applied (post)
  * @param {string} name `Function.name`
- * @param {mixinFunction} cb mixin function
+ * @param {functionalMixin} cb mixin function
  */
 function updateMixins(type, o, name, cb) {
   if (!mixinSets[type]) {
@@ -108,7 +109,7 @@ function getConditionalProps(o, ...propKeys) {
  * Functional mixin that encrypts the properties specified in `propKeys`
  * @param  {Array<string | function(*):string>} propKeys -
  * Names (or functions that return names) of properties to encrypt
- * @returns {mixinFunction} mixin function
+ * @returns {functionalMixin} mixin function
  */
 const encryptProperties = (...propKeys) => (o) => {
   const keys = getConditionalProps(o, ...propKeys);
@@ -169,13 +170,13 @@ const freezeProperties = (isUpdate, ...propKeys) => (o) => {
  * required property names
  */
 const requireProperties = (...propKeys) => (o) => {
-  const keys = getConditionalProps(o, ...propKeys);
-
-  const missing = keys.filter((key) => key && !o[key]);
-  if (missing?.length > 0) {
-    throw new Error(`missing required properties: ${missing}`);
+  if (!o.isLoading) {
+    const keys = getConditionalProps(o, ...propKeys);
+    const missing = keys.filter((key) => key && !o[key]);
+    if (missing?.length > 0) {
+      throw new Error(`missing required properties: ${missing}`);
+    }
   }
-
   return updateMixins(mixinType.post, o, requireProperties.name, () =>
     requireProperties(...propKeys)
   );
@@ -429,7 +430,7 @@ export function allowPropertiesMixin(...propKeys) {
  * match a regular expression, are of a certain length, or type,
  * or satisfy a custom validation function.
  * @param {validation[]} validations
- * @returns {mixinFunction} mixin function
+ * @returns {functionalMixin} mixin function
  */
 export function validatePropertiesMixin(validations) {
   return validateProperties(validations);
@@ -439,7 +440,7 @@ export function validatePropertiesMixin(validations) {
  * React to property updates. Run callbacks in `updaters`
  * when a request to update associated properties is received.
  * @param {updater[]} updaters - callbacks to run
- * @returns {mixinFunction} mixin function
+ * @returns {functionalMixin} mixin function
  */
 export function updatePropertiesMixin(updaters) {
   return updateProperties(false, updaters);

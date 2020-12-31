@@ -47,28 +47,28 @@ export const OrderStatus = {
  *
  * @param {*} items
  */
-export const checkItems = function (items) {
-  if (!items) {
+export const checkItems = function (orderItems) {
+  if (!orderItems) {
     throw new Error("order contains no items");
   }
-  const _items = Array.isArray(items) ? items : [items];
+  const items = Array.isArray(orderItems) ? orderItems : [orderItems];
 
   if (
-    _items.length > 0 &&
-    _items.every((i) => i["itemId"] && typeof i["price"] === "number")
+    items.length > 0 &&
+    items.every((i) => i.itemId && typeof i.price === "number")
   ) {
-    return _items;
+    return items;
   }
   throw new Error("order items invalid");
 };
 
 /**
- *
+ * Calculate order total
  * @param {*} items
  */
-export const calcTotal = function (items) {
-  const _items = checkItems(items);
-  return _items.reduce((total, item) => {
+export const calcTotal = function (orderItems) {
+  const items = checkItems(orderItems);
+  return items.reduce((total, item) => {
     return (total += item.price);
   }, 0);
 };
@@ -90,11 +90,10 @@ export const freezeOnApproval = (propKey) => (o) => {
  * @returns {string | null} the key or `null`
  */
 export const freezeOnCompletion = (propKey) => (o) => {
-  return [OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(
-    o[PREVMODEL].orderStatus
-  )
-    ? propKey
-    : null;
+  return [
+      OrderStatus.COMPLETE,
+      OrderStatus.CANCELED
+    ].includes(o[PREVMODEL].orderStatus) ? propKey : null;
 };
 
 /**
@@ -104,9 +103,7 @@ export const freezeOnCompletion = (propKey) => (o) => {
  * @returns {string | void} the key or `void`
  */
 export const requiredForCompletion = (propKey) => (o) => {
-  if (!o.orderStatus) {
-    return;
-  }
+  if (!o.orderStatus) return;
   return o.orderStatus === OrderStatus.COMPLETE ? propKey : void 0;
 };
 
@@ -131,15 +128,19 @@ const invalidStatusChanges = [
  * Check that status changes are valid
  */
 export const statusChangeValid = (o, propVal) => {
-  if (!o[PREVMODEL]?.orderStatus) {
-    return true;
-  }
-  if (invalidStatusChanges.some((i) => i(o, propVal))) {
+  if (!o[PREVMODEL]?.orderStatus) return true;
+
+  if (invalidStatusChanges.some((isc) => isc(o, propVal))) {
     throw new Error("invalid status change");
   }
   return true;
 };
 
+/**
+ * 
+ * @param {*} o 
+ * @param {*} propVal 
+ */
 export const orderTotalValid = (o, propVal) => {
   return calcTotal(o.orderItems) === propVal;
 };
@@ -185,40 +186,11 @@ function handleError(error, func) {
 }
 
 /**
- * Get last saved copy
- * @param {Order} order
- * @returns {Promise<Order>}
- *
-async function findOrder(order) {
-  const current = await order.find();
-  if (!current) {
-    return order;
-  }
-  return current;
-}*/
-
-/**
- * Run update against validations
- * @param {Order} order
- * @param {*} changes
- *
-async function updateOrder(order, changes) {
-  const current = await findOrder(order);
-  const updated = processUpdate(current, changes);
-  await updated.save();
-  return updated;
-}*/
-
-/**
  * Callback invoked by adapter when payment is complete
  * @param {{model:Order}} options
  */
 export async function paymentCompleted({ model: order }) {
-  return new Promise(function (resolve, reject) {
-    setTimeout(() => {
-      resolve(order.update({ orderStatus: OrderStatus.COMPLETE }));
-    }, 2000);
-  });
+  order.update({ orderStatus: OrderStatus.COMPLETE });
 }
 
 /**
@@ -265,7 +237,7 @@ export async function orderShipped(options, shipmentId) {
 }
 
 /**
- * In stock, ready for pickup
+ * Callback invoked when order is ready for pickup
  * @param {{ model:Order }} options
  */
 export async function orderPicked(options, pickupAddress) {
@@ -392,6 +364,10 @@ export async function handleOrderEvent({ model: order, eventType, changes }) {
   }
 }
 
+function needSignature(input, orderTotal) {
+  typeof input === "boolean" ? requireSignature : orderTotal > 999.99;
+}
+
 /**
  * Returns factory function for the Order model.
  * @param {*} dependencies - inject dependencies
@@ -413,16 +389,10 @@ export function orderFactory(dependencies) {
       creditCardNumber,
       billingAddress,
       shippingAddress,
-      signatureRequired:
-        typeof requireSignature === "boolean"
-          ? requireSignature
-          : total > 999.99,
+      signatureRequired: needSignature(requireSignature, total),
       [orderTotal]: total,
       [orderStatus]: OrderStatus.PENDING,
       [orderNo]: dependencies.uuid(),
-      // async update(changes) {
-      //   return updateOrder(this, changes);
-      // },
     };
     return Object.freeze(order);
   };

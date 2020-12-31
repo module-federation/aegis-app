@@ -28,7 +28,7 @@
  *  [x: string]: {
  *    service: service,
  *    timeout?: timeout,
- *    callback?: function({model: Model, port: string})
+ *    callback?: function({model: Model})
  *    errorCallback?: function({model: Model, port: string, error:Error}),
  *    timeoutCallback?: function({model: Model, port: string}),
  *    consumesEvent?:string,
@@ -61,13 +61,17 @@
  * @property {string} endpoint URI reference (e.g. plural of `modelName`)
  * @property {function(...args): any} factory factory function that creates model
  * @property {object} [dependencies] injected into the model for inverted control
- * @property {Array<import("./mixins").mixinFunction>} [mixins] - functional mixins are mixed into the model to implement domain logic, like input validation
+ * @property {Array<import("./mixins").functionalMixin>} [mixins] - functional mixins 
+ * are mixed into the model to implement domain logic, like input validation
  * @property {onUpdate} [onUpdate] - function called to handle update requests
  * @property {onDelete} [onDelete] - function called before deletion
- * @property {onLoad} [onLoad] - function called after deserialization - used to perform any custom unmarshalling of the model.
  * @property {ports} [ports] - input/output ports for the domain
- * @property {eventHandler[]} [eventHandlers] - callbacks invoked to handle application events, e.g. CRUD events
- * @property {serializer[]} [serializers] - when a model is deserialzed, the model's saved properties are used in the new model. Because mixins are run, serializer callbacks may be needed to format the deserialized properties, e.g. if the information was stored in encrypted format we don't want to encrypt it again.
+ * @property {eventHandler[]} [eventHandlers] - callbacks invoked to handle application 
+ * events, e.g. CRUD events
+ * @property {serializer[]} [serializers] - when a model is deserialzed, the model's 
+ * saved properties are used in the new model. Because mixins are run, serializer 
+ * callbacks may be needed to format the deserialized properties, e.g. if the 
+ * information was stored in encrypted format we don't want to encrypt it again.
  */
 
 import GlobalMixins from "./mixins";

@@ -64,6 +64,7 @@ export function shipOrder(service) {
               const newOrder = await callback(options, shippingId);
               resolve(newOrder);
             } catch (error) {
+              console.error(error);
               reject(error);
             }
           },
@@ -128,6 +129,7 @@ export function trackShipment(service) {
                 resolve(newOrder);
               }
             } catch (error) {
+              console.error(error);
               reject(error);
             }
           },
@@ -181,6 +183,7 @@ export function verifyDelivery(service) {
               const newOrder = await callback(options, proofOfDelivery);
               resolve(newOrder);
             } catch (e) {
+              console.error(e);
               reject(e);
             }
           },
