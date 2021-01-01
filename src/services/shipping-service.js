@@ -41,7 +41,7 @@ export const Shipping = {
       eventTarget: this.serviceName,
       eventType: "command",
       eventName: this.shipOrder.name,
-      eventTime: new Date().toUTCString(),
+      eventTime: new Date().getTime(),
       eventUuid: externalId,
       eventData: {
         commandName: this.shipOrder.name,
@@ -71,7 +71,7 @@ export const Shipping = {
       eventTarget: this.serviceName,
       eventType: "command",
       eventName: this.trackShipment.name,
-      eventTime: new Date().toUTCString(),
+      eventTime: new Date().getTime(),
       eventUuid: externalId,
       eventData: {
         commandName: this.trackShipment.name,

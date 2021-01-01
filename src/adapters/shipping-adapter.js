@@ -118,6 +118,7 @@ export function trackShipment(service) {
 
               const trackingId = service.trackingId(event);
               const trackingStatus = service.trackingStatus(event);
+              
               const { done, order: newOrder } = await callback(
                 options,
                 trackingId,
@@ -181,6 +182,7 @@ export function verifyDelivery(service) {
 
               const proofOfDelivery = service.proofOfDelivery(event);
               const newOrder = await callback(options, proofOfDelivery);
+
               resolve(newOrder);
             } catch (e) {
               console.error(e);
