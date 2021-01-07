@@ -95,14 +95,21 @@ function updateMixins(type, o, name, cb) {
 }
 
 /**
- * Execute any functions in `propKeys` and return key names
+ * Execute any functions in `propKeys` and return the key, 
+ * flatten any arrays, and return all properties of an object 
+ * if "*" is specified return key names.
  * @param {*} o - Object to compose
  * @param  {Array<string | function(*):string>} propKeys -
  * Names (or functions that return names) of properties
  * @returns {string[]} list of (resolved) property keys
  */
-function getConditionalProps(o, ...propKeys) {
-  return propKeys.map((k) => (typeof k === "function" ? k(o) : k));
+function parseKeys(o, ...propKeys) {
+  const keys = propKeys.flat().map(function (k) {
+    if (typeof k === "function") return k(o);
+    if (k === "*") return Object.keys(o);
+    return k;
+  });
+  return keys.flat();
 }
 
 /**
@@ -112,7 +119,7 @@ function getConditionalProps(o, ...propKeys) {
  * @returns {functionalMixin} mixin function
  */
 const encryptProperties = (...propKeys) => (o) => {
-  const keys = getConditionalProps(o, ...propKeys);
+  const keys = parseKeys(o, ...propKeys);
 
   const encryptProps = () => {
     if (o.isLoading) {
@@ -146,7 +153,7 @@ const encryptProperties = (...propKeys) => (o) => {
  */
 const freezeProperties = (isUpdate, ...propKeys) => (o) => {
   const preventUpdates = () => {
-    const keys = getConditionalProps(o, ...propKeys);
+    const keys = parseKeys(o, ...propKeys);
 
     const mutations = Object.keys(o).filter((key) => keys.includes(key));
 
@@ -171,7 +178,7 @@ const freezeProperties = (isUpdate, ...propKeys) => (o) => {
  */
 const requireProperties = (...propKeys) => (o) => {
   if (!o.isLoading) {
-    const keys = getConditionalProps(o, ...propKeys);
+    const keys = parseKeys(o, ...propKeys);
     const missing = keys.filter((key) => key && !o[key]);
     if (missing?.length > 0) {
       throw new Error(`missing required properties: ${missing}`);
@@ -188,7 +195,7 @@ const requireProperties = (...propKeys) => (o) => {
  * @param  {Array<string | function(*):string>} propKeys name of password props
  */
 const hashPasswords = (hash, ...propKeys) => (o) => {
-  const keys = getConditionalProps(o, ...propKeys);
+  const keys = parseKeys(o, ...propKeys);
 
   function hashPwds() {
     if (o.isLoading) return {};
@@ -216,7 +223,7 @@ const internalPropList = ["decrypt"];
  */
 const allowProperties = (isUpdate, ...propKeys) => (o) => {
   function rejectUnknownProps() {
-    const keys = getConditionalProps(o, ...propKeys);
+    const keys = parseKeys(o, ...propKeys);
     const allowList = keys.concat(internalPropList);
 
     const unknownProps = Object.keys(o).filter(
@@ -307,6 +314,12 @@ const Validator = {
    * @returns {boolean} true if tests pass
    */
   isValid(v, o, propVal) {
+    // v.every(key => {
+    //   if (v[key]) {
+    //     return this.tests[key](v[key], o, propVal);
+    //   }
+    //   return true;
+    // });
     return Object.keys(this.tests).every((key) => {
       if (v[key]) {
         // enabled

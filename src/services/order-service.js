@@ -3,8 +3,8 @@ import { RestOrderAdapter } from "../adapters/order-adapter";
 const url = process.env.ORDER_SVC_URL || "http://localhost:8070/api/orders/";
 
 export class OrderService {
-  constructor(adapter = RestOrderAdapter(url)) {
-    this.adapter = adapter;
+  constructor(adapter = RestOrderAdapter) {
+    this.adapter = new adapter(url);
   }
 
   getOrderId() {

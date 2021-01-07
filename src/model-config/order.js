@@ -26,6 +26,7 @@ import {
   cancelPayment,
   handleStatusChange,
   updateSignature,
+  calcTotal
 } from "../models/order";
 
 import {
@@ -58,11 +59,14 @@ export const Order = {
     freezePropertiesMixin(
       "orderNo",
       "customerInfo",
-      freezeOnApproval("orderItems"),
-      freezeOnApproval("creditCardNumber"),
-      freezeOnApproval("shippingAddress"),
-      freezeOnApproval("billingAddress"),
-      freezeOnCompletion("orderStatus")
+      freezeOnApproval([
+        "orderItems",
+        "orderTotal",
+        "creditCardNumber",
+        "shippingAddress",
+        "billingAddress"
+      ]),
+      freezeOnCompletion("*")
     ),
     updatePropertiesMixin([
       {
@@ -72,7 +76,7 @@ export const Order = {
       {
         propKey: "orderItems",
         update: updateSignature,
-      },
+      }
     ]),
     validatePropertiesMixin([
       {
@@ -114,7 +118,7 @@ export const Order = {
       callback: addressValidated,
       consumesEvent: "validateAddress",
       producesEvent: "addressValidated",
-      // disabled: true,
+      disabled: true,
     },
     authorizePayment: {
       service: "Payment",

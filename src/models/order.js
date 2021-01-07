@@ -161,7 +161,7 @@ export const recalcTotal = (o, propVal) => ({
  * @param {number} propVal - the property value
  */
 export const updateSignature = (o, propVal) => ({
-  signatureRequired: calcTotal(propVal) > 999.99 || o.signatureRequired,
+  signatureRequired: calcTotal(propVal) > 999.99 || o[PREVMODEL].signatureRequired,
 });
 
 /**
@@ -186,6 +186,22 @@ function handleError(error, func) {
   throw new Error(error);
 }
 
+async function checkProperty(order, key) {
+  if (Array.isArray(key)) {
+    return key
+      .map((k) => checkProperty(order, k))
+      .reduce((c, p)=>({...p, ...c}));
+  }
+  if (order[key]) {
+    return order;
+  }
+  const update = await order.find();
+  if (update?.[key]) {
+    return update;
+  }
+  throw new Error("%s is missing", key);
+}
+
 /**
  * Callback invoked by adapter when payment is complete
  * @param {{model:Order}} options
@@ -202,7 +218,7 @@ export async function paymentCompleted({ model: order }) {
 export async function deliveryVerified(options, proofOfDelivery) {
   const { model: order } = options;
   if (!proofOfDelivery) {
-    throw new Error("proofOfDelivery missing");
+    return checkProperty(order, "proofOfDelivery");
   }
   return order.update({ proofOfDelivery });
 }
@@ -215,12 +231,17 @@ export async function deliveryVerified(options, proofOfDelivery) {
  */
 export async function trackingUpdate(options, trackingId, trackingStatus) {
   const { model: order } = options;
-  if (!trackingId || !trackingStatus) {
-    throw new Error("trackingId or trackingStatus missing");
+  let update = order;
+
+  if (!trackingStatus || !trackingId) {
+    update = await checkProperty(order, ["trackingStatus", "trackingId"]);
+  } else {
+    update = await order.update({ trackingId, trackingStatus });
   }
+
   return {
     done: trackingStatus === "orderDelivered",
-    order: await order.update({ trackingId, trackingStatus }),
+    order: update,
   };
 }
 
@@ -232,7 +253,7 @@ export async function trackingUpdate(options, trackingId, trackingStatus) {
 export async function orderShipped(options, shipmentId) {
   const { model: order } = options;
   if (!shipmentId) {
-    throw new Error("shipmentId missing");
+    return checkProperty(order, "shipmentId");
   }
   return order.update({ shipmentId, orderStatus: OrderStatus.SHIPPING });
 }
@@ -244,7 +265,7 @@ export async function orderShipped(options, shipmentId) {
 export async function orderPicked(options, pickupAddress) {
   const { model: order } = options;
   if (!pickupAddress) {
-    throw new Error("pickupAddress is missing");
+    return checkProperty(order, "pickupAddress");
   }
   const update = await order.update({ pickupAddress });
   return update;
@@ -258,7 +279,7 @@ export async function orderPicked(options, pickupAddress) {
 export async function addressValidated(options, shippingAddress) {
   const { model: order } = options;
   if (!shippingAddress) {
-    throw new Error("shippingAddress is missing");
+    return checkProperty(order, "shippingAddress");
   }
   const update = await order.update({ shippingAddress });
   return update;
@@ -272,7 +293,7 @@ export async function addressValidated(options, shippingAddress) {
 export async function paymentAuthorized(options, paymentAuthorization) {
   const { model: order } = options;
   if (!paymentAuthorization) {
-    throw new Error("paymentAuthorization is missing");
+    return checkProperty(order, "paymentAuthorization");
   }
   return order.update({ paymentAuthorization });
 }
@@ -280,7 +301,7 @@ export async function paymentAuthorized(options, paymentAuthorization) {
 export async function refundPayment(options, receipt) {
   const { model: order } = options;
   if (!receipt) {
-    throw new Error("receipt is missing");
+    return checkProperty(order, "receipt");
   }
   return order.update({ receipt });
 }

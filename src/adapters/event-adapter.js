@@ -52,6 +52,15 @@ import { Event } from "../services/event-service";
  */
 const subscriptions = new Map();
 
+function checkFilter(message) {
+  return function (filter) {
+    const regex = new RegExp(filter);
+    const result = regex.test(message);
+    console.log({ func: checkFilter.name, filter, result, message });
+    return result;
+  };
+}
+
 /**
  * @typedef {string} message
  * @typedef {string|RegExp} topic
@@ -91,12 +100,14 @@ const Subscription = function ({ id, callback, topic, filters, once, model }) {
      */
     async filter(message) {
       if (filters) {
-        if (filters.every(f => new RegExp(f).test(message))) {
+        if (filters.every(checkFilter(message))) {
           if (once) {
             this.unsubscribe();
           }
           callback({ message, subscription: this });
+          return;
         }
+        console.log("filters didn't match: keep listening", message);
         return;
       }
       callback({ message, subscription: this });
@@ -111,13 +122,13 @@ const Subscription = function ({ id, callback, topic, filters, once, model }) {
 export function listen(service = Event) {
   return async function ({
     model,
-    args: [{ topic, callback, filter, once, id }],
+    args: [{ topic, callback, filters, once, id }],
   }) {
     const subscription = Subscription({
       id,
       topic,
       callback,
-      filter,
+      filters,
       once,
       model,
     });

@@ -53,14 +53,13 @@ export function shipOrder(service) {
           model: order,
           id: order.orderNo,
           topic: "orderChannel",
-          filters: [shipOrder.name, order.orderNo, "shipmentId"],
+          filters: [order.orderNo, "orderShipped", "shipmentId"],
           callback: async function ({ message }) {
             try {
               const event = JSON.parse(message);
               console.log("received event... ", event);
 
               const shippingId = service.shipmentId(event);
-
               const newOrder = await callback(options, shippingId);
 
               resolve(newOrder);
@@ -111,7 +110,6 @@ export function trackShipment(service) {
           id: order.orderNo,
           topic: "orderChannel",
           filters: [
-            trackShipment.name,
             order.orderNo,
             "trackingStatus",
             "trackingId",
@@ -179,8 +177,8 @@ export function verifyDelivery(service) {
           id: order.orderNo,
           topic: "orderChannel",
           filters: [
-            order.orderNo, 
-            verifyDelivery.name, 
+            order.orderNo,
+            "deliveryVerified",
             "proofOfDelivery"
           ],
           callback: async ({ message }) => {
