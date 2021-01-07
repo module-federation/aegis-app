@@ -52,11 +52,11 @@ import { Event } from "../services/event-service";
  */
 const subscriptions = new Map();
 
-function checkFilter(message) {
+function applyFilter(message) {
   return function (filter) {
     const regex = new RegExp(filter);
     const result = regex.test(message);
-    console.log({ func: checkFilter.name, filter, result, message });
+    console.log({ func: applyFilter.name, filter, result, message });
     return result;
   };
 }
@@ -100,7 +100,7 @@ const Subscription = function ({ id, callback, topic, filters, once, model }) {
      */
     async filter(message) {
       if (filters) {
-        if (filters.every(checkFilter(message))) {
+        if (filters.every(applyFilter(message))) {
           if (once) {
             this.unsubscribe();
           }

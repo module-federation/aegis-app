@@ -9,7 +9,6 @@ import {
   orderPicked,
   orderShipped,
   trackingUpdate,
-  handleLatePickup,
   deliveryVerified,
   paymentCompleted,
   OrderStatus,
@@ -118,7 +117,7 @@ export const Order = {
       callback: addressValidated,
       consumesEvent: "validateAddress",
       producesEvent: "addressValidated",
-      disabled: true,
+      //disabled: true,
     },
     authorizePayment: {
       service: "Payment",
@@ -140,7 +139,7 @@ export const Order = {
     shipOrder: {
       service: "Shipping",
       type: "outbound",
-      timeout: 24 * 60 * 60 * 1000,
+      //timeout: 24 * 60 * 60 * 1000,
       callback: orderShipped,
       consumesEvent: "orderPicked",
       producesEvent: "orderShipped",
@@ -149,7 +148,7 @@ export const Order = {
     trackShipment: {
       service: "Shipping",
       type: "outbound",
-      timeout: 7 * 24 * 60 * 60 * 1000,
+      //timeout: 7 * 24 * 60 * 60 * 1000,
       callback: trackingUpdate,
       consumesEvent: "orderShipped",
       producesEvent: "orderDelivered",
