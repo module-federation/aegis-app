@@ -11,7 +11,7 @@ export default (handleResponse) => {
     });
     res.on("end", () => {
       body = JSON.parse(body);
-      console.log(body);
+      //console.log(body);
       handleResponse(body);
     });
   });

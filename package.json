@@ -19,6 +19,7 @@
     "test": "",
     "test-remote": "mocha",
     "demo": "open http://localhost:8060",
+    "kafka": "../kafka/bin/start.sh",
     "kafka-zookpr": "../kafka/bin/zookeeper-server-start.sh  ../kafka/config/zookeeper.properties",
     "kafka-server": "../kafka/bin/kafka-server-start.sh ../kafka/config/server.properties",
     "kafka-topics": "npm run kafka-topics-order && npm run kafka-topics-inventory && npm run kafka-topics-shipping",

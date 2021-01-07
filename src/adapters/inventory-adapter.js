@@ -55,7 +55,11 @@ export function pickOrder(service) {
           model: order,
           id: order.orderNo,
           topic: "orderChannel",
-          filter: order.orderNo,
+          filters: [
+            order.orderNo,
+            pickOrder.name,
+            "pickupAddress"
+          ],
           callback: async ({ message }) => {
             try {
               const event = JSON.parse(message);

@@ -6,11 +6,11 @@
  * @typedef {import('./event-service').CommandEvent} CommandEvent
  *
  * @typedef {{shipTo}} CommandArgs
- *
+ * @typedef {function():ShipMessage} shipOrder
  * @typedef {Object} shippingServiceType
  * @property {string} serviceName
  * @property {string} channel
- * @property {function():ShipMessage} shipOrder
+ * @property {shipOrder} shipOrder
  * @property {function():ShipMessage} trackShipment
  * @property {function():ShipMessage} verifyDelivery
  */

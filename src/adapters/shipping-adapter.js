@@ -36,11 +36,11 @@ const requester = "orderService";
 
 /**
  *
- * @param {}
+ * @param {import('../services/shipping-service').shipOrder}
  * @type {adapterFactory}
  */
 export function shipOrder(service) {
-  return async function shipOrder(options) {
+  return async function (options) {
     const {
       model: order,
       args: [callback],
@@ -53,15 +53,16 @@ export function shipOrder(service) {
           model: order,
           id: order.orderNo,
           topic: "orderChannel",
-          filter: order.orderNo,
-
-          callback: async ({ message }) => {
+          filters: [shipOrder.name, order.orderNo, "shipmentId"],
+          callback: async function ({ message }) {
             try {
               const event = JSON.parse(message);
               console.log("received event... ", event);
 
               const shippingId = service.shipmentId(event);
+
               const newOrder = await callback(options, shippingId);
+
               resolve(newOrder);
             } catch (error) {
               console.error(error);
@@ -96,21 +97,25 @@ export function shipOrder(service) {
  * @type {adapterFactory}
  */
 export function trackShipment(service) {
-  return async function trackShipmentAsync(options) {
+  return async function (options) {
     const {
       model: order,
       args: [callback],
     } = options;
 
-    return new Promise(function (resolve, reject) {
+    return new Promise(async function (resolve, reject) {
       return order
         .listen({
           once: false,
           model: order,
           id: order.orderNo,
           topic: "orderChannel",
-          filter: order.orderNo,
-
+          filters: [
+            trackShipment.name,
+            order.orderNo,
+            "trackingStatus",
+            "trackingId",
+          ],
           callback: async function ({ message, subscription }) {
             try {
               const event = JSON.parse(message);
@@ -118,7 +123,7 @@ export function trackShipment(service) {
 
               const trackingId = service.trackingId(event);
               const trackingStatus = service.trackingStatus(event);
-              
+
               const { done, order: newOrder } = await callback(
                 options,
                 trackingId,
@@ -160,21 +165,24 @@ export function trackShipment(service) {
  * @type {adapterFactory}
  */
 export function verifyDelivery(service) {
-  return async function verifyDeliveryAsync(options) {
+  return async function (options) {
     const {
       model: order,
       args: [callback],
     } = options;
 
-    return new Promise(function (resolve, reject) {
+    return new Promise(async function (resolve, reject) {
       return order
         .listen({
           once: true,
           model: order,
           id: order.orderNo,
           topic: "orderChannel",
-          filter: order.orderNo,
-
+          filters: [
+            order.orderNo, 
+            verifyDelivery.name, 
+            "proofOfDelivery"
+          ],
           callback: async ({ message }) => {
             try {
               const event = JSON.parse(message);

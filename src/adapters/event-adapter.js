@@ -64,7 +64,7 @@ const subscriptions = new Map();
  *  model:object
  * }} options
  */
-const Subscription = function ({ id, callback, topic, filter, once, model }) {
+const Subscription = function ({ id, callback, topic, filters, once, model }) {
   return {
     /**
      * unsubscribe from topic
@@ -90,18 +90,16 @@ const Subscription = function ({ id, callback, topic, filter, once, model }) {
      * @param {string} message
      */
     async filter(message) {
-      if (filter) {
-        const regex = new RegExp(filter);
-
-        if (regex.test(message)) {
+      if (filters) {
+        if (filters.every(f => new RegExp(f).test(message))) {
           if (once) {
             this.unsubscribe();
           }
-          await callback({ message, subscription: this });
+          callback({ message, subscription: this });
         }
         return;
       }
-      await callback({ message, subscription: this });
+      callback({ message, subscription: this });
     },
   };
 };
@@ -135,7 +133,7 @@ export function listen(service = Event) {
       service.listen(/Channel/, async function ({ topic, message }) {
         if (subscriptions.has(topic)) {
           subscriptions.get(topic).forEach(async (subscription) => {
-            subscription.filter(message);
+            await subscription.filter(message);
           });
         }
       });

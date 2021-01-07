@@ -69,7 +69,8 @@ export const checkItems = function (orderItems) {
 export const calcTotal = function (orderItems) {
   const items = checkItems(orderItems);
   return items.reduce((total, item) => {
-    return (total += item.price);
+    const qty = item.qty || 1;
+    return (total += item.price * qty);
   }, 0);
 };
 
@@ -190,7 +191,7 @@ function handleError(error, func) {
  * @param {{model:Order}} options
  */
 export async function paymentCompleted({ model: order }) {
-  order.update({ orderStatus: OrderStatus.COMPLETE });
+  return order.update({ orderStatus: OrderStatus.COMPLETE });
 }
 
 /**
@@ -245,7 +246,8 @@ export async function orderPicked(options, pickupAddress) {
   if (!pickupAddress) {
     throw new Error("pickupAddress is missing");
   }
-  return order.update({ pickupAddress });
+  const update = await order.update({ pickupAddress });
+  return update;
 }
 
 /**
@@ -258,7 +260,8 @@ export async function addressValidated(options, shippingAddress) {
   if (!shippingAddress) {
     throw new Error("shippingAddress is missing");
   }
-  return order.update({ shippingAddress });
+  const update = await order.update({ shippingAddress });
+  return update;
 }
 
 /**
@@ -294,7 +297,7 @@ const OrderActions = {
   [OrderStatus.PENDING]: async (order) => {
     try {
       // Need a synchronous response
-      await Promise.all([
+      return Promise.all([
         order.validateAddress(addressValidated),
         order.authorizePayment(paymentAuthorized),
       ]);
@@ -411,7 +414,7 @@ export function errorCallback({ port, model: order, error }) {
  *
  * @param {{model:Order}} param0
  */
-export function timeoutCallback({ port, model: order }) {
+export function timeoutCallback({ port, ports, adapterFn, model: order }) {
   console.error("timeout...", port);
   order.compensate();
 }
