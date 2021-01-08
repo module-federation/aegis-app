@@ -1,8 +1,8 @@
 "use strict";
 
 import { processUpdate } from "../models/mixins";
-import { getUserSerializers, userFactory, userMixins } from "../models/user";
-import { uuid, decrypt } from "../lib/utils";
+import { userFactory, userMixins } from "../models/user";
+import { uuid } from "../lib/utils";
 
 /**
  * @type {import('../models/index').ModelSpecification}

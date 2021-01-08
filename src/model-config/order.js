@@ -25,7 +25,6 @@ import {
   cancelPayment,
   handleStatusChange,
   updateSignature,
-  calcTotal
 } from "../models/order";
 
 import {
@@ -117,7 +116,7 @@ export const Order = {
       callback: addressValidated,
       consumesEvent: "validateAddress",
       producesEvent: "addressValidated",
-      //disabled: true,
+      // disabled: true,
     },
     authorizePayment: {
       service: "Payment",
@@ -133,7 +132,7 @@ export const Order = {
       callback: orderPicked,
       consumesEvent: "pickOrder",
       producesEvent: "orderPicked",
-      timeout: 24 * 60 * 60 * 1000,
+      // timeout: 24 * 60 * 60 * 1000,
       undo: returnInventory,
     },
     shipOrder: {

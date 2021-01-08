@@ -32,7 +32,8 @@ import { Event } from "../services/event-service";
 
 /**
  * @typedef {{
- *  getModel:import('../models').Model,
+ *  filter:function(message):Promise<void>,
+ *  unsubscribe:function()
  * }} Subscription
  * @typedef {string|RegExp} topic
  * @callback eventHandler
@@ -70,7 +71,7 @@ function applyFilter(message) {
  *  topic:topic,
  *  filter:string|RegExp,
  *  once:boolean,
- *  model:object
+ *  model:import("../models").Model
  * }} options
  */
 const Subscription = function ({ id, callback, topic, filters, once, model }) {
@@ -124,13 +125,8 @@ export function listen(service = Event) {
     model,
     args: [{ topic, callback, filters, once, id }],
   }) {
-    const subscription = Subscription({
-      id,
-      topic,
-      callback,
-      filters,
-      once,
-      model,
+    const subscription = Subscription({ 
+      id, topic, callback, filters, once, model 
     });
 
     if (subscriptions.has(topic)) {
