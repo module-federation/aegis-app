@@ -62,7 +62,7 @@ export const Order = {
         "orderTotal",
         "creditCardNumber",
         "shippingAddress",
-        "billingAddress"
+        "billingAddress",
       ]),
       freezeOnCompletion("*")
     ),
@@ -74,7 +74,7 @@ export const Order = {
       {
         propKey: "orderItems",
         update: updateSignature,
-      }
+      },
     ]),
     validatePropertiesMixin([
       {
@@ -96,7 +96,7 @@ export const Order = {
     listen: {
       service: "Event",
       type: "inbound",
-      timeout: 0,
+      timeoutSeconds: 0,
     },
     notify: {
       service: "Event",
@@ -132,25 +132,28 @@ export const Order = {
       callback: orderPicked,
       consumesEvent: "pickOrder",
       producesEvent: "orderPicked",
-      // timeout: 24 * 60 * 60 * 1000,
+      timeoutSeconds: 20,
+      retryMinutes: 2,
       undo: returnInventory,
     },
     shipOrder: {
       service: "Shipping",
       type: "outbound",
-      //timeout: 24 * 60 * 60 * 1000,
       callback: orderShipped,
       consumesEvent: "orderPicked",
       producesEvent: "orderShipped",
+      timeoutSeconds: 20,
+      retryMinutes: 2,
       undo: returnShipment,
     },
     trackShipment: {
       service: "Shipping",
       type: "outbound",
-      //timeout: 7 * 24 * 60 * 60 * 1000,
       callback: trackingUpdate,
       consumesEvent: "orderShipped",
       producesEvent: "orderDelivered",
+      timeoutSeconds: 20,
+      retryMinutes: 2,
     },
     verifyDelivery: {
       service: "Shipping",
@@ -158,6 +161,8 @@ export const Order = {
       callback: deliveryVerified,
       consumesEvent: "orderDelivered",
       producesEvent: "deliveryVerified",
+      timeoutSeconds: 20,
+      retryMinutes: 2,
       undo: returnDelivery,
     },
     completePayment: {
@@ -166,6 +171,8 @@ export const Order = {
       callback: paymentCompleted,
       consumesEvent: "deliveryVerified",
       producesEvent: "paymentCompleted",
+      timeoutSeconds: 20,
+      retryMinutes: 2,
       undo: refundPayment,
     },
     cancelShipment: {

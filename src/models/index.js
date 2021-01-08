@@ -27,7 +27,7 @@
  * @typedef {{
  *  [x: string]: {
  *    service: service,
- *    timeout?: timeout,
+ timeoutSeconds?: timeout,
  *    callback?: function({model: Model})
  *    errorCallback?: function({model: Model, port: string, error:Error}),
  *    timeoutCallback?: function({model: Model, port: string}),
