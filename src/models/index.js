@@ -27,7 +27,7 @@
  * @typedef {{
  *  [x: string]: {
  *    service: service,
- timeoutSeconds?: timeout,
+ *    timeout?: timeout,
  *    callback?: function({model: Model})
  *    errorCallback?: function({model: Model, port: string, error:Error}),
  *    timeoutCallback?: function({model: Model, port: string}),
@@ -38,7 +38,15 @@
  *    adapter?: string
  *  }
  * }} ports - input/output ports for the domain
- *
+ * 
+ * @typedef {{
+ *  [x: string]: {
+ *    modelName:string,
+ *    type:"oneToMany"|"manyToOne",
+ *    foreignKey:any,
+ *  }
+ * }} relations - define related domain entities
+ * 
  * @typedef {Array<function({
  *  eventName:string,
  *  eventType:string,
@@ -49,6 +57,7 @@
  *
  * @typedef {string} key
  * @typedef {*} value
+ * 
  * @typedef {{
  *  on: "serialize" | "deserialize",
  *  key: string | RegExp | "*" | (function(key,value):boolean)
@@ -72,6 +81,7 @@
  * saved properties are used in the new model. Because mixins are run, serializer 
  * callbacks may be needed to format the deserialized properties, e.g. if the 
  * information was stored in encrypted format we don't want to encrypt it again.
+ * @property {relations} relations -  define related domain entities
  */
 
 import GlobalMixins from "./mixins";
@@ -101,8 +111,10 @@ function validateModel(model) {
  */
 function makeModel(model) {
   validateModel(model);
+  
   const mixins = model.mixins || {};
   const dependencies = model.dependencies || {};
+
   return {
     ...model,
     mixins: mixins.concat(GlobalMixins),

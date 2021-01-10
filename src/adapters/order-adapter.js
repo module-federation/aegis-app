@@ -110,9 +110,8 @@ export class RestOrderAdapter extends OrderAdapter {
       },
       (error) => {
         console.error(error.response.data);
-        throw new Error(error);
       }
-    );
+    ).catch(e => console.log(e));
   }
 
   /**

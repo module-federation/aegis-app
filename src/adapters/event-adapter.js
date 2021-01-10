@@ -123,7 +123,7 @@ const Subscription = function ({ id, callback, topic, filters, once, model }) {
 export function listen(service = Event) {
   return async function ({
     model,
-    args: [{ topic, callback, filters, once, id }],
+    args: [{ id, topic, callback, filters, once }],
   }) {
     const subscription = Subscription({ 
       id, topic, callback, filters, once, model 

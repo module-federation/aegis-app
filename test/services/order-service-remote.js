@@ -7,15 +7,17 @@ describe('OrderService', function () {
   describe('#createOrder()', function () {
     it('should create and submit order', async function () {
       const orderInfo = {
-        customerInfo: 'user1',
+        firstName: 'Dr.',
+        lastName: 'Dre',
+        email: "dre@email.com",
         billingAddress: '9612 Park Ave S, Bloomington, MN 55408',
         shippingAddress: '9612 Park Ave S, Bloomington, MN 55408',
         creditCardNumber: '378282246310005'
       }
       const os = new OrderService();
       const status = await os.addOrder(orderInfo)
-        .addOrderItem('item1', 90.22)
-        .addOrderItem('item2', 87.60)
+        .addOrderItem('item1', 90.99)
+        .addOrderItem('item2', 87.60, 2)
         .createOrder()
         .then(os => os.submitOrder())
         .then(os => os.getOrderStatus())

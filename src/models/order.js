@@ -1,6 +1,6 @@
 "use strict";
 
-import { processUpdate, checkFormat, PREVMODEL } from "./mixins";
+import { checkFormat, PREVMODEL } from "./mixins";
 
 /**
  * @typedef {string|RegExp} topic
@@ -30,6 +30,8 @@ import { processUpdate, checkFormat, PREVMODEL } from "./mixins";
  * @property {function()} decrypt - decrypts encypted properties
  * @property {function(*):Promise<Order>} update - update the order
  * @property {'APPROVED'|'SHIPPING'|'CANCELED'|'COMPLETED'} orderStatus
+ * @property {function():Promise<Customer>} customer - retrieves related customer object.
+ * 
  */
 
 const orderStatus = "orderStatus";
@@ -85,16 +87,28 @@ export const freezeOnApproval = (propKey) => (o) => {
 };
 
 /**
- * No changes to `propKey` once order is complete or canceled
+ * No changes to `propKey`ghgghggh once order is complete or canceled
  * @param {*} o - the order
  * @param {*} propKey
  * @returns {string | null} the key or `null`
  */
 export const freezeOnCompletion = (propKey) => (o) => {
   return [
-      OrderStatus.COMPLETE,
+      OrderStatus.COMPLETE, 
       OrderStatus.CANCELED
-    ].includes(o[PREVMODEL].orderStatus) ? propKey : null;
+    ].includes(o[PREVMODEL].orderStatus)
+      ? propKey
+      : null;
+};
+
+/**
+ * If not a registered customer, provide shipping details 
+ * @param {*} o
+ * @param {*} propKey
+ * @returns {string | void} the key or `void`
+ */
+export const requiredForGuest = (propKey) => (o) => {
+  return o.customerId ? null : propKey;
 };
 
 /**
@@ -105,7 +119,9 @@ export const freezeOnCompletion = (propKey) => (o) => {
  */
 export const requiredForCompletion = (propKey) => (o) => {
   if (!o.orderStatus) return;
-  return o.orderStatus === OrderStatus.COMPLETE ? propKey : void 0;
+  return o.orderStatus === OrderStatus.COMPLETE
+    ? propKey
+    : void 0;
 };
 
 const invalidStatusChange = (from, to) => (o, propVal) => {
@@ -138,9 +154,9 @@ export const statusChangeValid = (o, propVal) => {
 };
 
 /**
- * 
- * @param {*} o 
- * @param {*} propVal 
+ *
+ * @param {*} o
+ * @param {*} propVal
  */
 export const orderTotalValid = (o, propVal) => {
   return calcTotal(o.orderItems) === propVal;
@@ -161,7 +177,8 @@ export const recalcTotal = (o, propVal) => ({
  * @param {number} propVal - the property value
  */
 export const updateSignature = (o, propVal) => ({
-  signatureRequired: calcTotal(propVal) > 999.99 || o[PREVMODEL].signatureRequired,
+  signatureRequired:
+    calcTotal(propVal) > 999.99 || o[PREVMODEL].signatureRequired,
 });
 
 /**
@@ -190,7 +207,7 @@ async function checkProperty(order, key) {
   if (Array.isArray(key)) {
     return key
       .map((k) => checkProperty(order, k))
-      .reduce((c, p)=>({...p, ...c}));
+      .reduce((c, p) => ({ ...p, ...c }));
   }
   if (order[key]) {
     return order;
@@ -317,11 +334,36 @@ const OrderActions = {
    */
   [OrderStatus.PENDING]: async (order) => {
     try {
+
+      if (order.customerId) {
+        const customer = await order.customer();
+
+        if (!customer) {
+          throw new Error("invalid customer id", order.customerId);
+        }
+
+        const decrypted = customer.decrypt();
+
+        const updated = await order.update({
+          creditCardNumber: decrypted.creditCardNumber,
+          shippingAddress: decrypted.shippingAddress,
+          billingAddress: decrypted.billingAddress,
+          email: decrypted.email,
+          firstName: customer.firstName,
+          lastName: decrypted.lastName
+        });
+
+        await updated.authorizePayment(paymentAuthorized);
+
+        return;
+      }
+
       // Need a synchronous response
       return Promise.all([
         order.validateAddress(addressValidated),
         order.authorizePayment(paymentAuthorized),
       ]);
+
     } catch (error) {
       handleError(error, OrderStatus.PENDING);
     }
@@ -398,7 +440,10 @@ function needSignature(input, orderTotal) {
  */
 export function orderFactory(dependencies) {
   return async function createOrder({
-    customerInfo,
+    email,
+    lastName,
+    firstName,
+    customerId,
     orderItems,
     billingAddress = null,
     shippingAddress = null,
@@ -406,9 +451,12 @@ export function orderFactory(dependencies) {
     requireSignature,
   }) {
     const total = calcTotal(orderItems);
-    checkFormat(creditCardNumber, "creditCard");
+    // checkFormat(creditCardNumber, "creditCard");
     const order = {
-      customerInfo,
+      email,
+      lastName,
+      firstName,
+      customerId,
       orderItems,
       creditCardNumber,
       billingAddress,

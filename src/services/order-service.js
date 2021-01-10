@@ -24,7 +24,6 @@ export class OrderService {
   async createOrder() {
     try {
       await this.adapter.createOrder();
-      console.log("order created");
       return this;
     } catch (error) {
       throw new Error(error);
@@ -34,7 +33,6 @@ export class OrderService {
   async submitOrder(orderId = this.adapter.orderId) {
     try {
       await this.adapter.submitOrder(orderId);
-      console.log("order submitted");
       return this;
     } catch (error) {
       throw new Error(error);

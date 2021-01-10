@@ -14,4 +14,11 @@ export const Customer = {
   factory: customerFactory,
   onUpdate: processUpdate,
   mixins: customerMixins,
+  relations: {
+    orders: {
+      modelName: "order",
+      type: "oneToMany",
+      foreignKey: "customerId"
+    }
+  }
 };

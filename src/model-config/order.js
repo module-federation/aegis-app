@@ -25,6 +25,7 @@ import {
   cancelPayment,
   handleStatusChange,
   updateSignature,
+  requiredForGuest
 } from "../models/order";
 
 import {
@@ -48,21 +49,28 @@ export const Order = {
   mixins: [
     requirePropertiesMixin(
       "orderItems",
-      "customerInfo",
-      "billingAddress",
-      "shippingAddress",
-      "creditCardNumber",
+      requiredForGuest([
+        "lastName",
+        "firstName",
+        "billingAddress",
+        "shippingAddress",
+        "creditCardNumber",
+        "email",
+      ]),
       requiredForCompletion("proofOfDelivery")
     ),
     freezePropertiesMixin(
       "orderNo",
-      "customerInfo",
+      "customerId",
       freezeOnApproval([
+        "email",
+        "lastName",
+        "firstName",
         "orderItems",
         "orderTotal",
-        "creditCardNumber",
-        "shippingAddress",
         "billingAddress",
+        "shippingAddress",
+        "creditCardNumber",
       ]),
       freezeOnCompletion("*")
     ),
@@ -95,8 +103,8 @@ export const Order = {
   ports: {
     listen: {
       service: "Event",
-      type: "inbound",
-      timeoutSeconds: 0,
+      type: "outbound",
+      timeout: 0,
     },
     notify: {
       service: "Event",
@@ -116,7 +124,7 @@ export const Order = {
       callback: addressValidated,
       consumesEvent: "validateAddress",
       producesEvent: "addressValidated",
-      // disabled: true,
+      disabled: true,
     },
     authorizePayment: {
       service: "Payment",
@@ -132,8 +140,8 @@ export const Order = {
       callback: orderPicked,
       consumesEvent: "pickOrder",
       producesEvent: "orderPicked",
-      timeoutSeconds: 20,
-      retryMinutes: 2,
+      timeout: 20,
+      retryTimeout: 60,
       undo: returnInventory,
     },
     shipOrder: {
@@ -142,8 +150,8 @@ export const Order = {
       callback: orderShipped,
       consumesEvent: "orderPicked",
       producesEvent: "orderShipped",
-      timeoutSeconds: 20,
-      retryMinutes: 2,
+      timeout: 20,
+      retryTimeout: 60,
       undo: returnShipment,
     },
     trackShipment: {
@@ -152,8 +160,9 @@ export const Order = {
       callback: trackingUpdate,
       consumesEvent: "orderShipped",
       producesEvent: "orderDelivered",
-      timeoutSeconds: 20,
-      retryMinutes: 2,
+      timeoutCallback: ({ model }) => model.compensate(),
+      timeout: 20,
+      retryTimeout: 60,
     },
     verifyDelivery: {
       service: "Shipping",
@@ -161,8 +170,9 @@ export const Order = {
       callback: deliveryVerified,
       consumesEvent: "orderDelivered",
       producesEvent: "deliveryVerified",
-      timeoutSeconds: 20,
-      retryMinutes: 2,
+      timeoutCallback: ({ model }) => model.compensate(),
+      timeout: 20,
+      retryTimeout: 60,
       undo: returnDelivery,
     },
     completePayment: {
@@ -171,8 +181,8 @@ export const Order = {
       callback: paymentCompleted,
       consumesEvent: "deliveryVerified",
       producesEvent: "paymentCompleted",
-      timeoutSeconds: 20,
-      retryMinutes: 2,
+      timeout: 20,
+      retryTimeout: 60,
       undo: refundPayment,
     },
     cancelShipment: {
@@ -187,9 +197,8 @@ export const Order = {
   relations: {
     customer: {
       modelName: "customer",
-      primaryKey: "custId",
-      foreignKey: "customerInfo",
-      type: "referencesOne",
+      foreignKey: "customerId",
+      type: "manyToOne",
     },
   },
   accessControlList: {

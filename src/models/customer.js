@@ -8,6 +8,7 @@ export function customerFactory({ uuid }) {
     firstName,
     lastName,
     shippingAddress,
+    creditCardNumber,
     billingAddress = shippingAddress,
     phone,
     email,
@@ -17,6 +18,7 @@ export function customerFactory({ uuid }) {
       customerId: uuid(),
       firstName,
       lastName,
+      creditCardNumber,
       shippingAddress,
       billingAddress,
       phone,
@@ -31,7 +33,14 @@ export function customerFactory({ uuid }) {
  */
 export const customerMixins = [
   freezePropertiesMixin("customerId"),
-  requirePropertiesMixin("firstName", "lastName", "email"),
+  requirePropertiesMixin(
+    "firstName",
+    "lastName",
+    "email",
+    "shippingAddress",
+    "billingAddress",
+    "creditCardNumber"
+  ),
 ];
 
 /**
