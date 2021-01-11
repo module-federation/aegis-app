@@ -25,7 +25,8 @@ import {
   cancelPayment,
   handleStatusChange,
   updateSignature,
-  requiredForGuest
+  requiredForGuest,
+  approve
 } from "../models/order";
 
 import {
@@ -200,6 +201,10 @@ export const Order = {
       foreignKey: "customerId",
       type: "manyToOne",
     },
+  },
+  commands: {
+    decrypt: "decrypt",
+    approve,
   },
   accessControlList: {
     admin: {

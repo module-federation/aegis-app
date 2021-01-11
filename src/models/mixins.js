@@ -157,7 +157,6 @@ const freezeProperties = (isUpdate, ...propKeys) => (o) => {
     const keys = parseKeys(o, ...propKeys);
 
     const mutations = Object.keys(o).filter((key) => keys.includes(key));
-
     if (mutations?.length > 0) {
       throw new Error(`cannot update readonly properties: ${mutations}`);
     }

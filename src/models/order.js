@@ -102,7 +102,7 @@ export const freezeOnCompletion = (propKey) => (o) => {
 };
 
 /**
- * If not a registered customer, provide shipping details 
+ * If not a registered customer, provide shipping & payment details. 
  * @param {*} o
  * @param {*} propKey
  * @returns {string | void} the key or `void`
@@ -334,7 +334,6 @@ const OrderActions = {
    */
   [OrderStatus.PENDING]: async (order) => {
     try {
-
       if (order.customerId) {
         const customer = await order.customer();
 
@@ -468,6 +467,11 @@ export function orderFactory(dependencies) {
     };
     return Object.freeze(order);
   };
+}
+
+export async function approve (order) {
+  const updated = await order.update({ orderStatus: OrderStatus.APPROVED });
+  handleStatusChange(updated);
 }
 
 /**

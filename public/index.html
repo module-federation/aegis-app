@@ -6,19 +6,40 @@
   </head>
   <body>
     <h2>Log in and open WebSocket to listen for model events.</h2>
-    <button id="login" type="button" title="login">
-      Login
-    </button>
-    <button id="wsButton" type="button" title="Open WebSocket connection">
-      Open WebSocket
-    </button>
-        <button id="logout" type="button" title="logout">
-      Logout
-    </button>
-    </button>
-        <button id="clear" type="button" title="clear">
-      Clear
-    </button>
+    <table> 
+      <tr>
+        <td>
+          <button id="login" type="button" title="login">
+            Login
+          </button>
+          <button id="wsButton" type="button" title="Open WebSocket connection">
+            Open WebSocket
+          </button>
+              <button id="logout" type="button" title="logout">
+            Logout
+          </button>
+          </button>
+              <button id="clear" type="button" title="clear">
+            Clear
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="send">Send Event</label>
+        </td>
+      </tr>
+      <tr>
+        <td>
+           <input id="send" style="width:300px;" value="{ eventName:'', eventData:{} }"></input><pre></pre>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <button>Send Event</button>
+        </td>
+      </tr>
+    </table>
     <pre id="messages" style="height: 500px; overflow: scroll"></pre>
     <script src="app.js"></script>
   </body>
