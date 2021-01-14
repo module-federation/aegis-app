@@ -38,7 +38,7 @@
  *    adapter?: string
  *  }
  * }} ports - input/output ports for the domain
- * 
+ *
  * @typedef {{
  *  [x: string]: {
  *    modelName:string,
@@ -46,7 +46,7 @@
  *    foreignKey:any,
  *  }
  * }} relations - define related domain entities
- * 
+ *
  * @typedef {Array<function({
  *  eventName:string,
  *  eventType:string,
@@ -57,7 +57,7 @@
  *
  * @typedef {string} key
  * @typedef {*} value
- * 
+ *
  * @typedef {{
  *  on: "serialize" | "deserialize",
  *  key: string | RegExp | "*" | (function(key,value):boolean)
@@ -65,23 +65,33 @@
  *  value(key, value):value
  * }} serializer
  *
+ * @typedef {{
+ *  [x:string]: {
+ *    allow:string|function(*):boolean|Array<string|function(*):boolean>
+ *    deny:string|function(*):boolean|Array<string|function(*):boolean>
+ *    type:"role"|"relation"
+ *    desc?:string
+ * }
+ * }} accessControlList
+ *
  * @typedef {Object} ModelSpecification Specify model data and behavior
  * @property {string} modelName name of model (case-insenstive)
  * @property {string} endpoint URI reference (e.g. plural of `modelName`)
  * @property {function(...args): any} factory factory function that creates model
  * @property {object} [dependencies] injected into the model for inverted control
- * @property {Array<import("./mixins").functionalMixin>} [mixins] - functional mixins 
+ * @property {Array<import("./mixins").functionalMixin>} [mixins] - functional mixins
  * are mixed into the model to implement domain logic, like input validation
  * @property {onUpdate} [onUpdate] - function called to handle update requests
  * @property {onDelete} [onDelete] - function called before deletion
  * @property {ports} [ports] - input/output ports for the domain
- * @property {eventHandler[]} [eventHandlers] - callbacks invoked to handle application 
+ * @property {eventHandler[]} [eventHandlers] - callbacks invoked to handle application
  * events, e.g. CRUD events
- * @property {serializer[]} [serializers] - when a model is deserialzed, the model's 
- * saved properties are used in the new model. Because mixins are run, serializer 
- * callbacks may be needed to format the deserialized properties, e.g. if the 
+ * @property {serializer[]} [serializers] - when a model is deserialzed, the model's
+ * saved properties are used in the new model. Because mixins are run, serializer
+ * callbacks may be needed to format the deserialized properties, e.g. if the
  * information was stored in encrypted format we don't want to encrypt it again.
  * @property {relations} relations -  define related domain entities
+ * @property {accessControlList} accessControlList - define authorization
  */
 
 import GlobalMixins from "./mixins";
@@ -111,7 +121,7 @@ function validateModel(model) {
  */
 function makeModel(model) {
   validateModel(model);
-  
+
   const mixins = model.mixins || {};
   const dependencies = model.dependencies || {};
 

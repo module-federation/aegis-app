@@ -1,6 +1,6 @@
-'use strict'
+"use strict";
 
-const uuid = require('../lib/utils').uuid;
+const uuid = require("../lib/utils").uuid;
 const SmartyStreetsSDK = require("smartystreets-javascript-sdk");
 
 const SmartyStreetsCore = SmartyStreetsSDK.core;
@@ -22,12 +22,12 @@ export const Address = {
     console.log(`REAL validating address...${address}`);
 
     if (!address) {
-      console.log('no address');
+      console.log("no address");
       return;
     }
 
     if (disabled) {
-      console.log('address service disabled');
+      console.log("address service disabled");
       return address;
     }
 
@@ -45,21 +45,20 @@ export const Address = {
 
     const candidate = response.lookups[0].result[0];
     if (!candidate) {
-      throw new Error('invalid address');
+      throw new Error("invalid address");
     }
 
     const validatedAddress = [
       candidate.deliveryLine1,
       candidate.deliveryLine2,
-      candidate.lastLine
-    ].join(' ');
+      candidate.lastLine,
+    ].join(" ");
 
     console.log(`address: ${validatedAddress}`);
 
     if (!validatedAddress) {
-      throw new Error('invalid address');
+      throw new Error("invalid address");
     }
     return validatedAddress;
-
-  }
-}
+  },
+};

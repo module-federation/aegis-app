@@ -23,10 +23,9 @@ import {
   refundPayment,
   returnDelivery,
   cancelPayment,
-  handleStatusChange,
   updateSignature,
   requiredForGuest,
-  approve
+  approve,
 } from "../models/order";
 
 import {
@@ -200,63 +199,70 @@ export const Order = {
       modelName: "customer",
       foreignKey: "customerId",
       type: "manyToOne",
+      desc: "Many orders per customer, one customer per order",
     },
   },
   commands: {
-    decrypt: "decrypt",
-    approve,
+    decrypt: {
+      command: "decrypt",
+      acl: ["read", "decrypt"],
+    },
+    approve: {
+      command: approve,
+      acl: ["write", "approve"],
+    },
   },
   accessControlList: {
     admin: {
       allow: ["read", "delete", "decrypt"],
-      decrypt: (order) => ({ ...order, ...order.decrypt() }),
-      type: ["userRole", "custom"],
+      type: "role",
     },
     owner: {
       allow: "*",
       deny: "delete",
-      type: "userRole",
+      type: "role",
     },
     delegate: {
-      allow: "*",
+      set allow(allow) {
+        this.allow = (delegator) => [...delegator.permissions];
+      },
+      get allow() {
+        return this.allow;
+      },
       deny: "delete",
-      type: "userRole",
+      type: "role",
     },
     approver: {
-      allow: [
-        "approve",
-        "deny",
-        (order) => order.status === OrderStatus.PENDING,
-      ],
-      approve: (order) =>
-        handleStatusChange(order.update({ orderStatus: OrderStatus.APPROVED })),
-      deny: (order) =>
-        handleStatusChange(order.update({ orderStatus: OrderStatus.CANCELED })),
-      type: ["userRole", "custom"],
+      //allow: (approve = (orderStatus) => orderStatus === OrderStatus.PENDING),
+      type: "role",
     },
-    customer: {
+    orders: {
       allow: "read",
-      type: "modelRelation",
+      type: "relation",
+      desc: "Allow customer model to see orders",
     },
   },
-  // serializers: [
-  //   {
-  //     on: "deserialize",
-  //     key: "creditCardNumber",
-  //     type: "string",
-  //     value: (key, value) => decrypt(value),
-  //   },
-  //   {
-  //     on: "deserialize",
-  //     key: "shippingAddress",
-  //     type: "string",
-  //     value: (key, value) => decrypt(value),
-  //   },
-  //   {
-  //     on: "deserialize",
-  //     key: "billingAddress",
-  //     type: "string",
-  //     value: (key, value) => decrypt(value),
-  //   },
-  // ],
+  serializers: [
+    {
+      on: "deserialize",
+      key: "creditCardNumber",
+      type: "string",
+      value: (key, value) => decrypt(value),
+      enabled: false,
+    },
+    {
+      on: "deserialize",
+      key: "shippingAddress",
+      type: "string",
+      value: (key, value) => decrypt(value),
+      enabled: false,
+    },
+    {
+      on: "deserialize",
+      key: "billingAddress",
+      type: "string",
+      value: (key, value) => decrypt(value),
+      enabled: false,
+    },
+  ],
 };

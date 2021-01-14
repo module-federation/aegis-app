@@ -19,13 +19,8 @@
     "test": "",
     "test-remote": "mocha",
     "demo": "open http://localhost:8060",
-    "kafka": "../kafka/bin/start.sh",
-    "kafka-zookpr": "../kafka/bin/zookeeper-server-start.sh  ../kafka/config/zookeeper.properties",
-    "kafka-server": "../kafka/bin/kafka-server-start.sh ../kafka/config/server.properties",
-    "kafka-topics": "npm run kafka-topics-order && npm run kafka-topics-inventory && npm run kafka-topics-shipping",
-    "kafka-topics-order": "../kafka/bin/kafka-topics.sh --if-not-exists --create --topic orderChannel --bootstrap-server localhost:9092",
-    "kafka-topics-shipping": "../kafka/bin/kafka-topics.sh --if-not-exists --create --topic shippingChannel --bootstrap-server localhost:9092",
-    "kafka-topics-inventory": "../kafka/bin/kafka-topics.sh --if-not-exists --create --topic inventoryChannel --bootstrap-server localhost:9092"
+    "kafka-start": "start-kafka.sh",
+    "kafka-stop": "stop-kafka.sh"
   },
   "author": "Tyson Midboe",
   "license": "MIT",

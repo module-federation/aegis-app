@@ -105,7 +105,7 @@ wss.on("connection", function (ws, request) {
   ws.on("message", function (message) {
     console.log(`Received message ${message} from user ${userId}`);
   });
-  
+
   ws.on("close", function () {
     map.delete(userId);
   });

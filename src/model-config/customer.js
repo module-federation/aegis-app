@@ -18,7 +18,14 @@ export const Customer = {
     orders: {
       modelName: "order",
       type: "oneToMany",
-      foreignKey: "customerId"
-    }
-  }
+      foreignKey: "customerId",
+    },
+  },
+  accessControlList: {
+    customer: {
+      allow: "read",
+      type: "relation",
+      desc: "Allow orders to see customers via  `customer` relation.",
+    },
+  },
 };

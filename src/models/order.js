@@ -31,7 +31,7 @@ import { checkFormat, PREVMODEL } from "./mixins";
  * @property {function(*):Promise<Order>} update - update the order
  * @property {'APPROVED'|'SHIPPING'|'CANCELED'|'COMPLETED'} orderStatus
  * @property {function():Promise<Customer>} customer - retrieves related customer object.
- * 
+ *
  */
 
 const orderStatus = "orderStatus";
@@ -70,6 +70,7 @@ export const checkItems = function (orderItems) {
  */
 export const calcTotal = function (orderItems) {
   const items = checkItems(orderItems);
+
   return items.reduce((total, item) => {
     const qty = item.qty || 1;
     return (total += item.price * qty);
@@ -87,22 +88,21 @@ export const freezeOnApproval = (propKey) => (o) => {
 };
 
 /**
- * No changes to `propKey`ghgghggh once order is complete or canceled
+ * No changes to `propKey` once order is complete or canceled
  * @param {*} o - the order
  * @param {*} propKey
  * @returns {string | null} the key or `null`
  */
 export const freezeOnCompletion = (propKey) => (o) => {
-  return [
-      OrderStatus.COMPLETE, 
-      OrderStatus.CANCELED
-    ].includes(o[PREVMODEL].orderStatus)
-      ? propKey
-      : null;
+  return [OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(
+    o[PREVMODEL].orderStatus
+  )
+    ? propKey
+    : null;
 };
 
 /**
- * If not a registered customer, provide shipping & payment details. 
+ * If not a registered customer, provide shipping & payment details.
  * @param {*} o
  * @param {*} propKey
  * @returns {string | void} the key or `void`
@@ -119,9 +119,7 @@ export const requiredForGuest = (propKey) => (o) => {
  */
 export const requiredForCompletion = (propKey) => (o) => {
   if (!o.orderStatus) return;
-  return o.orderStatus === OrderStatus.COMPLETE
-    ? propKey
-    : void 0;
+  return o.orderStatus === OrderStatus.COMPLETE ? propKey : void 0;
 };
 
 const invalidStatusChange = (from, to) => (o, propVal) => {
@@ -349,7 +347,7 @@ const OrderActions = {
           billingAddress: decrypted.billingAddress,
           email: decrypted.email,
           firstName: customer.firstName,
-          lastName: decrypted.lastName
+          lastName: decrypted.lastName,
         });
 
         await updated.authorizePayment(paymentAuthorized);
@@ -362,7 +360,6 @@ const OrderActions = {
         order.validateAddress(addressValidated),
         order.authorizePayment(paymentAuthorized),
       ]);
-
     } catch (error) {
       handleError(error, OrderStatus.PENDING);
     }
@@ -469,7 +466,7 @@ export function orderFactory(dependencies) {
   };
 }
 
-export async function approve (order) {
+export async function approve(order) {
   const updated = await order.update({ orderStatus: OrderStatus.APPROVED });
   handleStatusChange(updated);
 }
