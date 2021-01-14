@@ -10,13 +10,17 @@
  * @property {function(Object)} update - use this function to update model
  * specify changes in an object
  * @property {function()} toJSON - de/serialization logic
- * @property {function(function()):Promise<void>} [port] - when you configure a port,
- * the framework generates a function that your code calls to invoke it. When data
+ * @property {function(function():Promise<Model>):Promise<Model>} [port] - when a
+ * port is configured, the framework generates a function to invoke it. When data
  * arrives on the port, depending on the implementation, the port's adapter invokes
- * the callback you specified as an argument to the port function. Then, if configured,
- * an event is fired to trigger the next port function.
+ * the callback specified in the port configuration, or as an argument to the port
+ * function. The callback returns an updated Model, and control is returned to the
+ * caller. Optionally, an event is fired to trigger the next port function to run
  * @property {function():Promise<any>} [relation] - when you configure a relation,
- * the framework generates a function your code calls to run the query.
+ * the framework generates a function that your code can call to run the query
+ * @property {function(*):*} [command] - the framework will call any model method
+ * you specify when passed as a parameter or query in an API call.
+ *
  * @callback onUpdate called to handle model updates
  * @param {Model} model
  * @param {Object} changes
@@ -81,7 +85,7 @@
  *    deny:string|function(*):boolean|Array<string|function(*):boolean>
  *    type:"role"|"relation"
  *    desc?:string
- * }
+ *  }
  * }} accessControlList
  *
  * @typedef {{
