@@ -2,12 +2,21 @@
 
 /**
  * @typedef {Object} Model
- * @property {string} id
- * @property {string} modelName
- * @property {string} createTime
- * @property {onUpdate} onUpdate
- * @property {onDelete} onDelete
- *
+ * @property {string} Symbol_id - immutable/private uuid
+ * @property {string} Symbol_modelName - immutable/private name
+ * @property {string} Symbol_createTime - immutable/private createTime
+ * @property {onUpdate} Symbol_onUpdate - immutable/private update function
+ * @property {onDelete} Symbol_onDelete
+ * @property {function(Object)} update - use this function to update model
+ * specify changes in an object
+ * @property {function()} toJSON - de/serialization logic
+ * @property {function(function()):Promise<void>} [port] - when you configure a port,
+ * the framework generates a function that your code calls to invoke it. When data
+ * arrives on the port, depending on the implementation, the port's adapter invokes
+ * the callback you specified as an argument to the port function. Then, if configured,
+ * an event is fired to trigger the next port function.
+ * @property {function():Promise<any>} [relation] - when you configure a relation,
+ * the framework generates a function your code calls to run the query.
  * @callback onUpdate called to handle model updates
  * @param {Model} model
  * @param {Object} changes
@@ -53,7 +62,8 @@
  *  eventTime:string,
  *  modelName:string,
  *  model:Model
- * }):Promise<void>>} eventHandler - callbacks invoked to handle domain and application events
+ * }):Promise<void>>} eventHandler - callbacks invoked to handle domain and
+ * application events
  *
  * @typedef {string} key
  * @typedef {*} value
@@ -74,24 +84,33 @@
  * }
  * }} accessControlList
  *
+ * @typedef {{
+ *  [x: string]: {
+ *    command:string|function(Model):Promise<any>,
+ *    acl:accessControlList[]
+ *  }
+ * }} command - configure functions to execute when specified in a
+ * URL parameter or query of the auto-generate REST API
+ *
  * @typedef {Object} ModelSpecification Specify model data and behavior
  * @property {string} modelName name of model (case-insenstive)
  * @property {string} endpoint URI reference (e.g. plural of `modelName`)
- * @property {function(...args): any} factory factory function that creates model
+ * @property {function(...args): any} factory factory function that creates the model
  * @property {object} [dependencies] injected into the model for inverted control
- * @property {Array<import("./mixins").functionalMixin>} [mixins] - functional mixins
- * are mixed into the model to implement domain logic, like input validation
- * @property {onUpdate} [onUpdate] - function called to handle update requests
- * @property {onDelete} [onDelete] - function called before deletion
+ * @property {Array<import("./mixins").functionalMixin>} [mixins] - use mixins
+ * to implement domain logic, like input validation.
+ * @property {onUpdate} [onUpdate] - Function called to handle update requests. Called
+ * before save.
+ * @property {onDelete} [onDelete] - Function called before deletion.
  * @property {ports} [ports] - input/output ports for the domain
  * @property {eventHandler[]} [eventHandlers] - callbacks invoked to handle application
  * events, e.g. CRUD events
- * @property {serializer[]} [serializers] - when a model is deserialzed, the model's
- * saved properties are used in the new model. Because mixins are run, serializer
- * callbacks may be needed to format the deserialized properties, e.g. if the
- * information was stored in encrypted format we don't want to encrypt it again.
- * @property {relations} relations -  define related domain entities
- * @property {accessControlList} accessControlList - define authorization
+ * @property {serializer[]} [serializers] - use for custom de/serialization of the model
+ * when reading or writing to storage or network
+ * @property {relations} [relations] - link related domain models
+ * @property {command} [commands] - define functions to execute when specified in a
+ * URL parameter or query of the auto-generated REST API
+ * @property {accessControlList} [accessControlList] - configure authorization
  */
 
 import GlobalMixins from "./mixins";

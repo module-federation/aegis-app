@@ -223,17 +223,12 @@ export const Order = {
       type: "role",
     },
     delegate: {
-      set allow(allow) {
-        this.allow = (delegator) => [...delegator.permissions];
-      },
-      get allow() {
-        return this.allow;
-      },
+      allow: (delegator) => [...delegator.permissions],
       deny: "delete",
       type: "role",
     },
     approver: {
-      //allow: (approve = (orderStatus) => orderStatus === OrderStatus.PENDING),
+      allow: "approve",
       type: "role",
     },
     orders: {
