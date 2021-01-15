@@ -1,6 +1,10 @@
 "use strict";
 
 /**
+ * @typedef {string} eventName
+ */
+
+/**
  * @typedef {Object} Model
  * @property {string} Symbol_id - immutable/private uuid
  * @property {string} Symbol_modelName - immutable/private name
@@ -10,6 +14,8 @@
  * @property {function(Object)} update - use this function to update model
  * specify changes in an object
  * @property {function()} toJSON - de/serialization logic
+ * @property {function(eventName,function(eventName,Model):void)} addListener listen for domain events
+ * @property {function(eventName,Model):Promise<void>} emit emit domain event
  * @property {function(function():Promise<Model>):Promise<Model>} [port] - when a
  * port is configured, the framework generates a function to invoke it. When data
  * arrives on the port, depending on the implementation, the port's adapter invokes
@@ -20,20 +26,28 @@
  * the framework generates a function that your code can call to run the query
  * @property {function(*):*} [command] - the framework will call any model method
  * you specify when passed as a parameter or query in an API call.
- *
+ */
+
+/**
  * @callback onUpdate called to handle model updates
  * @param {Model} model
  * @param {Object} changes
  * @returns {Model | Error} updated model or throw
- *
+ */
+
+/**
  * @callback onDelete
  * @param {Model} model
  * @returns {Model | Error} updated model or throw
- *
+ */
+
+/**
  * @callback onLoad
  * @param {Model} savedModel rehydrated model
  * @returns {Model | Error} updated model or throw
- *
+ */
+
+/**
  * @typedef {string} service - name of the service object to inject in adapter
  * @typedef {number} timeout - call to adapter will timeout after `timeout` milliseconds
  *
@@ -68,10 +82,15 @@
  *  model:Model
  * }):Promise<void>>} eventHandler - callbacks invoked to handle domain and
  * application events
+ */
+
+/**
  *
  * @typedef {string} key
  * @typedef {*} value
- *
+ */
+
+/**
  * @typedef {{
  *  on: "serialize" | "deserialize",
  *  key: string | RegExp | "*" | (function(key,value):boolean)
@@ -95,7 +114,9 @@
  *  }
  * }} command - configure functions to execute when specified in a
  * URL parameter or query of the auto-generate REST API
- *
+ */
+
+/**
  * @typedef {Object} ModelSpecification Specify model data and behavior
  * @property {string} modelName name of model (case-insenstive)
  * @property {string} endpoint URI reference (e.g. plural of `modelName`)

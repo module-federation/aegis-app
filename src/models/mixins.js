@@ -224,8 +224,8 @@ const internalPropList = ["decrypt"];
 const allowProperties = (isUpdate, ...propKeys) => (o) => {
   function rejectUnknownProps() {
     const keys = parseKeys(o, ...propKeys);
-    const allowList = keys.concat(internalPropList);
 
+    const allowList = keys.concat(internalPropList);
     const unknownProps = Object.keys(o).filter(
       (key) => !allowList.includes(key)
     );
@@ -337,6 +337,7 @@ const Validator = {
 const validateProperties = (validations) => (o) => {
   const invalid = validations.filter((v) => {
     const propVal = o[v.propKey];
+
     if (!propVal) {
       return false;
     }
@@ -465,7 +466,7 @@ export function updatePropertiesMixin(updaters) {
  * @param {regexType} expr
  * @returns {function(any):any} dynamic property func
  */
-export const withCorrectFormat = (propKey, expr) => (o) => {
+export const withValidFormat = (propKey, expr) => (o) => {
   if (o.isLoading) return propKey;
   if (o[propKey] && !RegEx.test(expr, o[propKey])) {
     throw new Error(`invalid ${propKey}`);
@@ -493,11 +494,11 @@ export const encryptPersonalInfo = encryptProperties(
   "address",
   "shippingAddress",
   "billingAddress",
-  withCorrectFormat("email", "email"),
-  withCorrectFormat("phone", "phone"),
-  withCorrectFormat("mobile", "phone"),
-  withCorrectFormat("creditCardNumber", "creditCard"),
-  withCorrectFormat("ssn", "ssn")
+  withValidFormat("email", "email"),
+  withValidFormat("phone", "phone"),
+  withValidFormat("mobile", "phone"),
+  withValidFormat("creditCardNumber", "creditCard"),
+  withValidFormat("ssn", "ssn")
 );
 
 /**
