@@ -32,3 +32,5 @@ out/scripts/prettify/prettify.js
 out/styles/jsdoc-default.css
 out/styles/prettify-jsdoc.css
 out/styles/prettify-tomorrow.css
+zookpr.out
+kafka.out

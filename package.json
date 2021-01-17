@@ -19,9 +19,8 @@
     "test": "",
     "test-remote": "mocha",
     "demo": "open http://localhost:8060",
-    "kafka-start": "start-kafka.sh",
-    "kafka-stop": "stop-kafka.sh",
-    "jsdoc": "npm run jsdoc -R"
+    "kafka-start": "scripts/start-kafka.sh",
+    "kafka-stop": "scripts/stop-kafka.sh"
   },
   "author": "Tyson Midboe",
   "license": "MIT",

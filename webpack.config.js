@@ -38,16 +38,15 @@ var serverConfig = {
       library: { type: "commonjs-module" },
       filename: "remoteEntry.js",
       exposes: {
-        "./service1": "./src/services-mock/service1",
         "./models": "./src/models",
         "./adapters": "./src/adapters",
+        "./service1": "./src/services-mock/service1",
         "./publish-event": "./src/services/publish-event",
         "./orderService": "/src/services/order-service",
         "./eventService": "/src/services/event-service",
         "./paymentService": "/src/services/payment-service",
         "./shippingService": "/src/services/shipping-service",
         "./addressService": "/src/services/address-service",
-        //'./inventoryService': '/src/services/inventory-service'
       },
       shared: {
         axios: {
