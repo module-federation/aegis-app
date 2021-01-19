@@ -24,7 +24,7 @@ export function authorizePayment(service) {
     return new Promise(async function (resolve, reject) {
       try {
         const paymentAuthorization = await service.authorizePayment(order);
-        const newOrder = await callback(options, paymentAuthorization);
+        const newOrder = await callback(options, { paymentAuthorization });
         resolve(newOrder);
       } catch (error) {
         reject(error);

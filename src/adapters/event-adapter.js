@@ -53,11 +53,11 @@ import { Event } from "../services/event-service";
  */
 const subscriptions = new Map();
 
-function applyFilter(message) {
+function filterMatches(message) {
   return function (filter) {
     const regex = new RegExp(filter);
     const result = regex.test(message);
-    console.log({ func: applyFilter.name, filter, result, message });
+    console.log({ func: filterMatches.name, filter, result, message });
     return result;
   };
 }
@@ -101,16 +101,17 @@ const Subscription = function ({ id, callback, topic, filters, once, model }) {
      */
     async filter(message) {
       if (filters) {
-        if (filters.every(applyFilter(message))) {
+        if (filters.every(filterMatches(message))) {
           if (once) {
             this.unsubscribe();
           }
           callback({ message, subscription: this });
           return;
         }
-        console.log("filters didn't match: keep listening", message);
+        // no match
         return;
       }
+      // no filters
       callback({ message, subscription: this });
     },
   };
@@ -125,8 +126,13 @@ export function listen(service = Event) {
     model,
     args: [{ id, topic, callback, filters, once }],
   }) {
-    const subscription = Subscription({ 
-      id, topic, callback, filters, once, model 
+    const subscription = Subscription({
+      id,
+      topic,
+      callback,
+      filters,
+      once,
+      model,
     });
 
     if (subscriptions.has(topic)) {

@@ -9,7 +9,7 @@
  * }} subscription
  * @typedef {Object} shipOrderServiceType
  * @property {string} serviceName
- * @property {string} channel
+ * @property {string} toppic
  * @property {function():function():import('../services/event-service').EventMessage} shipOrder
  * @property {function():function():import('../services/event-service').EventMessage} trackShipment
  * @property {function():function():import('../services/event-service').EventMessage} verifyDelivery
@@ -46,6 +46,38 @@ export function shipOrder(service) {
       args: [callback],
     } = options;
 
+    function shipOrderCallback(resolve, reject) {
+      return async function ({ message }) {
+        try {
+          const event = JSON.parse(message);
+          console.log("received event... ", event);
+          const payload = service.getPayload(shipOrder.name, event);
+          const updated = await callback(options, payload);
+          resolve(updated);
+        } catch (error) {
+          console.error(error);
+          reject(error);
+        }
+      };
+    }
+
+    function callShipOrder() {
+      return order.notify(
+        service.topic,
+        JSON.stringify(
+          service.shipOrder({
+            shipTo: order.decrypt().shippingAddress,
+            shipFrom: order.pickupAddress,
+            lineItems: order.orderItems,
+            signature: order.signatureRequired,
+            externalId: order.orderNo,
+            requester,
+            respondOn,
+          })
+        )
+      );
+    }
+
     return new Promise(function (resolve, reject) {
       return order
         .listen({
@@ -54,37 +86,9 @@ export function shipOrder(service) {
           id: order.orderNo,
           topic: "orderChannel",
           filters: [order.orderNo, "orderShipped", "shipmentId"],
-          callback: async function ({ message }) {
-            try {
-              const event = JSON.parse(message);
-              console.log("received event... ", event);
-
-              const shippingId = service.shipmentId(event);
-              const newOrder = await callback(options, shippingId);
-
-              resolve(newOrder);
-            } catch (error) {
-              console.error(error);
-              reject(error);
-            }
-          },
+          callback: shipOrderCallback(resolve, reject),
         })
-        .then(() => {
-          return order.notify(
-            service.channel,
-            JSON.stringify(
-              service.shipOrder({
-                shipTo: order.decrypt().shippingAddress,
-                shipFrom: order.pickupAddress,
-                lineItems: order.orderItems,
-                signature: order.signatureRequired,
-                externalId: order.orderNo,
-                requester,
-                respondOn,
-              })
-            )
-          );
-        })
+        .then(callShipOrder)
         .catch((error) => {
           throw new Error(error);
         });
@@ -102,6 +106,39 @@ export function trackShipment(service) {
       args: [callback],
     } = options;
 
+    function trackShipmentCallback(resolve, reject) {
+      return async function ({ message, subscription }) {
+        try {
+          const event = JSON.parse(message);
+          console.log("received event...", event);
+          const payload = service.getPayload(trackShipment.name, event);
+          const { done, order: updated } = await callback(options, payload);
+          if (done) {
+            subscription.unsubscribe();
+            resolve(updated);
+          }
+        } catch (error) {
+          console.error(error);
+          reject(error);
+        }
+      };
+    }
+
+    function callTrackShipment() {
+      return order.notify(
+        service.topic,
+        JSON.stringify(
+          service.trackShipment({
+            trackingId: order.trackingId,
+            shipmentId: order.shipmentId,
+            externalId: order.orderNo,
+            requester,
+            respondOn,
+          })
+        )
+      );
+    }
+
     return new Promise(async function (resolve, reject) {
       return order
         .listen({
@@ -109,51 +146,13 @@ export function trackShipment(service) {
           model: order,
           id: order.orderNo,
           topic: "orderChannel",
-          filters: [
-            order.orderNo,
-            "trackingStatus",
-            "trackingId",
-          ],
-          callback: async function ({ message, subscription }) {
-            try {
-              const event = JSON.parse(message);
-              console.log("received event...", event);
-
-              const trackingId = service.trackingId(event);
-              const trackingStatus = service.trackingStatus(event);
-
-              const { done, order: newOrder } = await callback(
-                options,
-                trackingId,
-                trackingStatus
-              );
-
-              if (done) {
-                subscription.unsubscribe();
-                resolve(newOrder);
-              }
-            } catch (error) {
-              console.error(error);
-              reject(error);
-            }
-          },
+          filters: [order.orderNo, "trackingStatus", "trackingId"],
+          callback: trackShipmentCallback(resolve, reject),
         })
-        .then(() => {
-          return order.notify(
-            service.channel,
-            JSON.stringify(
-              service.trackShipment({
-                trackingId: order.trackingId,
-                shipmentId: order.shipmentId,
-                externalId: order.orderNo,
-                requester,
-                respondOn,
-              })
-            )
-          );
+        .then(callTrackShipment)
+        .catch((error) => {
+          throw new Error(error);
         });
-    }).catch((error) => {
-      throw new Error(error);
     });
   };
 }
@@ -169,6 +168,35 @@ export function verifyDelivery(service) {
       args: [callback],
     } = options;
 
+    function verifyDeliveryCallback(resolve, reject) {
+      return async function ({ message }) {
+        try {
+          const event = JSON.parse(message);
+          console.log("received event...", event);
+          const payload = service.getPayload(verifyDelivery.name, event);
+          const updated = await callback(options, payload);
+          resolve(updated);
+        } catch (e) {
+          console.error(e);
+          reject(e);
+        }
+      };
+    }
+
+    function callVerifyDelivery() {
+      return order.notify(
+        service.topic,
+        JSON.stringify(
+          service.verifyDelivery({
+            trackingId: order.trackingId,
+            externalId: order.orderNo,
+            requester,
+            respondOn,
+          })
+        )
+      );
+    }
+
     return new Promise(async function (resolve, reject) {
       return order
         .listen({
@@ -176,38 +204,12 @@ export function verifyDelivery(service) {
           model: order,
           id: order.orderNo,
           topic: "orderChannel",
-          filters: [
-            order.orderNo,
-            "deliveryVerified",
-            "proofOfDelivery"
-          ],
-          callback: async ({ message }) => {
-            try {
-              const event = JSON.parse(message);
-              console.log("received event...", event);
-
-              const proofOfDelivery = service.proofOfDelivery(event);
-              const newOrder = await callback(options, proofOfDelivery);
-
-              resolve(newOrder);
-            } catch (e) {
-              console.error(e);
-              reject(e);
-            }
-          },
+          filters: [order.orderNo, "deliveryVerified", "proofOfDelivery"],
+          callback: verifyDeliveryCallback(resolve, reject),
         })
-        .then(() => {
-          return order.notify(
-            service.channel,
-            JSON.stringify(
-              service.verifyDelivery({
-                trackingId: order.trackingId,
-                externalId: order.orderNo,
-                requester,
-                respondOn,
-              })
-            )
-          );
+        .then(callVerifyDelivery)
+        .catch((error) => {
+          throw new Error(error);
         });
     }).catch((error) => {
       throw new Error(error);

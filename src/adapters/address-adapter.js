@@ -17,20 +17,20 @@
  */
 export function validateAddress(service) {
   return async function (options) {
-    return new Promise(async function (resolve, reject) {
-      const {
-        model: order,
-        args: [callback],
-      } = options;
-      const shippingAddress = await service.validateAddress(
-        order.decrypt().shippingAddress
-      );
-      try {
-        const update = await callback(options, shippingAddress);
-        resolve(update);
-      } catch(error) {
-        reject(error);
-      }
-    });
-  }
+    const {
+      model: order,
+      args: [callback],
+    } = options;
+
+    const shippingAddress = await service.validateAddress(
+      order.decrypt().shippingAddress
+    );
+
+    try {
+      const update = await callback(options, { shippingAddress });
+      return update;
+    } catch (error) {
+      console.error(error);
+    }
+  };
 }
