@@ -28,6 +28,11 @@ export function customerFactory({ uuid }) {
   };
 }
 
+export async function okToDelete(customer) {
+  const orders = await customer.orders();
+  return orders.length > 0; 
+}
+
 /**
  * @type {import('./mixins').mixinFunction[]}
  */

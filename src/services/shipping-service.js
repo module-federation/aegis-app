@@ -20,7 +20,7 @@
  */
 export const Shipping = {
   serviceName: "shippingService",
-  channel: "shippingChannel",
+  topic: "shippingChannel",
 
   /**
    *
@@ -109,23 +109,23 @@ export const Shipping = {
     };
   },
 
+  getPayload(func, event) {
+    const payloads = {
+      [this.shipOrder.name]: {
+        shipmentId: event.eventData.shipmentId,
+      },
+      [this.trackShipment.name]: {
+        trackingId: event.eventData.trackingId,
+        trackingStatus: event.eventData.trackingStatus,
+      },
+      [this.verifyDelivery.name]: {
+        proofOfDelivery: event.eventData.proofOfDelivery,
+      },
+    };
+    return payloads[func];
+  },
+
   getProperty(event, key) {
     return event.eventData[key];
-  },
-
-  shipmentId(event) {
-    return event.eventData[this.shipmentId.name];
-  },
-
-  trackingId(event) {
-    return event.eventData[this.trackingId.name];
-  },
-
-  trackingStatus(event) {
-    return event.eventData[this.trackingStatus.name];
-  },
-
-  proofOfDelivery(event) {
-    return event.eventData[this.proofOfDelivery.name];
   },
 };

@@ -217,6 +217,59 @@ async function checkProperty(order, key) {
   throw new Error("%s is missing", key);
 }
 
+function makeObject(prop) {
+  if (Array.isArray(prop)) {
+    return prop.reduce((p, c) => ({ ...c, ...p }));
+  }
+  return prop;
+}
+
+async function _checkProperty(
+  key,
+  options = {},
+  payload = {},
+  func = _checkProperty.name
+) {
+  const { model } = options;
+
+  if (!model || !payload || !key) {
+    console.error({
+      func,
+      error: "model, payload, or key is missing",
+      model,
+      payload,
+      key,
+    });
+    return {};
+  }
+
+  if (Array.isArray(key)) {
+    const keys = await Promise.all(
+      key.map((k) => _checkProperty(k, options, payload, func))
+    );
+    return keys;
+  }
+
+  if (payload[key]) {
+    return { [key]: payload[key] };
+  }
+
+  if (model[key]) {
+    return { [key]: model[key] };
+  }
+
+  const latest = await model.find();
+  if (latest?.[key]) {
+    return { [key]: latest[key] };
+  }
+
+  const error = "property is missing " + key;
+
+  console.error({ func, error, payload, model, latest });
+
+  throw new Error(error);
+}
+
 /**
  * Callback invoked by adapter when payment is complete
  * @param {{model:Order}} options
@@ -230,12 +283,14 @@ export async function paymentCompleted({ model: order }) {
  * @param {{model:Order}} options
  * @param {string} proofOfDelivery
  */
-export async function deliveryVerified(options, proofOfDelivery) {
-  const { model: order } = options;
-  if (!proofOfDelivery) {
-    return checkProperty(order, "proofOfDelivery");
-  }
-  return order.update({ proofOfDelivery });
+export async function deliveryVerified(options = {}, payload = {}) {
+  const changes = await _checkProperty(
+    "proofOfDelivery",
+    options,
+    payload,
+    deliveryVerified.name
+  );
+  return order.update(changes);
 }
 
 /**
@@ -244,18 +299,20 @@ export async function deliveryVerified(options, proofOfDelivery) {
  * @param {string} trackingId
  * @param {string} trackingStatus
  */
-export async function trackingUpdate(options, trackingId, trackingStatus) {
-  const { model: order } = options;
-  let update = order;
+export async function trackingUpdate(options = {}, payload = {}) {
+  const { model } = options;
 
-  if (!trackingStatus || !trackingId) {
-    update = await checkProperty(order, ["trackingStatus", "trackingId"]);
-  } else {
-    update = await order.update({ trackingId, trackingStatus });
-  }
+  const props = await _checkProperty(
+    ["trackingStatus", "trackingId"],
+    options,
+    payload,
+    trackingUpdate.name
+  );
+
+  const update = await model.update(makeObject(props));
 
   return {
-    done: trackingStatus === "orderDelivered",
+    done: payload.trackingStatus === "orderDelivered",
     order: update,
   };
 }
@@ -265,12 +322,15 @@ export async function trackingUpdate(options, trackingId, trackingStatus) {
  * @param {{model:Order}} options
  * @param {string} shipmentId
  */
-export async function orderShipped(options, shipmentId) {
+export async function orderShipped(options = {}, payload = {}) {
   const { model: order } = options;
-  if (!shipmentId) {
-    return checkProperty(order, "shipmentId");
-  }
-  return order.update({ shipmentId, orderStatus: OrderStatus.SHIPPING });
+  const prop = _checkProperty(
+    "shipmentId",
+    options,
+    payload,
+    orderShipped.name
+  );
+  return order.update({ prop, orderStatus: OrderStatus.SHIPPING });
 }
 
 /**
@@ -291,12 +351,15 @@ export async function orderPicked(options, pickupAddress) {
  * @param {{ model:Order }} options
  * @param {string} shippingAddress
  */
-export async function addressValidated(options, shippingAddress) {
-  const { model: order } = options;
-  if (!shippingAddress) {
-    return checkProperty(order, "shippingAddress");
-  }
-  const update = await order.update({ shippingAddress });
+export async function addressValidated(options = {}, payload = {}) {
+  const prop = _checkProperty(
+    "shippingAddress",
+    options,
+    payload,
+    addressValidated.name
+  );
+
+  const update = await order.update(prop);
   return update;
 }
 
@@ -305,20 +368,29 @@ export async function addressValidated(options, shippingAddress) {
  * @param {{ model:Order }} options
  * @param {*} paymentAuthorization
  */
-export async function paymentAuthorized(options, paymentAuthorization) {
+export async function paymentAuthorized(options = {}, payload = {}) {
   const { model: order } = options;
-  if (!paymentAuthorization) {
-    return checkProperty(order, "paymentAuthorization");
-  }
-  return order.update({ paymentAuthorization });
+
+  const prop = _checkProperty(
+    "paymentAuthorization",
+    options,
+    payload,
+    paymentAuthorized.name
+  );
+
+  return order.update(prop);
 }
 
-export async function refundPayment(options, receipt) {
+export async function refundPayment(options = {}, payload = {}) {
   const { model: order } = options;
-  if (!receipt) {
-    return checkProperty(order, "receipt");
-  }
-  return order.update({ receipt });
+
+  const prop = _checkProperty(
+    "paymentAuthorization",
+    options,
+    payload,
+    paymentAuthorized.name
+  );
+  return order.update(prop);
 }
 
 /**
@@ -350,16 +422,20 @@ const OrderActions = {
           lastName: decrypted.lastName,
         });
 
-        await updated.authorizePayment(paymentAuthorized);
-
-        return;
+        // Need a synchronous response
+        const result = await Promise.all([
+          updated.validateAddress(addressValidated),
+          updated.authorizePayment(paymentAuthorized),
+        ]);
+        return result;
       }
 
       // Need a synchronous response
-      return Promise.all([
+      const result = await Promise.all([
         order.validateAddress(addressValidated),
         order.authorizePayment(paymentAuthorized),
       ]);
+      return result;
     } catch (error) {
       handleError(error, OrderStatus.PENDING);
     }
@@ -426,7 +502,7 @@ export async function handleOrderEvent({ model: order, eventType, changes }) {
   }
 }
 
-function needSignature(input, orderTotal) {
+function needsSignature(input, orderTotal) {
   typeof input === "boolean" ? requireSignature : orderTotal > 999.99;
 }
 
@@ -457,7 +533,7 @@ export function orderFactory(dependencies) {
       creditCardNumber,
       billingAddress,
       shippingAddress,
-      signatureRequired: needSignature(requireSignature, total),
+      signatureRequired: needsSignature(requireSignature, total),
       [orderTotal]: total,
       [orderStatus]: OrderStatus.PENDING,
       [orderNo]: dependencies.uuid(),
