@@ -109,6 +109,7 @@ export const Order = {
     notify: {
       service: "Event",
       type: "outbound",
+      timeout: 0,
     },
     save: {
       service: "Persistence",
@@ -121,23 +122,20 @@ export const Order = {
     validateAddress: {
       service: "Address",
       type: "outbound",
-      callback: addressValidated,
-      consumesEvent: "validateAddress",
+      consumesEvent: "startOrder",
       producesEvent: "addressValidated",
       disabled: true,
     },
     authorizePayment: {
       service: "Payment",
       type: "outbound",
-      callback: paymentAuthorized,
-      consumesEvent: "authorizePayment",
+      consumesEvent: "startOrder",
       producesEvent: "paymentAuthorized",
       undo: cancelPayment,
     },
     pickOrder: {
       service: "Inventory",
       type: "outbound",
-      callback: orderPicked,
       consumesEvent: "pickOrder",
       producesEvent: "orderPicked",
       undo: returnInventory,
@@ -145,7 +143,7 @@ export const Order = {
     shipOrder: {
       service: "Shipping",
       type: "outbound",
-      keys: "shipmentId",
+      callback: orderShipped,
       consumesEvent: "orderPicked",
       producesEvent: "orderShipped",
       undo: returnShipment,
@@ -160,7 +158,7 @@ export const Order = {
     verifyDelivery: {
       service: "Shipping",
       type: "outbound",
-      keys: "proofOfDelivery",
+      keys: ["proofOfDelivery"],
       consumesEvent: "orderDelivered",
       producesEvent: "deliveryVerified",
       undo: returnDelivery,

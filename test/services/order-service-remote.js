@@ -9,7 +9,7 @@ describe("OrderService", function () {
       const orderInfo = {
         firstName: "Dr.",
         lastName: "Dre",
-        email: "dre@email.com",
+        email: "dre@mail.com",
         billingAddress: "9612 Park Ave S, Bloomington, MN 55408",
         shippingAddress: "9612 Park Ave S, Bloomington, MN 55408",
         creditCardNumber: "378282246310005",

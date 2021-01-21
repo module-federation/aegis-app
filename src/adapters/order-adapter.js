@@ -8,18 +8,24 @@ export class OrderAdapter {
   constructor() {}
 
   addOrder({
-    customerInfo,
+    customerId,
     orderItems = [],
     creditCardNumber,
     shippingAddress,
     billingAddress,
+    firstName,
+    lastName,
+    email,
   } = {}) {
     this.orderInfo = {
-      customerInfo,
+      customerId,
       orderItems,
       creditCardNumber,
       shippingAddress,
       billingAddress,
+      firstName,
+      lastName,
+      email,
     };
     return this;
   }
@@ -51,67 +57,31 @@ export class OrderAdapter {
     throw new Error("unimplemented abstract method");
   }
 }
-
-// export class LocalOrderAdapter extends OrderAdapter {
-//   /**
-//    * @override
-//    */
-//   createOrder() {
-//     const Order = require('../models').Order;
-//     const createOrder = Order.factory(Order.dependencies);
-//     this.order = await createOrder(this.orderInfo)
-//       .then(order => compose(...Order.mixins)(order));
-//     this.orderId = this.order.orderId;
-//     return this;
-//   }
-
-//   async handleStatusChange(status) {
-//     require('../models/order').statusChangeValid(this.order, status);
-//     await require('../models/order').handleStatusChange({
-//       ...this.order,
-//       orderStatus: status,
-//     });
-//   }
-
-//   submitOrder() {
-//     await this.handleStatusChange('APPROVED');
-//     return this;
-//   }
-
-//   fillOrder() {
-//   }
-//   shipOrder() {
-//   }
-//   trackShipment() {
-//   }
-//   verifyDelivery() {
-//   }
-//   completeOrder() {
-//   }
-//   cancelOrder() {
-//     await this.handleStatusChange('CANCELED');
-//     return this;
-//   }
-// }
-
 export class RestOrderAdapter extends OrderAdapter {
   constructor(url) {
     super();
     this.url = url;
   }
+
   /**
    * @override
    */
   async createOrder() {
-    return axios.post(this.url, this.orderInfo).then(
-      (response) => {
-        this.orderId = response.data.modelId;
-        return this;
-      },
-      (error) => {
-        console.error(error.response.data);
-      }
-    ).catch(e => console.log(e));
+    if (!this.orderInfo) {
+      throw new Error("there is no order data");
+    }
+    return axios
+      .post(this.url, this.orderInfo)
+      .then(
+        (response) => {
+          this.orderId = response.data.modelId;
+          return this;
+        },
+        (error) => {
+          console.error(error.response.data);
+        }
+      )
+      .catch((e) => console.log(e));
   }
 
   /**
@@ -119,6 +89,9 @@ export class RestOrderAdapter extends OrderAdapter {
    * @param {*} orderId
    */
   async submitOrder(orderId = this.orderId) {
+    if (!this.orderInfo) {
+      throw new Error("there is no order data");
+    }
     return axios.patch(this.url + orderId, { orderStatus: "APPROVED" }).then(
       () => this,
       (error) => {
@@ -145,19 +118,6 @@ export class RestOrderAdapter extends OrderAdapter {
   async getOrderStatus(orderId = this.orderId) {
     const order = await this.getOrder(orderId);
     return order.orderStatus;
-  }
-
-  shipOrder() {
-    return axios.patch(this.url + orderId, { orderStatus: "SHIPPING" }).then(
-      (response) => {
-        this.orderId = response.data.modelId;
-        return this;
-      },
-      (error) => {
-        console.error(error.response.data);
-        throw new Error(error);
-      }
-    );
   }
 
   completeOrder() {

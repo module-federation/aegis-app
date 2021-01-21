@@ -470,7 +470,7 @@ const OrderActions = {
    */
   [OrderStatus.CANCELED]: async (order) => {
     try {
-      order.compensate();
+      order.undo();
     } catch (error) {
       handleError(error, OrderStatus.CANCELED);
     }
@@ -553,7 +553,7 @@ export async function approve(order) {
  */
 export function errorCallback({ port, model: order, error }) {
   console.error("error...", port, error);
-  order.compensate();
+  order.undo();
 }
 
 /**
@@ -562,7 +562,7 @@ export function errorCallback({ port, model: order, error }) {
  */
 export function timeoutCallback({ port, ports, adapterFn, model: order }) {
   console.error("timeout...", port);
-  order.compensate();
+  order.undo();
 }
 
 export function handleLatePickup({ model: order }) {
@@ -586,5 +586,5 @@ export async function cancelPayment({ model }) {
 }
 
 export async function compensate({ model }) {
-  model.compensate();
+  model.undo();
 }
