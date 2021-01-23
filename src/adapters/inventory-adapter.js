@@ -61,7 +61,7 @@ export function pickOrder(service) {
               const event = JSON.parse(message);
               console.log("recieved event: ", event);
               const pickupAddress = event.eventData.warehouse_addr;
-              const newOrder = await callback(options, pickupAddress);
+              const newOrder = await callback(options, { pickupAddress });
               resolve(newOrder); // hold promise until we get an answer
             } catch (error) {
               reject(error);

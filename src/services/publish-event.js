@@ -1,6 +1,6 @@
 import http from "http";
 
-export default function publishEvent(event) {
+export function publishEvent(event) {
   if (!event) {
     return;
   }

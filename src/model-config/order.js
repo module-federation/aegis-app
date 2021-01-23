@@ -136,6 +136,7 @@ export const Order = {
     pickOrder: {
       service: "Inventory",
       type: "outbound",
+      keys: "pickupAddress",
       consumesEvent: "pickOrder",
       producesEvent: "orderPicked",
       undo: returnInventory,
@@ -169,8 +170,6 @@ export const Order = {
       callback: paymentCompleted,
       consumesEvent: "deliveryVerified",
       producesEvent: "paymentCompleted",
-      timeout: 20,
-      retryTimeout: 60,
       undo: refundPayment,
     },
     cancelShipment: {

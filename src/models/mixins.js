@@ -95,8 +95,8 @@ function updateMixins(type, o, name, cb) {
 }
 
 /**
- * Execute any functions in `propKeys` to get dynamic properties, 
- * flatten arrays, and return all properties of an object 
+ * Execute any functions in `propKeys` to get dynamic properties,
+ * flatten arrays, and return all properties of an object
  * when  "*" is specified.
  * @param {*} o - Object to compose
  * @param  {Array<string | function(*):string>} propKeys -
@@ -123,8 +123,7 @@ const encryptProperties = (...propKeys) => (o) => {
 
   const encryptProps = () => {
     if (o.isLoading) {
-      return
-      ;
+      return;
     }
     return keys
       .map((key) => (o[key] ? { [key]: encrypt(o[key]) } : {}))

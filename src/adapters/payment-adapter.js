@@ -21,15 +21,13 @@ export function authorizePayment(service) {
       model: order,
       args: [callback],
     } = options;
-    return new Promise(async function (resolve, reject) {
-      try {
-        const paymentAuthorization = await service.authorizePayment(order);
-        const newOrder = await callback(options, { paymentAuthorization });
-        resolve(newOrder);
-      } catch (error) {
-        reject(error);
-      }
-    });
+    try {
+      const paymentAuthorization = await service.authorizePayment(order);
+      const newOrder = await callback(options, { paymentAuthorization });
+      return newOrder;
+    } catch (error) {
+      console.error(error);
+    }
   };
 }
 /**
@@ -37,15 +35,13 @@ export function authorizePayment(service) {
  */
 export function completePayment(service) {
   return async function (options) {
-    return new Promise(async function (resolve, reject) {
-      const {
-        model: order,
-        args: [callback],
-      } = options;
-      await service.completePayment(order);
-      const newOrder = await callback(options);
-      resolve(newOrder);
-    });
+    const {
+      model: order,
+      args: [callback],
+    } = options;
+    await service.completePayment(order);
+    const newOrder = await callback(options);
+    return newOrder;
   };
 }
 /**
@@ -53,14 +49,12 @@ export function completePayment(service) {
  */
 export function refundPayment(service) {
   return async function (options) {
-    return new Promise(async function (resolve, reject) {
-      const {
-        model: order,
-        args: [callback],
-      } = options;
-      await service.refundPayment(order);
-      const newOrder = await callback(options);
-      resolve(newOrder);
-    });
+    const {
+      model: order,
+      args: [callback],
+    } = options;
+    await service.refundPayment(order);
+    const newOrder = await callback(options);
+    return newOrder;
   };
 }
