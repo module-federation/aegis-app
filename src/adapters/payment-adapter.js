@@ -39,8 +39,8 @@ export function completePayment(service) {
       model: order,
       args: [callback],
     } = options;
-    await service.completePayment(order);
-    const newOrder = await callback(options);
+    const confirmationCode = await service.completePayment(order);
+    const newOrder = await callback(options, { confirmationCode });
     return newOrder;
   };
 }

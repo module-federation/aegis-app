@@ -126,6 +126,7 @@ export const Payment = {
 
   async completePayment(model) {
     console.log("REAL completing payment: %s", model.orderNo);
+    return "1234";
   },
 
   async refundPayment(model) {

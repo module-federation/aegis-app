@@ -4,12 +4,8 @@ import {
   orderFactory,
   readyToDelete,
   handleOrderEvent,
-  addressValidated,
-  paymentAuthorized,
-  orderPicked,
   orderShipped,
   trackingUpdate,
-  deliveryVerified,
   paymentCompleted,
   OrderStatus,
   recalcTotal,
@@ -114,14 +110,17 @@ export const Order = {
     save: {
       service: "Persistence",
       type: "outbound",
+      timeout: 0,
     },
     find: {
       service: "Persistence",
       type: "outbound",
+      timeout: 0,
     },
     validateAddress: {
       service: "Address",
       type: "outbound",
+      keys: "shippingAddress",
       consumesEvent: "startOrder",
       producesEvent: "addressValidated",
       disabled: true,
@@ -129,6 +128,7 @@ export const Order = {
     authorizePayment: {
       service: "Payment",
       type: "outbound",
+      keys: "paymentAuthorization",
       consumesEvent: "startOrder",
       producesEvent: "paymentAuthorized",
       undo: cancelPayment,
@@ -139,6 +139,8 @@ export const Order = {
       keys: "pickupAddress",
       consumesEvent: "pickOrder",
       producesEvent: "orderPicked",
+      timeout: 30,
+      maxRetry: 5,
       undo: returnInventory,
     },
     shipOrder: {
@@ -147,6 +149,8 @@ export const Order = {
       callback: orderShipped,
       consumesEvent: "orderPicked",
       producesEvent: "orderShipped",
+      timeout: 30,
+      maxRetry: 5,
       undo: returnShipment,
     },
     trackShipment: {
@@ -155,14 +159,18 @@ export const Order = {
       callback: trackingUpdate,
       consumesEvent: "orderShipped",
       producesEvent: "orderDelivered",
+      timeout: 30,
+      maxRetry: 5,
     },
     verifyDelivery: {
       service: "Shipping",
       type: "outbound",
-      keys: ["proofOfDelivery"],
+      keys: "proofOfDelivery",
       consumesEvent: "orderDelivered",
       producesEvent: "deliveryVerified",
       undo: returnDelivery,
+      timeout: 30,
+      maxRetry: 5,
     },
     completePayment: {
       service: "Payment",
@@ -179,6 +187,12 @@ export const Order = {
     refundPayment: {
       service: "Payment",
       type: "outbound",
+    },
+    createCustomer: {
+      service: "Customer",
+      type: "outbound",
+      consumesEvent: "addCustomerFromOrder",
+      producesEvent: "newCustomerFromOrder",
     },
   },
   relations: {

@@ -41,6 +41,7 @@ var serverConfig = {
         "./models": "./src/models",
         "./adapters": "./src/adapters",
         "./services": "./src/services",
+        "./validations": "./src/models/mixins",
       },
       shared: {
         axios: {

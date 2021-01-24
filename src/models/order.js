@@ -1,6 +1,7 @@
 "use strict";
 
-import { checkFormat, PREVMODEL } from "./mixins";
+import { PREVMODEL } from "./mixins";
+import checkProperty from "./check-property";
 
 /**
  * @typedef {string|RegExp} topic
@@ -201,22 +202,6 @@ function handleError(error, func) {
   throw new Error(error);
 }
 
-async function checkProperty(order, key) {
-  if (Array.isArray(key)) {
-    return key
-      .map((k) => checkProperty(order, k))
-      .reduce((c, p) => ({ ...p, ...c }));
-  }
-  if (order[key]) {
-    return order;
-  }
-  const update = await order.find();
-  if (update?.[key]) {
-    return update;
-  }
-  throw new Error("%s is missing", key);
-}
-
 function makeObject(prop) {
   if (Array.isArray(prop)) {
     return prop.reduce((p, c) => ({ ...c, ...p }));
@@ -224,58 +209,21 @@ function makeObject(prop) {
   return prop;
 }
 
-async function _checkProperty(
-  key,
-  options = {},
-  payload = {},
-  func = _checkProperty.name
-) {
-  const { model } = options;
-
-  if (!model || !payload || !key) {
-    console.error({
-      func,
-      error: "model, payload, or key is missing",
-      model,
-      payload,
-      key,
-    });
-    return {};
-  }
-
-  if (Array.isArray(key)) {
-    const keys = await Promise.all(
-      key.map((k) => _checkProperty(k, options, payload, func))
-    );
-    return keys;
-  }
-
-  if (payload[key]) {
-    return { [key]: payload[key] };
-  }
-
-  if (model[key]) {
-    return { [key]: model[key] };
-  }
-
-  const latest = await model.find();
-  if (latest?.[key]) {
-    return { [key]: latest[key] };
-  }
-
-  const error = "property is missing " + key;
-
-  console.error({ func, error, payload, model, latest });
-
-  throw new Error(error);
-}
-
 /**
  * Callback invoked by adapter when payment is complete
  * @param {{model:Order}} options
  */
-export async function paymentCompleted({ model: order }) {
-  return order.update({ orderStatus: OrderStatus.COMPLETE });
+export async function paymentCompleted(options = {}, payload = {}) {
+  const { model: order } = options;
+
+  const prop = checkProperty(
+    "confirmationCode",
+    options,
+    payload,
+    paymentCompleted.name
+  );
+
+  return order.update({ ...prop, orderStatus: OrderStatus.COMPLETE });
 }
 
 /**
@@ -284,12 +232,15 @@ export async function paymentCompleted({ model: order }) {
  * @param {string} proofOfDelivery
  */
 export async function deliveryVerified(options = {}, payload = {}) {
-  const changes = await _checkProperty(
+  const { model: order } = options;
+
+  const changes = await checkProperty(
     "proofOfDelivery",
     options,
     payload,
     deliveryVerified.name
   );
+
   return order.update(changes);
 }
 
@@ -300,20 +251,18 @@ export async function deliveryVerified(options = {}, payload = {}) {
  * @param {string} trackingStatus
  */
 export async function trackingUpdate(options = {}, payload = {}) {
-  const { model } = options;
+  const { model: order } = options;
 
-  const props = await _checkProperty(
+  const props = await checkProperty(
     ["trackingStatus", "trackingId"],
     options,
     payload,
     trackingUpdate.name
   );
 
-  const update = await model.update(makeObject(props));
-
   return {
     done: payload.trackingStatus === "orderDelivered",
-    order: update,
+    order: await order.update(makeObject(props)),
   };
 }
 
@@ -324,26 +273,32 @@ export async function trackingUpdate(options = {}, payload = {}) {
  */
 export async function orderShipped(options = {}, payload = {}) {
   const { model: order } = options;
-  const prop = _checkProperty(
+
+  const prop = await checkProperty(
     "shipmentId",
     options,
     payload,
     orderShipped.name
   );
-  return order.update({ prop, orderStatus: OrderStatus.SHIPPING });
+
+  return order.update({ ...prop, orderStatus: OrderStatus.SHIPPING });
 }
 
 /**
  * Callback invoked when order is ready for pickup
  * @param {{ model:Order }} options
  */
-export async function orderPicked(options, pickupAddress) {
+export async function orderPicked(options = {}, payload = {}) {
   const { model: order } = options;
-  if (!pickupAddress) {
-    return checkProperty(order, "pickupAddress");
-  }
-  const update = await order.update({ pickupAddress });
-  return update;
+
+  const changes = await checkProperty(
+    "pickupAddress",
+    options,
+    payload,
+    addressValidated.name
+  );
+
+  return order.update(changes);
 }
 
 /**
@@ -352,15 +307,16 @@ export async function orderPicked(options, pickupAddress) {
  * @param {string} shippingAddress
  */
 export async function addressValidated(options = {}, payload = {}) {
-  const prop = _checkProperty(
+  const { model: order } = options;
+
+  const changes = await checkProperty(
     "shippingAddress",
     options,
     payload,
     addressValidated.name
   );
 
-  const update = await order.update(prop);
-  return update;
+  return order.update(changes);
 }
 
 /**
@@ -371,7 +327,7 @@ export async function addressValidated(options = {}, payload = {}) {
 export async function paymentAuthorized(options = {}, payload = {}) {
   const { model: order } = options;
 
-  const prop = _checkProperty(
+  const prop = checkProperty(
     "paymentAuthorization",
     options,
     payload,
@@ -384,12 +340,13 @@ export async function paymentAuthorized(options = {}, payload = {}) {
 export async function refundPayment(options = {}, payload = {}) {
   const { model: order } = options;
 
-  const prop = _checkProperty(
-    "paymentAuthorization",
+  const prop = checkProperty(
+    "refundReceipt",
     options,
     payload,
-    paymentAuthorized.name
+    refundPayment.name
   );
+
   return order.update(prop);
 }
 
@@ -405,6 +362,7 @@ const OrderActions = {
   [OrderStatus.PENDING]: async (order) => {
     try {
       if (order.customerId) {
+        // Use the customer relation configured in the ModelSpec
         const customer = await order.customer();
 
         if (!customer) {
@@ -418,15 +376,16 @@ const OrderActions = {
           shippingAddress: decrypted.shippingAddress,
           billingAddress: decrypted.billingAddress,
           email: decrypted.email,
-          firstName: customer.firstName,
           lastName: decrypted.lastName,
+          firstName: customer.firstName,
         });
 
-        // Need a synchronous response
+        // Require a synchronous response
         const result = await Promise.all([
           updated.validateAddress(addressValidated),
           updated.authorizePayment(paymentAuthorized),
         ]);
+
         return result;
       }
 
@@ -435,6 +394,7 @@ const OrderActions = {
         order.validateAddress(addressValidated),
         order.authorizePayment(paymentAuthorized),
       ]);
+
       return result;
     } catch (error) {
       handleError(error, OrderStatus.PENDING);
@@ -446,7 +406,7 @@ const OrderActions = {
    */
   [OrderStatus.APPROVED]: async (order) => {
     try {
-      // don't block the caller waiting for promise
+      // don't block the caller waiting for the promise
       order.pickOrder(orderPicked);
     } catch (error) {
       handleError(error, OrderStatus.APPROVED);
@@ -502,8 +462,13 @@ export async function handleOrderEvent({ model: order, eventType, changes }) {
   }
 }
 
+/**
+ * Require a signature for orders at or over $1000
+ * @param {*} input
+ * @param {*} orderTotal
+ */
 function needsSignature(input, orderTotal) {
-  typeof input === "boolean" ? requireSignature : orderTotal > 999.99;
+  typeof input === "boolean" ? input : orderTotal > 999.99;
 }
 
 /**
@@ -523,7 +488,7 @@ export function orderFactory(dependencies) {
     requireSignature,
   }) {
     const total = calcTotal(orderItems);
-    // checkFormat(creditCardNumber, "creditCard");
+    const signatureRequired = needsSignature(requireSignature, total);
     const order = {
       email,
       lastName,
@@ -533,7 +498,7 @@ export function orderFactory(dependencies) {
       creditCardNumber,
       billingAddress,
       shippingAddress,
-      signatureRequired: needsSignature(requireSignature, total),
+      signatureRequired,
       [orderTotal]: total,
       [orderStatus]: OrderStatus.PENDING,
       [orderNo]: dependencies.uuid(),
@@ -562,7 +527,6 @@ export function errorCallback({ port, model: order, error }) {
  */
 export function timeoutCallback({ port, ports, adapterFn, model: order }) {
   console.error("timeout...", port);
-  order.undo();
 }
 
 export function handleLatePickup({ model: order }) {
@@ -586,5 +550,9 @@ export async function cancelPayment({ model }) {
 }
 
 export async function compensate({ model }) {
-  model.undo();
+  try {
+    await model.undo();
+  } catch (error) {
+    console.error(error);
+  }
 }
