@@ -1,7 +1,5 @@
 "use strict";
 
-import { response } from "express";
-
 const axios = require("axios");
 
 export class OrderAdapter {
@@ -73,15 +71,15 @@ export class RestOrderAdapter extends OrderAdapter {
     return axios
       .post(this.url, this.orderInfo)
       .then(
-        (response) => {
+        response => {
           this.orderId = response.data.modelId;
           return this;
         },
-        (error) => {
+        error => {
           console.error(error.response.data);
         }
       )
-      .catch((e) => console.log(e));
+      .catch(e => console.log(e));
   }
 
   /**
@@ -94,7 +92,7 @@ export class RestOrderAdapter extends OrderAdapter {
     }
     return axios.patch(this.url + orderId, { orderStatus: "APPROVED" }).then(
       () => this,
-      (error) => {
+      error => {
         console.error(error.response.data);
         throw new Error(error);
       }
@@ -103,12 +101,12 @@ export class RestOrderAdapter extends OrderAdapter {
 
   async getOrder(orderId = this.orderId) {
     return axios.get(this.url + orderId).then(
-      (response) => {
+      response => {
         console.log(response.data);
         this.order = response.data.model;
         return this.order;
       },
-      (error) => {
+      error => {
         console.error(error.response.data);
         throw new Error(error);
       }
@@ -127,11 +125,11 @@ export class RestOrderAdapter extends OrderAdapter {
         proofOfDelivery: pod,
       })
       .then(
-        (response) => {
+        response => {
           this.orderId = response.data.modelId;
           return this;
         },
-        (error) => {
+        error => {
           console.error(error.response.data);
           throw new Error(error);
         }
@@ -145,11 +143,11 @@ export class RestOrderAdapter extends OrderAdapter {
         cancelReason: reason,
       })
       .then(
-        (response) => {
+        response => {
           this.orderId = response.data.modelId;
           return this;
         },
-        (error) => {
+        error => {
           console.error(error.response.data);
           throw new Error(error);
         }

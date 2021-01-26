@@ -1,9 +1,10 @@
 "use strict";
 
 import { PREVMODEL } from "./mixins";
-import checkProperty from "./check-property";
+import { async } from "../lib/utils";
+import checkPayload from "./check-payload";
 
-/**
+/**w
  * @typedef {string|RegExp} topic
  * @typedef {function(string)} eventCallback
  * @typedef {import('../adapters/index').adapterFunction} adapterFunction
@@ -38,6 +39,7 @@ import checkProperty from "./check-property";
 const orderStatus = "orderStatus";
 const orderTotal = "orderTotal";
 const orderNo = "orderNo";
+
 export const OrderStatus = {
   PENDING: "PENDING",
   APPROVED: "APPROVED",
@@ -58,7 +60,7 @@ export const checkItems = function (orderItems) {
 
   if (
     items.length > 0 &&
-    items.every((i) => i.itemId && typeof i.price === "number")
+    items.every(i => i.itemId && typeof i.price === "number")
   ) {
     return items;
   }
@@ -84,7 +86,7 @@ export const calcTotal = function (orderItems) {
  * @param {*} propKey
  * @returns {string | null} the key or `null`
  */
-export const freezeOnApproval = (propKey) => (o) => {
+export const freezeOnApproval = propKey => o => {
   return o[PREVMODEL].orderStatus !== OrderStatus.PENDING ? propKey : null;
 };
 
@@ -94,7 +96,7 @@ export const freezeOnApproval = (propKey) => (o) => {
  * @param {*} propKey
  * @returns {string | null} the key or `null`
  */
-export const freezeOnCompletion = (propKey) => (o) => {
+export const freezeOnCompletion = propKey => o => {
   return [OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(
     o[PREVMODEL].orderStatus
   )
@@ -108,7 +110,7 @@ export const freezeOnCompletion = (propKey) => (o) => {
  * @param {*} propKey
  * @returns {string | void} the key or `void`
  */
-export const requiredForGuest = (propKey) => (o) => {
+export const requiredForGuest = propKey => o => {
   return o.customerId ? null : propKey;
 };
 
@@ -118,7 +120,7 @@ export const requiredForGuest = (propKey) => (o) => {
  * @param {*} propKey
  * @returns {string | void} the key or `void`
  */
-export const requiredForCompletion = (propKey) => (o) => {
+export const requiredForCompletion = propKey => o => {
   if (!o.orderStatus) return;
   return o.orderStatus === OrderStatus.COMPLETE ? propKey : void 0;
 };
@@ -146,7 +148,7 @@ const invalidStatusChanges = [
 export const statusChangeValid = (o, propVal) => {
   if (!o[PREVMODEL]?.orderStatus) return true;
 
-  if (invalidStatusChanges.some((isc) => isc(o, propVal))) {
+  if (invalidStatusChanges.some(isc => isc(o, propVal))) {
     throw new Error("invalid status change");
   }
   return true;
@@ -202,11 +204,11 @@ function handleError(error, func) {
   throw new Error(error);
 }
 
-function makeObject(prop) {
-  if (Array.isArray(prop)) {
-    return prop.reduce((p, c) => ({ ...c, ...p }));
+async function updateOrder(order, result) {
+  if (result.ok) {
+    return order.update(result.asObject());
   }
-  return prop;
+  throw new Error(result.error);
 }
 
 /**
@@ -216,14 +218,14 @@ function makeObject(prop) {
 export async function paymentCompleted(options = {}, payload = {}) {
   const { model: order } = options;
 
-  const prop = checkProperty(
+  const changes = checkPayload(
     "confirmationCode",
     options,
     payload,
     paymentCompleted.name
   );
 
-  return order.update({ ...prop, orderStatus: OrderStatus.COMPLETE });
+  return order.update({ ...changes, orderStatus: OrderStatus.COMPLETE });
 }
 
 /**
@@ -234,7 +236,7 @@ export async function paymentCompleted(options = {}, payload = {}) {
 export async function deliveryVerified(options = {}, payload = {}) {
   const { model: order } = options;
 
-  const changes = await checkProperty(
+  const changes = checkPayload(
     "proofOfDelivery",
     options,
     payload,
@@ -253,17 +255,14 @@ export async function deliveryVerified(options = {}, payload = {}) {
 export async function trackingUpdate(options = {}, payload = {}) {
   const { model: order } = options;
 
-  const props = await checkProperty(
+  const changes = checkPayload(
     ["trackingStatus", "trackingId"],
     options,
     payload,
     trackingUpdate.name
   );
 
-  return {
-    done: payload.trackingStatus === "orderDelivered",
-    order: await order.update(makeObject(props)),
-  };
+  ret;
 }
 
 /**
@@ -274,14 +273,14 @@ export async function trackingUpdate(options = {}, payload = {}) {
 export async function orderShipped(options = {}, payload = {}) {
   const { model: order } = options;
 
-  const prop = await checkProperty(
+  const changes = checkPayload(
     "shipmentId",
     options,
     payload,
     orderShipped.name
   );
 
-  return order.update({ ...prop, orderStatus: OrderStatus.SHIPPING });
+  return order.update(changes);
 }
 
 /**
@@ -291,7 +290,7 @@ export async function orderShipped(options = {}, payload = {}) {
 export async function orderPicked(options = {}, payload = {}) {
   const { model: order } = options;
 
-  const changes = await checkProperty(
+  const changes = checkPayload(
     "pickupAddress",
     options,
     payload,
@@ -309,7 +308,7 @@ export async function orderPicked(options = {}, payload = {}) {
 export async function addressValidated(options = {}, payload = {}) {
   const { model: order } = options;
 
-  const changes = await checkProperty(
+  const changes = checkPayload(
     "shippingAddress",
     options,
     payload,
@@ -327,27 +326,22 @@ export async function addressValidated(options = {}, payload = {}) {
 export async function paymentAuthorized(options = {}, payload = {}) {
   const { model: order } = options;
 
-  const prop = checkProperty(
+  const changes = checkPayload(
     "paymentAuthorization",
     options,
     payload,
     paymentAuthorized.name
   );
 
-  return order.update(prop);
+  return order.update(changes);
 }
 
 export async function refundPayment(options = {}, payload = {}) {
   const { model: order } = options;
-
-  const prop = checkProperty(
-    "refundReceipt",
-    options,
-    payload,
-    refundPayment.name
+  const property = await async(
+    checkPayload("refundReceipt", options, payload, refundPayment.name)
   );
-
-  return order.update(prop);
+  return updateOrder(order, property);
 }
 
 /**
@@ -359,7 +353,7 @@ const OrderActions = {
    * for the order total when the order is first created.
    * @param {Order} order - the order
    */
-  [OrderStatus.PENDING]: async (order) => {
+  [OrderStatus.PENDING]: async order => {
     try {
       if (order.customerId) {
         // Use the customer relation configured in the ModelSpec
@@ -404,7 +398,7 @@ const OrderActions = {
    * Pick the order and specify the pickup location
    * @param {Order} order
    */
-  [OrderStatus.APPROVED]: async (order) => {
+  [OrderStatus.APPROVED]: async order => {
     try {
       // don't block the caller waiting for the promise
       order.pickOrder(orderPicked);
@@ -416,7 +410,7 @@ const OrderActions = {
    * Useful if we need to restart tracking
    * @param {Order} order
    */
-  [OrderStatus.SHIPPING]: async (order) => {
+  [OrderStatus.SHIPPING]: async order => {
     try {
       // don't block the caller waiting for this
       order.trackShipment(trackingUpdate);
@@ -428,7 +422,7 @@ const OrderActions = {
    * Start cancellation process
    * @param {Order} order
    */
-  [OrderStatus.CANCELED]: async (order) => {
+  [OrderStatus.CANCELED]: async order => {
     try {
       order.undo();
     } catch (error) {
@@ -439,7 +433,7 @@ const OrderActions = {
    *
    * @param {Order} order
    */
-  [OrderStatus.COMPLETE]: async (order) => {
+  [OrderStatus.COMPLETE]: async order => {
     console.log("do customer sentiment etc");
     return;
   },

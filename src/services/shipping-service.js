@@ -1,22 +1,47 @@
 "use strict";
 
 /**
- * @typedef {import('./event-service').EventMessage} EventMessage
- *
- * @typedef {import('./event-service').CommandEvent} CommandEvent
- *
- * @typedef {{shipTo}} CommandArgs
- * @typedef {function():ShipMessage} shipOrder
- * @typedef {Object} shippingServiceType
- * @property {string} serviceName
- * @property {string} channel
- * @property {shipOrder} shipOrder
- * @property {function():ShipMessage} trackShipment
- * @property {function():ShipMessage} verifyDelivery
+ * @typedef {import('../adapters/event-adapter').EventMessage} EventMessage
  */
 
 /**
+ * @typedef {import('../adapters/event-adapter').CommandEvent} CommandEvent
+ */
+
+/**
+ * @typedef {Object} shippingService formats and parses shipping event messages
+ * @property {string} serviceName - programmatic service name in eventSource/Target
+ * @property {string} topic - event topic "shippingChannel" when sending messasges
+ * @property {function():EventMessage} shipOrder - request label and pickup of order
+ * @property {function():EventMessage} trackShipment - report on location/status of parcel
+ * @property {function():EventMessage} verifyDelivery - ensure customer recieved parcel
+ * @property {function():EventMessage} returnShipment - return to sender if refunding
+ * @property {function(EventMessage):{[key]:string}} getPayload - extract payload
+ */
+
+function createEventMessage({ requester, service, type, name, id, data }) {
+  return {
+    eventSource: requester,
+    eventTarget: service,
+    eventType: type,
+    eventName: name,
+    eventTime: new Date().getTime(),
+    eventUuid: id,
+    eventData: data,
+  };
+}
+
+function createCommandEvent(name, topic, ...args) {
+  return {
+    commandName: name,
+    commandResp: topic,
+    commandArgs: { ...args },
+  };
+}
+
+/**
  * Shipping service events
+ * @type {shippingService}
  */
 export const Shipping = {
   serviceName: "shippingService",
@@ -25,7 +50,7 @@ export const Shipping = {
   /**
    *
    * @param {*} param0
-   * @returns {ShipMessage}
+   * @returns {shipMessage}
    */
   shipOrder({
     shipTo,
@@ -36,28 +61,22 @@ export const Shipping = {
     requester,
     respondOn,
   }) {
-    return {
-      eventSource: requester,
-      eventTarget: this.serviceName,
-      eventType: "command",
-      eventName: this.shipOrder.name,
-      eventTime: new Date().getTime(),
-      eventUuid: externalId,
-      eventData: {
-        commandName: this.shipOrder.name,
-        commandResp: respondOn,
-        /**
-         * @type {CommandArgs}
-         */
-        commandArgs: {
-          shipTo,
-          shipFrom,
-          lineItems,
-          signature,
-          externalId,
-        },
-      },
-    };
+    return createEventMessage({
+      requester,
+      service: this.serviceName,
+      type: "command",
+      name: this.shipOrder.name,
+      id: externalId,
+      data: createCommandEvent(
+        this.shipOrder.name,
+        respondOn,
+        shipTo,
+        shipFrom,
+        lineItems,
+        signature,
+        externalId
+      ),
+    });
   },
 
   /**
@@ -66,23 +85,20 @@ export const Shipping = {
    * @returns {EventMessage}
    */
   trackShipment({ externalId, shipmentId, trackingId, requester, respondOn }) {
-    return {
-      eventSource: requester,
-      eventTarget: this.serviceName,
-      eventType: "command",
-      eventName: this.trackShipment.name,
-      eventTime: new Date().getTime(),
-      eventUuid: externalId,
-      eventData: {
-        commandName: this.trackShipment.name,
-        commandResp: respondOn,
-        commandArgs: {
-          externalId,
-          shipmentId,
-          trackingId,
-        },
-      },
-    };
+    return createEventMessage({
+      requester,
+      service: this.serviceName,
+      type: "command",
+      name: this.shipOrder.name,
+      id: externalId,
+      data: createCommandEvent(
+        this.shipOrder.name,
+        respondOn,
+        externalId,
+        shipmentId,
+        trackingId
+      ),
+    });
   },
 
   /**
@@ -108,6 +124,8 @@ export const Shipping = {
       },
     };
   },
+
+  returnShipment() {},
 
   getPayload(func, event) {
     const payloads = {

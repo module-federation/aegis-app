@@ -42,6 +42,13 @@
  */
 
 /**
+ * @callback validate called to handle model updates
+ * @param {Model} model
+ * @param {Object} changes
+ * @returns {Model | Error} updated model or throw
+ */
+
+/**
  * @callback onLoad
  * @param {Model} savedModel rehydrated model
  * @returns {Model | Error} updated model or throw
@@ -127,6 +134,7 @@
  * @property {onUpdate} [onUpdate] - Function called to handle update requests. Called
  * before save.
  * @property {onDelete} [onDelete] - Function called before deletion.
+ * @property {validate} [validate] -
  * @property {ports} [ports] - input/output ports for the domain
  * @property {eventHandler[]} [eventHandlers] - callbacks invoked to handle application
  * events, e.g. CRUD events
@@ -151,7 +159,7 @@ import * as modelConfigs from "../model-config";
 const requiredProps = ["modelName", "endpoint", "factory"];
 
 function validateModel(model) {
-  const missing = requiredProps.filter((p) => !model[p]);
+  const missing = requiredProps.filter(p => !model[p]);
   if (missing?.length > 0) {
     throw new Error(
       `missing properties: ${missing} > ${Object.entries(model)}`
@@ -179,6 +187,6 @@ function makeModel(model) {
   };
 }
 
-const models = Object.values(modelConfigs).map((model) => makeModel(model));
+const models = Object.values(modelConfigs).map(model => makeModel(model));
 
 export { models };

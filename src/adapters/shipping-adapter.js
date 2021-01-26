@@ -1,34 +1,38 @@
 "use strict";
 
 /**
- * @typedef {string|RegExp} topic
- * @callback eventCallback
+ * @callback portCallback
+ * @param {{options:{}}}
+ * @param {{payload:{[key]:string}}}
+ */
+
+/**
+ * @callback eeventCallback
  * @param {string} message
  * @param {{
  *  unsubscribe:function()
  * }} subscription
- * @typedef {Object} shipOrderServiceType
- * @property {string} serviceName
- * @property {string} toppic
- * @property {function():function():import('../services/event-service').EventMessage} shipOrder
- * @property {function():function():import('../services/event-service').EventMessage} trackShipment
- * @property {function():function():import('../services/event-service').EventMessage} verifyDelivery
- *
- * @typedef {{
- *  shipOrder:function(),
- *  trackShipment:function(),
- *  verifyDelivery:function()
- * }} ShippingAdapter
+ */
+
+/**
  * @typedef {import('../models/order').Order} Order
- * @typedef {shipOrderServiceType} service
+ */
+
+/**
+ * @typedef {import("../services/shipping-service").shippingService} shippingService
+ */
+
+/**
  * @typedef {{
- *  listen:function(topic,RegExp,eventCallback)
+ *  listen:function(topic,RegExp,portCallback)
  *  notify:function(topic,eventCallback)
  * }} event
+ */
+
+/**
  * @callback adapterFactory
  * @param {service} service
- * @param {event} event
- * @returns {function({model:Order,parms:[eventCallback]})}
+ * @returns {function({model:Order,args:[portCallback]}):Order}
  */
 
 const respondOn = "orderChannel";
@@ -36,7 +40,7 @@ const requester = "orderService";
 
 /**
  *
- * @param {import('../services/shipping-service').shipOrder}
+ * @param {import('../services/shipping-service').shippingService} service
  * @type {adapterFactory}
  */
 export function shipOrder(service) {
@@ -91,7 +95,7 @@ export function shipOrder(service) {
           callback: shipOrderCallback(resolve, reject),
         })
         .then(callShipOrder)
-        .catch((error) => {
+        .catch(error => {
           throw new Error(error);
         });
     });
@@ -99,6 +103,7 @@ export function shipOrder(service) {
 }
 
 /**
+ * @param {import('../services/shipping-service').shippingService} service
  * @type {adapterFactory}
  */
 export function trackShipment(service) {
@@ -108,14 +113,20 @@ export function trackShipment(service) {
       args: [callback],
     } = options;
 
+    /**
+     *
+     * @param {*} resolve
+     * @param {*} reject
+     * @returns {eventCallback}
+     */
     function trackShipmentCallback(resolve, reject) {
       return async function ({ message, subscription }) {
         try {
           const event = JSON.parse(message);
           console.log("received event...", event);
           const payload = service.getPayload(trackShipment.name, event);
-          const { done, order: updated } = await callback(options, payload);
-          if (done) {
+          const updated = await callback(options, payload);
+          if (updated.trackingStatus === "orderDelivered") {
             subscription.unsubscribe();
             resolve(updated);
           }
@@ -152,7 +163,7 @@ export function trackShipment(service) {
           callback: trackShipmentCallback(resolve, reject),
         })
         .then(callTrackShipment)
-        .catch((error) => {
+        .catch(error => {
           throw new Error(error);
         });
     });
@@ -160,7 +171,7 @@ export function trackShipment(service) {
 }
 
 /**
- *
+ * @param {import('../services/shipping-service').shippingService} service
  * @type {adapterFactory}
  */
 export function verifyDelivery(service) {
@@ -210,10 +221,10 @@ export function verifyDelivery(service) {
           callback: verifyDeliveryCallback(resolve, reject),
         })
         .then(callVerifyDelivery)
-        .catch((error) => {
+        .catch(error => {
           throw new Error(error);
         });
-    }).catch((error) => {
+    }).catch(error => {
       throw new Error(error);
     });
   };

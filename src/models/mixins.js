@@ -54,7 +54,7 @@ const POSTMIXINS = mixinSets[mixinType.post];
  * @returns {import('.').Model} updated model
  */
 export function processUpdate(model, changes) {
-  changes[PREVMODEL] = model; // keep history
+  changes[PREVMODEL] = JSON.parse(JSON.stringify(model)); // keep history
 
   const updates = model[PREMIXINS]
     ? compose(...model[PREMIXINS].values())(changes)
@@ -94,6 +94,37 @@ function updateMixins(type, o, name, cb) {
   return o;
 }
 
+export function validate(model, changes) {
+  //model[PREVMODEL] = JSON.parse(JSON.stringify(model)); // keep history
+
+  const updates = model.validations
+    .filter(v => v.type === "pre")
+    .map(v => model[v.name].apply(changes))
+    .reduce((p, c) => ({ ...c, ...p }), changes);
+
+  const updated = { ...model, ...updates };
+
+  return updated.validations
+    .filter(v => v.type === "post")
+    .map(v => updated[v.name]())
+    .reduce((p, c) => ({ ...p, ...c }), updated);
+}
+
+export function addValidator(o, name, type) {
+  if (!["pre", "post"].includes(type)) throw new Error("unknown type", type);
+
+  const validations = o[validations] || [];
+
+  if (validations.every(v => v.name !== name)) {
+    return {
+      ...o,
+      validate,
+      validations: [...validations, { name, type }],
+    };
+  }
+  return o;
+}
+
 /**
  * Execute any functions in `propKeys` to get dynamic properties,
  * flatten arrays, and return all properties of an object
@@ -118,7 +149,7 @@ function parseKeys(o, ...propKeys) {
  * Names (or functions that return names) of properties to encrypt
  * @returns {functionalMixin} mixin function
  */
-const encryptProperties = (...propKeys) => (o) => {
+const encryptProperties = (...propKeys) => o => {
   const keys = parseKeys(o, ...propKeys);
 
   const encryptProps = () => {
@@ -126,7 +157,7 @@ const encryptProperties = (...propKeys) => (o) => {
       return;
     }
     return keys
-      .map((key) => (o[key] ? { [key]: encrypt(o[key]) } : {}))
+      .map(key => (o[key] ? { [key]: encrypt(o[key]) } : {}))
       .reduce((p, c) => ({ ...c, ...p }));
   };
 
@@ -137,7 +168,7 @@ const encryptProperties = (...propKeys) => (o) => {
   return {
     decrypt() {
       return keys
-        .map((key) => (this[key] ? { [key]: decrypt(this[key]) } : {}))
+        .map(key => (this[key] ? { [key]: decrypt(this[key]) } : {}))
         .reduce((p, c) => ({ ...c, ...p }));
     },
     ...mixins,
@@ -151,11 +182,11 @@ const encryptProperties = (...propKeys) => (o) => {
  * @param {boolean} isUpdate - set to false on create and true on update
  * @param  {Array<string | function(*):string>} propKeys - names of properties to freeze
  */
-const freezeProperties = (isUpdate, ...propKeys) => (o) => {
+const freezeProperties = (isUpdate, ...propKeys) => o => {
   const preventUpdates = () => {
     const keys = parseKeys(o, ...propKeys);
 
-    const mutations = Object.keys(o).filter((key) => keys.includes(key));
+    const mutations = Object.keys(o).filter(key => keys.includes(key));
     if (mutations?.length > 0) {
       throw new Error(`cannot update readonly properties: ${mutations}`);
     }
@@ -175,10 +206,10 @@ const freezeProperties = (isUpdate, ...propKeys) => (o) => {
  * @param {Array<string | function(*):string>} propKeys -
  * required property names
  */
-const requireProperties = (...propKeys) => (o) => {
+const requireProperties = (...propKeys) => o => {
   if (!o.isLoading) {
     const keys = parseKeys(o, ...propKeys);
-    const missing = keys.filter((key) => key && !o[key]);
+    const missing = keys.filter(key => key && !o[key]);
     if (missing?.length > 0) {
       throw new Error(`missing required properties: ${missing}`);
     }
@@ -193,13 +224,13 @@ const requireProperties = (...propKeys) => (o) => {
  * @param {*} hash hash algorithm
  * @param  {Array<string | function(*):string>} propKeys name of password props
  */
-const hashPasswords = (hash, ...propKeys) => (o) => {
+const hashPasswords = (hash, ...propKeys) => o => {
   const keys = parseKeys(o, ...propKeys);
 
   function hashPwds() {
     if (o.isLoading) return {};
     return keys
-      .map((key) => (o[key] ? { [key]: hash(o[key]) } : {}))
+      .map(key => (o[key] ? { [key]: hash(o[key]) } : {}))
       .reduce((p, c) => ({ ...c, ...p }));
   }
 
@@ -220,14 +251,12 @@ const internalPropList = ["decrypt"];
  * @param {*} isUpdate
  * @param  {...any} propKeys
  */
-const allowProperties = (isUpdate, ...propKeys) => (o) => {
+const allowProperties = (isUpdate, ...propKeys) => o => {
   function rejectUnknownProps() {
     const keys = parseKeys(o, ...propKeys);
 
     const allowList = keys.concat(internalPropList);
-    const unknownProps = Object.keys(o).filter(
-      (key) => !allowList.includes(key)
-    );
+    const unknownProps = Object.keys(o).filter(key => !allowList.includes(key));
 
     if (unknownProps?.length > 0) {
       throw new Error(`invalid properties: ${unknownProps}`);
@@ -243,7 +272,7 @@ const allowProperties = (isUpdate, ...propKeys) => (o) => {
   );
 };
 
-export const callMethod = (fn, ...args) => (o) => {
+export const callMethod = (fn, ...args) => o => {
   return {
     ...o,
     ...o[fn](...args),
@@ -313,13 +342,7 @@ const Validator = {
    * @returns {boolean} true if tests pass
    */
   isValid(v, o, propVal) {
-    // v.every(key => {
-    //   if (v[key]) {
-    //     return this.tests[key](v[key], o, propVal);
-    //   }
-    //   return true;
-    // });
-    return Object.keys(this.tests).every((key) => {
+    return Object.keys(this.tests).every(key => {
       if (v[key]) {
         // enabled
         return this.tests[key](v[key], o, propVal);
@@ -333,23 +356,32 @@ const Validator = {
  *
  * @param {validation[]} validations
  */
-const validateProperties = (validations) => (o) => {
-  const invalid = validations.filter((v) => {
-    const propVal = o[v.propKey];
+const validateProperties = validations => o => {
+  function validate(obj) {
+    const invalid = validations.filter(v => {
+      const propVal = obj[v.propKey];
 
-    if (!propVal) {
-      return false;
+      if (!propVal) {
+        return false;
+      }
+      return !Validator.isValid(v, obj, propVal);
+    });
+
+    if (invalid?.length > 0) {
+      throw new Error(`invalid value for ${[...invalid.map(v => v.propKey)]}`);
     }
-    return !Validator.isValid(v, o, propVal);
-  });
-
-  if (invalid?.length > 0) {
-    throw new Error(`invalid value for ${[...invalid.map((v) => v.propKey)]}`);
   }
 
-  return updateMixins(mixinType.post, o, validateProperties.name, () =>
-    validateProperties(validations)
-  );
+  return {
+    ...addValidator(o, validateProperties.name, "post"),
+    validateProperties() {
+      validate(this);
+    },
+  };
+
+  // return updateMixins(mixinType.post, o, validateProperties.name, () =>
+  //   validateProperties(validations)
+  // );
 };
 
 /**
@@ -368,14 +400,14 @@ const validateProperties = (validations) => (o) => {
  * @param {boolean} isUpdate false on create, true on update
  * @param {updater[]} updaters
  */
-const updateProperties = (isUpdate, updaters) => (o) => {
+const updateProperties = (isUpdate, updaters) => o => {
   function updateProps() {
     if (isUpdate) {
-      const updates = updaters.filter((u) => o[u.propKey]);
+      const updates = updaters.filter(u => o[u.propKey]);
 
       if (updates?.length > 0) {
         return updates
-          .map((u) => u.update(o, o[u.propKey]))
+          .map(u => u.update(o, o[u.propKey]))
           .reduce((p, c) => ({ ...p, ...c }));
       }
     }
@@ -465,7 +497,7 @@ export function updatePropertiesMixin(updaters) {
  * @param {regexType} expr
  * @returns {function(any):any} dynamic property func
  */
-export const withValidFormat = (propKey, expr) => (o) => {
+export const withValidFormat = (propKey, expr) => o => {
   if (o.isLoading) return propKey;
   if (o[propKey] && !RegEx.test(expr, o[propKey])) {
     throw new Error(`invalid ${propKey}`);

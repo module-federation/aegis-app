@@ -30,6 +30,8 @@ import {
   freezePropertiesMixin,
   updatePropertiesMixin,
   validatePropertiesMixin,
+  validateOrder,
+  validate,
 } from "../models/mixins";
 
 import { uuid } from "../lib/utils";
@@ -95,6 +97,7 @@ export const Order = {
   ],
   onUpdate: processUpdate,
   onDelete: readyToDelete,
+  validate: validate,
   eventHandlers: [handleOrderEvent],
   ports: {
     listen: {
@@ -121,7 +124,7 @@ export const Order = {
       service: "Address",
       type: "outbound",
       keys: "shippingAddress",
-      consumesEvent: "startOrder",
+      consumesEvent: "startWorkflow",
       producesEvent: "addressValidated",
       disabled: true,
     },
@@ -129,7 +132,7 @@ export const Order = {
       service: "Payment",
       type: "outbound",
       keys: "paymentAuthorization",
-      consumesEvent: "startOrder",
+      consumesEvent: "startWorkflow",
       producesEvent: "paymentAuthorized",
       undo: cancelPayment,
     },
@@ -139,8 +142,6 @@ export const Order = {
       keys: "pickupAddress",
       consumesEvent: "pickOrder",
       producesEvent: "orderPicked",
-      timeout: 30,
-      maxRetry: 5,
       undo: returnInventory,
     },
     shipOrder: {
@@ -149,8 +150,6 @@ export const Order = {
       callback: orderShipped,
       consumesEvent: "orderPicked",
       producesEvent: "orderShipped",
-      timeout: 30,
-      maxRetry: 5,
       undo: returnShipment,
     },
     trackShipment: {
@@ -159,8 +158,6 @@ export const Order = {
       callback: trackingUpdate,
       consumesEvent: "orderShipped",
       producesEvent: "orderDelivered",
-      timeout: 30,
-      maxRetry: 5,
     },
     verifyDelivery: {
       service: "Shipping",
@@ -169,15 +166,13 @@ export const Order = {
       consumesEvent: "orderDelivered",
       producesEvent: "deliveryVerified",
       undo: returnDelivery,
-      timeout: 30,
-      maxRetry: 5,
     },
     completePayment: {
       service: "Payment",
       type: "outbound",
       callback: paymentCompleted,
       consumesEvent: "deliveryVerified",
-      producesEvent: "paymentCompleted",
+      producesEvent: "workflowComplete",
       undo: refundPayment,
     },
     cancelShipment: {
@@ -224,7 +219,7 @@ export const Order = {
       type: "role",
     },
     delegate: {
-      allow: (delegator) => [...delegator.permissions],
+      allow: delegator => [...delegator.permissions],
       deny: "delete",
       type: "role",
     },

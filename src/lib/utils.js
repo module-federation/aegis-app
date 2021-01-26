@@ -42,7 +42,32 @@ export function hash(data) {
 }
 
 export function uuid() {
-  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
     (c ^ (crypto.randomBytes(16)[0] & (15 >> (c / 4)))).toString(16)
   );
+}
+
+export function makeArray(v) {
+  return Array.isArray(v) ? v : [v];
+}
+
+export function makeObject(prop) {
+  if (Array.isArray(prop)) {
+    return prop.reduce((p, c) => ({ ...c, ...p }));
+  }
+  return prop;
+}
+
+export function async(promise) {
+  return promise
+    .then(data => ({
+      ok: true,
+      data,
+      asObject: () => makeObject(data),
+      asArray: () => makeArray(data),
+    }))
+    .catch(error => {
+      console.error(error);
+      return Promise.resolve({ ok: false, error });
+    });
 }
