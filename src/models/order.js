@@ -1,7 +1,6 @@
 "use strict";
 
-import { PREVMODEL } from "./mixins";
-import { async } from "../lib/utils";
+import { prevmodel } from "./mixins";
 import checkPayload from "./check-payload";
 
 /**w
@@ -87,7 +86,7 @@ export const calcTotal = function (orderItems) {
  * @returns {string | null} the key or `null`
  */
 export const freezeOnApproval = propKey => o => {
-  return o[PREVMODEL].orderStatus !== OrderStatus.PENDING ? propKey : null;
+  return o[prevmodel].orderStatus !== OrderStatus.PENDING ? propKey : null;
 };
 
 /**
@@ -98,7 +97,7 @@ export const freezeOnApproval = propKey => o => {
  */
 export const freezeOnCompletion = propKey => o => {
   return [OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(
-    o[PREVMODEL].orderStatus
+    o[prevmodel].orderStatus
   )
     ? propKey
     : null;
@@ -126,7 +125,7 @@ export const requiredForCompletion = propKey => o => {
 };
 
 const invalidStatusChange = (from, to) => (o, propVal) => {
-  return propVal === to && o[PREVMODEL].orderStatus === from;
+  return propVal === to && o[prevmodel].orderStatus === from;
 };
 
 const invalidStatusChanges = [
@@ -146,7 +145,7 @@ const invalidStatusChanges = [
  * Check that status changes are valid
  */
 export const statusChangeValid = (o, propVal) => {
-  if (!o[PREVMODEL]?.orderStatus) return true;
+  if (!o[prevmodel]?.orderStatus) return true;
 
   if (invalidStatusChanges.some(isc => isc(o, propVal))) {
     throw new Error("invalid status change");
@@ -178,8 +177,7 @@ export const recalcTotal = (o, propVal) => ({
  * @param {number} propVal - the property value
  */
 export const updateSignature = (o, propVal) => ({
-  signatureRequired:
-    calcTotal(propVal) > 999.99 || o[PREVMODEL].signatureRequired,
+  signatureRequired: calcTotal(propVal) > 999.99 || o.signatureRequired,
 });
 
 /**
@@ -202,13 +200,6 @@ export function readyToDelete(model) {
 function handleError(error, func) {
   console.error({ func, error });
   throw new Error(error);
-}
-
-async function updateOrder(order, result) {
-  if (result.ok) {
-    return order.update(result.asObject());
-  }
-  throw new Error(result.error);
 }
 
 /**
@@ -262,7 +253,7 @@ export async function trackingUpdate(options = {}, payload = {}) {
     trackingUpdate.name
   );
 
-  ret;
+  return order.update(changes);
 }
 
 /**
@@ -332,16 +323,20 @@ export async function paymentAuthorized(options = {}, payload = {}) {
     payload,
     paymentAuthorized.name
   );
+  console.log({ func: paymentAuthorized.name, options, payload });
 
   return order.update(changes);
 }
 
 export async function refundPayment(options = {}, payload = {}) {
   const { model: order } = options;
-  const property = await async(
-    checkPayload("refundReceipt", options, payload, refundPayment.name)
+  const changes = checkPayload(
+    "refundReceipt",
+    options,
+    payload,
+    refundPayment.name
   );
-  return updateOrder(order, property);
+  return order.update(changes);
 }
 
 /**
@@ -375,21 +370,25 @@ const OrderActions = {
         });
 
         // Require a synchronous response
-        const result = await Promise.all([
+        return Promise.all([
           updated.validateAddress(addressValidated),
           updated.authorizePayment(paymentAuthorized),
-        ]);
-
-        return result;
+        ])
+          .then(([shippingAddress, paymentAuthorization]) => {
+            return order.update({ paymentAuthorization, shippingAddress });
+          })
+          .then(order => order);
       }
 
       // Need a synchronous response
-      const result = await Promise.all([
+      return Promise.all([
         order.validateAddress(addressValidated),
         order.authorizePayment(paymentAuthorized),
-      ]);
-
-      return result;
+      ])
+        .then(([shippingAddress, paymentAuthorization]) => {
+          return order.update({ paymentAuthorization, shippingAddress });
+        })
+        .then(order => order);
     } catch (error) {
       handleError(error, OrderStatus.PENDING);
     }
@@ -479,7 +478,7 @@ export function orderFactory(dependencies) {
     billingAddress = null,
     shippingAddress = null,
     creditCardNumber = null,
-    requireSignature,
+    requireSignature = false,
   }) {
     const total = calcTotal(orderItems);
     const signatureRequired = needsSignature(requireSignature, total);

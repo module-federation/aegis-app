@@ -1,7 +1,7 @@
 "use strict";
 
 import { decrypt } from "../lib/utils";
-import { freezePropertiesMixin, requirePropertiesMixin } from "./mixins";
+import { freezeProperties, requireProperties } from "./mixins";
 
 export function customerFactory({ uuid }) {
   return function createCustomer({
@@ -30,15 +30,15 @@ export function customerFactory({ uuid }) {
 
 export async function okToDelete(customer) {
   const orders = await customer.orders();
-  return orders.length > 0; 
+  return orders.length > 0;
 }
 
 /**
  * @type {import('./mixins').mixinFunction[]}
  */
 export const customerMixins = [
-  freezePropertiesMixin("customerId"),
-  requirePropertiesMixin(
+  freezeProperties("customerId"),
+  requireProperties(
     "firstName",
     "lastName",
     "email",

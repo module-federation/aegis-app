@@ -2,11 +2,7 @@
 
 /**
  * @typedef {import('../models/order').Order} Order
- * @typedef {{
- * authorizePayment:function():Promise<string>,
- * completePaymet:function():Promise<void>,
- * refundPayment:function():Promise<void>
- * }} service
+ * @typedef
  * @callback adapterFactory
  * @param {service} service
  * @returns {function({model:Order,parms:any[]})}
@@ -14,22 +10,29 @@
 
 /**
  * @type {adapterFactory}
+ * @param {import("../services/payment-service").PaymentService} service
  */
 export function authorizePayment(service) {
-  return async function (options) {
+  return function (options) {
     const {
       model: order,
       args: [callback],
     } = options;
-    try {
-      const paymentAuthorization = await service.authorizePayment(order);
-      const newOrder = await callback(options, { paymentAuthorization });
-      return newOrder;
-    } catch (error) {
-      console.error(error);
-    }
+
+    return service
+      .authorizePayment(
+        order.orderNo,
+        order.orderTotal,
+        "orderService",
+        order.customerId,
+        false
+      )
+      .then(paymentAuthorization => callback(options, { paymentAuthorization }))
+      .then(model => model)
+      .catch(error => console.error(error));
   };
 }
+
 /**
  * @type {adapterFactory}
  */

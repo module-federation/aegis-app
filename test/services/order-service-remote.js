@@ -20,10 +20,10 @@ describe("OrderService", function () {
         .addOrderItem("item1", 90.99)
         .addOrderItem("item2", 87.6, 2)
         .createOrder()
-        .then((os) => os.submitOrder())
-        .then((os) => os.getOrderStatus())
-        .then((status) => status)
-        .catch((e) => console.error(e));
+        .then(os => os.submitOrder())
+        .then(os => os.getOrderStatus())
+        .then(status => status)
+        .catch(e => console.error(e));
       assert.match(status, /APPROVED|SHIPPING|COMPLETED/);
     });
   });
@@ -31,7 +31,7 @@ describe("OrderService", function () {
 
 async function processOrder(fn, ...args) {
   const os = new OrderService();
-  await os[fn](...args).catch((e) => console.error(e.message));
+  await os[fn](...args).catch(e => console.error(e.message));
 }
 
 const disableTests = true;
@@ -49,7 +49,7 @@ const disableTests = true;
 
   const orderId = (
     await os.addOrder(orderInfo).addOrderItem("item1", 2343.99).createOrder()
-  ).then((os) => os.orderId);
+  ).then(os => os.orderId);
 
   await processOrder("submitOrder", orderId);
   await processOrder("shipOrder", orderId);

@@ -53,7 +53,7 @@ export function makeArray(v) {
 
 export function makeObject(prop) {
   if (Array.isArray(prop)) {
-    return prop.reduce((p, c) => ({ ...c, ...p }));
+    return prop.reduce((p, c) => ({ ...p, ...c }));
   }
   return prop;
 }

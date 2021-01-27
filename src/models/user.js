@@ -1,9 +1,9 @@
 "use strict";
 
 import {
-  requirePropertiesMixin,
-  freezePropertiesMixin,
-  hashPasswordsMixin,
+  requireProperties,
+  freezeProperties,
+  hashPasswords,
 } from "./mixins";
 
 export function userFactory({ uuid }) {
@@ -29,9 +29,9 @@ export function userFactory({ uuid }) {
 }
 
 export const userMixins = [
-  requirePropertiesMixin("userName", "password", "firstName"),
-  freezePropertiesMixin("userId", "userName"),
-  hashPasswordsMixin("password"),
+  requireProperties("userName", "password", "firstName"),
+  freezeProperties("userId", "userName"),
+  hashPasswords("password"),
 ];
 
 export function getUserSerializers({ decrypt }) {

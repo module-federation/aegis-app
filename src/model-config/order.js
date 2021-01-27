@@ -25,13 +25,11 @@ import {
 } from "../models/order";
 
 import {
-  processUpdate,
-  requirePropertiesMixin,
-  freezePropertiesMixin,
-  updatePropertiesMixin,
-  validatePropertiesMixin,
-  validateOrder,
-  validate,
+  requireProperties,
+  freezeProperties,
+  updateProperties,
+  validateProperties,
+  validateModel,
 } from "../models/mixins";
 
 import { uuid } from "../lib/utils";
@@ -45,7 +43,7 @@ export const Order = {
   factory: orderFactory,
   dependencies: { uuid },
   mixins: [
-    requirePropertiesMixin(
+    requireProperties(
       "orderItems",
       requiredForGuest([
         "lastName",
@@ -57,7 +55,7 @@ export const Order = {
       ]),
       requiredForCompletion("proofOfDelivery")
     ),
-    freezePropertiesMixin(
+    freezeProperties(
       "orderNo",
       "customerId",
       freezeOnApproval([
@@ -72,7 +70,7 @@ export const Order = {
       ]),
       freezeOnCompletion("*")
     ),
-    updatePropertiesMixin([
+    updateProperties([
       {
         propKey: "orderItems",
         update: recalcTotal,
@@ -82,7 +80,7 @@ export const Order = {
         update: updateSignature,
       },
     ]),
-    validatePropertiesMixin([
+    validateProperties([
       {
         propKey: "orderStatus",
         values: Object.values(OrderStatus),
@@ -95,9 +93,8 @@ export const Order = {
       },
     ]),
   ],
-  onUpdate: processUpdate,
+  validate: validateModel,
   onDelete: readyToDelete,
-  validate: validate,
   eventHandlers: [handleOrderEvent],
   ports: {
     listen: {

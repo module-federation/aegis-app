@@ -29,7 +29,7 @@ export default function checkPayload(
   if (Array.isArray(key)) {
     const keys = key.map(k => checkPayload(k, options, payload, port));
 
-    return keys.reduce((p, c) => ({ ...c, ...p }));
+    return keys.reduce((p, c) => ({ ...p, ...c }));
   }
 
   if (payload[key]) {

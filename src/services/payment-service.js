@@ -1,25 +1,39 @@
 "use strict";
 
-import axios from "axios";
-const square_token = process.env.SQUARE_TOKEN;
-const url = "http://host.domain.com";
+/**
+ * @callback authorizePaymentType
+ * @param {string} id
+ * @param {number} amount
+ * @param {string} source_id
+ * @param {string} customer_id
+ * @param {boolean} [autocomplete]
+ * @returns {Promise<string>}
+ */
 
-async function send(payload) {
-  return axios
-    .post(url, payload)
-    .then(
-      (response) => {
-        const modelId = response.data.modelId;
-        return this;
-      },
-      (error) => {
-        console.error(error.response.data);
-      }
-    )
-    .catch((e) => console.log(e));
-}
+/**
+ * @typedef PaymentService
+ * @property {authorizePaymentType} authorizePayment
+ * @property {function()} completePayment
+ * @property {function()} refundPayment
+ */
+
+import { Client, Environment, ApiError } from "square";
+
+const client = new Client({
+  environment: Environment.Sandbox,
+  accessToken: process.env.SQUARE_ACCESS_TOKEN,
+});
 
 export const Payment = {
+  /**
+   * @type {authorizePaymentType}
+   * @param {*} id
+   * @param {*} amount
+   * @param {*} source_id
+   * @param {*} customer_id
+   * @param {*} autocomplete
+   * @param {*} currency
+   */
   async authorizePayment(
     id,
     amount,
@@ -45,8 +59,49 @@ export const Payment = {
         currency: "USD",
       },
     };
-    await send(payload);
-    return { authorization: "1234" };
+
+    const bodyAmountMoney = {};
+    bodyAmountMoney.amount = 200;
+    bodyAmountMoney.currency = "USD";
+
+    const bodyTipMoney = {};
+    bodyTipMoney.amount = 198;
+    bodyTipMoney.currency = "CHF";
+
+    const bodyAppFeeMoney = {};
+    bodyAppFeeMoney.amount = 10;
+    bodyAppFeeMoney.currency = "USD";
+
+    const body = {
+      sourceId: "ccof:uIbfJXhXETSP197M3GB",
+      idempotencyKey: "4935a656-a929-4792-b97c-8848be85c27c",
+      amountMoney: bodyAmountMoney,
+    };
+
+    body.tipMoney = bodyTipMoney;
+    body.appFeeMoney = bodyAppFeeMoney;
+    body.delayDuration = "delay_duration6";
+    body.autocomplete = true;
+    body.orderId = "order_id0";
+    body.customerId = "VDKXEEKPJN48QDG3BGGFAK05P8";
+    body.locationId = "XK3DBG77NJBFX";
+    body.referenceId = "123456";
+    body.note = "Brief description";
+
+    // try {
+    //   const {
+    //     result,
+    //     ...httpResponse
+    //   } = await client.paymentsApi.createPayment(body);
+    //   // Get more response info...
+    //   // const { statusCode, headers } = httpResponse;
+    // } catch (error) {
+    //   if (error instanceof ApiError) {
+    //     const errors = error.result;
+    //     // const { statusCode, headers } = error;
+    //   }
+    // }
+    return "1234";
   },
 
   /*
