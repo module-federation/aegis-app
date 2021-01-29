@@ -13,23 +13,20 @@
  * @param {import("../services/payment-service").PaymentService} service
  */
 export function authorizePayment(service) {
-  return function (options) {
-    const {
-      model: order,
-      args: [callback],
-    } = options;
+  return async function (options) {
+      const {
+        model: order,
+        args: [callback],
+      } = options;
 
-    return service
-      .authorizePayment(
+      const paymentAuthorization = await service.authorizePayment(
         order.orderNo,
-        order.orderTotal,
-        "orderService",
-        order.customerId,
+        12.0,
+        "src",
+        "ibm",
         false
-      )
-      .then(paymentAuthorization => callback(options, { paymentAuthorization }))
-      .then(model => model)
-      .catch(error => console.error(error));
+      );
+      return callback(options, { paymentAuthorization });
   };
 }
 

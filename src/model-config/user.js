@@ -1,6 +1,6 @@
 "use strict";
 
-import { processUpdate } from "../models/mixins";
+import { validateModel } from "../models/mixins";
 import { userFactory, userMixins } from "../models/user";
 import { uuid } from "../lib/utils";
 
@@ -13,5 +13,5 @@ export const User = {
   dependencies: { uuid },
   factory: userFactory,
   mixins: userMixins,
-  onUpdate: processUpdate,
+  validate: validateModel,
 };

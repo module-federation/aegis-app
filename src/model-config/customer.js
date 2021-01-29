@@ -1,7 +1,11 @@
 "use strict";
 
-import { customerFactory, customerMixins, okToDelete } from "../models/customer";
-import { processUpdate } from "../models/mixins";
+import {
+  customerFactory,
+  customerMixins,
+  okToDelete,
+} from "../models/customer";
+import { validateModel } from "../models/mixins";
 import { uuid } from "../lib/utils";
 
 /**
@@ -12,7 +16,7 @@ export const Customer = {
   endpoint: "customers",
   dependencies: { uuid },
   factory: customerFactory,
-  onUpdate: processUpdate,
+  validate: validateModel,
   onDelete: okToDelete,
   mixins: customerMixins,
   relations: {

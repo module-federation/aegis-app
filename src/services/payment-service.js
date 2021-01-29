@@ -17,12 +17,12 @@
  * @property {function()} refundPayment
  */
 
-import { Client, Environment, ApiError } from "square";
+// import { Client, Environment, ApiError } from "square";
 
-const client = new Client({
-  environment: Environment.Sandbox,
-  accessToken: process.env.SQUARE_ACCESS_TOKEN,
-});
+// const client = new Client({
+//   environment: Environment.Sandbox,
+//   accessToken: process.env.SQUARE_ACCESS_TOKEN,
+// });
 
 export const Payment = {
   /**
@@ -59,7 +59,7 @@ export const Payment = {
         currency: "USD",
       },
     };
-
+    /*
     const bodyAmountMoney = {};
     bodyAmountMoney.amount = 200;
     bodyAmountMoney.currency = "USD";
@@ -101,6 +101,7 @@ export const Payment = {
     //     // const { statusCode, headers } = error;
     //   }
     // }
+    */
     return "1234";
   },
 
@@ -174,9 +175,6 @@ export const Payment = {
     }
   ]
 }
-
-
-
   */
 
   async completePayment(model) {

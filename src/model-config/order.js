@@ -30,6 +30,9 @@ import {
   updateProperties,
   validateProperties,
   validateModel,
+  createMethod,
+  execMethod,
+  invokePort,
 } from "../models/mixins";
 
 import { uuid } from "../lib/utils";
@@ -91,7 +94,26 @@ export const Order = {
         maxnum: 99999.99,
         isValid: orderTotalValid,
       },
+      {
+        propKey: "email",
+        regex: "email",
+      },
+      {
+        propKey: "creditCardNumber",
+        regex: "creditCard",
+      },
+      {
+        propKey: "phone",
+        regex: "phone",
+      },
     ]),
+    // createMethod(function paymentAuthorized() {
+    //   return (
+    //     (this.paymentAuthorization && !this[prevmodel]) ||
+    //     (this.paymentAuthorization &&
+    //       this[prevmodel].orderTotal <= this.orderTotal)
+    //   );
+    // }),
   ],
   validate: validateModel,
   onDelete: readyToDelete,

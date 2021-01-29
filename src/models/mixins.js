@@ -17,11 +17,15 @@ import { hash, encrypt, decrypt, compose } from "../lib/utils";
  */
 
 /**
+ * @typedef {import("../models/index").Model} Model
+ */
+
+/**
  * Private key to access previous version of the model
  */
 export const prevmodel = Symbol("prevModel");
 /**
- * private key to acess validation config
+ * private key to access validation config
  */
 export const validations = Symbol("validations");
 /**
@@ -79,7 +83,7 @@ export function processUpdate(model, changes) {
  * @param {string} name `Function.name`
  * @param {functionalMixin} cb mixin function
  */
-function updateMixins(type, o, name, cb) {
+export function updateMixins(type, o, name, cb) {
   if (!mixinSets[type]) {
     throw new Error("invalid mixin type");
   }
@@ -108,24 +112,27 @@ const eventMask = {
 
 /**
  * Run validation functions enabled for a given event.
- * @param {*} model - the composed object
+ * @param {Model} model - the composed object
  * @param {*} changes - object containing changes
  * @param {Number} event - Indicates what event is occuring:
  * 1st bit turned on means update, 2nd bit create, 3rd load
+ * see `eventMask`.
  */
 export function validateModel(model, changes, event) {
   changes[prevmodel] = JSON.parse(JSON.stringify(model)); // keep history
 
-  // Run validations against changes (input)
+  // Run validations against the incoming changes (input)
   const updates = model[validations]
+    .sort((a, b) => a.order - b.order)
     .filter(v => v.pre & event)
     .map(v => model[v.name].apply(changes))
     .reduce((p, c) => ({ ...p, ...c }), changes);
 
   const updated = { ...model, ...updates };
 
-  // Run validations against the changed object (output)
+  // Run validations against the updated object (output)
   return updated[validations]
+    .sort((a, b) => a.order - b.order)
     .filter(v => v.post & event)
     .map(v => updated[v.name]())
     .reduce((p, c) => ({ ...p, ...c }), updated);
@@ -166,20 +173,19 @@ function enableEvent(onUpdate = true, onCreate = false, onLoad = false) {
  * @param {number} post - "post" functions run against the target
  * object after the changes have been applied. Use the output
  * of `enableEvent` here.
+ * @param {number} order - order in which validation runs
  */
-export function addValidation(o, name, pre, post) {
+export function addValidation(o, name, pre, post, order) {
   const config = o[validations] || [];
 
   if (config.some(v => v.name === name)) {
     return o;
   }
 
-  console.debug("adding validation", name, pre, post);
-
   return {
     ...o,
     validateModel,
-    [validations]: [...config, { name, pre, post }],
+    [validations]: [...config, { name, pre, post, order }],
   };
 }
 
@@ -225,8 +231,9 @@ export const encryptProperties = (...propKeys) => o => {
     ...addValidation(
       o,
       encryptProperties.name,
-      enableEvent(true, false),
-      enableEvent(false, true)
+      enableEvent(true, true),
+      enableEvent(false, true),
+      99
     ),
     decrypt() {
       return keys
@@ -245,9 +252,9 @@ export const freezeProperties = (...propKeys) => o => {
   const preventUpdates = obj => {
     const keys = parseKeys(obj, ...propKeys);
 
-    const mutations = Object.keys(obj).filter(key => keys.includes(key));
-    if (mutations?.length > 0) {
-      throw new Error(`cannot update readonly properties: ${mutations}`);
+    const sideEffects = Object.keys(obj).filter(key => keys.includes(key));
+    if (sideEffects?.length > 0) {
+      throw new Error(`cannot update readonly properties: ${sideEffects}`);
     }
   };
 
@@ -255,7 +262,7 @@ export const freezeProperties = (...propKeys) => o => {
     freezeProperties() {
       preventUpdates(this);
     },
-    ...addValidation(o, freezeProperties.name, enableEvent(), 0),
+    ...addValidation(o, freezeProperties.name, enableEvent(), 0, 20),
   };
 };
 
@@ -277,7 +284,7 @@ export const requireProperties = (...propKeys) => o => {
     requireProperties() {
       requireProps(this);
     },
-    ...addValidation(o, requireProperties.name, 0, enableEvent()),
+    ...addValidation(o, requireProperties.name, 0, enableEvent(), 30),
   };
 };
 
@@ -303,7 +310,8 @@ export const hashPasswords = (...propKeys) => o => {
       o,
       hashPasswords.name,
       enableEvent(),
-      enableEvent(false, true)
+      enableEvent(false, true),
+      80
     ),
   };
 };
@@ -330,14 +338,63 @@ export const allowProperties = (...propKeys) => o => {
     rejectUnknownProperties() {
       return rejectUnknownProps(this);
     },
-    ...addValidation(o, "rejectUnknownProperties", enableEvents(), 0),
+    ...addValidation(o, "rejectUnknownProperties", enableEvents(), 0, 40),
   };
 };
 
-export const callMethod = (fn, ...args) => o => {
+/**
+ * Set a validation that invokes a port. The port must be configured
+ * in the `ModelSpecification`.
+ * @param {string} fn - name of port (as it appears in the ModelSpec)
+ * @param {boolean} onCreate - invoke on create
+ * @param {boolean} onUpdate - invoke on update
+ * @param  {...any} args - pass arguments
+ */
+export const invokePort = (fn, onCreate, onUpdate, ...args) => async o => {
   return {
     ...o,
-    ...o[fn](...args),
+    invokePort() {
+      console.log({ func: "invokePort", fn, args });
+      return this[fn](...args).then(o => o);
+    },
+    ...addValidation(o, "invokePort", 0, enableEvent(onUpdate, onCreate), 85),
+  };
+};
+
+/**
+ * Set a validation that calls a model method or provided function.
+ * @param {string|function(Model, ...any):Promise<any>} fn - callback function
+ * or name of method to executee
+ * @param {boolean} onCreate - invoke on create
+ * @param {boolean} onUpdate - invoke on update
+ * @param  {...any} args - pass arguments to the method/function
+ * @return {Model}
+ */
+export const execMethod = (fn, onCreate, onUpdate, ...args) => async o => {
+  const functionType = {
+    function: (fn, obj, ...args) => fn(obj, ...args).then(o => o),
+    string: (fn, obj, ...args) => obj[fn](...args).then(o => o),
+  };
+
+  return {
+    ...o,
+    async execMethod() {
+      const model = await functionType[typeof fn](fn, this, ...args);
+      return model;
+    },
+    ...addValidation(o, "execMethod", 0, enableEvent(onUpdate, onCreate), 80),
+  };
+};
+
+/**
+ * Create a method on the model.
+ * @param {*} fn
+ * @param  {...any} args
+ */
+export const createMethod = (fn, ...args) => o => {
+  return {
+    ...o,
+    [fn.name]: () => fn(...args),
   };
 };
 
@@ -442,7 +499,8 @@ export const validateProperties = validations => o => {
       o,
       validateProperties.name,
       enableEvent(true, true),
-      enableEvent(true, true)
+      enableEvent(false, true),
+      82
     ),
   };
 };
@@ -521,11 +579,6 @@ export const encryptPersonalInfo = encryptProperties(
   "creditCardNumber",
   "ssn"
 );
-// withValidFormat("email", "email"),
-// withValidFormat("phone", "phone"),
-// withValidFormat("mobile", "phone"),
-// withValidFormat("creditCardNumber", "creditCard"),
-// withValidFormat("ssn", "ssn")
 
 /**
  * Global mixins

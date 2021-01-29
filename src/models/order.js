@@ -32,7 +32,9 @@ import checkPayload from "./check-payload";
  * @property {function(*):Promise<Order>} update - update the order
  * @property {'APPROVED'|'SHIPPING'|'CANCELED'|'COMPLETED'} orderStatus
  * @property {function():Promise<Customer>} customer - retrieves related customer object.
- *
+ * @property {function(string,Order)} emit - broadcast domain event
+ * @property {function():boolean} paymentAuthorized - payment approved and reserved
+ * @property {function():boolean} autoComplete - whether or not to immediately submit the order
  */
 
 const orderStatus = "orderStatus";
@@ -208,14 +210,12 @@ function handleError(error, func) {
  */
 export async function paymentCompleted(options = {}, payload = {}) {
   const { model: order } = options;
-
   const changes = checkPayload(
     "confirmationCode",
     options,
     payload,
     paymentCompleted.name
   );
-
   return order.update({ ...changes, orderStatus: OrderStatus.COMPLETE });
 }
 
@@ -226,14 +226,12 @@ export async function paymentCompleted(options = {}, payload = {}) {
  */
 export async function deliveryVerified(options = {}, payload = {}) {
   const { model: order } = options;
-
   const changes = checkPayload(
     "proofOfDelivery",
     options,
     payload,
     deliveryVerified.name
   );
-
   return order.update(changes);
 }
 
@@ -245,14 +243,12 @@ export async function deliveryVerified(options = {}, payload = {}) {
  */
 export async function trackingUpdate(options = {}, payload = {}) {
   const { model: order } = options;
-
   const changes = checkPayload(
     ["trackingStatus", "trackingId"],
     options,
     payload,
     trackingUpdate.name
   );
-
   return order.update(changes);
 }
 
@@ -263,14 +259,12 @@ export async function trackingUpdate(options = {}, payload = {}) {
  */
 export async function orderShipped(options = {}, payload = {}) {
   const { model: order } = options;
-
   const changes = checkPayload(
     "shipmentId",
     options,
     payload,
     orderShipped.name
   );
-
   return order.update(changes);
 }
 
@@ -280,14 +274,12 @@ export async function orderShipped(options = {}, payload = {}) {
  */
 export async function orderPicked(options = {}, payload = {}) {
   const { model: order } = options;
-
   const changes = checkPayload(
     "pickupAddress",
     options,
     payload,
     addressValidated.name
   );
-
   return order.update(changes);
 }
 
@@ -298,14 +290,12 @@ export async function orderPicked(options = {}, payload = {}) {
  */
 export async function addressValidated(options = {}, payload = {}) {
   const { model: order } = options;
-
   const changes = checkPayload(
     "shippingAddress",
     options,
     payload,
     addressValidated.name
   );
-
   return order.update(changes);
 }
 
@@ -316,16 +306,21 @@ export async function addressValidated(options = {}, payload = {}) {
  */
 export async function paymentAuthorized(options = {}, payload = {}) {
   const { model: order } = options;
-
   const changes = checkPayload(
     "paymentAuthorization",
     options,
     payload,
     paymentAuthorized.name
   );
-  console.log({ func: paymentAuthorized.name, options, payload });
-
-  return order.update(changes);
+  console.log({
+    order: 5,
+    func: paymentAuthorized.name,
+    options,
+    payload,
+    changes,
+  });
+  const update = await order.update(changes);
+  return update;
 }
 
 export async function refundPayment(options = {}, payload = {}) {
@@ -339,6 +334,29 @@ export async function refundPayment(options = {}, payload = {}) {
   return order.update(changes);
 }
 
+async function getCustomerOrder(order) {
+  if (order.customerId) {
+    // Use the configured customer relation
+    const customer = await order.customer();
+
+    if (!customer) {
+      throw new Error("invalid customer id", order.customerId);
+    }
+
+    const decrypted = customer.decrypt();
+    const updated = await order.update({
+      creditCardNumber: decrypted.creditCardNumber,
+      shippingAddress: decrypted.shippingAddress,
+      billingAddress: decrypted.billingAddress,
+      email: decrypted.email,
+      lastName: decrypted.lastName,
+      firstName: customer.firstName,
+    });
+    return updated;
+  }
+  return order;
+}
+
 /**
  * Starts the order service workflow.
  */
@@ -350,45 +368,22 @@ const OrderActions = {
    */
   [OrderStatus.PENDING]: async order => {
     try {
-      if (order.customerId) {
-        // Use the customer relation configured in the ModelSpec
-        const customer = await order.customer();
+      if (order.paymentAuthorized()) return;
+      const customerOrder = await getCustomerOrder(order);
 
-        if (!customer) {
-          throw new Error("invalid customer id", order.customerId);
-        }
+      // block the caller: we won't proceed w/o $$
+      const [address, payment] = await Promise.all([
+        customerOrder.validateAddress(addressValidated),
+        customerOrder.authorizePayment(paymentAuthorized),
+      ]);
 
-        const decrypted = customer.decrypt();
-
-        const updated = await order.update({
-          creditCardNumber: decrypted.creditCardNumber,
-          shippingAddress: decrypted.shippingAddress,
-          billingAddress: decrypted.billingAddress,
-          email: decrypted.email,
-          lastName: decrypted.lastName,
-          firstName: customer.firstName,
+      if (customerOrder.autoComplete()) {
+        handleStatusChange({
+          ...address,
+          ...payment,
+          orderStatus: OrderStatus.APPROVED,
         });
-
-        // Require a synchronous response
-        return Promise.all([
-          updated.validateAddress(addressValidated),
-          updated.authorizePayment(paymentAuthorized),
-        ])
-          .then(([shippingAddress, paymentAuthorization]) => {
-            return order.update({ paymentAuthorization, shippingAddress });
-          })
-          .then(order => order);
       }
-
-      // Need a synchronous response
-      return Promise.all([
-        order.validateAddress(addressValidated),
-        order.authorizePayment(paymentAuthorized),
-      ])
-        .then(([shippingAddress, paymentAuthorization]) => {
-          return order.update({ paymentAuthorization, shippingAddress });
-        })
-        .then(order => order);
     } catch (error) {
       handleError(error, OrderStatus.PENDING);
     }
@@ -399,8 +394,12 @@ const OrderActions = {
    */
   [OrderStatus.APPROVED]: async order => {
     try {
-      // don't block the caller waiting for the promise
-      order.pickOrder(orderPicked);
+      if (order.paymentAuthorized()) {
+        // don't block the caller awaiting
+        order.pickOrder(orderPicked);
+        return;
+      }
+      throw new Error("payment authorization declined");
     } catch (error) {
       handleError(error, OrderStatus.APPROVED);
     }
@@ -439,7 +438,7 @@ const OrderActions = {
 };
 
 /**
- *
+ * Call order service workflow
  * @param {Order} order
  */
 export async function handleStatusChange(order) {
@@ -447,11 +446,12 @@ export async function handleStatusChange(order) {
 }
 
 /**
+ * Called on create, update, delete of model.
  * @param {{model:Order}}
  */
 export async function handleOrderEvent({ model: order, eventType, changes }) {
   if (changes?.orderStatus || eventType === "CREATE") {
-    await handleStatusChange(order);
+    return handleStatusChange(order);
   }
 }
 
@@ -461,7 +461,7 @@ export async function handleOrderEvent({ model: order, eventType, changes }) {
  * @param {*} orderTotal
  */
 function needsSignature(input, orderTotal) {
-  typeof input === "boolean" ? input : orderTotal > 999.99;
+  return typeof input === "boolean" ? input : orderTotal > 999.99;
 }
 
 /**
@@ -478,7 +478,8 @@ export function orderFactory(dependencies) {
     billingAddress = null,
     shippingAddress = null,
     creditCardNumber = null,
-    requireSignature = false,
+    requireSignature,
+    autoComplete = false,
   }) {
     const total = calcTotal(orderItems);
     const signatureRequired = needsSignature(requireSignature, total);
@@ -495,6 +496,16 @@ export function orderFactory(dependencies) {
       [orderTotal]: total,
       [orderStatus]: OrderStatus.PENDING,
       [orderNo]: dependencies.uuid(),
+      paymentAuthorized() {
+        return (
+          (this.paymentAuthorization && !this[prevmodel]) ||
+          (this.paymentAuthorization &&
+            this[prevmodel].orderTotal <= this.orderTotal)
+        );
+      },
+      autoComplete() {
+        return autoComplete;
+      },
     };
     return Object.freeze(order);
   };
