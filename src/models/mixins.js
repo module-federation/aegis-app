@@ -546,7 +546,6 @@ export const updateProperties = updaters => o => {
  * @returns {function(any):any} dynamic property func
  */
 export const withValidFormat = (propKey, expr) => o => {
-  if (o.isLoading) return propKey;
   if (o[propKey] && !RegEx.test(expr, o[propKey])) {
     throw new Error(`invalid ${propKey}`);
   }

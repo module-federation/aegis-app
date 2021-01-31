@@ -9,11 +9,32 @@
  */
 
 /**
+ * @callback shipOrder
+ * @param {string} shipTo
+ * @param {string} shipFrom
+ * @param {string} lineItems
+ * @param {string} signature
+ * @param {string} externalId
+ * @param {string} requester
+ * @param {string} respondOn
+ * @returns {EventMessage}
+ */
+
+/**
+ * @callback trackShipment
+ * @param {string} shipmentId
+ * @param {string} externalId
+ * @param {string} requester
+ * @param {string} respondOn
+ * @returns {EventMessage}
+ */
+
+/**
  * @typedef {Object} shippingService formats and parses shipping event messages
  * @property {string} serviceName - programmatic service name in eventSource/Target
  * @property {string} topic - event topic "shippingChannel" when sending messasges
- * @property {function():EventMessage} shipOrder - request label and pickup of order
- * @property {function():EventMessage} trackShipment - report on location/status of parcel
+ * @property {shipOrder} shipOrder - request label and pickup of order
+ * @property {trackShipment} trackShipment - report on location/status of parcel
  * @property {function():EventMessage} verifyDelivery - ensure customer recieved parcel
  * @property {function():EventMessage} returnShipment - return to sender if refunding
  * @property {function(EventMessage):{[key]:string}} getPayload - extract payload
@@ -31,7 +52,7 @@ function createEventMessage({ requester, service, type, name, id, data }) {
   };
 }
 
-function createCommandEvent(name, topic, ...args) {
+function createCommandEvent(name, topic, args) {
   return {
     commandName: name,
     commandResp: topic,
@@ -67,15 +88,13 @@ export const Shipping = {
       type: "command",
       name: this.shipOrder.name,
       id: externalId,
-      data: createCommandEvent(
-        this.shipOrder.name,
-        respondOn,
+      data: createCommandEvent(this.shipOrder.name, respondOn, {
         shipTo,
         shipFrom,
         lineItems,
         signature,
-        externalId
-      ),
+        externalId,
+      }),
     });
   },
 
@@ -89,15 +108,13 @@ export const Shipping = {
       requester,
       service: this.serviceName,
       type: "command",
-      name: this.shipOrder.name,
+      name: this.trackShipment.name,
       id: externalId,
-      data: createCommandEvent(
-        this.shipOrder.name,
-        respondOn,
+      data: createCommandEvent(this.trackShipment.name, respondOn, {
         externalId,
         shipmentId,
         trackingId
-      ),
+      }),
     });
   },
 

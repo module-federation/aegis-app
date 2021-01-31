@@ -107,13 +107,6 @@ export const Order = {
         regex: "phone",
       },
     ]),
-    // createMethod(function paymentAuthorized() {
-    //   return (
-    //     (this.paymentAuthorization && !this[prevmodel]) ||
-    //     (this.paymentAuthorization &&
-    //       this[prevmodel].orderTotal <= this.orderTotal)
-    //   );
-    // }),
   ],
   validate: validateModel,
   onDelete: readyToDelete,

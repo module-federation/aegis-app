@@ -394,6 +394,7 @@ const OrderActions = {
    */
   [OrderStatus.APPROVED]: async order => {
     try {
+      console.log({ func: "APPROVED", order });
       if (order.paymentAuthorized()) {
         // don't block the caller awaiting
         order.pickOrder(orderPicked);

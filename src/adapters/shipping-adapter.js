@@ -142,7 +142,6 @@ export function trackShipment(service) {
         service.topic,
         JSON.stringify(
           service.trackShipment({
-            trackingId: order.trackingId,
             shipmentId: order.shipmentId,
             externalId: order.orderNo,
             requester,
@@ -159,7 +158,7 @@ export function trackShipment(service) {
           model: order,
           id: order.orderNo,
           topic: "orderChannel",
-          filters: [order.orderNo, "trackingStatus", "trackingId"],
+          filters: [order.orderNo, "trackingId", 'trackingStatus'],
           callback: trackShipmentCallback(resolve, reject),
         })
         .then(callTrackShipment)
