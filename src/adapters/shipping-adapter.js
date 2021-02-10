@@ -50,8 +50,6 @@ export function shipOrder(service) {
       args: [callback],
     } = options;
 
-    console.log({ func: shipOrder.name, ...service, options });
-
     function shipOrderCallback(resolve, reject) {
       return async function ({ message }) {
         try {

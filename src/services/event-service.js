@@ -2,27 +2,32 @@
 
 import { Kafka } from "kafkajs";
 
+const brokers = process.env.KAFKA_BROKERS || ["localhost:9092"];
+const topics = new RegExp(process.env.KAFKA_TOPICS) || /Channel/;
 const kafka = new Kafka({
   clientId: "fedmon",
-  brokers: ["localhost:9092"],
+  brokers,
 });
-
-let groupId = process.env.KAFKA_GROUP_ID;
+const groupId = process.env.KAFKA_GROUP_ID;
 const consumer = kafka.consumer({ groupId });
 const producer = kafka.producer();
 
+/**
+ * @typedef {EventService}
+ */
 export const Event = {
   listening: false,
+  topics,
 
   /**
-   *
+   * Implements event consumer service.
    * @param {string|RegExp} topic
    * @param {function({message, topic})} callback
    */
   async listen(topic, callback) {
     try {
       await consumer.connect();
-      await consumer.subscribe({ topic: topic, fromBeginning: true });
+      await consumer.subscribe({ topic, fromBeginning: true });
       this.listening = true;
       await consumer.run({
         eachMessage: async ({ topic, message }) =>
@@ -31,11 +36,16 @@ export const Event = {
             message: message.value.toString(),
           }),
       });
-    } catch (e) {
-      throw e;
+    } catch (error) {
+      console.error(error);
     }
   },
 
+  /**
+   * Implemements event producer service.
+   * @param {string|RegExp} topic
+   * @param {string} message
+   */
   async notify(topic, message) {
     await producer.connect();
     await producer.send({

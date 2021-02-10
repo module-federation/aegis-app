@@ -210,7 +210,9 @@ function parseKeys(o, ...propKeys) {
 }
 
 /**
- * Functional mixin that encrypts the properties specified in `propKeys`
+ * Encrypt properties. Properties remain encrypted indefinitely, and
+ * must be explicitly decrypted as needed, e.g. reading values in memory,
+ * from storage, serializing and sending to an external system.
  * @param  {Array<string | function(*):string>} propKeys -
  * Names (or functions that return names) of properties to encrypt
  * @returns {functionalMixin} mixin function
@@ -244,7 +246,7 @@ export const encryptProperties = (...propKeys) => o => {
 };
 
 /**
- * Functional mixin that prevents properties from being updated.
+ * Prevent properties from being modified.
  * Accepts a property name or a function that returns a property name.
  * @param  {Array<string | function(*):string>} propKeys - names of properties to freeze
  */
@@ -267,7 +269,7 @@ export const freezeProperties = (...propKeys) => o => {
 };
 
 /**
- * Functional mixin that enforces required fields
+ * Enforce required fields.
  * @param {Array<string | function(*):string>} propKeys -
  * required property names
  */
@@ -289,7 +291,7 @@ export const requireProperties = (...propKeys) => o => {
 };
 
 /**
- * Functional mixin that hashes passwords
+ * Hash passwords.
  * @param {*} hash hash algorithm
  * @param  {Array<string | function(*):string>} propKeys name of password props
  */
@@ -319,7 +321,7 @@ export const hashPasswords = (...propKeys) => o => {
 const internalPropList = ["decrypt"];
 
 /**
- *
+ * Reject unknown properties in user input. Allow only approved keys.
  * @param  {...any} propKeys
  */
 export const allowProperties = (...propKeys) => o => {
@@ -387,7 +389,7 @@ export const execMethod = (fn, onCreate, onUpdate, ...args) => async o => {
 };
 
 /**
- * Create a method on the model.
+ * Create a method on a model.
  * @param {*} fn
  * @param  {...any} args
  */
@@ -472,7 +474,8 @@ const Validator = {
 };
 
 /**
- *
+ * Verify a property value is a member of a list, is of a certain length, size
+ * or type, matches a regular expression or satisfies a custom validation function.
  * @param {validation[]} validations
  */
 export const validateProperties = validations => o => {
@@ -518,6 +521,7 @@ export const validateProperties = validations => o => {
  */
 
 /**
+ * Respond to property updates by updating addtional (dependent) properties as needed.
  * @param {updater[]} updaters
  */
 export const updateProperties = updaters => o => {

@@ -53,11 +53,16 @@ import { Event } from "../services/event-service";
  */
 const subscriptions = new Map();
 
+/**
+ * Test the filter.
+ * @param {string} message
+ * @returns {function(string|RegExp):boolean} did the filter match?
+ */
 function filterMatches(message) {
   return function (filter) {
     const regex = new RegExp(filter);
     const result = regex.test(message);
-    console.log({ func: filterMatches.name, filter, result, message });
+    console.debug({ func: filterMatches.name, filter, result, message });
     return result;
   };
 }
@@ -101,8 +106,10 @@ const Subscription = function ({ id, callback, topic, filters, once, model }) {
      */
     async filter(message) {
       if (filters) {
+        // Every filter must match.
         if (filters.every(filterMatches(message))) {
           if (once) {
+            // Only looking for 1 msg, got it.
             this.unsubscribe();
           }
           callback({ message, subscription: this });
@@ -111,41 +118,37 @@ const Subscription = function ({ id, callback, topic, filters, once, model }) {
         // no match
         return;
       }
-      // no filters
+      // no filters defined, just invoke the callback.
       callback({ message, subscription: this });
     },
   };
 };
 
 /**
- *
+ * Listen for external events with default event service if none specified.
  * @type {adapterFactory}
+ * @param {import('../services/event-service').Event} [service] - has default service
  */
 export function listen(service = Event) {
-  return async function ({
-    model,
-    args: [{ id, topic, callback, filters, once }],
-  }) {
-    const subscription = Subscription({
-      id,
-      topic,
-      callback,
-      filters,
-      once,
+  return async function (options) {
+    const {
       model,
-    });
+      args: [arg],
+    } = options;
 
-    if (subscriptions.has(topic)) {
-      subscriptions.get(topic).set(id, subscription);
+    const subscription = Subscription({ model, ...arg });
+
+    if (subscriptions.has(arg.topic)) {
+      subscriptions.get(arg.topic).set(arg.id, subscription);
       return subscription;
     }
 
-    subscriptions.set(topic, new Map().set(id, subscription));
+    subscriptions.set(arg.topic, new Map().set(arg.id, subscription));
 
     if (!service.listening) {
-      service.listen(/Channel/, async function ({ topic, message }) {
+      service.listen(service.topics, async function ({ topic, message }) {
         if (subscriptions.has(topic)) {
-          subscriptions.get(topic).forEach(async (subscription) => {
+          subscriptions.get(topic).forEach(async subscription => {
             await subscription.filter(message);
           });
         }

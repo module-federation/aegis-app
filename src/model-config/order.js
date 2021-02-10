@@ -21,6 +21,7 @@ import {
   cancelPayment,
   updateSignature,
   requiredForGuest,
+  requiredForApproval,
   approve,
 } from "../models/order";
 
@@ -30,9 +31,6 @@ import {
   updateProperties,
   validateProperties,
   validateModel,
-  createMethod,
-  execMethod,
-  invokePort,
 } from "../models/mixins";
 
 import { uuid } from "../lib/utils";
@@ -56,6 +54,7 @@ export const Order = {
         "creditCardNumber",
         "email",
       ]),
+      requiredForApproval("paymentAuthorization"),
       requiredForCompletion("proofOfDelivery")
     ),
     freezeProperties(
@@ -70,6 +69,7 @@ export const Order = {
         "billingAddress",
         "shippingAddress",
         "creditCardNumber",
+        "paymentAuthorization",
       ]),
       freezeOnCompletion("*")
     ),

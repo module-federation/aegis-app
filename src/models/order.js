@@ -33,8 +33,8 @@ import checkPayload from "./check-payload";
  * @property {'APPROVED'|'SHIPPING'|'CANCELED'|'COMPLETED'} orderStatus
  * @property {function():Promise<Customer>} customer - retrieves related customer object.
  * @property {function(string,Order)} emit - broadcast domain event
- * @property {function():boolean} paymentAuthorized - payment approved and reserved
- * @property {function():boolean} autoComplete - whether or not to immediately submit the order
+ * @property {function():boolean} paymentAuthorized - payment approved and funds reserved
+ * @property {function():boolean} autoCheckout - whether or not to immediately submit the order
  */
 
 const orderStatus = "orderStatus";
@@ -113,6 +113,15 @@ export const freezeOnCompletion = propKey => o => {
  */
 export const requiredForGuest = propKey => o => {
   return o.customerId ? null : propKey;
+};
+
+/**
+ * Value required to approve order.
+ * @param {*} propKey
+ */
+export const requiredForApproval = propKey => o => {
+  if (!o.orderStatus) return;
+  return o.orderStatus === OrderStatus.APPROVED ? propKey : void 0;
 };
 
 /**
@@ -334,9 +343,15 @@ export async function refundPayment(options = {}, payload = {}) {
   return order.update(changes);
 }
 
+/**
+ * Copy existing customer data to the order if a valid ID was provided.
+ *
+ * @param {Order} order
+ * @throws {"InvalidCustomerId"}
+ */
 async function getCustomerOrder(order) {
   if (order.customerId) {
-    // Use the configured customer relation
+    // Use the configured relation to fetch customer model
     const customer = await order.customer();
 
     if (!customer) {
@@ -377,7 +392,7 @@ const OrderActions = {
         customerOrder.authorizePayment(paymentAuthorized),
       ]);
 
-      if (customerOrder.autoComplete()) {
+      if (customerOrder.autoCheckout() && payment.paymentAuthorized()) {
         handleStatusChange({
           ...address,
           ...payment,
@@ -389,24 +404,25 @@ const OrderActions = {
     }
   },
   /**
-   * Pick the order and specify the pickup location
+   * If payment is authorized, notify inventory.
+   * This kicks off the rest of the workflow,
+   * which is controlled through port config.
    * @param {Order} order
    */
   [OrderStatus.APPROVED]: async order => {
     try {
-      console.log({ func: "APPROVED", order });
       if (order.paymentAuthorized()) {
         // don't block the caller awaiting
         order.pickOrder(orderPicked);
         return;
       }
-      throw new Error("payment authorization declined");
+      throw new Error("payment authorization problem");
     } catch (error) {
       handleError(error, OrderStatus.APPROVED);
     }
   },
   /**
-   * Useful if we need to restart tracking
+   * Useful if we need to restart tracking.
    * @param {Order} order
    */
   [OrderStatus.SHIPPING]: async order => {
@@ -418,7 +434,7 @@ const OrderActions = {
     }
   },
   /**
-   * Start cancellation process
+   * Start cancellation process.
    * @param {Order} order
    */
   [OrderStatus.CANCELED]: async order => {
@@ -447,7 +463,7 @@ export async function handleStatusChange(order) {
 }
 
 /**
- * Called on create, update, delete of model.
+ * Called on create, update, delete of model instance.
  * @param {{model:Order}}
  */
 export async function handleOrderEvent({ model: order, eventType, changes }) {
@@ -457,7 +473,7 @@ export async function handleOrderEvent({ model: order, eventType, changes }) {
 }
 
 /**
- * Require a signature for orders at or over $1000
+ * Require a signature for orders $1000 and up
  * @param {*} input
  * @param {*} orderTotal
  */
@@ -471,16 +487,17 @@ function needsSignature(input, orderTotal) {
  */
 export function orderFactory(dependencies) {
   return async function createOrder({
-    email,
-    lastName,
-    firstName,
-    customerId,
     orderItems,
+    email = null,
+    lastName = null,
+    firstName = null,
+    customerId = null,
     billingAddress = null,
     shippingAddress = null,
     creditCardNumber = null,
+    shippingPriority = null,
+    autoCheckout = false,
     requireSignature,
-    autoComplete = false,
   }) {
     const total = calcTotal(orderItems);
     const signatureRequired = needsSignature(requireSignature, total);
@@ -494,9 +511,14 @@ export function orderFactory(dependencies) {
       billingAddress,
       shippingAddress,
       signatureRequired,
+      shippingPriority,
+      estimatedArrival: null,
       [orderTotal]: total,
       [orderStatus]: OrderStatus.PENDING,
       [orderNo]: dependencies.uuid(),
+      /**
+       * Has payment for the order been authorized?
+       */
       paymentAuthorized() {
         return (
           (this.paymentAuthorization && !this[prevmodel]) ||
@@ -504,8 +526,11 @@ export function orderFactory(dependencies) {
             this[prevmodel].orderTotal <= this.orderTotal)
         );
       },
-      autoComplete() {
-        return autoComplete;
+      /**
+       * Should this order proceed to checkout automatically or wait for approval.
+       */
+      autoCheckout() {
+        return autoCheckout;
       },
     };
     return Object.freeze(order);
