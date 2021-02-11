@@ -2,6 +2,7 @@
 
 import { prevmodel } from "./mixins";
 import checkPayload from "./check-payload";
+import { encrypt } from "../lib/utils";
 
 /**w
  * @typedef {string|RegExp} topic
@@ -268,13 +269,16 @@ export async function trackingUpdate(options = {}, payload = {}) {
  */
 export async function orderShipped(options = {}, payload = {}) {
   const { model: order } = options;
-  const changes = checkPayload(
+  const shipmentPayload = checkPayload(
     "shipmentId",
     options,
     payload,
     orderShipped.name
   );
-  return order.update(changes);
+  return order.update({
+    shipmentId: shipmentPayload.shipmentId,
+    orderStatus: OrderStatus.SHIPPING,
+  });
 }
 
 /**
@@ -299,13 +303,14 @@ export async function orderPicked(options = {}, payload = {}) {
  */
 export async function addressValidated(options = {}, payload = {}) {
   const { model: order } = options;
-  const changes = checkPayload(
+  const addressPayload = checkPayload(
     "shippingAddress",
     options,
     payload,
     addressValidated.name
   );
-  return order.update(changes);
+  const shippingAddress = encrypt(addressPayload.shippingAddress);
+  return order.update({ shippingAddress });
 }
 
 /**
@@ -321,13 +326,6 @@ export async function paymentAuthorized(options = {}, payload = {}) {
     payload,
     paymentAuthorized.name
   );
-  console.log({
-    order: 5,
-    func: paymentAuthorized.name,
-    options,
-    payload,
-    changes,
-  });
   const update = await order.update(changes);
   return update;
 }
@@ -351,7 +349,7 @@ export async function refundPayment(options = {}, payload = {}) {
  */
 async function getCustomerOrder(order) {
   if (order.customerId) {
-    // Use the configured relation to fetch customer model
+    // Use the configured customer relation to fetch the model
     const customer = await order.customer();
 
     if (!customer) {
@@ -369,7 +367,9 @@ async function getCustomerOrder(order) {
     });
     return updated;
   }
-  // Emit an event to create a new customer record.
+  // Tell the customer service to create a new customer.
+  // The `addModel` event has a built-in handler that calls
+  // the framework's `addModel` function directly.
   order.emit("addModel:CREATECUSTOMER", order);
 
   return order;
@@ -381,7 +381,9 @@ async function getCustomerOrder(order) {
 const OrderActions = {
   /**
    * Verifies the shipping address and authorizes payment
-   * for the order total when the order is first created.
+   * for the order total when the order is first created,
+   * or when it is updated while still in pending status.
+   *
    * @param {Order} order - the order
    */
   [OrderStatus.PENDING]: async order => {
@@ -390,17 +392,19 @@ const OrderActions = {
       const customerOrder = await getCustomerOrder(order);
 
       // block the caller: we won't proceed w/o $$
-      const [address, payment] = await Promise.all([
+      const [address, payment] = await Promise.allSettled([
         customerOrder.validateAddress(addressValidated),
         customerOrder.authorizePayment(paymentAuthorized),
       ]);
 
       if (customerOrder.autoCheckout() && payment.paymentAuthorized()) {
-        handleStatusChange({
-          ...address,
-          ...payment,
-          orderStatus: OrderStatus.APPROVED,
-        });
+        handleStatusChange(
+          customerOrder.update({
+            shippingAddress: address.shippingAddress,
+            paymentAuthorization: payment.paymentAuthorization,
+            orderStatus: OrderStatus.APPROVED,
+          })
+        );
       }
     } catch (error) {
       handleError(error, OrderStatus.PENDING);

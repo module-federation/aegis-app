@@ -1,11 +1,12 @@
 "use strict";
 
+import { customerFactory, okToDelete } from "../models/customer";
 import {
-  customerFactory,
-  customerMixins,
-  okToDelete,
-} from "../models/customer";
-import { validateModel } from "../models/mixins";
+  validateModel,
+  freezeProperties,
+  validateProperties,
+  requireProperties,
+} from "../models/mixins";
 import { uuid } from "../lib/utils";
 
 /**
@@ -18,7 +19,28 @@ export const Customer = {
   factory: customerFactory,
   validate: validateModel,
   onDelete: okToDelete,
-  mixins: customerMixins,
+  mixins: [
+    freezeProperties("customerId"),
+    requireProperties(
+      "firstName",
+      "lastName",
+      "email",
+      "shippingAddress",
+      "billingAddress",
+      "creditCardNumber"
+    ),
+    validateProperties([
+      {
+        propKey: "email",
+        unique: true,
+        regex: "email",
+      },
+      {
+        propKey: "creditCardNumber",
+        regex: "creditCard",
+      },
+    ]),
+  ],
   relations: {
     orders: {
       modelName: "order",
@@ -30,7 +52,7 @@ export const Customer = {
     customer: {
       allow: "read",
       type: "relation",
-      desc: "Allow orders to see customers via  `customer` relation.",
+      desc: "Allow orders to see customers.",
     },
   },
 };

@@ -138,7 +138,7 @@ export const Order = {
       keys: "shippingAddress",
       consumesEvent: "startWorkflow",
       producesEvent: "addressValidated",
-      disabled: false,
+      disabled: true,
     },
     authorizePayment: {
       service: "Payment",
@@ -167,7 +167,7 @@ export const Order = {
     trackShipment: {
       service: "Shipping",
       type: "outbound",
-      keys: ["trackingId, trackingStatus"],
+      callback: trackingUpdate,
       consumesEvent: "orderShipped",
       producesEvent: "orderDelivered",
     },
@@ -201,7 +201,7 @@ export const Order = {
       modelName: "customer",
       foreignKey: "customerId",
       type: "manyToOne",
-      desc: "Many orders per customer, one customer per order",
+      desc: "Many orders per customer, just 1 cust. / order",
     },
   },
   commands: {

@@ -156,7 +156,7 @@ export function trackShipment(service) {
           model: order,
           id: order.orderNo,
           topic: "orderChannel",
-          filters: [order.orderNo, "trackingId", 'trackingStatus'],
+          filters: [order.orderNo, "trackingId", "trackingStatus"],
           callback: trackShipmentCallback(resolve, reject),
         })
         .then(callTrackShipment)

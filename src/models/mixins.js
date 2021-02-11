@@ -411,7 +411,7 @@ export const RegEx = {
   creditCard: /^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/,
   ssn: /^(?!666|000|9\\d{2})\\d{3}-(?!00)\\d{2}-(?!0{4})\\d{4}$/,
   /**
-   *
+   * Allow caller to pass a keyword that refers to one of the regex above
    * @param {regexType} expr
    * @param {*} val
    */
@@ -440,6 +440,7 @@ export const RegEx = {
  *  maxlen?:number
  *  maxnum?:number
  *  typeof?:string
+ *  unique?:boolean
  * }} validation
  */
 
@@ -448,16 +449,18 @@ export const RegEx = {
  */
 const Validator = {
   tests: {
-    isValid: (v, o, propVal) => v(o, propVal),
-    values: (v, o, propVal) => v.includes(propVal),
-    regex: (v, o, propVal) => RegEx.test(v, propVal),
-    typeof: (v, o, propVal) => v === typeof propVal,
-    maxnum: (v, o, propVal) => v + 1 > propVal,
-    maxlen: (v, o, propVal) => v + 1 > propVal.length,
+    isValid: (v, o, propVal) => v.isValid(o, propVal),
+    values: (v, o, propVal) => v.values.includes(propVal),
+    regex: (v, o, propVal) => RegEx.test(v.regex, propVal),
+    typeof: (v, o, propVal) => v.typeof === typeof propVal,
+    maxnum: (v, o, propVal) => v.maxnum + 1 > propVal,
+    maxlen: (v, o, propVal) => v.maxlen + 1 > propVal.length,
+    unique: (v, o, propVal) =>
+      o.list({ [v.propKey]: propVal }).then(list => list.length < 2),
   },
   /**
    * Returns true if tests pass
-   * @param {validation} v validation spec
+   * @param {validation} v validation config
    * @param {Object} o object to compose
    * @param {*} propVal value of property to validate
    * @returns {boolean} true if tests pass
@@ -465,8 +468,8 @@ const Validator = {
   isValid(v, o, propVal) {
     return Object.keys(this.tests).every(key => {
       if (v[key]) {
-        // enabled
-        return this.tests[key](v[key], o, propVal);
+        // the test `key` is specified, run it
+        return this.tests[key](v, o, propVal);
       }
       return true;
     });
@@ -474,8 +477,11 @@ const Validator = {
 };
 
 /**
- * Verify a property value is a member of a list, is of a certain length, size
- * or type, matches a regular expression or satisfies a custom validation function.
+ * Verify a property value is a member of a list,
+ * is unique within the set of model instances,
+ * is of a certain length, size or type,
+ * matches a regular expression
+ * or satisfies a custom validation function.
  * @param {validation[]} validations
  */
 export const validateProperties = validations => o => {
@@ -498,6 +504,7 @@ export const validateProperties = validations => o => {
     validateProperties() {
       validate(this);
     },
+
     ...addValidation(
       o,
       validateProperties.name,
