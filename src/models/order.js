@@ -369,6 +369,9 @@ async function getCustomerOrder(order) {
     });
     return updated;
   }
+  // Emit an event to create a new customer record.
+  order.emit("addModel:CREATECUSTOMER", order);
+
   return order;
 }
 
@@ -416,7 +419,7 @@ const OrderActions = {
         order.pickOrder(orderPicked);
         return;
       }
-      throw new Error("payment authorization problem");
+      console.error("payment authorization problem");
     } catch (error) {
       handleError(error, OrderStatus.APPROVED);
     }
@@ -455,7 +458,7 @@ const OrderActions = {
 };
 
 /**
- * Call order service workflow
+ * Call order service workflow - controlled by status
  * @param {Order} order
  */
 export async function handleStatusChange(order) {
@@ -527,7 +530,7 @@ export function orderFactory(dependencies) {
         );
       },
       /**
-       * Should this order proceed to checkout automatically or wait for approval.
+       * Proceed to checkout automatically or wait for approval?
        */
       autoCheckout() {
         return autoCheckout;

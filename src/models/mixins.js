@@ -123,8 +123,8 @@ export function validateModel(model, changes, event) {
 
   // Run validations against the incoming changes (input)
   const updates = model[validations]
-    .sort((a, b) => a.order - b.order)
     .filter(v => v.pre & event)
+    .sort((a, b) => a.order - b.order)
     .map(v => model[v.name].apply(changes))
     .reduce((p, c) => ({ ...p, ...c }), changes);
 
@@ -132,8 +132,8 @@ export function validateModel(model, changes, event) {
 
   // Run validations against the updated object (output)
   return updated[validations]
-    .sort((a, b) => a.order - b.order)
     .filter(v => v.post & event)
+    .sort((a, b) => a.order - b.order)
     .map(v => updated[v.name]())
     .reduce((p, c) => ({ ...p, ...c }), updated);
 }

@@ -138,7 +138,7 @@ export const Order = {
       keys: "shippingAddress",
       consumesEvent: "startWorkflow",
       producesEvent: "addressValidated",
-      disabled: true,
+      disabled: false,
     },
     authorizePayment: {
       service: "Payment",
@@ -167,7 +167,7 @@ export const Order = {
     trackShipment: {
       service: "Shipping",
       type: "outbound",
-      callback: trackingUpdate,
+      keys: ["trackingId, trackingStatus"],
       consumesEvent: "orderShipped",
       producesEvent: "orderDelivered",
     },
@@ -194,12 +194,6 @@ export const Order = {
     refundPayment: {
       service: "Payment",
       type: "outbound",
-    },
-    createCustomer: {
-      service: "Customer",
-      type: "outbound",
-      consumesEvent: "addCustomerFromOrder",
-      producesEvent: "newCustomerFromOrder",
     },
   },
   relations: {
