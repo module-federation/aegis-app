@@ -440,9 +440,14 @@ export const RegEx = {
  *  maxlen?:number
  *  maxnum?:number
  *  typeof?:string
- *  unique?:boolean
+ *  unique?:{ encrypted:boolean }
  * }} validation
  */
+
+function handleEncryption(v, o, propVal) {
+  const compareVal = v.unique.encrypted ? encrypt(propVal) : propVal;
+  return o.listSync({ [v.propKey]: compareVal }).length < 1;
+}
 
 /**
  * Run validation tests
@@ -455,8 +460,7 @@ const Validator = {
     typeof: (v, o, propVal) => v.typeof === typeof propVal,
     maxnum: (v, o, propVal) => v.maxnum + 1 > propVal,
     maxlen: (v, o, propVal) => v.maxlen + 1 > propVal.length,
-    unique: (v, o, propVal) =>
-      o.list({ [v.propKey]: propVal }).then(list => list.length < 2),
+    unique: (v, o, propVal) => handleEncryption(v, o, propVal),
   },
   /**
    * Returns true if tests pass

@@ -14,6 +14,9 @@ const credentials = new SmartyStreetsCore.StaticCredentials(authId, authToken);
 
 const client = SmartyStreetsCore.buildClient.usStreet(credentials);
 
+/**
+ * @typedef Address
+ */
 export const Address = {
   // Documentation for input fields can be found at:
   // https://smartystreets.com/docs/us-street-api#input-fields

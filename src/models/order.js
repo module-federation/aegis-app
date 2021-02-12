@@ -50,6 +50,8 @@ export const OrderStatus = {
   CANCELED: "CANCELED",
 };
 
+const CREATE_CUSTOMER_EVENT = "addModel:CREATECUSTOMER";
+
 /**
  *
  * @param {*} items
@@ -230,39 +232,6 @@ export async function paymentCompleted(options = {}, payload = {}) {
 }
 
 /**
- * Callback invoked by adapter when delivery is verified.
- * @param {{model:Order}} options
- * @param {string} proofOfDelivery
- */
-export async function deliveryVerified(options = {}, payload = {}) {
-  const { model: order } = options;
-  const changes = checkPayload(
-    "proofOfDelivery",
-    options,
-    payload,
-    deliveryVerified.name
-  );
-  return order.update(changes);
-}
-
-/**
- * Handle shipment tracking update
- * @param {{model: Order }} options
- * @param {string} trackingId
- * @param {string} trackingStatus
- */
-export async function trackingUpdate(options = {}, payload = {}) {
-  const { model: order } = options;
-  const changes = checkPayload(
-    ["trackingStatus", "trackingId"],
-    options,
-    payload,
-    trackingUpdate.name
-  );
-  return order.update(changes);
-}
-
-/**
  * Callback invoked by shipping adapter when order is picked up.
  * @param {{model:Order}} options
  * @param {string} shipmentId
@@ -356,21 +325,20 @@ async function getCustomerOrder(order) {
       throw new Error("invalid customer id", order.customerId);
     }
 
-    const decrypted = customer.decrypt();
     const updated = await order.update({
-      creditCardNumber: decrypted.creditCardNumber,
-      shippingAddress: decrypted.shippingAddress,
-      billingAddress: decrypted.billingAddress,
-      email: decrypted.email,
-      lastName: decrypted.lastName,
+      creditCardNumber: customer.creditCardNumber,
+      shippingAddress: customer.shippingAddress,
+      billingAddress: customer.billingAddress,
+      email: customer.email,
+      lastName: customer.lastName,
       firstName: customer.firstName,
     });
     return updated;
   }
   // Tell the customer service to create a new customer.
-  // The `addModel` event has a built-in handler that calls
+  // The event has a built-in handler that calls
   // the framework's `addModel` function directly.
-  order.emit("addModel:CREATECUSTOMER", order);
+  order.emit(CREATE_CUSTOMER_EVENT, order);
 
   return order;
 }

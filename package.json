@@ -7,7 +7,7 @@
     "pnp": false
   },
   "repository": {
-    "url": "https://github.com/tysonrm/composable-microservices-remotes"
+    "url": "https://github.com/tysonrm/microlib-orderservice"
   },
   "scripts": {
     "build": "npm run clean && webpack --config webpack.config.js",
@@ -25,7 +25,7 @@
   "author": "Tyson Midboe",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
@@ -42,6 +42,7 @@
     "@babel/register": "^7.12.1",
     "babel-loader": "^8.1.0",
     "babel-register": "^6.26.0",
+    "bootstrap": "^4.6.0",
     "esm": "^3.2.25",
     "express-cli": "0.0.1",
     "mocha": "^8.2.0",

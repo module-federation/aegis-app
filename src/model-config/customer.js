@@ -32,7 +32,7 @@ export const Customer = {
     validateProperties([
       {
         propKey: "email",
-        unique: true,
+        unique: { encrypted: true },
         regex: "email",
       },
       {

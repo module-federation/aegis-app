@@ -167,7 +167,7 @@ export const Order = {
     trackShipment: {
       service: "Shipping",
       type: "outbound",
-      callback: trackingUpdate,
+      keys: ["trackingStatus", "trackingId"],
       consumesEvent: "orderShipped",
       producesEvent: "orderDelivered",
     },
