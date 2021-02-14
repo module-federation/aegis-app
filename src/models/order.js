@@ -311,20 +311,22 @@ export async function refundPayment(options = {}, payload = {}) {
 }
 
 /**
- * Copy existing customer data to the order if a valid ID was provided.
+ * Copy the existing customer data into the order.
  *
  * @param {Order} order
  * @throws {"InvalidCustomerId"}
  */
 async function getCustomerOrder(order) {
+  // If an id is given, try to get the customer model
   if (order.customerId) {
-    // Use the configured customer relation to fetch the model
+    // Use the relation set in the spec to fetch it
     const customer = await order.customer();
 
     if (!customer) {
       throw new Error("invalid customer id", order.customerId);
     }
 
+    // Copy the data we need into the order
     const updated = await order.update({
       creditCardNumber: customer.creditCardNumber,
       shippingAddress: customer.shippingAddress,
@@ -335,7 +337,7 @@ async function getCustomerOrder(order) {
     });
     return updated;
   }
-  // Tell the customer service to create a new customer.
+  // Tell the customer service to try creating a new customer.
   // The event has a built-in handler that calls
   // the framework's `addModel` function directly.
   order.emit(CREATE_CUSTOMER_EVENT, order);

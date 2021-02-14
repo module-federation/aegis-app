@@ -6,12 +6,14 @@ export default function makeAdapters(ports, adapters, services) {
   }
   return Object.keys(ports)
     .map(port => {
+      if (!adapters[port]) {
+        return;
+      }
+
       try {
-        if (adapters[port]) {
-          return {
-            [port]: adapters[port](services[ports[port].service]),
-          };
-        }
+        return {
+          [port]: adapters[port](services[ports[port].service]),
+        };
       } catch (e) {
         console.warn(e.message);
       }

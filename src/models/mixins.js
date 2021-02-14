@@ -230,6 +230,7 @@ export const encryptProperties = (...propKeys) => o => {
     encryptProperties() {
       return encryptProps(this);
     },
+
     ...addValidation(
       o,
       encryptProperties.name,
@@ -237,6 +238,7 @@ export const encryptProperties = (...propKeys) => o => {
       enableEvent(false, true),
       99
     ),
+
     decrypt() {
       return keys
         .map(key => (this[key] ? { [key]: decrypt(this[key]) } : {}))

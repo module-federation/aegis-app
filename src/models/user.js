@@ -4,6 +4,7 @@ import {
   requireProperties,
   freezeProperties,
   hashPasswords,
+  validateProperties,
 } from "./mixins";
 
 export function userFactory({ uuid }) {
@@ -32,27 +33,10 @@ export const userMixins = [
   requireProperties("userName", "password", "firstName"),
   freezeProperties("userId", "userName"),
   hashPasswords("password"),
+  validateProperties([
+    {
+      propKey: "email",
+      unique: { encrypted: true },
+    },
+  ]),
 ];
-
-export function getUserSerializers({ decrypt }) {
-  return [
-    {
-      on: "deserialize",
-      key: "phone",
-      type: "string",
-      value: (key, value) => decrypt(value),
-    },
-    {
-      on: "deserialize",
-      key: "email",
-      type: "string",
-      value: (key, value) => decrypt(value),
-    },
-    {
-      on: "deserialize",
-      key: "lastName",
-      type: "string",
-      value: (key, value) => decrypt(value),
-    },
-  ];
-}
