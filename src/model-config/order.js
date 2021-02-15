@@ -5,7 +5,6 @@ import {
   readyToDelete,
   handleOrderEvent,
   orderShipped,
-  trackingUpdate,
   paymentCompleted,
   OrderStatus,
   recalcTotal,
