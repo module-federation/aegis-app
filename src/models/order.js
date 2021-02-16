@@ -295,8 +295,7 @@ export async function paymentAuthorized(options = {}, payload = {}) {
     payload,
     paymentAuthorized.name
   );
-  const update = await order.update(changes);
-  return update;
+  return order.update(changes);
 }
 
 export async function refundPayment(options = {}, payload = {}) {
@@ -311,15 +310,15 @@ export async function refundPayment(options = {}, payload = {}) {
 }
 
 /**
- * Copy the existing customer data into the order.
+ * Copy existing customer data into the order.
  *
  * @param {Order} order
  * @throws {"InvalidCustomerId"}
  */
 async function getCustomerOrder(order) {
-  // If an id is given, try to get the customer model
+  // If an id is given, try fetching the model
   if (order.customerId) {
-    // Use the relation set in the spec to fetch it
+    // Use the relation defined in the spec
     const customer = await order.customer();
 
     if (!customer) {
@@ -339,7 +338,7 @@ async function getCustomerOrder(order) {
   }
   // Tell the customer service to try creating a new customer.
   // The event has a built-in handler that calls
-  // the framework's `addModel` function directly.
+  // the framework's `addModel` function.
   order.emit(CREATE_CUSTOMER_EVENT, order);
 
   return order;
