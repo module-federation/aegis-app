@@ -200,7 +200,7 @@ export const Order = {
       modelName: "customer",
       foreignKey: "customerId",
       type: "manyToOne",
-      desc: "Many orders per customer, just 1 cust. / order",
+      desc: "Many orders per customer, just one customer per order",
     },
   },
   commands: {

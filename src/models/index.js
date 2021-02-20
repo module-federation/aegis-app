@@ -154,39 +154,39 @@ import * as services from "../services-mock";
 import * as adapters from "../adapters";
 
 // Models
-import * as modelConfigs from "../model-config";
+import * as modelSpecs from "../config";
 
 const requiredProps = ["modelName", "endpoint", "factory"];
 
-function validateModel(model) {
-  const missing = requiredProps.filter(p => !model[p]);
+function validateSpec(spec) {
+  const missing = requiredProps.filter(key => !spec[key]);
   if (missing?.length > 0) {
     throw new Error(
-      `missing properties: ${missing} > ${Object.entries(model)}`
+      `missing properties: ${missing} > ${Object.entries(spec)}`
     );
   }
 }
 
 /**
- * @param {ModelSpecification} model
+ * @param {ModelSpecification} spec
  * @param {*} dependencies - services injected
  */
-function makeModel(model) {
-  validateModel(model);
+function makeModel(spec) {
+  validateSpec(spec);
 
-  const mixins = model.mixins || {};
-  const dependencies = model.dependencies || {};
+  const mixins = spec.mixins || {};
+  const dependencies = spec.dependencies || {};
 
   return {
-    ...model,
+    ...spec,
     mixins: mixins.concat(GlobalMixins),
     dependencies: {
       ...dependencies,
-      ...makeAdapters(model.ports, adapters, services),
+      ...makeAdapters(spec.ports, adapters, services),
     },
   };
 }
 
-const models = Object.values(modelConfigs).map(model => makeModel(model));
+const models = Object.values(modelSpecs).map(spec => makeModel(spec));
 
 export { models };

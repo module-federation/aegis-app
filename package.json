@@ -12,6 +12,7 @@
   "scripts": {
     "build": "npm run clean && webpack --config webpack.config.js",
     "start": "node -r dotenv/config dist/main.js",
+    "start-all": "npm run kafka-stop && npm run kafka-start && node -r dotenv/config dist/main.js",
     "dev-start": "nodemon --watch src --exec npm restart",
     "restart": "npm run build && npm run start",
     "clean": "rm -rf dist",

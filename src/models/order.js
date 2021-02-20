@@ -85,7 +85,7 @@ export const calcTotal = function (orderItems) {
 };
 
 /**
- * No changes to `propKey` once order is approved
+ * No changes to `propKey` properties once the order is approved
  * @param {*} o - the order
  * @param {*} propKey
  * @returns {string | null} the key or `null`
@@ -325,7 +325,7 @@ async function getCustomerOrder(order) {
       throw new Error("invalid customer id", order.customerId);
     }
 
-    // Copy the data we need into the order
+    // Copy the customer data to the order
     const updated = await order.update({
       creditCardNumber: customer.creditCardNumber,
       shippingAddress: customer.shippingAddress,
@@ -336,10 +336,12 @@ async function getCustomerOrder(order) {
     });
     return updated;
   }
-  // Tell the customer service to try creating a new customer.
-  // The event has a built-in handler that calls
-  // the framework's `addModel` function.
-  order.emit(CREATE_CUSTOMER_EVENT, order);
+  // Tell the customer service to try creating a
+  // new customer. The framework has a built-in handler
+  // that calls the model's `addModel` function.
+  if (order.saveShippingDetails) {
+    order.emit(CREATE_CUSTOMER_EVENT, order);
+  }
 
   return order;
 }
@@ -361,15 +363,22 @@ const OrderActions = {
       const customerOrder = await getCustomerOrder(order);
 
       // block the caller: we won't proceed w/o $$
-      const [address, payment] = await Promise.allSettled([
-        customerOrder.validateAddress(addressValidated),
-        customerOrder.authorizePayment(paymentAuthorized),
-      ]);
+      const authProm = customerOrder.authorizePayment(paymentAuthorized);
+      const addrProm = customerOrder.validateAddress(addressValidated);
+      const [payment, address] = await Promise.allSettled([authProm, addrProm]);
 
-      if (customerOrder.autoCheckout() && payment.paymentAuthorized()) {
+      if (payment.status === "rejected") {
+        throw new Error("payment auth problem");
+      }
+
+      if (!payment.paymentAuthorized()) {
+        throw new Error("payment authorization declined");
+      }
+
+      if (customerOrder.autoCheckout()) {
         handleStatusChange(
           customerOrder.update({
-            shippingAddress: address.shippingAddress,
+            shippingAddress,
             paymentAuthorization: payment.paymentAuthorization,
             orderStatus: OrderStatus.APPROVED,
           })
@@ -473,6 +482,7 @@ export function orderFactory(dependencies) {
     creditCardNumber = null,
     shippingPriority = null,
     autoCheckout = false,
+    saveShippingDetails = false,
     requireSignature,
   }) {
     const total = calcTotal(orderItems);
@@ -487,6 +497,7 @@ export function orderFactory(dependencies) {
       billingAddress,
       shippingAddress,
       signatureRequired,
+      saveShippingDetails,
       shippingPriority,
       estimatedArrival: null,
       [orderTotal]: total,

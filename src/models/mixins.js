@@ -110,45 +110,112 @@ const eventMask = {
   onload: 1 << 2, //  0100 Load
 };
 
+function handleUpdateEvent(model, updates, event) {
+  const isUpdate = eventMask.update & event;
+  const decrypted = isUpdate ? model.decrypt() : {};
+  return {
+    ...model,
+    ...updates,
+    ...decrypted,
+  };
+}
+
 /**
  * Run validation functions enabled for a given event.
  * @param {Model} model - the composed object
  * @param {*} changes - object containing changes
  * @param {Number} event - Indicates what event is occuring:
- * 1st bit turned on means update, 2nd bit create, 3rd load
+ * 1st bit turned on means update, 2nd bit create, 3rd load,
  * see `eventMask`.
  */
 export function validateModel(model, changes, event) {
-  changes[prevmodel] = JSON.parse(JSON.stringify(model)); // keep history
+  // if there are no changes, and the event is an update, return
+  if (Object.keys(changes) < 1 && eventMask.update & event) {
+    return model;
+  }
 
-  // Run validations against the incoming changes (input)
+  // keep history
+  changes[prevmodel] = JSON.parse(JSON.stringify(model));
+
+  console.debug({
+    update: eventMask.update & event,
+    create: eventMask.create & event,
+    onload: eventMask.onload & event,
+    validations: model[validations].sort((a, b) => a.order - b.order),
+    changes,
+  });
+
+  // Validate just the input data
   const updates = model[validations]
-    .filter(v => v.pre & event)
+    .filter(v => v.input & event)
     .sort((a, b) => a.order - b.order)
+    //.reduce((model, v) => model[v.name].apply(changes), changes);
     .map(v => model[v.name].apply(changes))
     .reduce((p, c) => ({ ...p, ...c }), changes);
 
   const updated = { ...model, ...updates };
+  //handleUpdateEvent(model, updates, event);
 
-  // Run validations against the updated object (output)
-  return updated[validations]
-    .filter(v => v.post & event)
-    .sort((a, b) => a.order - b.order)
-    .map(v => updated[v.name]())
-    .reduce((p, c) => ({ ...p, ...c }), updated);
+  // Validate the updated model
+  return (
+    updated[validations]
+      .filter(v => v.output & event)
+      .sort((a, b) => a.order - b.order)
+      //.reduce((model, v) => model[v.name](), updated);
+      .map(v => updated[v.name]())
+      .reduce((p, c) => ({ ...p, ...c }), updated)
+  );
 }
+
+/**
+ * Specify when validations run.
+ */
+const enableValidation = (() => {
+  const onUpdate = enableEvent(true, false, false);
+  const onCreate = enableEvent(false, true, false);
+  const onCreateAndUpdate = enableEvent(true, true, false);
+  const onLoad = enableEvent(false, false, true);
+  const onAll = enableEvent(true, true, true);
+  const none = enableEvent(false, false, false);
+  return {
+    /**
+     * Validation runs on update.
+     */
+    onUpdate,
+    /**
+     * Validation runs on create.
+     */
+    onCreate,
+    /**
+     * Validation runs on both create and update.
+     */
+    onCreateAndUpdate,
+    /**
+     * Validation runs on load.
+     */
+    onLoad,
+    /**
+     * Validation runs on all events.
+     */
+    onAll,
+    /**
+     * Validation runs on no event (disabled).
+     */
+    none,
+  };
+})();
 
 /**
  * Enable validation to run on specific events.
  * @param {boolean} onUpdate - whether or not to run the validation on update.
  * Defaults to `true`.
  * @param {boolean} onCreate - whether or not to run the validation on create.
- * Defaults to `false`.
+ * Defaults to `true`.
  * @param {boolean} onLoad - whether or not to run the validation when
  * the object is being loaded into memory after being deserialized.
  * Defaults to `false`.
  */
-function enableEvent(onUpdate = true, onCreate = false, onLoad = false) {
+function enableEvent(onUpdate = true, onCreate = true, onLoad = false) {
   let enabled = 0;
 
   if (onUpdate) {
@@ -166,26 +233,34 @@ function enableEvent(onUpdate = true, onCreate = false, onLoad = false) {
 
 /**
  * Add a validation function to be called for a given event.
- * @param {*} o - the composed object
- * @param {string} name - name of function to run
- * @param {number} pre - "pre" functions run against the object
- * containing the changes. Use the output of `enableEvent` here.
- * @param {number} post - "post" functions run against the target
- * object after the changes have been applied. Use the output
- * of `enableEvent` here.
- * @param {number} order - order in which validation runs
+ * @typedef {object} validationConfig
+ * @property {*} o - the composed object
+ * @property {string} name - name of function to run
+ * @property {number} input - "input" validations run against
+ * the request data passed by the caller. Use `enableValidation`
+ * to provide a value for this param.
+ * @property {number} output - "output" functions run against the
+ * model after the changes have been applied.
+ * @property {number} order - order in which validation runs
+ * @param {validationConfig} param0
  */
-export function addValidation(o, name, pre, post, order) {
-  const config = o[validations] || [];
+export function addValidation({
+  model,
+  name,
+  input = 0,
+  output = 0,
+  order = 50,
+}) {
+  const config = model[validations] || [];
 
   if (config.some(v => v.name === name)) {
-    return o;
+    return model;
   }
 
   return {
-    ...o,
+    ...model,
     validateModel,
-    [validations]: [...config, { name, pre, post, order }],
+    [validations]: [...config, { name, input, output, order }],
   };
 }
 
@@ -231,13 +306,13 @@ export const encryptProperties = (...propKeys) => o => {
       return encryptProps(this);
     },
 
-    ...addValidation(
-      o,
-      encryptProperties.name,
-      enableEvent(true, true),
-      enableEvent(false, true),
-      99
-    ),
+    ...addValidation({
+      model: o,
+      name: encryptProperties.name,
+      input: enableValidation.onUpdate,
+      output: enableValidation.onCreate,
+      order: 99,
+    }),
 
     decrypt() {
       return keys
@@ -266,7 +341,13 @@ export const freezeProperties = (...propKeys) => o => {
     freezeProperties() {
       preventUpdates(this);
     },
-    ...addValidation(o, freezeProperties.name, enableEvent(), 0, 20),
+
+    ...addValidation({
+      model: o,
+      name: freezeProperties.name,
+      input: enableValidation.onUpdate,
+      order: 20,
+    }),
   };
 };
 
@@ -288,7 +369,13 @@ export const requireProperties = (...propKeys) => o => {
     requireProperties() {
       requireProps(this);
     },
-    ...addValidation(o, requireProperties.name, 0, enableEvent(), 30),
+
+    ...addValidation({
+      model: o,
+      name: requireProperties.name,
+      output: enableValidation.onCreateAndUpdate,
+      order: 75,
+    }),
   };
 };
 
@@ -310,13 +397,14 @@ export const hashPasswords = (...propKeys) => o => {
     hashPasswords() {
       return hashPwds(this);
     },
-    ...addValidation(
-      o,
-      hashPasswords.name,
-      enableEvent(),
-      enableEvent(false, true),
-      80
-    ),
+
+    ...addValidation({
+      model: o,
+      name: hashPasswords.name,
+      input: enableValidation.onUpdate,
+      output: enableValidation.onCreate,
+      order: 80,
+    }),
   };
 };
 
@@ -342,63 +430,12 @@ export const allowProperties = (...propKeys) => o => {
     rejectUnknownProperties() {
       return rejectUnknownProps(this);
     },
-    ...addValidation(o, "rejectUnknownProperties", enableEvents(), 0, 40),
-  };
-};
 
-/**
- * Set a validation that invokes a port. The port must be configured
- * in the `ModelSpecification`.
- * @param {string} fn - name of port (as it appears in the ModelSpec)
- * @param {boolean} onCreate - invoke on create
- * @param {boolean} onUpdate - invoke on update
- * @param  {...any} args - pass arguments
- */
-export const invokePort = (fn, onCreate, onUpdate, ...args) => async o => {
-  return {
-    ...o,
-    invokePort() {
-      console.log({ func: "invokePort", fn, args });
-      return this[fn](...args).then(o => o);
-    },
-    ...addValidation(o, "invokePort", 0, enableEvent(onUpdate, onCreate), 85),
-  };
-};
-
-/**
- * Set a validation that calls a model method or provided function.
- * @param {string|function(Model, ...any):Promise<any>} fn - callback function
- * or name of method to executee
- * @param {boolean} onCreate - invoke on create
- * @param {boolean} onUpdate - invoke on update
- * @param  {...any} args - pass arguments to the method/function
- * @return {Model}
- */
-export const execMethod = (fn, onCreate, onUpdate, ...args) => async o => {
-  const functionType = {
-    function: (fn, obj, ...args) => fn(obj, ...args).then(o => o),
-    string: (fn, obj, ...args) => obj[fn](...args).then(o => o),
-  };
-
-  return {
-    ...o,
-    async execMethod() {
-      const model = await functionType[typeof fn](fn, this, ...args);
-      return model;
-    },
-    ...addValidation(o, "execMethod", 0, enableEvent(onUpdate, onCreate), 80),
-  };
-};
-
-/**
- * Create a method on a model.
- * @param {*} fn
- * @param  {...any} args
- */
-export const createMethod = (fn, ...args) => o => {
-  return {
-    ...o,
-    [fn.name]: () => fn(...args),
+    ...addValidation({
+      model: o,
+      name: "rejectUnknownProperties",
+      order: 40,
+    }),
   };
 };
 
@@ -462,10 +499,10 @@ const Validator = {
     typeof: (v, o, propVal) => v.typeof === typeof propVal,
     maxnum: (v, o, propVal) => v.maxnum + 1 > propVal,
     maxlen: (v, o, propVal) => v.maxlen + 1 > propVal.length,
-    unique: (v, o, propVal) => handleEncryption(v, o, propVal),
+    unique: (v, o, propVal) => handleEncryption(v, o, propVa),
   },
   /**
-   * Returns true if tests pass
+   * Returns true if tests pass.
    * @param {validation} v validation config
    * @param {Object} o object to compose
    * @param {*} propVal value of property to validate
@@ -484,9 +521,9 @@ const Validator = {
 
 /**
  * Verify a property value is a member of a list,
- * is unique within the set of model instances,
+ * is unique within a set of model instances,
  * is of a certain length, size or type,
- * matches a regular expression
+ * matches a regular expression,
  * or satisfies a custom validation function.
  * @param {validation[]} validations
  */
@@ -511,13 +548,13 @@ export const validateProperties = validations => o => {
       validate(this);
     },
 
-    ...addValidation(
-      o,
-      validateProperties.name,
-      enableEvent(true, true),
-      enableEvent(false, true),
-      82
-    ),
+    ...addValidation({
+      model: o,
+      name: validateProperties.name,
+      input: enableValidation.onUpdate,
+      output: enableValidation.onCreate,
+      order: 90,
+    }),
   };
 };
 
@@ -552,7 +589,81 @@ export const updateProperties = updaters => o => {
     updateProperties() {
       return updateProps(this);
     },
-    ...addValidation(o, updateProperties.name, enableEvent(), enableEvent()),
+
+    ...addValidation({
+      model: o,
+      name: updateProperties.name,
+      input: enableValidation.onUpdate,
+      order: 35,
+    }),
+  };
+};
+
+/**
+ * Set a validation that invokes a port. The port must be configured
+ * in the `ModelSpecification`.
+ * @param {string} fn - name of port (as it appears in the ModelSpec)
+ * @param {boolean} onCreate - invoke on create
+ * @param {boolean} onUpdate - invoke on update
+ * @param  {...any} args - pass arguments
+ */
+export const invokePort = (fn, onCreate, onUpdate, ...args) => async o => {
+  return {
+    ...o,
+    invokePort() {
+      console.log({ func: "invokePort", fn, args });
+      return this[fn](...args).then(o => o);
+    },
+
+    ...addValidation({
+      model: o,
+      name: "invokePort",
+      output: enableValidation.onUpdate,
+      order: 85,
+    }),
+  };
+};
+
+/**
+ * Set a validation that calls a model method or provided function.
+ * @param {string|function(Model, ...any):Promise<any>} fn - callback function
+ * or name of method to executee
+ * @param {boolean} onCreate - invoke on create
+ * @param {boolean} onUpdate - invoke on update
+ * @param  {...any} args - pass arguments to the method/function
+ * @return {Model}
+ */
+export const execMethod = (fn, onCreate, onUpdate, ...args) => async o => {
+  const functionType = {
+    function: (fn, obj, ...args) => fn(obj, ...args).then(o => o),
+    string: (fn, obj, ...args) => obj[fn](...args).then(o => o),
+  };
+
+  return {
+    ...o,
+    async execMethod() {
+      const model = await functionType[typeof fn](fn, this, ...args);
+      return model;
+    },
+
+    ...addValidation({
+      model: o,
+      name: "execMethod",
+      output: enableValidation.onUpdate,
+      order: 40,
+    }),
+  };
+};
+
+/**
+ * Create a method on a model.
+ * @param {*} fn
+ * @param  {...any} args
+ */
+export const createMethod = (fn, ...args) => o => {
+  return {
+    ...o,
+    [fn.name]: () => fn(...args),
   };
 };
 

@@ -113,7 +113,7 @@ export const Shipping = {
       data: createCommandEvent(this.trackShipment.name, respondOn, {
         externalId,
         shipmentId,
-        trackingId
+        trackingId,
       }),
     });
   },
@@ -124,25 +124,32 @@ export const Shipping = {
    * @returns {EventMessage}
    */
   verifyDelivery({ requester, respondOn, trackingId, externalId }) {
-    return {
-      eventSource: this.serviceName,
-      eventTarget: requester,
-      eventType: "command",
-      eventName: this.verifyDelivery.name,
-      eventTime: new Date().getTime(),
-      eventUuid: externalId,
-      eventData: {
-        commandName: this.verifyDelivery.name,
-        commandResp: respondOn,
-        commandArgs: {
-          trackingId,
-          externalId,
-        },
-      },
-    };
+    return createEventMessage({
+      requester,
+      service: this.serviceName,
+      type: "command",
+      name: this.verifyDelivery.name,
+      id: externalId,
+      data: createCommandEvent(this.verifyDelivery.name, respondOn, {
+        externalId,
+        trackingId,
+      }),
+    });
   },
 
-  returnShipment() {},
+  returnShipment({ requester, respondOn, shipmentId, externalId }) {
+    return createEventMessage({
+      requester,
+      service: this.serviceName,
+      type: "command",
+      id: externalId,
+      name: this.returnShipment.name,
+      data: createCommandEvent(this.returnShipment, respondOn, {
+        shipmentId,
+        externalId,
+      }),
+    });
+  },
 
   getPayload(func, event) {
     const payloads = {
