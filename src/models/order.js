@@ -362,16 +362,20 @@ const OrderActions = {
       if (order.paymentAuthorized()) return;
       const customerOrder = await getCustomerOrder(order);
 
-      // block the caller: we won't proceed w/o $$
       const authProm = customerOrder.authorizePayment(paymentAuthorized);
       const addrProm = customerOrder.validateAddress(addressValidated);
+
+      // block the caller: we won't proceed w/o $$
       const [payment, address] = await Promise.allSettled([authProm, addrProm]);
+      const shippingAddress = address.value
+        ? address.value.shippingAddress
+        : customerOrder.shippingAddress;
 
       if (payment.status === "rejected") {
         throw new Error("payment auth problem");
       }
 
-      if (!payment.paymentAuthorized()) {
+      if (!payment.value.paymentAuthorized()) {
         throw new Error("payment authorization declined");
       }
 
@@ -379,8 +383,8 @@ const OrderActions = {
         handleStatusChange(
           customerOrder.update({
             shippingAddress,
-            paymentAuthorization: payment.paymentAuthorization,
-            orderStatus: OrderStatus.APPROVED,
+            paymentAuthorization: payment.value.paymentAuthorization,
+            OrderStatus: OrderStatus.APPROVED,
           })
         );
       }
@@ -550,6 +554,10 @@ export function handleLatePickup({ model: order }) {
   console.log(handleLatePickup.name);
 }
 
+/**
+ * Start process to return canceled order items to inventory.
+ * @param {*} param0
+ */
 export async function returnInventory({ model }) {
   console.log(returnInventory.name);
 }

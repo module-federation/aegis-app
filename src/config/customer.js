@@ -7,7 +7,7 @@ import {
   validateProperties,
   requireProperties,
 } from "../models/mixins";
-import { uuid } from "../lib/utils";
+import { decrypt, uuid } from "../lib/utils";
 
 /**
  * @type {import('../models/index').ModelSpecification}
@@ -46,6 +46,12 @@ export const Customer = {
       modelName: "order",
       type: "oneToMany",
       foreignKey: "customerId",
+    },
+  },
+  commands: {
+    decrypt: {
+      command: decrypt,
+      acl: ["read", "decrypt"],
     },
   },
   accessControlList: {

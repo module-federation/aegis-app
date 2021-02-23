@@ -145,26 +145,23 @@ export function validateModel(model, changes, event) {
     changes,
   });
 
+  const input = { ...changes, [prevmodel]: JSON.parse(JSON.stringify(model)) };
+
   // Validate just the input data
   const updates = model[validations]
     .filter(v => v.input & event)
     .sort((a, b) => a.order - b.order)
-    //.reduce((model, v) => model[v.name].apply(changes), changes);
-    .map(v => model[v.name].apply(changes))
-    .reduce((p, c) => ({ ...p, ...c }), changes);
+    .map(v => model[v.name].apply(input))
+    .reduce((p, c) => ({ ...p, ...c }), input);
 
   const updated = { ...model, ...updates };
-  //handleUpdateEvent(model, updates, event);
 
   // Validate the updated model
-  return (
-    updated[validations]
-      .filter(v => v.output & event)
-      .sort((a, b) => a.order - b.order)
-      //.reduce((model, v) => model[v.name](), updated);
-      .map(v => updated[v.name]())
-      .reduce((p, c) => ({ ...p, ...c }), updated)
-  );
+  return updated[validations]
+    .filter(v => v.output & event)
+    .sort((a, b) => a.order - b.order)
+    .map(v => updated[v.name]())
+    .reduce((p, c) => ({ ...p, ...c }), updated);
 }
 
 /**
@@ -237,7 +234,7 @@ function enableEvent(onUpdate = true, onCreate = true, onLoad = false) {
  * @property {*} o - the composed object
  * @property {string} name - name of function to run
  * @property {number} input - "input" validations run against
- * the request data passed by the caller. Use `enableValidation`
+ * the data passed by the caller in the request. Use `enableValidation`
  * to provide a value for this param.
  * @property {number} output - "output" functions run against the
  * model after the changes have been applied.
@@ -408,7 +405,7 @@ export const hashPasswords = (...propKeys) => o => {
   };
 };
 
-const internalPropList = ["decrypt"];
+const internalPropList = [];
 
 /**
  * Reject unknown properties in user input. Allow only approved keys.
@@ -434,7 +431,8 @@ export const allowProperties = (...propKeys) => o => {
     ...addValidation({
       model: o,
       name: "rejectUnknownProperties",
-      order: 40,
+      input: enableValidation.onUpdate,
+      order: 15,
     }),
   };
 };
@@ -483,7 +481,7 @@ export const RegEx = {
  * }} validation
  */
 
-function handleEncryption(v, o, propVal) {
+function evaluateUniqueness(v, o, propVal) {
   const compareVal = v.unique.encrypted ? encrypt(propVal) : propVal;
   return o.listSync({ [v.propKey]: compareVal }).length < 1;
 }
@@ -499,7 +497,7 @@ const Validator = {
     typeof: (v, o, propVal) => v.typeof === typeof propVal,
     maxnum: (v, o, propVal) => v.maxnum + 1 > propVal,
     maxlen: (v, o, propVal) => v.maxlen + 1 > propVal.length,
-    unique: (v, o, propVal) => handleEncryption(v, o, propVa),
+    unique: (v, o, propVal) => evaluateUniqueness(v, o, propVal),
   },
   /**
    * Returns true if tests pass.

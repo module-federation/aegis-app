@@ -20,15 +20,14 @@ export function validateAddress(service) {
       args: [callback],
     } = options;
 
-    const shippingAddress = await service.validateAddress(
-      order.decrypt().shippingAddress
-    );
-
     try {
+      const shippingAddress = await service.validateAddress(
+        order.decrypt().shippingAddress
+      );
       const update = await callback(options, { shippingAddress });
       return update;
     } catch (error) {
-      console.error(error);
+      console.error({ func: validateAddress.name, error, options });
     }
   };
 }

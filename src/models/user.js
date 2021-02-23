@@ -36,7 +36,12 @@ export const userMixins = [
   validateProperties([
     {
       propKey: "email",
+      regex: "email",
       unique: { encrypted: true },
+    },
+    {
+      propKey: "userName",
+      unique: { encrypted: false },
     },
   ]),
 ];

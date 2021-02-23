@@ -30,6 +30,10 @@
  */
 
 /**
+ * @typedef {string} functionName
+ */
+
+/**
  * @typedef {Object} shippingService formats and parses shipping event messages
  * @property {string} serviceName - programmatic service name in eventSource/Target
  * @property {string} topic - event topic "shippingChannel" when sending messasges
@@ -37,7 +41,7 @@
  * @property {trackShipment} trackShipment - report on location/status of parcel
  * @property {function():EventMessage} verifyDelivery - ensure customer recieved parcel
  * @property {function():EventMessage} returnShipment - return to sender if refunding
- * @property {function(EventMessage):{[key]:string}} getPayload - extract payload
+ * @property {function(functionName,EventMessage):{[key]:string}} getPayload - extract payload
  */
 
 function createEventMessage({ requester, service, type, name, id, data }) {

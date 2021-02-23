@@ -7,7 +7,7 @@
  */
 
 /**
- * @callback eeventCallback
+ * @callback eventCallback
  * @param {string} message
  * @param {{
  *  unsubscribe:function()
@@ -35,13 +35,23 @@
  * @returns {function({model:Order,args:[portCallback]}):Order}
  */
 
-const respondOn = "orderChannel";
-const requester = "orderService";
+const ORDER_SERVICE = "orderService";
+const ORDER_TOPIC = "orderChannel";
+
+const handleError = error => {
+  console.error({ file: "shipping-adapter.js", error });
+};
 
 /**
- *
+ * Call `shipOrder` to request shipment of the order items.
  * @param {import('../services/shipping-service').shippingService} service
  * @type {adapterFactory}
+ * @returns {function(options):Promise<Order>}
+ * Return a promise that is resolved once we receive
+ * a response message from the shipping service. Start
+ * listening for the response first and then send the
+ * shipOrder event.
+ *
  */
 export function shipOrder(service) {
   return async function (options) {
@@ -50,11 +60,20 @@ export function shipOrder(service) {
       args: [callback],
     } = options;
 
+    /**
+     * Called by the event listener when the shipOrder
+     * response message arrives. Resolve the promise
+     * the caller has been waiting on since we sent
+     * the request message.
+     * @param {*} resolve
+     * @param {*} reject
+     * @returns
+     */
     function shipOrderCallback(resolve, reject) {
       return async function ({ message }) {
         try {
           const event = JSON.parse(message);
-          console.log("received event... ", event);
+          console.debug("received event... ", event);
           const payload = service.getPayload(shipOrder.name, event);
           const updated = await callback(options, payload);
           resolve(updated);
@@ -65,6 +84,9 @@ export function shipOrder(service) {
       };
     }
 
+    /**
+     * Send the shipOrder event to the shipping service.
+     */
     function callShipOrder() {
       return order.notify(
         service.topic,
@@ -75,8 +97,8 @@ export function shipOrder(service) {
             lineItems: order.orderItems,
             signature: order.signatureRequired,
             externalId: order.orderNo,
-            requester,
-            respondOn,
+            requester: ORDER_SERVICE,
+            respondOn: ORDER_TOPIC,
           })
         )
       );
@@ -88,14 +110,12 @@ export function shipOrder(service) {
           once: true,
           model: order,
           id: order.orderNo,
-          topic: "orderChannel",
+          topic: ORDER_TOPIC,
           filters: [order.orderNo, "orderShipped", "shipmentId"],
           callback: shipOrderCallback(resolve, reject),
         })
         .then(callShipOrder)
-        .catch(error => {
-          throw new Error(error);
-        });
+        .catch(handleError);
     });
   };
 }
@@ -113,15 +133,15 @@ export function trackShipment(service) {
 
     /**
      *
-     * @param {*} resolve
-     * @param {*} reject
+     * @param {function(Order)} resolve resolve the promise
+     * @param {function(Error)} reject reject promise
      * @returns {eventCallback}
      */
     function trackShipmentCallback(resolve, reject) {
       return async function ({ message, subscription }) {
         try {
           const event = JSON.parse(message);
-          console.log("received event...", event);
+          console.debug("received event...", event);
           const payload = service.getPayload(trackShipment.name, event);
           const updated = await callback(options, payload);
           if (updated.trackingStatus === "orderDelivered") {
@@ -142,8 +162,8 @@ export function trackShipment(service) {
           service.trackShipment({
             shipmentId: order.shipmentId,
             externalId: order.orderNo,
-            requester,
-            respondOn,
+            requester: ORDER_SERVICE,
+            respondOn: ORDER_TOPIC,
           })
         )
       );
@@ -160,9 +180,7 @@ export function trackShipment(service) {
           callback: trackShipmentCallback(resolve, reject),
         })
         .then(callTrackShipment)
-        .catch(error => {
-          throw new Error(error);
-        });
+        .catch(handleError);
     });
   };
 }
@@ -182,7 +200,7 @@ export function verifyDelivery(service) {
       return async function ({ message }) {
         try {
           const event = JSON.parse(message);
-          console.log("received event...", event);
+          console.debug("received event...", event);
           const payload = service.getPayload(verifyDelivery.name, event);
           const updated = await callback(options, payload);
           resolve(updated);
@@ -200,8 +218,8 @@ export function verifyDelivery(service) {
           service.verifyDelivery({
             trackingId: order.trackingId,
             externalId: order.orderNo,
-            requester,
-            respondOn,
+            requester: ORDER_SERVICE,
+            respondOn: ORDER_TOPIC,
           })
         )
       );
@@ -218,11 +236,7 @@ export function verifyDelivery(service) {
           callback: verifyDeliveryCallback(resolve, reject),
         })
         .then(callVerifyDelivery)
-        .catch(error => {
-          throw new Error(error);
-        });
-    }).catch(error => {
-      throw new Error(error);
+        .catch(handleError);
     });
   };
 }
