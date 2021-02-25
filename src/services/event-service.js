@@ -54,11 +54,15 @@ export const Event = {
    * @param {string} message
    */
   async notify(topic, message) {
-    await producer.connect();
-    await producer.send({
-      topic: topic,
-      messages: [{ value: message }],
-    });
-    await producer.disconnect();
+    try {
+      await producer.connect();
+      await producer.send({
+        topic: topic,
+        messages: [{ value: message }],
+      });
+      await producer.disconnect();
+    } catch (error) {
+      console.error({ func: this.notify.name, error });
+    }
   },
 };

@@ -37,7 +37,7 @@
  * @typedef {Object} shippingService formats and parses shipping event messages
  * @property {string} serviceName - programmatic service name in eventSource/Target
  * @property {string} topic - event topic "shippingChannel" when sending messasges
- * @property {shipOrder} shipOrder - request label and pickup of order
+ * @property {shipOrder} shipOrder - format event message requesting shipping label and pickup of order
  * @property {trackShipment} trackShipment - report on location/status of parcel
  * @property {function():EventMessage} verifyDelivery - ensure customer recieved parcel
  * @property {function():EventMessage} returnShipment - return to sender if refunding

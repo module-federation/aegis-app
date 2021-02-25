@@ -2,7 +2,7 @@
 
 import { prevmodel } from "./mixins";
 import checkPayload from "./check-payload";
-import { encrypt } from "../lib/utils";
+import { async, encrypt } from "../lib/utils";
 
 /**w
  * @typedef {string|RegExp} topic
@@ -30,7 +30,8 @@ import { encrypt } from "../lib/utils";
  * @property {string} orderNo = the order number
  * @property {string} trackingId - id given by tracking status for this `orderNo`
  * @property {function()} decrypt - decrypts encypted properties
- * @property {function(*):Promise<Order>} update - update the order
+ * @property {function({key1:any,keyN:any}, boolean):Promise<Order>} update - update the order,
+ * set the second arg to false to turn off validation.
  * @property {'APPROVED'|'SHIPPING'|'CANCELED'|'COMPLETED'} orderStatus
  * @property {function():Promise<Customer>} customer - retrieves related customer object.
  * @property {function(string,Order)} emit - broadcast domain event
@@ -278,7 +279,7 @@ export async function addressValidated(options = {}, payload = {}) {
     payload,
     addressValidated.name
   );
-  const shippingAddress = encrypt(addressPayload.shippingAddress);
+  const shippingAddress = addressPayload.shippingAddress;
   return order.update({ shippingAddress });
 }
 
@@ -358,50 +359,48 @@ const OrderActions = {
    * @param {Order} order - the order
    */
   [OrderStatus.PENDING]: async order => {
-    try {
-      if (order.paymentAuthorized()) return;
-      const customerOrder = await getCustomerOrder(order);
+    // If requester is a customer, get shipping data from customer service.
+    const customerOrder = await getCustomerOrder(order);
 
-      const authProm = customerOrder.authorizePayment(paymentAuthorized);
-      const addrProm = customerOrder.validateAddress(addressValidated);
+    // Authorize payment for the current total.
+    const payment = await async(
+      customerOrder.authorizePayment(paymentAuthorized)
+    );
 
-      // block the caller: we won't proceed w/o $$
-      const [payment, address] = await Promise.allSettled([authProm, addrProm]);
-      const shippingAddress = address.value
-        ? address.value.shippingAddress
-        : customerOrder.shippingAddress;
+    if (!payment.ok) {
+      throw new Error("payment auth problem", payment.error);
+    }
 
-      if (payment.status === "rejected") {
-        throw new Error("payment auth problem");
-      }
+    if (!payment.data.paymentAuthorized()) {
+      throw new Error("payment authorization declined");
+    }
 
-      if (!payment.value.paymentAuthorized()) {
-        throw new Error("payment authorization declined");
-      }
+    // Now validate address
+    const address = await async(payment.data.validateAddress(addressValidated));
 
-      if (customerOrder.autoCheckout()) {
-        handleStatusChange(
-          customerOrder.update({
-            shippingAddress,
-            paymentAuthorization: payment.value.paymentAuthorization,
-            OrderStatus: OrderStatus.APPROVED,
-          })
-        );
-      }
-    } catch (error) {
-      handleError(error, OrderStatus.PENDING);
+    if (customerOrder.autoCheckout()) {
+      handleStatusChange(
+        await customerOrder.update(
+          {
+            ...payment.data,
+            ...(address.ok ? address.data : {}),
+            orderStatus: OrderStatus.APPROVED,
+          },
+          false
+        )
+      );
     }
   },
   /**
    * If payment is authorized, notify inventory.
    * This kicks off the rest of the workflow,
-   * which is controlled through port config.
+   * which is controlled through ports config.
    * @param {Order} order
    */
   [OrderStatus.APPROVED]: async order => {
     try {
       if (order.paymentAuthorized()) {
-        // don't block the caller awaiting
+        // don't block the caller waiting
         order.pickOrder(orderPicked);
         return;
       }
@@ -417,7 +416,8 @@ const OrderActions = {
   [OrderStatus.SHIPPING]: async order => {
     try {
       // don't block the caller waiting for this
-      order.trackShipment(trackingUpdate);
+      // order.trackShipment(trackingUpdate);
+      console.debug({ func: OrderStatus.SHIPPING, order });
     } catch (error) {
       handleError(error, OrderStatus.SHIPPING);
     }

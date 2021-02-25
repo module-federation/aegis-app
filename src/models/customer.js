@@ -26,6 +26,11 @@ export function customerFactory({ uuid }) {
 }
 
 export async function okToDelete(customer) {
-  const orders = await customer.orders();
-  return orders.length > 0;
+  try {
+    const orders = await customer.orders();
+    return orders.length > 0;
+  } catch (error) {
+    console.error({ func: okToDelete.name, error });
+    return true;
+  }
 }

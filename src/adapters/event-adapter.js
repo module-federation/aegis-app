@@ -40,7 +40,7 @@ import { Event } from "../services/event-service";
  * @param {string} eventData
  * @typedef {eventHandler} notifyType
  * @typedef {{
- * listen:function(topic, eventHandler),
+ * listen:function(topic, x),
  * notify:notifyType
  * }} EventService
  * @callback adapterFactory
@@ -164,7 +164,7 @@ export function listen(service = Event) {
  */
 export function notify(service = Event) {
   return async function ({ model, args: [topic, message] }) {
-    console.log("sending...", { topic, message: JSON.parse(message) });
+    console.debug("sending...", { topic, message: JSON.parse(message) });
     await service.notify(topic, message);
     return model;
   };

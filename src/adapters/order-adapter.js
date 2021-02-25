@@ -55,6 +55,7 @@ export class OrderAdapter {
     throw new Error("unimplemented abstract method");
   }
 }
+
 export class RestOrderAdapter extends OrderAdapter {
   constructor(url) {
     super();

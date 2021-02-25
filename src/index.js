@@ -11,7 +11,7 @@ const services = require("./service-registry").default;
 
 const app = express();
 const map = new Map();
-const API_R = "/api";
+const API_ROOT = "/api";
 const PORT = 8060;
 
 // list the models we expose to host through module federation

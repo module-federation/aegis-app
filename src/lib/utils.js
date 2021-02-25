@@ -58,6 +58,14 @@ export function makeObject(prop) {
   return prop;
 }
 
+/**
+ *
+ * @param {Promise<{
+ * ok:()=>any,
+ *
+ * }} promise
+ * @returns
+ */
 export function async(promise) {
   return promise
     .then(data => ({

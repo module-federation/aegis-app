@@ -7,10 +7,12 @@
  */
 
 /**
+ * @typedef {string} message
  * @callback eventCallback
  * @param {string} message
  * @param {{
- *  unsubscribe:function()
+ *  unsubscribe:function(),
+ *  filter:function(message):boolean
  * }} subscription
  */
 
@@ -38,8 +40,9 @@
 const ORDER_SERVICE = "orderService";
 const ORDER_TOPIC = "orderChannel";
 
-const handleError = error => {
-  console.error({ file: "shipping-adapter.js", error });
+const handleError = (error, reject = null, func = null) => {
+  console.error({ file: __filename, func, error });
+  if (reject) reject(error);
 };
 
 /**
@@ -50,7 +53,7 @@ const handleError = error => {
  * Return a promise that is resolved once we receive
  * a response message from the shipping service. Start
  * listening for the response first and then send the
- * shipOrder event.
+ * request message.
  *
  */
 export function shipOrder(service) {
@@ -65,9 +68,9 @@ export function shipOrder(service) {
      * response message arrives. Resolve the promise
      * the caller has been waiting on since we sent
      * the request message.
-     * @param {*} resolve
-     * @param {*} reject
-     * @returns
+     * @param {function(Order)} resolve
+     * @param {function(Error)} reject
+     * @returns {function(message):Promise<Order>}
      */
     function shipOrderCallback(resolve, reject) {
       return async function ({ message }) {
@@ -78,8 +81,7 @@ export function shipOrder(service) {
           const updated = await callback(options, payload);
           resolve(updated);
         } catch (error) {
-          console.error(error);
-          reject(error);
+          handleError(error, reject, shipOrderCallback.name);
         }
       };
     }
@@ -135,7 +137,6 @@ export function trackShipment(service) {
      *
      * @param {function(Order)} resolve resolve the promise
      * @param {function(Error)} reject reject promise
-     * @returns {eventCallback}
      */
     function trackShipmentCallback(resolve, reject) {
       return async function ({ message, subscription }) {
@@ -149,8 +150,7 @@ export function trackShipment(service) {
             resolve(updated);
           }
         } catch (error) {
-          console.error(error);
-          reject(error);
+          handleError(error, reject, trackShipment.name);
         }
       };
     }
@@ -175,7 +175,7 @@ export function trackShipment(service) {
           once: false,
           model: order,
           id: order.orderNo,
-          topic: "orderChannel",
+          topic: ORDER_TOPIC,
           filters: [order.orderNo, "trackingId", "trackingStatus"],
           callback: trackShipmentCallback(resolve, reject),
         })
@@ -196,6 +196,12 @@ export function verifyDelivery(service) {
       args: [callback],
     } = options;
 
+    /**
+     *
+     * @param {function(Order)} resolve
+     * @param {function(Error)} reject
+     * @returns
+     */
     function verifyDeliveryCallback(resolve, reject) {
       return async function ({ message }) {
         try {
@@ -205,8 +211,7 @@ export function verifyDelivery(service) {
           const updated = await callback(options, payload);
           resolve(updated);
         } catch (e) {
-          console.error(e);
-          reject(e);
+          handleError(e, reject, verifyDeliveryCallback.name);
         }
       };
     }

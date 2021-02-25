@@ -137,7 +137,7 @@ export const Order = {
       keys: "shippingAddress",
       consumesEvent: "startWorkflow",
       producesEvent: "addressValidated",
-      disabled: true,
+      disabled: false,
     },
     authorizePayment: {
       service: "Payment",

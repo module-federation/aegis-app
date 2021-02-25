@@ -1,14 +1,12 @@
-'use strict'
+"use strict";
 
-export * from './address-adapter'
-export * from './payment-adapter'
-export * from './shipping-adapter'
-export * from './event-adapter'
-export * from './inventory-adapter'
+export * from "./address-adapter";
+export * from "./payment-adapter";
+export * from "./shipping-adapter";
+export * from "./event-adapter";
+export * from "./inventory-adapter";
 
 /**
  * @typedef {import('../models').Model} Model
- * @typedef {function(function(eventCallback):Model)} adapterFunction
+ * @typedef {function(function(eventCallback):Promise<Model>)} adapterFunction
  */
-
-
