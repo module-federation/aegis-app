@@ -19,9 +19,9 @@ import { async, encrypt } from "../lib/utils";
  * @property {adapterFunction} trackShipment
  * @property {adapterFunction} refundPayment
  * @property {adapterFunction} compensate - undo all transactions up to this point
- * @property {function():Promise<Order>} pickkOrder - pick the items and get them ready for shipment
+ * @property {function():Promise<Order>} pickOrder - pick the items and get them ready for shipment
  * @property {adapterFunction} authorizePayment - verify payment info, credit avail
- * @property {import('../adapters/shipping-adapter').} shipOrder
+ * @property {import('../adapters/shipping-adapter')} shipOrder
  * {import('../adapters/shipping-adapter').shipOrder} shipOrder -
  * calls shipping service to request delivery
  * @property {function(Order):Promise<void>} save - saves order
@@ -29,11 +29,11 @@ import { async, encrypt } from "../lib/utils";
  * @property {string} shippingAddress
  * @property {string} orderNo = the order number
  * @property {string} trackingId - id given by tracking status for this `orderNo`
- * @property {function()} decrypt - decrypts encypted properties
+ * @property {function():Order} decrypt - decrypts encypted properties
  * @property {function({key1:any,keyN:any}, boolean):Promise<Order>} update - update the order,
  * set the second arg to false to turn off validation.
  * @property {'APPROVED'|'SHIPPING'|'CANCELED'|'COMPLETED'} orderStatus
- * @property {function():Promise<Customer>} customer - retrieves related customer object.
+ * @property {function():Promise<import("../models/index").Model>} customer - retrieves related customer object.
  * @property {function(string,Order)} emit - broadcast domain event
  * @property {function():boolean} paymentAuthorized - payment approved and funds reserved
  * @property {function():boolean} autoCheckout - whether or not to immediately submit the order
@@ -154,6 +154,10 @@ const invalidStatusChanges = [
   invalidStatusChange(OrderStatus.PENDING, OrderStatus.SHIPPING),
   // Can't change directly to complete from pending
   invalidStatusChange(OrderStatus.PENDING, OrderStatus.COMPLETE),
+  // Can't change final status
+  invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.PENDING),
+  // Can't change final status
+  invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.SHIPPING),
 ];
 
 /**
@@ -279,8 +283,7 @@ export async function addressValidated(options = {}, payload = {}) {
     payload,
     addressValidated.name
   );
-  const shippingAddress = addressPayload.shippingAddress;
-  return order.update({ shippingAddress });
+  return order.update({ shippingAddress: addressPayload.shippingAddress });
 }
 
 /**
@@ -326,13 +329,14 @@ async function getCustomerOrder(order) {
       throw new Error("invalid customer id", order.customerId);
     }
 
-    // Copy the customer data to the order
+    // Add customer data to the order
+    const decrypted = customer.decrypt();
     const updated = await order.update({
-      creditCardNumber: customer.creditCardNumber,
-      shippingAddress: customer.shippingAddress,
-      billingAddress: customer.billingAddress,
-      email: customer.email,
-      lastName: customer.lastName,
+      creditCardNumber: decrypted.creditCardNumber,
+      shippingAddress: decrypted.shippingAddress,
+      billingAddress: decrypted.billingAddress,
+      email: decrypted.email,
+      lastName: decrypted.lastName,
       firstName: customer.firstName,
     });
     return updated;
@@ -371,19 +375,21 @@ const OrderActions = {
       throw new Error("payment auth problem", payment.error);
     }
 
-    if (!payment.data.paymentAuthorized()) {
+    if (!payment.object.paymentAuthorized()) {
       throw new Error("payment authorization declined");
     }
 
-    // Now validate address
-    const address = await async(payment.data.validateAddress(addressValidated));
+    // Now verify address
+    const address = await async(
+      payment.object.validateAddress(addressValidated)
+    );
 
     if (customerOrder.autoCheckout()) {
       handleStatusChange(
         await customerOrder.update(
           {
-            ...payment.data,
-            ...(address.ok ? address.data : {}),
+            ...payment.object,
+            ...(address.ok ? address.object : {}),
             orderStatus: OrderStatus.APPROVED,
           },
           false
@@ -394,13 +400,13 @@ const OrderActions = {
   /**
    * If payment is authorized, notify inventory.
    * This kicks off the rest of the workflow,
-   * which is controlled through ports config.
+   * which is controlled through port config.
    * @param {Order} order
    */
   [OrderStatus.APPROVED]: async order => {
     try {
       if (order.paymentAuthorized()) {
-        // don't block the caller waiting
+        // don't block the caller by waiting
         order.pickOrder(orderPicked);
         return;
       }
@@ -531,6 +537,10 @@ export function orderFactory(dependencies) {
 export async function approve(order) {
   const updated = await order.update({ orderStatus: OrderStatus.APPROVED });
   handleStatusChange(updated);
+}
+
+export async function submit(order) {
+  approve(order);
 }
 
 /**

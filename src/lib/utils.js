@@ -68,11 +68,11 @@ export function makeObject(prop) {
  */
 export function async(promise) {
   return promise
-    .then(data => ({
+    .then(result => ({
       ok: true,
-      data,
-      asObject: () => makeObject(data),
-      asArray: () => makeArray(data),
+      object: result,
+      asObject: () => makeObject(result),
+      asArray: () => makeArray(result),
     }))
     .catch(error => {
       console.error(error);

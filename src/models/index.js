@@ -109,7 +109,7 @@
  *  [x:string]: {
  *    allow:string|function(*):boolean|Array<string|function(*):boolean>
  *    deny:string|function(*):boolean|Array<string|function(*):boolean>
- *    type:"role"|"relation"
+ *    type:"role"|"relation"|"command"
  *    desc?:string
  *  }
  * }} accessControlList

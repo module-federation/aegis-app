@@ -113,5 +113,5 @@ wss.on("connection", function (ws, request) {
 
 // Start the server.
 server.listen(PORT, function () {
-  console.log(`Listening on http://localhost:${PORT}`);
+  console.log(`Listening on http://localhost:${PORT}\n`);
 });

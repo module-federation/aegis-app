@@ -7,7 +7,7 @@ import {
   validateProperties,
   requireProperties,
 } from "../models/mixins";
-import { decrypt, uuid } from "../lib/utils";
+import { uuid } from "../lib/utils";
 
 /**
  * @type {import('../models/index').ModelSpecification}
@@ -50,7 +50,7 @@ export const Customer = {
   },
   commands: {
     decrypt: {
-      command: decrypt,
+      command: "decrypt",
       acl: ["read", "decrypt"],
     },
   },

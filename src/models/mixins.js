@@ -134,17 +134,7 @@ export function validateModel(model, changes, event) {
     return model;
   }
 
-  // keep history
-  changes[prevmodel] = JSON.parse(JSON.stringify(model));
-
-  console.debug({
-    update: eventMask.update & event,
-    create: eventMask.create & event,
-    onload: eventMask.onload & event,
-    validations: model[validations].sort((a, b) => a.order - b.order),
-    changes,
-  });
-
+  // keep a history of the last saved model
   const input = { ...changes, [prevmodel]: JSON.parse(JSON.stringify(model)) };
 
   // Validate just the input data
@@ -173,7 +163,7 @@ const enableValidation = (() => {
   const onCreateAndUpdate = enableEvent(true, true, false);
   const onLoad = enableEvent(false, false, true);
   const onAll = enableEvent(true, true, true);
-  const none = enableEvent(false, false, false);
+  const never = enableEvent(false, false, false);
   return {
     /**
      * Validation runs on update.
@@ -196,9 +186,9 @@ const enableValidation = (() => {
      */
     onAll,
     /**
-     * Validation runs on no event (disabled).
+     * Validation runs on zero events (disabled).
      */
-    none,
+    never,
   };
 })();
 
@@ -224,7 +214,6 @@ function enableEvent(onUpdate = true, onCreate = true, onLoad = false) {
   if (onLoad) {
     enabled |= eventMask.onload;
   }
-
   return enabled;
 }
 
