@@ -17,17 +17,15 @@ export function publishEvent(event) {
     },
   };
 
-  const req = http.request(options, (res) => {
+  const req = http.request(options, res => {
     res.setEncoding("utf8");
-    res.on("data", (chunk) => {
-      // console.log(`BODY: ${chunk}`);
+    res.on("data", chunk => {
+      console.log(chunk);
     });
-    res.on("end", () => {
-      // console.log('No more data in response.');
-    });
+    res.on("end", () => {});
   });
 
-  req.on("error", (e) => {
+  req.on("error", e => {
     console.error(`problem with request: ${e.message}`);
   });
 

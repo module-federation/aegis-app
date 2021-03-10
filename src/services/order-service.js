@@ -3,7 +3,7 @@ import { RestOrderAdapter } from "../adapters/order-adapter";
 const url = process.env.ORDER_SVC_URL || "http://localhost:8070/api/orders/";
 
 export class OrderInfo {
-  constructore() {}
+  constructor() {}
   firstName;
   lastName;
   email;

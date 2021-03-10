@@ -530,6 +530,7 @@ export function orderFactory(dependencies) {
         return autoCheckout;
       },
     };
+
     return Object.freeze(order);
   };
 }
@@ -541,6 +542,12 @@ export async function approve(order) {
 
 export async function submit(order) {
   approve(order);
+}
+
+export async function count(order) {
+  return {
+    totalOrders: order.list().length,
+  };
 }
 
 /**

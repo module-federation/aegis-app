@@ -161,9 +161,7 @@ const requiredProps = ["modelName", "endpoint", "factory"];
 function validateSpec(spec) {
   const missing = requiredProps.filter(key => !spec[key]);
   if (missing?.length > 0) {
-    throw new Error(
-      `missing properties: ${missing} > ${Object.entries(spec)}`
-    );
+    throw new Error(`missing properties: ${missing} > ${Object.entries(spec)}`);
   }
 }
 
@@ -174,7 +172,7 @@ function validateSpec(spec) {
 function makeModel(spec) {
   validateSpec(spec);
 
-  const mixins = spec.mixins || {};
+  const mixins = spec.mixins || [];
   const dependencies = spec.dependencies || {};
 
   return {

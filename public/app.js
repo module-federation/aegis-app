@@ -21,7 +21,7 @@
             cls = "<span>";
           }
         } else if (/true|false/.test(match)) {
-          cls = "<span class='text-light'>";
+          cls = "<span class='text-white'>";
         } else if (/null/.test(match)) {
           cls = "<span class='text-info'>";
         }
