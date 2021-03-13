@@ -216,7 +216,12 @@ export function readyToDelete(model) {
  * @param {*} error
  * @param {*} func
  */
-function handleError(error, func) {
+function handleError(error, order, func) {
+  try {
+    if (order) order.emit("orderError", { func, error });
+  } catch (error) {
+    console.error("order.emit", error);
+  }
   console.error({ func, error });
   throw new Error(error);
 }
@@ -271,7 +276,7 @@ export async function orderPicked(options = {}, payload = {}) {
 }
 
 /**
- *
+ * Callback invoked when shippingAddress is verified (and possibly corrected)
  * @param {{ model:Order }} options
  * @param {string} shippingAddress
  */
@@ -302,6 +307,12 @@ export async function paymentAuthorized(options = {}, payload = {}) {
   return order.update(changes);
 }
 
+/**
+ * Called to refund payment when order is canceled.
+ * @param {*} options
+ * @param {*} payload
+ * @returns
+ */
 export async function refundPayment(options = {}, payload = {}) {
   const { model: order } = options;
   const changes = checkPayload(
@@ -314,7 +325,7 @@ export async function refundPayment(options = {}, payload = {}) {
 }
 
 /**
- * Copy existing customer data into the order.
+ * Copy existing customer data into the order or create new customer.
  *
  * @param {Order} order
  * @throws {"InvalidCustomerId"}
@@ -410,9 +421,9 @@ const OrderActions = {
         order.pickOrder(orderPicked);
         return;
       }
-      console.error("payment authorization problem");
+      order.emit("PayAuthFail", "Payment authorization problem");
     } catch (error) {
-      handleError(error, OrderStatus.APPROVED);
+      handleError(error, order, OrderStatus.APPROVED);
     }
   },
   /**
@@ -425,7 +436,7 @@ const OrderActions = {
       // order.trackShipment(trackingUpdate);
       console.debug({ func: OrderStatus.SHIPPING, order });
     } catch (error) {
-      handleError(error, OrderStatus.SHIPPING);
+      handleError(error, order, OrderStatus.SHIPPING);
     }
   },
   /**
@@ -436,7 +447,7 @@ const OrderActions = {
     try {
       order.undo();
     } catch (error) {
-      handleError(error, OrderStatus.CANCELED);
+      handleError(error, order, OrderStatus.CANCELED);
     }
   },
   /**
@@ -544,12 +555,6 @@ export async function submit(order) {
   approve(order);
 }
 
-export async function count(order) {
-  return {
-    totalOrders: order.list().length,
-  };
-}
-
 /**
  *
  * @param {{model:Order}} param0
@@ -565,10 +570,6 @@ export function errorCallback({ port, model: order, error }) {
  */
 export function timeoutCallback({ port, ports, adapterFn, model: order }) {
   console.error("timeout...", port);
-}
-
-export function handleLatePickup({ model: order }) {
-  console.log(handleLatePickup.name);
 }
 
 /**

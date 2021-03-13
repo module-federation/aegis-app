@@ -55,7 +55,7 @@ const postmixins = mixinSets[mixinType.post];
 
 /**
  * Apply any pre and post mixins and return the result.
- *
+ * @deprecated
  * @param {*} model - current model
  * @param {*} changes - object containing changes
  * @returns {import('.').Model} updated model
@@ -75,6 +75,7 @@ export function processUpdate(model, changes) {
 }
 
 /**
+ * @deprecated
  * Store mixins for execution on update
  * @param {mixinType} type
  * run before changes are applied or afterward
@@ -230,13 +231,7 @@ function enableEvent(onUpdate = true, onCreate = true, onLoad = false) {
  * @property {number} order - order in which validation runs
  * @param {validationConfig} param0
  */
-export function addValidation({
-  model,
-  name,
-  input = 0,
-  output = 0,
-  order = 50,
-}) {
+function addValidation({ model, name, input = 0, output = 0, order = 50 }) {
   const config = model[validations] || [];
 
   if (config.some(v => v.name === name)) {

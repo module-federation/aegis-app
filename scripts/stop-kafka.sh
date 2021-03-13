@@ -1,5 +1,5 @@
 #!/bin/sh
-cd ../kafka
+cd ../../kafka
 
 bin/kafka-server-stop.sh | { read message; if [ "$message" = "No kafka server to stop" ]; then echo "it's stopped"; fi }
 
