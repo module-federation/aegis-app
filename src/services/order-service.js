@@ -11,6 +11,7 @@ export class OrderInfo {
   shippingAddress;
   creditCardNumber;
 }
+
 export class OrderService {
   constructor(adapter = RestOrderAdapter) {
     this.adapter = new adapter(url);
@@ -31,30 +32,28 @@ export class OrderService {
   }
 
   async createOrder() {
-    try {
-      await this.adapter.createOrder();
-      return this;
-    } catch (error) {
-      throw new Error(error);
-    }
+    await this.adapter.createOrder();
+    return this;
   }
 
   async submitOrder(orderId = this.adapter.orderId) {
-    try {
-      await this.adapter.submitOrder(orderId);
-      return this;
-    } catch (error) {
-      throw new Error(error);
-    }
+    await this.adapter.submitOrder(orderId);
+    return this;
+  }
+
+  async getOrder(orderId = this.adapter.orderId) {
+    if (!this.adapter.order) await this.adapter.getOrder();
+    return this.adapter.order;
   }
 
   async getOrderStatus(orderId = this.adapter.orderId) {
-    try {
-      const status = await this.adapter.getOrderStatus(orderId);
-      return status;
-    } catch (error) {
-      throw new Error(error);
-    }
+    if (!this.adapter.order) await this.adapter.getOrder();
+    return this.adapter.order.orderStatus;
+  }
+
+  async getOrderTotal(orderId = this.adapter.orderId) {
+    if (!this.adapter.order) await this.adapter.getOrder();
+    return this.adapter.order.orderTotal;
   }
 }
 

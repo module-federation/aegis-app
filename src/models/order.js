@@ -223,6 +223,7 @@ function handleError(error, order, func) {
     console.error("order.emit", error);
   }
   console.error({ func, error });
+  2;
   throw new Error(error);
 }
 
@@ -356,7 +357,7 @@ async function getCustomerOrder(order) {
   // new customer. The framework has a built-in handler
   // that calls the model's `addModel` function.
   if (order.saveShippingDetails) {
-    order.emit(CREATE_CUSTOMER_EVENT, order);
+    await async(order.emit(CREATE_CUSTOMER_EVENT, order));
   }
 
   return order;
@@ -445,6 +446,11 @@ const OrderActions = {
    */
   [OrderStatus.CANCELED]: async order => {
     try {
+      console.debug({
+        func: OrderStatus.CANCELED,
+        desc: "calling undo",
+        orderNo: order.orderNo,
+      });
       order.undo();
     } catch (error) {
       handleError(error, order, OrderStatus.CANCELED);
@@ -546,8 +552,21 @@ export function orderFactory(dependencies) {
   };
 }
 
+/**
+ * Called as command to approve/submit order.
+ * @param {*} order
+ */
 export async function approve(order) {
   const updated = await order.update({ orderStatus: OrderStatus.APPROVED });
+  handleStatusChange(updated);
+}
+
+/**
+ * Called as command to cancel order.
+ * @param {*} order
+ */
+export async function cancel(order) {
+  const updated = await order.update({ orderStatus: OrderStatus.CANCELED });
   handleStatusChange(updated);
 }
 

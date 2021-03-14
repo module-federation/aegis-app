@@ -41,6 +41,7 @@ var serverConfig = {
         "./models": "./src/models",
         "./adapters": "./src/adapters",
         "./services": "./src/services",
+        "./services-mock": "./src/services-mock",
         "./validations": "./src/models/mixins",
       },
       shared: {

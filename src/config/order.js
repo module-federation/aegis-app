@@ -22,6 +22,7 @@ import {
   requiredForGuest,
   requiredForApproval,
   approve,
+  cancel,
 } from "../models/order";
 
 import {
@@ -193,10 +194,6 @@ export const Order = {
       service: "Payment",
       type: "outbound",
     },
-    noop: {
-      service: "noop",
-      type: "inbound",
-    },
   },
   relations: {
     customer: {
@@ -214,6 +211,10 @@ export const Order = {
     approve: {
       command: approve,
       acl: ["write", "approve"],
+    },
+    cancel: {
+      command: cancel,
+      acl: ["write", "cancel"],
     },
   },
   accessControlList: {
