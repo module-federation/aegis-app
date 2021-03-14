@@ -1,8 +1,8 @@
 /**
  * @type {import("../models").ModelSpecification}
  */
-export const Product = {
-  modelName: "Product",
-  endpoint: "products",
+export const Sales = {
+  modelName: "Sales",
+  endpoint: "sales",
   factory: () => ({ a, b }) => Object.freeze({ a, b }),
 };
