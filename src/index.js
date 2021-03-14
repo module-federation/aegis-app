@@ -116,3 +116,7 @@ wss.on("connection", function (ws, request) {
 server.listen(PORT, function () {
   console.log(`Listening on http://localhost:${PORT}\n`);
 });
+
+axios
+  .get("http://localhost:8070/reload")
+  .then(response => console.log(response.data));
