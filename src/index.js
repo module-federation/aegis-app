@@ -7,7 +7,7 @@ const WebSocket = require("ws");
 const { uuid } = require("./lib/utils");
 require("dotenv").config();
 const services = require("./service-registry").default;
-const { handleEvents } = require("./services-mock/event-service");
+//const { handleEvents } = require("./services-mock/event-service");
 
 const app = express();
 const map = new Map();
@@ -75,7 +75,7 @@ const wss = new WebSocket.Server({ clientTracking: true, noServer: true });
 // Send events emitted from host to any WS clients
 app.post(`${API_ROOT}/publish`, (req, res) => {
   console.log({ event: req.body });
-  handleEvents(req, res);
+  //handleEvents(req, res);
   wss.clients.forEach(function each(client) {
     if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify({ event: req.body }));

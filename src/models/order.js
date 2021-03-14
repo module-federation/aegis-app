@@ -595,26 +595,22 @@ export function timeoutCallback({ port, ports, adapterFn, model: order }) {
  * Start process to return canceled order items to inventory.
  * @param {*} param0
  */
-export async function returnInventory({ model }) {
+export async function returnInventory(order) {
   console.log(returnInventory.name);
+  await order.update({ orderStatus: OrderStatus.CANCELED });
 }
 
-export async function returnShipment({ model }) {
+export async function returnShipment(order) {
   console.log(returnShipment.name);
+  await order.update({ orderStatus: OrderStatus.CANCELED });
 }
 
-export async function returnDelivery({ model }) {
+export async function returnDelivery(order) {
   console.log(returnDelivery.name);
+  await order.update({ orderStatus: OrderStatus.CANCELED });
 }
 
-export async function cancelPayment({ model }) {
+export async function cancelPayment(order) {
   console.log(cancelPayment.name);
-}
-
-export async function compensate({ model }) {
-  try {
-    await model.undo();
-  } catch (error) {
-    console.error(error);
-  }
+  await order.update({ orderStatus: OrderStatus.CANCELED });
 }
