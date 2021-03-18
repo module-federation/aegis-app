@@ -111,18 +111,6 @@ export const Order = {
   onDelete: readyToDelete,
   eventHandlers: [handleOrderEvent],
   ports: {
-    helloWorld2: {
-      service: "hello2",
-      type: "inbound",
-    },
-    helloWorld: {
-      service: "hello",
-      type: "inbound",
-    },
-    newPort: {
-      service: "newService",
-      type: "outbound",
-    },
     listen: {
       service: "Event",
       type: "outbound",
