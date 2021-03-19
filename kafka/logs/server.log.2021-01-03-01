@@ -1,0 +1,7 @@
+[2021-01-03 01:19:45,454] INFO [GroupCoordinator 0]: Member fedmon-28449115-9375-4a22-b188-aa6ec188f4ee in group fedmonserv has failed, removing it from the group (kafka.coordinator.group.GroupCoordinator)
+[2021-01-03 01:19:45,512] INFO [GroupCoordinator 0]: Preparing to rebalance group fedmonserv in state PreparingRebalance with old generation 133 (__consumer_offsets-27) (reason: removing member fedmon-28449115-9375-4a22-b188-aa6ec188f4ee on heartbeat expiration) (kafka.coordinator.group.GroupCoordinator)
+[2021-01-03 01:19:45,609] INFO [GroupCoordinator 0]: Group fedmonserv with generation 134 is now empty (__consumer_offsets-27) (kafka.coordinator.group.GroupCoordinator)
+[2021-01-03 01:20:56,503] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 43 milliseconds. (kafka.coordinator.group.GroupMetadataManager)
+[2021-01-03 01:30:56,471] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 29 milliseconds. (kafka.coordinator.group.GroupMetadataManager)
+[2021-01-03 01:44:00,911] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 14 milliseconds. (kafka.coordinator.group.GroupMetadataManager)
+[2021-01-03 01:55:38,603] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 35 milliseconds. (kafka.coordinator.group.GroupMetadataManager)

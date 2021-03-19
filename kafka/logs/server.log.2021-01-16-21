@@ -1,0 +1,6 @@
+[2021-01-16 21:00:20,941] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 2 milliseconds. (kafka.coordinator.group.GroupMetadataManager)
+[2021-01-16 21:10:20,936] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 2 milliseconds. (kafka.coordinator.group.GroupMetadataManager)
+[2021-01-16 21:20:20,918] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 2 milliseconds. (kafka.coordinator.group.GroupMetadataManager)
+[2021-01-16 21:30:20,896] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 16 milliseconds. (kafka.coordinator.group.GroupMetadataManager)
+[2021-01-16 21:40:29,712] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 4 milliseconds. (kafka.coordinator.group.GroupMetadataManager)
+[2021-01-16 21:50:29,683] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 0 milliseconds. (kafka.coordinator.group.GroupMetadataManager)

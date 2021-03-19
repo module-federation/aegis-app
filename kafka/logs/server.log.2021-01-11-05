@@ -1,0 +1,8 @@
+[2021-01-11 05:19:05,777] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 1 milliseconds. (kafka.coordinator.group.GroupMetadataManager)
+[2021-01-11 05:29:05,757] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 1 milliseconds. (kafka.coordinator.group.GroupMetadataManager)
+[2021-01-11 05:39:05,739] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 3 milliseconds. (kafka.coordinator.group.GroupMetadataManager)
+[2021-01-11 05:44:15,612] INFO [GroupCoordinator 0]: Preparing to rebalance group fedmon in state PreparingRebalance with old generation 20 (__consumer_offsets-23) (reason: Adding new member fedmon-0471f471-67b0-4f2b-ae2f-425e06b15009 with group instance id None) (kafka.coordinator.group.GroupCoordinator)
+[2021-01-11 05:44:15,614] INFO [GroupCoordinator 0]: Stabilized group fedmon generation 21 (__consumer_offsets-23) (kafka.coordinator.group.GroupCoordinator)
+[2021-01-11 05:44:15,618] INFO [GroupCoordinator 0]: Assignment received from leader for group fedmon for generation 21 (kafka.coordinator.group.GroupCoordinator)
+[2021-01-11 05:49:05,711] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 3 milliseconds. (kafka.coordinator.group.GroupMetadataManager)
+[2021-01-11 05:59:05,683] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 1 milliseconds. (kafka.coordinator.group.GroupMetadataManager)

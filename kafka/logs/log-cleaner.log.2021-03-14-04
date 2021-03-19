@@ -1,0 +1,20 @@
+[2021-03-14 04:09:18,096] INFO Cleaner 0: Beginning cleaning of log __consumer_offsets-31. (kafka.log.LogCleaner)
+[2021-03-14 04:09:18,099] INFO Cleaner 0: Building offset map for __consumer_offsets-31... (kafka.log.LogCleaner)
+[2021-03-14 04:09:18,170] INFO Cleaner 0: Building offset map for log __consumer_offsets-31 for 1 segments in offset range [6710960, 7549830). (kafka.log.LogCleaner)
+[2021-03-14 04:09:18,613] INFO Cleaner 0: Offset map for log __consumer_offsets-31 complete. (kafka.log.LogCleaner)
+[2021-03-14 04:09:18,614] INFO Cleaner 0: Cleaning log __consumer_offsets-31 (cleaning prior to Sun Mar 14 04:09:06 CDT 2021, discarding tombstones prior to Sat Mar 13 02:54:01 CST 2021)... (kafka.log.LogCleaner)
+[2021-03-14 04:09:18,617] INFO Cleaner 0: Cleaning LogSegment(baseOffset=0, size=0, lastModifiedTime=1615711507580, largestTime=1615711507580) in log __consumer_offsets-31 into 0 with deletion horizon 1615625641779, retaining deletes. (kafka.log.LogCleaner)
+[2021-03-14 04:09:18,617] INFO Cleaner 0: Cleaning LogSegment(baseOffset=5872096, size=1261, lastModifiedTime=1615712041779, largestTime=1615712041779) in log __consumer_offsets-31 into 0 with deletion horizon 1615625641779, retaining deletes. (kafka.log.LogCleaner)
+[2021-03-14 04:09:18,637] INFO Cleaner 0: Swapping in cleaned segment LogSegment(baseOffset=0, size=0, lastModifiedTime=1615712041779, largestTime=1615712041779) for segment(s) List(LogSegment(baseOffset=0, size=0, lastModifiedTime=1615711507580, largestTime=1615711507580), LogSegment(baseOffset=5872096, size=1261, lastModifiedTime=1615712041779, largestTime=1615712041779)) in log Log(dir=/tmp/kafka-logs/__consumer_offsets-31, topic=__consumer_offsets, partition=31, highWatermark=7571040, lastStableOffset=7571040, logStartOffset=0, logEndOffset=7571040) (kafka.log.LogCleaner)
+[2021-03-14 04:09:18,641] INFO Cleaner 0: Cleaning LogSegment(baseOffset=6710960, size=104857484, lastModifiedTime=1615712946358, largestTime=1615712946358) in log __consumer_offsets-31 into 6710960 with deletion horizon 1615625641779, retaining deletes. (kafka.log.LogCleaner)
+[2021-03-14 04:09:18,975] INFO Cleaner 0: Swapping in cleaned segment LogSegment(baseOffset=6710960, size=1261, lastModifiedTime=1615712946358, largestTime=1615712946358) for segment(s) List(LogSegment(baseOffset=6710960, size=104857484, lastModifiedTime=1615712946358, largestTime=1615712946358)) in log Log(dir=/tmp/kafka-logs/__consumer_offsets-31, topic=__consumer_offsets, partition=31, highWatermark=7571599, lastStableOffset=7571599, logStartOffset=0, logEndOffset=7571599) (kafka.log.LogCleaner)
+[2021-03-14 04:09:18,978] INFO [kafka-log-cleaner-thread-0]: 
+	Log cleaner thread 0 cleaned log __consumer_offsets-31 (dirty section = [6710960, 7549830])
+	100.0 MB of log processed in 0.9 seconds (114.0 MB/sec).
+	Indexed 100.0 MB in 0.5 seconds (194.2 Mb/sec, 58.7% of total time)
+	Buffer utilization: 0.0%
+	Cleaned 100.0 MB in 0.4 seconds (276.2 Mb/sec, 41.3% of total time)
+	Start size: 100.0 MB (838,876 messages)
+	End size: 0.0 MB (6 messages)
+	100.0% size reduction (100.0% fewer messages)
+ (kafka.log.LogCleaner)

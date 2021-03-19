@@ -1,0 +1,26 @@
+[2021-03-19T17:16:19.322+0600][gc] Using G1
+[2021-03-19T17:16:19.327+0600][gc,init] Version: 15.0.1+9-18 (release)
+[2021-03-19T17:16:19.327+0600][gc,init] CPUs: 8 total, 8 available
+[2021-03-19T17:16:19.327+0600][gc,init] Memory: 8192M
+[2021-03-19T17:16:19.327+0600][gc,init] Large Page Support: Disabled
+[2021-03-19T17:16:19.327+0600][gc,init] NUMA Support: Disabled
+[2021-03-19T17:16:19.327+0600][gc,init] Compressed Oops: Enabled (Zero based)
+[2021-03-19T17:16:19.327+0600][gc,init] Heap Region Size: 1M
+[2021-03-19T17:16:19.327+0600][gc,init] Heap Min Capacity: 1G
+[2021-03-19T17:16:19.327+0600][gc,init] Heap Initial Capacity: 1G
+[2021-03-19T17:16:19.327+0600][gc,init] Heap Max Capacity: 1G
+[2021-03-19T17:16:19.327+0600][gc,init] Pre-touch: Disabled
+[2021-03-19T17:16:19.327+0600][gc,init] Parallel Workers: 8
+[2021-03-19T17:16:19.327+0600][gc,init] Concurrent Workers: 2
+[2021-03-19T17:16:19.327+0600][gc,init] Concurrent Refinement Workers: 8
+[2021-03-19T17:16:19.327+0600][gc,init] Periodic GC: Disabled
+[2021-03-19T17:16:19.328+0600][gc,cds ] Mark closed archive regions in map: [0x00000007fff00000, 0x00000007fff78ff8]
+[2021-03-19T17:16:19.328+0600][gc,cds ] Mark open archive regions in map: [0x00000007ffe00000, 0x00000007ffe50ff8]
+[2021-03-19T17:16:19.328+0600][gc,metaspace] CDS archive(s) mapped at: [0x0000000800000000-0x0000000800b2c000-0x0000000800b2c000), size 11714560, SharedBaseAddress: 0x0000000800000000, ArchiveRelocationMode: 0.
+[2021-03-19T17:16:19.328+0600][gc,metaspace] Compressed class space mapped at: 0x0000000800b2c000-0x0000000840b2c000, size: 1073741824
+[2021-03-19T17:16:19.328+0600][gc,metaspace] Narrow klass base: 0x0000000800000000, Narrow klass shift: 3, Narrow klass range: 0x100000000
+[2021-03-19T17:16:20.501+0600][gc,heap,exit] Heap
+[2021-03-19T17:16:20.501+0600][gc,heap,exit]  garbage-first heap   total 1048576K, used 19240K [0x00000007c0000000, 0x0000000800000000)
+[2021-03-19T17:16:20.501+0600][gc,heap,exit]   region size 1024K, 19 young (19456K), 0 survivors (0K)
+[2021-03-19T17:16:20.501+0600][gc,heap,exit]  Metaspace       used 7789K, capacity 7929K, committed 8192K, reserved 1056768K
+[2021-03-19T17:16:20.501+0600][gc,heap,exit]   class space    used 919K, capacity 954K, committed 1024K, reserved 1048576K

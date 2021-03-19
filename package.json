@@ -1,5 +1,5 @@
 {
-  "name": "MicroLib-OrderServiceExample",
+  "name": "microlib-example",
   "version": "1.0.0",
   "description": "",
   "main": "./dist/main.js",

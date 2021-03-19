@@ -112,11 +112,20 @@ wss.on("connection", function (ws, request) {
   });
 });
 
-// Start the server.
+setTimeout(() => {
+  try {
+    const https = require("https");
+    const httpsAgent = new https.Agent({
+      rejectUnauthorized: false,
+    });
+    axios
+      .get("https://localhost:8707/microlib/reload", { httpsAgent })
+      .then(response => console.log(response.data));
+  } catch (e) {
+    console.log(e);
+  }
+}, 10000);
+
 server.listen(PORT, function () {
   console.log(`Listening on http://localhost:${PORT}\n`);
 });
-
-axios
-  .get("http://localhost:8070/reload")
-  .then(response => console.log(response.data));
