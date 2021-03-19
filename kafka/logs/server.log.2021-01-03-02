@@ -1,5 +1,0 @@
-[2021-01-03 02:05:38,546] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 6 milliseconds. (kafka.coordinator.group.GroupMetadataManager)
-[2021-01-03 02:07:00,444] INFO [GroupCoordinator 0]: Preparing to rebalance group fedmonserv in state PreparingRebalance with old generation 134 (__consumer_offsets-27) (reason: Adding new member fedmon-d656d508-a83b-4ad1-b536-2599780b5924 with group instance id None) (kafka.coordinator.group.GroupCoordinator)
-[2021-01-03 02:07:00,465] INFO [GroupCoordinator 0]: Stabilized group fedmonserv generation 135 (__consumer_offsets-27) (kafka.coordinator.group.GroupCoordinator)
-[2021-01-03 02:07:00,488] INFO [GroupCoordinator 0]: Assignment received from leader for group fedmonserv for generation 135 (kafka.coordinator.group.GroupCoordinator)
-[2021-01-03 02:54:07,199] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 62 milliseconds. (kafka.coordinator.group.GroupMetadataManager)

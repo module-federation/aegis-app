@@ -1,8 +1,0 @@
-[2020-12-28 05:00:41,014] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 15 milliseconds. (kafka.coordinator.group.GroupMetadataManager)
-[2020-12-28 05:07:44,889] INFO [GroupCoordinator 0]: Member fedmon-b26beb5e-db64-4eb3-a107-af57620114e2 in group fedmonserv has failed, removing it from the group (kafka.coordinator.group.GroupCoordinator)
-[2020-12-28 05:07:44,893] INFO [GroupCoordinator 0]: Preparing to rebalance group fedmonserv in state PreparingRebalance with old generation 65 (__consumer_offsets-27) (reason: removing member fedmon-b26beb5e-db64-4eb3-a107-af57620114e2 on heartbeat expiration) (kafka.coordinator.group.GroupCoordinator)
-[2020-12-28 05:07:44,895] INFO [GroupCoordinator 0]: Group fedmonserv with generation 66 is now empty (__consumer_offsets-27) (kafka.coordinator.group.GroupCoordinator)
-[2020-12-28 05:11:49,376] INFO [GroupCoordinator 0]: Preparing to rebalance group fedmonserv in state PreparingRebalance with old generation 66 (__consumer_offsets-27) (reason: Adding new member fedmon-d9bdddda-5ce0-4475-84d7-77d1c907eee5 with group instance id None) (kafka.coordinator.group.GroupCoordinator)
-[2020-12-28 05:11:49,381] INFO [GroupCoordinator 0]: Stabilized group fedmonserv generation 67 (__consumer_offsets-27) (kafka.coordinator.group.GroupCoordinator)
-[2020-12-28 05:11:49,386] INFO [GroupCoordinator 0]: Assignment received from leader for group fedmonserv for generation 67 (kafka.coordinator.group.GroupCoordinator)
-[2020-12-28 05:14:20,746] INFO [GroupMetadataManager brokerId=0] Removed 0 expired offsets in 7 milliseconds. (kafka.coordinator.group.GroupMetadataManager)

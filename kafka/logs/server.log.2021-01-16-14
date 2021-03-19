@@ -1,3 +1,0 @@
-[2021-01-16 14:58:43,334] INFO [GroupCoordinator 0]: Preparing to rebalance group fedmon in state PreparingRebalance with old generation 4 (__consumer_offsets-23) (reason: Adding new member fedmon-c40d4fc1-097f-4fd5-afd3-9262c57dac39 with group instance id None) (kafka.coordinator.group.GroupCoordinator)
-[2021-01-16 14:58:43,354] INFO [GroupCoordinator 0]: Stabilized group fedmon generation 5 (__consumer_offsets-23) (kafka.coordinator.group.GroupCoordinator)
-[2021-01-16 14:58:43,363] INFO [GroupCoordinator 0]: Assignment received from leader for group fedmon for generation 5 (kafka.coordinator.group.GroupCoordinator)

@@ -1,4 +1,0 @@
-[2021-01-04 17:32:20,079] INFO [Controller id=0] Processing automatic preferred replica leader election (kafka.controller.KafkaController)
-[2021-01-04 17:32:20,099] TRACE [Controller id=0] Checking need to trigger auto leader balancing (kafka.controller.KafkaController)
-[2021-01-04 17:32:20,121] DEBUG [Controller id=0] Topics not in preferred replica for broker 0 HashMap() (kafka.controller.KafkaController)
-[2021-01-04 17:32:20,122] TRACE [Controller id=0] Leader imbalance ratio for broker 0 is 0.0 (kafka.controller.KafkaController)
