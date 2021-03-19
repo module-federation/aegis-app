@@ -22,6 +22,7 @@ import {
   requiredForGuest,
   requiredForApproval,
   approve,
+  cancel,
 } from "../models/order";
 
 import {
@@ -210,6 +211,10 @@ export const Order = {
     approve: {
       command: approve,
       acl: ["write", "approve"],
+    },
+    cancel: {
+      command: cancel,
+      acl: ["write", "cancel"],
     },
   },
   accessControlList: {

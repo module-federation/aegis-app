@@ -1,3 +1,4 @@
 
+# Developing an application using MicroLib
 
-The [MicroLib](https://github.com/tysonrm/microlib) server remotely imports modules in src/services, src/adapters and src/models. Code to retrieve chunks via http (instead of shared filesystem) courtesy of [jacob-ebey](https://github.com/jacob-ebey)
+Example of an Order and Customer service streaming to / running in the same [MicroLib](https://github.com/module-federation/MicroLib) host server process. Shows integration with, and orchestration of, an Address, Payment, Inventory,s Shipping, Event (Kafka, WebSockets), and Persistance service (MongoDB) via MicroLib federated ports.

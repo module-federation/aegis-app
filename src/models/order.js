@@ -216,8 +216,14 @@ export function readyToDelete(model) {
  * @param {*} error
  * @param {*} func
  */
-function handleError(error, func) {
+function handleError(error, order, func) {
+  try {
+    if (order) order.emit("orderError", { func, error });
+  } catch (error) {
+    console.error("order.emit", error);
+  }
   console.error({ func, error });
+  2;
   throw new Error(error);
 }
 
@@ -271,7 +277,7 @@ export async function orderPicked(options = {}, payload = {}) {
 }
 
 /**
- *
+ * Callback invoked when shippingAddress is verified (and possibly corrected)
  * @param {{ model:Order }} options
  * @param {string} shippingAddress
  */
@@ -302,6 +308,12 @@ export async function paymentAuthorized(options = {}, payload = {}) {
   return order.update(changes);
 }
 
+/**
+ * Called to refund payment when order is canceled.
+ * @param {*} options
+ * @param {*} payload
+ * @returns
+ */
 export async function refundPayment(options = {}, payload = {}) {
   const { model: order } = options;
   const changes = checkPayload(
@@ -314,7 +326,7 @@ export async function refundPayment(options = {}, payload = {}) {
 }
 
 /**
- * Copy existing customer data into the order.
+ * Copy existing customer data into the order or create new customer.
  *
  * @param {Order} order
  * @throws {"InvalidCustomerId"}
@@ -345,7 +357,7 @@ async function getCustomerOrder(order) {
   // new customer. The framework has a built-in handler
   // that calls the model's `addModel` function.
   if (order.saveShippingDetails) {
-    order.emit(CREATE_CUSTOMER_EVENT, order);
+    await async(order.emit(CREATE_CUSTOMER_EVENT, order));
   }
 
   return order;
@@ -410,9 +422,9 @@ const OrderActions = {
         order.pickOrder(orderPicked);
         return;
       }
-      console.error("payment authorization problem");
+      order.emit("PayAuthFail", "Payment authorization problem");
     } catch (error) {
-      handleError(error, OrderStatus.APPROVED);
+      handleError(error, order, OrderStatus.APPROVED);
     }
   },
   /**
@@ -425,7 +437,7 @@ const OrderActions = {
       // order.trackShipment(trackingUpdate);
       console.debug({ func: OrderStatus.SHIPPING, order });
     } catch (error) {
-      handleError(error, OrderStatus.SHIPPING);
+      handleError(error, order, OrderStatus.SHIPPING);
     }
   },
   /**
@@ -434,9 +446,14 @@ const OrderActions = {
    */
   [OrderStatus.CANCELED]: async order => {
     try {
+      console.debug({
+        func: OrderStatus.CANCELED,
+        desc: "calling undo",
+        orderNo: order.orderNo,
+      });
       order.undo();
     } catch (error) {
-      handleError(error, OrderStatus.CANCELED);
+      handleError(error, order, OrderStatus.CANCELED);
     }
   },
   /**
@@ -535,19 +552,26 @@ export function orderFactory(dependencies) {
   };
 }
 
+/**
+ * Called as command to approve/submit order.
+ * @param {*} order
+ */
 export async function approve(order) {
   const updated = await order.update({ orderStatus: OrderStatus.APPROVED });
   handleStatusChange(updated);
 }
 
-export async function submit(order) {
-  approve(order);
+/**
+ * Called as command to cancel order.
+ * @param {*} order
+ */
+export async function cancel(order) {
+  const updated = await order.update({ orderStatus: OrderStatus.CANCELED });
+  handleStatusChange(updated);
 }
 
-export async function count(order) {
-  return {
-    totalOrders: order.list().length,
-  };
+export async function submit(order) {
+  approve(order);
 }
 
 /**
@@ -567,34 +591,26 @@ export function timeoutCallback({ port, ports, adapterFn, model: order }) {
   console.error("timeout...", port);
 }
 
-export function handleLatePickup({ model: order }) {
-  console.log(handleLatePickup.name);
-}
-
 /**
  * Start process to return canceled order items to inventory.
  * @param {*} param0
  */
-export async function returnInventory({ model }) {
+export async function returnInventory(order) {
   console.log(returnInventory.name);
+  await order.update({ orderStatus: OrderStatus.CANCELED });
 }
 
-export async function returnShipment({ model }) {
+export async function returnShipment(order) {
   console.log(returnShipment.name);
+  await order.update({ orderStatus: OrderStatus.CANCELED });
 }
 
-export async function returnDelivery({ model }) {
+export async function returnDelivery(order) {
   console.log(returnDelivery.name);
+  await order.update({ orderStatus: OrderStatus.CANCELED });
 }
 
-export async function cancelPayment({ model }) {
+export async function cancelPayment(order) {
   console.log(cancelPayment.name);
-}
-
-export async function compensate({ model }) {
-  try {
-    await model.undo();
-  } catch (error) {
-    console.error(error);
-  }
+  await order.update({ orderStatus: OrderStatus.CANCELED });
 }

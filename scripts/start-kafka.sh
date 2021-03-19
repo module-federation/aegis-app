@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd ../kafka
+cd ../../kafka*
 
 nohup bin/zookeeper-server-start.sh  config/zookeeper.properties > zookpr.out &
 

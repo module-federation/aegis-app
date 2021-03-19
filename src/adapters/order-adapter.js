@@ -47,6 +47,10 @@ export class OrderAdapter {
     throw new Error("unimplemented abstract method");
   }
 
+  async getOrder(orderId = this.orderId) {
+    throw new Error("unimplememnted abstract method");
+  }
+
   completeOrder() {
     throw new Error("unimplemented abstract method");
   }
@@ -104,7 +108,7 @@ export class RestOrderAdapter extends OrderAdapter {
     return axios.get(this.url + orderId).then(
       response => {
         console.log(response.data);
-        this.order = response.data.model;
+        this.order = response.data;
         return this.order;
       },
       error => {
@@ -112,11 +116,6 @@ export class RestOrderAdapter extends OrderAdapter {
         throw new Error(error);
       }
     );
-  }
-
-  async getOrderStatus(orderId = this.orderId) {
-    const order = await this.getOrder(orderId);
-    return order.orderStatus;
   }
 
   completeOrder() {

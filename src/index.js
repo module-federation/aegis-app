@@ -7,14 +7,12 @@ const WebSocket = require("ws");
 const { uuid } = require("./lib/utils");
 require("dotenv").config();
 const services = require("./service-registry").default;
+//const { handleEvents } = require("./services-mock/event-service");
 
 const app = express();
 const map = new Map();
 const API_ROOT = "/api";
 const PORT = 8060;
-
-let restart = true;
-let webhook;
 
 import axios from "axios";
 // list the models we expose to host through module federation
@@ -74,26 +72,10 @@ app.get(`${API_ROOT}/service1`, (req, res) => {
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ clientTracking: true, noServer: true });
 
-function handleWebhook(event) {
-  // if (webhook && !restart) return;
-  // if (event?.eventName === "hot-reload") {
-  //   webhook = event.eventData.url;
-  // }
-  // if (restart && webhook) {
-  //   try {
-  //     axios.get(webhook);
-  //     restart = false;
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // }
-}
 // Send events emitted from host to any WS clients
 app.post(`${API_ROOT}/publish`, (req, res) => {
   console.log({ event: req.body });
-
-  handleWebhook(req.body);
-
+  //handleEvents(req, res);
   wss.clients.forEach(function each(client) {
     if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify({ event: req.body }));
@@ -134,3 +116,7 @@ wss.on("connection", function (ws, request) {
 server.listen(PORT, function () {
   console.log(`Listening on http://localhost:${PORT}\n`);
 });
+
+axios
+  .get("http://localhost:8070/reload")
+  .then(response => console.log(response.data));
