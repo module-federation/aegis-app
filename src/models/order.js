@@ -35,7 +35,7 @@ import { async, encrypt } from "../lib/utils";
  * @property {'APPROVED'|'SHIPPING'|'CANCELED'|'COMPLETED'} orderStatus
  * @property {function():Promise<import("../models/index").Model>} customer - retrieves related customer object.
  * @property {function(string,Order)} emit - broadcast domain event
- * @property {function():boolean} paymentAuthorized - payment approved and funds reserved
+ * @property {function():boolean} paymentAccepted - payment approved and funds reserved
  * @property {function():boolean} autoCheckout - whether or not to immediately submit the order
  */
 
@@ -375,38 +375,42 @@ const OrderActions = {
    * @param {Order} order - the order
    */
   [OrderStatus.PENDING]: async order => {
-    // If requester is a customer, get shipping data from customer service.
-    const customerOrder = await getCustomerOrder(order);
+    try {
+      // If requester is a customer, get shipping data from customer service.
+      const customerOrder = await getCustomerOrder(order);
 
-    // Authorize payment for the current total.
-    const payment = await async(
-      customerOrder.authorizePayment(paymentAuthorized)
-    );
-
-    if (!payment.ok) {
-      throw new Error("payment auth problem", payment.error);
-    }
-
-    if (!payment.object.paymentAuthorized()) {
-      throw new Error("payment authorization declined");
-    }
-
-    // Now verify address
-    const address = await async(
-      payment.object.validateAddress(addressValidated)
-    );
-
-    if (customerOrder.autoCheckout()) {
-      handleStatusChange(
-        await customerOrder.update(
-          {
-            ...payment.object,
-            ...(address.ok ? address.object : {}),
-            orderStatus: OrderStatus.APPROVED,
-          },
-          false
-        )
+      // Authorize payment for the current total.
+      const payment = await async(
+        customerOrder.authorizePayment(paymentAuthorized)
       );
+
+      if (!payment.ok) {
+        throw new Error("payment auth problem", payment.error);
+      }
+
+      if (!payment.object.paymentAccepted()) {
+        throw new Error("payment authorization declined");
+      }
+
+      // Now verify address
+      const address = await async(
+        payment.object.validateAddress(addressValidated)
+      );
+
+      if (customerOrder.autoCheckout()) {
+        handleStatusChange(
+          await customerOrder.update(
+            {
+              ...payment.object,
+              ...(address.ok ? address.object : {}),
+              orderStatus: OrderStatus.APPROVED,
+            },
+            false
+          )
+        );
+      }
+    } catch (e) {
+      console.error(e);
     }
   },
   /**
@@ -417,7 +421,7 @@ const OrderActions = {
    */
   [OrderStatus.APPROVED]: async order => {
     try {
-      if (order.paymentAuthorized()) {
+      if (order.paymentAccepted()) {
         // don't block the caller by waiting
         order.pickOrder(orderPicked);
         return;
@@ -533,7 +537,7 @@ export function orderFactory(dependencies) {
       /**
        * Has payment for the order been authorized?
        */
-      paymentAuthorized() {
+      paymentAccepted() {
         return (
           (this.paymentAuthorization && !this[prevmodel]) ||
           (this.paymentAuthorization &&
