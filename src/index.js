@@ -112,6 +112,10 @@ wss.on("connection", function (ws, request) {
   });
 });
 
+const accessToken =
+  "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImpzTEIzNmEzZmJuS0VYb0MtWWlhNyJ9.eyJpc3MiOiJodHRwczovL2Rldi0yZmUyaWFyNi51cy5hdXRoMC5jb20vIiwic3ViIjoiRGRSSEg2dTVCc3FwclMwM3J0Z0ZEdjVwNnh6Q2RFVUtAY2xpZW50cyIsImF1ZCI6Imh0dHBzOi8vbWljcm9saWIuaW8vIiwiaWF0IjoxNjE2MzEwNzIyLCJleHAiOjE2MTYzOTcxMjIsImF6cCI6IkRkUkhINnU1QnNxcHJTMDNydGdGRHY1cDZ4ekNkRVVLIiwiZ3R5IjoiY2xpZW50LWNyZWRlbnRpYWxzIiwicGVybWlzc2lvbnMiOltdfQ.QlAiBv74oXQrezbmzRlP0XiEU-_dKg2pLy2ohglYELDBmel3eDB95jgFDwUftqdNhlcD0JG8-1KDynuxixwY_G0FdJ1P2O0TuJM1bD6e3cPkpYxbAqZkHyjOYzBs6WV8U1Lmcg2b8vfbPF4wm-UVRS685b1pUit5hKNZgBsLSLvqveOCySIG1VYWsjcs3D-OilaW4tiKBbtufiQSw3TJFGBWcQrouhl24WBQC7VMu-kWMkdqZGtyV44Hy2X8DltLw48QcmpeW0PtjVC_L1JGaLd3upShSBk_IC0CJAX1S065OXmKiGUKyQg6P1qqCzSqz8Yn7ac5iKJtmw_9jB2aQw";
+axios.defaults.headers.common["Authorization"] = `bearer ${accessToken}`;
+
 setTimeout(() => {
   try {
     const https = require("https");
@@ -124,7 +128,7 @@ setTimeout(() => {
   } catch (e) {
     console.log(e);
   }
-}, 10000);
+}, 20000);
 
 server.listen(PORT, function () {
   console.log(`Listening on http://localhost:${PORT}\n`);
