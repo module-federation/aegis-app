@@ -22,7 +22,8 @@
     "demo": "open http://localhost:8060",
     "hot-reload": "curl http://localhost:8070/microlib/reload",
     "kafka-start": "scripts/start-kafka.sh",
-    "kafka-stop": "scripts/stop-kafka.sh"
+    "kafka-stop": "scripts/stop-kafka.sh",
+    "refresh-token": "./accessToken.sh"
   },
   "author": "Tyson Midboe",
   "license": "MIT",

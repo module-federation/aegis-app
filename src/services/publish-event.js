@@ -26,7 +26,7 @@ export function publishEvent(event) {
   });
 
   req.on("error", e => {
-    console.error(`problem with request: ${e.message}`);
+    // console.error(`problem with request: ${e.message}`);
   });
 
   // Write data to request body

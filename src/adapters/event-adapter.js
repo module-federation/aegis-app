@@ -146,7 +146,7 @@ export function listen(service = Event) {
     subscriptions.set(arg.topic, new Map().set(arg.id, subscription));
 
     if (!service.listening) {
-      service.listen(service.topics, async function ({ topic, message }) {
+      service.listen(/Channel/, async function ({ topic, message }) {
         if (subscriptions.has(topic)) {
           subscriptions.get(topic).forEach(async subscription => {
             await subscription.filter(message);

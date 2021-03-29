@@ -7,6 +7,8 @@ const WebSocket = require("ws");
 const { uuid } = require("./lib/utils");
 require("dotenv").config();
 const services = require("./service-registry").default;
+const cluster = require("cluster");
+const fs = require("fs");
 //const { handleEvents } = require("./services-mock/event-service");
 
 const app = express();
@@ -112,24 +114,47 @@ wss.on("connection", function (ws, request) {
   });
 });
 
-const accessToken =
-  "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImpzTEIzNmEzZmJuS0VYb0MtWWlhNyJ9.eyJpc3MiOiJodHRwczovL2Rldi0yZmUyaWFyNi51cy5hdXRoMC5jb20vIiwic3ViIjoiRGRSSEg2dTVCc3FwclMwM3J0Z0ZEdjVwNnh6Q2RFVUtAY2xpZW50cyIsImF1ZCI6Imh0dHBzOi8vbWljcm9saWIuaW8vIiwiaWF0IjoxNjE2MzEwNzIyLCJleHAiOjE2MTYzOTcxMjIsImF6cCI6IkRkUkhINnU1QnNxcHJTMDNydGdGRHY1cDZ4ekNkRVVLIiwiZ3R5IjoiY2xpZW50LWNyZWRlbnRpYWxzIiwicGVybWlzc2lvbnMiOltdfQ.QlAiBv74oXQrezbmzRlP0XiEU-_dKg2pLy2ohglYELDBmel3eDB95jgFDwUftqdNhlcD0JG8-1KDynuxixwY_G0FdJ1P2O0TuJM1bD6e3cPkpYxbAqZkHyjOYzBs6WV8U1Lmcg2b8vfbPF4wm-UVRS685b1pUit5hKNZgBsLSLvqveOCySIG1VYWsjcs3D-OilaW4tiKBbtufiQSw3TJFGBWcQrouhl24WBQC7VMu-kWMkdqZGtyV44Hy2X8DltLw48QcmpeW0PtjVC_L1JGaLd3upShSBk_IC0CJAX1S065OXmKiGUKyQg6P1qqCzSqz8Yn7ac5iKJtmw_9jB2aQw";
-axios.defaults.headers.common["Authorization"] = `bearer ${accessToken}`;
+function startServer() {
+  server.listen(PORT, function () {
+    console.log(`Listening on http://localhost:${PORT}\n`);
+  });
+}
 
-setTimeout(() => {
-  try {
-    const https = require("https");
-    const httpsAgent = new https.Agent({
-      rejectUnauthorized: false,
-    });
-    axios
-      .get("https://localhost:8707/microlib/reload", { httpsAgent })
-      .then(response => console.log(response.data));
-  } catch (e) {
-    console.log(e);
+function hotReload() {
+  const url = process.env.RELOAD_URL || "http://localhost:8070";
+  const auth = /true/i.test(process.env.AUTH_ENABLED);
+  const ssl = url.startsWith("https");
+  if (auth) {
+    const text = fs.readFileSync("./public/token.json", "utf-8");
+    const token = JSON.parse(text);
+    axios.defaults.headers.common[
+      "Authorization"
+    ] = `bearer ${token.access_token}`;
   }
-}, 20000);
+  setTimeout(() => {
+    try {
+      if (ssl) {
+        const https = require("https");
+        const httpsAgent = new https.Agent({
+          rejectUnauthorized: false,
+        });
+        axios
+          .get(url, { httpsAgent })
+          .then(response => console.log(response.data));
+      } else {
+        axios
+          .get(url)
+          .then(response => console.log(response.data));
+      }
+    } catch (e) {
+      console.log(e.message);
+    }
+  }, 10000);
+}
 
-server.listen(PORT, function () {
-  console.log(`Listening on http://localhost:${PORT}\n`);
-});
+if (cluster.isMaster) {
+  startServer();
+  cluster.fork(); // fork process to handle
+} else {
+  hotReload();
+}

@@ -8,3 +8,5 @@ out
 zookpr.out
 kafka.out
 kafka
+token.json
+accessToken.sh
