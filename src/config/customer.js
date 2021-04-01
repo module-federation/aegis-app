@@ -8,6 +8,7 @@ import {
   requireProperties,
 } from "../models/mixins";
 import { uuid } from "../lib/utils";
+import { DataSourceFile } from "../datasources/datasource-file";
 
 /**
  * @type {import('../models/index').ModelSpecification}
@@ -18,6 +19,7 @@ export const Customer = {
   dependencies: { uuid },
   factory: customerFactory,
   validate: validateModel,
+  datasource: DataSourceFile,
   onDelete: okToDelete,
   mixins: [
     freezeProperties("customerId"),

@@ -34,15 +34,13 @@ var serverConfig = {
   plugins: [
     new NodemonPlugin(),
     new ModuleFederationPlugin({
-      name: "orderService",
+      name: "microservices",
       library: { type: "commonjs-module" },
       filename: "remoteEntry.js",
       exposes: {
         "./models": "./src/models",
         "./adapters": "./src/adapters",
         "./services": "./src/services",
-        "./services-mock": "./src/services-mock",
-        "./validations": "./src/models/mixins",
       },
       shared: {
         axios: {
