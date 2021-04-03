@@ -54,6 +54,7 @@
     "express-cli": "0.0.1",
     "is-core-module": "^2.2.0",
     "mocha": "^8.2.0",
+    "mongodb": "^3.6.5",
     "nodemon": "^2.0.6",
     "nodemon-webpack-plugin": "^4.3.2",
     "webpack": "5.0.0-beta.28",

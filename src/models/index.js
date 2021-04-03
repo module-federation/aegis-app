@@ -119,8 +119,23 @@
  *    command:string|function(Model):Promise<any>,
  *    acl:accessControlList[]
  *  }
- * }} command - configure functions to execute when specified in a
+ * }} commands - configure functions to execute when specified in a
  * URL parameter or query of the auto-generate REST API
+ */
+
+/**
+ * @typedef {{
+ *  [x: string]: {
+ *    endpointUri: string,
+ *    port:ports[p],
+ *    callback: ({
+ *      body:string,
+ *      headers:{},
+ *      params:{}}) => Promise<{
+ *        body,status,headers
+ *      }>
+ *    })
+ * }} endpoints
  */
 
 /**
@@ -141,9 +156,13 @@
  * @property {serializer[]} [serializers] - use for custom de/serialization of the model
  * when reading or writing to storage or network
  * @property {relations} [relations] - link related domain models
- * @property {command} [commands] - define functions to execute when specified in a
+ * @property {commands} [commands] - define functions to execute when specified in a
  * URL parameter or query of the auto-generated REST API
  * @property {accessControlList} [accessControlList] - configure authorization
+ * @property {endpoints} [endpoints] - additional custom API endpoints - specify inbound port
+ * @property {{factory:import("../datasources/datasource-mongodb/"),url:string,credentials?:string}} [datasource] - custom datasource
+ * for this model. If not set, the default set by the server is used.
+ *
  */
 
 import GlobalMixins from "./mixins";

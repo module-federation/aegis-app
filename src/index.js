@@ -131,30 +131,74 @@ function hotReload() {
       "Authorization"
     ] = `bearer ${token.access_token}`;
   }
-  setTimeout(() => {
-    try {
-      if (ssl) {
-        const https = require("https");
-        const httpsAgent = new https.Agent({
-          rejectUnauthorized: false,
-        });
-        axios
-          .get(url, { httpsAgent })
-          .then(response => console.log(response.data));
-      } else {
-        axios
-          .get(url)
-          .then(response => console.log(response.data));
-      }
-    } catch (e) {
-      console.log(e.message);
+  // setTimeout(() => {
+  try {
+    if (ssl) {
+      const https = require("https");
+      const httpsAgent = new https.Agent({
+        rejectUnauthorized: false,
+      });
+      axios
+        .get(url, { httpsAgent })
+        .then(response => console.log(response.data));
+    } else {
+      axios.get(url).then(response => console.log(response.data));
     }
-  }, 10000);
+  } catch (e) {
+    console.log(e.message);
+  }
+  //}, 10000);
 }
 
+// function startHotLoadWorker() {
+//   const worker = cluster.fork();
+//   const timerId = setTimeout(function (params) {
+//     startHotLoadWorker();
+//   }, 10000);
+//   worker.on("message", msg => {
+//     if (msg?.status === "done") {
+//       clearTimeout(timerId);
+//     }
+//   });
+//
+
 if (cluster.isMaster) {
+  cluster.fork();
   startServer();
-  cluster.fork(); // fork process to handle
 } else {
   hotReload();
 }
+
+// let reloaded = false;
+// let serverRunning = false;
+
+// (async () => {
+//   while (!reloaded) {
+//     const worker = cluster.fork();
+
+//     if (cluster.master) {
+//       if (!serverRunning) {
+//         startServer();
+//         serverRunning = true;
+//       }
+//       function waitOnHotLoad() {
+//         return new Promise(function (resolve) {
+//           worker.on("message", msg => {
+//             if (msg === "all good") {
+//               reloading = true;
+//               resolve(true);
+//             }
+//           });
+//         });
+//       }
+//       await waitOnHotLoad();
+
+//       await new Promise(r => setTimeout(r, 2000));
+//     }
+//   }
+// })();
+
+// if (cluster.worker) {
+//   hotReload();
+//   process.send("all good");
+// }

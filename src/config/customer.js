@@ -8,7 +8,7 @@ import {
   requireProperties,
 } from "../models/mixins";
 import { uuid } from "../lib/utils";
-import { DataSourceFile } from "../datasources/datasource-file";
+import { DataSourceAdapterMongo } from "../datasources/datasource-mongodb";
 
 /**
  * @type {import('../models/index').ModelSpecification}
@@ -19,8 +19,12 @@ export const Customer = {
   dependencies: { uuid },
   factory: customerFactory,
   validate: validateModel,
-  datasource: DataSourceFile,
   onDelete: okToDelete,
+  datasource: {
+    factory: DataSourceAdapterMongo,
+    url: "mongodb://localhost:27017",
+    cacheSize: 2000,
+  },
   mixins: [
     freezeProperties("customerId"),
     requireProperties(

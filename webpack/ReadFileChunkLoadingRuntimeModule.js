@@ -118,7 +118,7 @@ class ReadFileChunkLoadingRuntimeModule extends RuntimeModule {
       withLoading
         ? Template.asString([
             "// ReadFile + VM.run chunk loading for javascript",
-            `${fn}.readFileVm = function(chunkId, promises) { console.log(">>>>>>>>>chunckId",chunkId);`,
+            `${fn}.readFileVm = function(chunkId, promises) { console.log(">>>>>>>>>chunkId",chunkId);`,
             hasJsMatcher !== false
               ? Template.indent([
                   "",

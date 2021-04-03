@@ -34,6 +34,7 @@ import {
 } from "../models/mixins";
 
 import { uuid } from "../lib/utils";
+import { DataSourceAdapterMongo } from "../datasources/datasource-mongodb";
 
 /**
  * @type {import('../models/index').ModelSpecification}
@@ -42,6 +43,11 @@ export const Order = {
   modelName: "order",
   endpoint: "orders",
   factory: orderFactory,
+  datasource: {
+    factory: DataSourceAdapterMongo,
+    url: "mongodb://localhost:27017",
+    cacheSize: 2000,
+  },
   dependencies: { uuid },
   mixins: [
     requireProperties(
@@ -193,6 +199,31 @@ export const Order = {
     refundPayment: {
       service: "Payment",
       type: "outbound",
+    },
+    oauthCallback: {
+      type: "inbound",
+      adapter: "endpoints.oauthCallback",
+      keys: ["nonce"],
+      producesEvent: "refreshToken",
+    },
+    refreshToken: {
+      type: "outbound",
+      service: "oauth",
+      settings: {
+        urls: [
+          "facebook.com/oauth",
+          "oauth.google.com",
+          "indentity.service.com/oauth",
+        ],
+      },
+      consumesEvent: "refreshToken",
+      producesEvent: "tokenRefreshed",
+    },
+  },
+  endpoints: {
+    oauthCallback: {
+      uri: "oauth-callback",
+      callback: (order, payload) => order.refreshToken(payload.nonce),
     },
   },
   relations: {

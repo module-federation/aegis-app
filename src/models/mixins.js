@@ -1,6 +1,7 @@
 "use strict";
 
 import { hash, encrypt, decrypt, compose } from "../lib/utils";
+import util from "util";
 
 /**
  * Functional mixin created by `functionalMixinFactory`
@@ -121,6 +122,26 @@ function handleUpdateEvent(model, updates, event) {
   };
 }
 
+function isObject(p) {
+  return p != null && typeof p === "object";
+}
+
+function containsUpdates(model, changes, event) {
+  if (eventMask.update & event) {
+    const changeList = Object.keys(changes);
+    if (changeList.length < 1) return false;
+
+    if (
+      changeList.every(
+        k => model[k] && util.isDeepStrictEqual(changes[k], model[k])
+      )
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
 /**
  * Run validation functions enabled for a given event.
  * @param {Model} model - the composed object
@@ -131,7 +152,7 @@ function handleUpdateEvent(model, updates, event) {
  */
 export function validateModel(model, changes, event) {
   // if there are no changes, and the event is an update, return
-  if (Object.keys(changes) < 1 && eventMask.update & event) {
+  if (!containsUpdates(model, changes, event)) {
     return model;
   }
 
@@ -247,10 +268,11 @@ function addValidation({ model, name, input = 0, output = 0, order = 50 }) {
 
 /**
  * Resolve keys:
- * if the value is any array, flatten it.
+ * If the value includes an array, flatten it, then for each element:
  * If the value is "*", return all keys of the object.
- * If the value is a function, execute it to get dynamic keys.
- * If the function returns an array, flatten it.
+ * If the value is a function, execute it to get a dynamic key or key list.
+ * If the value is a RegExp, test it to get dynamic key list.
+ * If any of the above produce an array of keys, flatten it.
  * @param {*} o - Object to compose
  * @param  {Array<string | function(*):string>} propKeys -
  * Names (or functions that return names) of properties
@@ -259,6 +281,7 @@ function addValidation({ model, name, input = 0, output = 0, order = 50 }) {
 function parseKeys(o, ...propKeys) {
   const keys = propKeys.flat().map(function (k) {
     if (typeof k === "function") return k(o);
+    if (k instanceof RegExp) return Object.keys(o).filter(key => k.test(key));
     if (k === "*") return Object.keys(o);
     return k;
   });
@@ -306,7 +329,7 @@ export const encryptProperties = (...propKeys) => o => {
 /**
  * Prevent properties from being modified.
  * Accepts a property name or a function that returns a property name.
- * @param  {Array<string | function(*):string>} propKeys - names of properties to freeze
+ * @param  {Array<string | function(*):string | RegExp>} propKeys - names of properties to freeze
  */
 export const freezeProperties = (...propKeys) => o => {
   const preventUpdates = obj => {
@@ -334,8 +357,9 @@ export const freezeProperties = (...propKeys) => o => {
 
 /**
  * Enforce required fields.
- * @param {Array<string | function(*):string>} propKeys -
- * required property names
+ * @param {Array<string | function(*):string | RegExp>} propKeys -
+ * required property key names - can be a function or regex
+ * that returns the property key names
  */
 export const requireProperties = (...propKeys) => o => {
   const keys = parseKeys(o, ...propKeys);
@@ -363,7 +387,7 @@ export const requireProperties = (...propKeys) => o => {
 /**
  * Hash passwords.
  * @param {*} hash hash algorithm
- * @param  {Array<string | function(*):string>} propKeys name of password props
+ * @param  {Array<string | function(*):string | RegExp>} propKeys name of password props
  */
 export const hashPasswords = (...propKeys) => o => {
   const keys = parseKeys(o, ...propKeys);
@@ -678,15 +702,17 @@ export const checkFormat = (value, expr) => {
  * Implement GDPR encryption requirement across models
  */
 export const encryptPersonalInfo = encryptProperties(
-  "lastName",
-  "address",
-  "shippingAddress",
-  "billingAddress",
-  "email",
-  "phone",
-  "mobile",
-  "creditCardNumber",
-  "ssn"
+  /^last.*Name$|^surname$|^family.*Name$/i,
+  /^shipping.*Address$/i,
+  /^billing.*Address$/i,
+  /^home.*Address$/i,
+  /email|e-mail/i,
+  /^phone$|^home.*phone$/i,
+  /^mobile$|^mobile.*number$|^cell.*number$/i,
+  /^credit.*Card/i,
+  /^cvv$/i,
+  /^ssn$|^socialSecurity/i,
+  /^encrypted/i
 );
 
 /**
