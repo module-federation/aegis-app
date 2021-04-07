@@ -1,7 +1,7 @@
 export const DataSourceAdapterDynamo = function (
   url,
-  DataSourceMemory,
-  cacheSize = 2000
+  cacheSize = 2000,
+  DataSourceMemory
 ) {
   /**
    * Datasource adapter for AWS Dynamo DB
