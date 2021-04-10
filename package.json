@@ -20,7 +20,7 @@
     "test": "mocha",
     "test-remote": "mocha",
     "demo": "open http://localhost:8060",
-    "hot-reload": "curl http://localhost:8070/microlib/reload",
+    "hot-reload": "curl http://localhost:8707/microlib/reload",
     "kafka-start": "scripts/start-kafka.sh",
     "kafka-stop": "scripts/stop-kafka.sh",
     "refresh-token": "./accessToken.sh"
@@ -28,6 +28,7 @@
   "author": "Tyson Midboe",
   "license": "MIT",
   "dependencies": {
+    "@module-federation/aegis": "^0.0.1-alpha.17",
     "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",

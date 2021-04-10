@@ -1,11 +1,11 @@
 var path = require("path");
 const ModuleFederationPlugin = require("webpack").container
   .ModuleFederationPlugin;
-const httpNode = require("./webpack/http-node");
+const httpNodeDemo = require("@module-federation/aegis/webpack/http-node-demo");
 const NodemonPlugin = require("nodemon-webpack-plugin");
 
 var serverConfig = {
-  target: httpNode,
+  target: httpNodeDemo,
   entry: ["@babel/polyfill", path.resolve(__dirname, "src/index.js")],
   output: {
     path: path.resolve(__dirname, "dist"),
