@@ -2,9 +2,10 @@
 
 /**
  * Datasource adapter factory.
+ * @name DataSourceAdapterMongo
  * @param {string} url database url
- * @param {number} [cacheSize] number of models to keep in cache
  * @param {*} DataSource base class that enables caching
+ * @param {number} [cacheSize] number of models to keep in cache
  * @returns {import("./datasource").default}
  */
 export const DataSourceAdapterMongo = function (
@@ -12,7 +13,6 @@ export const DataSourceAdapterMongo = function (
   cacheSize,
   DataSourceMongoDb
 ) {
-  //const MongoClient = require("mongodb").MongoClient;
   /**
    * MongoDB adapter extends in-memory datasource to support caching.
    * The cache is always updated first, which allows the system to run

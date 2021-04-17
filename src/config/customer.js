@@ -24,6 +24,7 @@ export const Customer = {
     factory: DataSourceAdapterMongo,
     url: "mongodb://localhost:27017",
     cacheSize: 2000,
+    baseClass: "DataSourceMongoDb",
   },
   mixins: [
     freezeProperties("customerId"),

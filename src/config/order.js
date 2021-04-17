@@ -144,15 +144,31 @@ export const Order = {
       type: "outbound",
       keys: "shippingAddress",
       producesEvent: "addressValidated",
-      disabled: true,
+      circuitBreaker: {
+        default: {
+          errorRate: 20,
+          callVolume: 10,
+          intervalMs: 10000,
+          retryDelay: 30000,
+        },
+      },
+      disabled: false,
     },
     authorizePayment: {
       service: "Payment",
       type: "outbound",
       keys: "paymentAuthorization",
+      undo: cancelPayment,
       consumesEvent: "startWorkflow",
       producesEvent: "paymentAuthorized",
-      undo: cancelPayment,
+      circuitBreaker: {
+        default: {
+          errorRate: 20,
+          callVolume: 10,
+          intervalMs: 10000,
+          retryDelay: 30000,
+        },
+      },
     },
     pickOrder: {
       service: "Inventory",
@@ -161,6 +177,14 @@ export const Order = {
       consumesEvent: "pickOrder",
       producesEvent: "orderPicked",
       undo: returnInventory,
+      circuitBreaker: {
+        default: {
+          errorRate: 20,
+          callVolume: 10,
+          intervalMs: 10000,
+          retryDelay: 30000,
+        },
+      },
     },
     shipOrder: {
       service: "Shipping",
@@ -169,6 +193,14 @@ export const Order = {
       consumesEvent: "orderPicked",
       producesEvent: "orderShipped",
       undo: returnShipment,
+      circuitBreaker: {
+        default: {
+          errorRate: 20,
+          callVolume: 10,
+          intervalMs: 10000,
+          retryDelay: 30000,
+        },
+      },
     },
     trackShipment: {
       service: "Shipping",
@@ -176,6 +208,14 @@ export const Order = {
       keys: ["trackingStatus", "trackingId"],
       consumesEvent: "orderShipped",
       producesEvent: "orderDelivered",
+      circuitBreaker: {
+        default: {
+          errorRate: 20,
+          callVolume: 10,
+          intervalMs: 10000,
+          retryDelay: 30000,
+        },
+      },
     },
     verifyDelivery: {
       service: "Shipping",
@@ -184,6 +224,14 @@ export const Order = {
       consumesEvent: "orderDelivered",
       producesEvent: "deliveryVerified",
       undo: returnDelivery,
+      circuitBreaker: {
+        default: {
+          errorRate: 20,
+          callVolume: 10,
+          intervalMs: 10000,
+          retryDelay: 30000,
+        },
+      },
     },
     completePayment: {
       service: "Payment",
@@ -192,6 +240,14 @@ export const Order = {
       consumesEvent: "deliveryVerified",
       producesEvent: "workflowComplete",
       undo: refundPayment,
+      circuitBreaker: {
+        default: {
+          errorRate: 20,
+          callVolume: 10,
+          intervalMs: 10000,
+          retryDelay: 30000,
+        },
+      },
     },
     cancelShipment: {
       service: "Shipping",

@@ -85,7 +85,7 @@ app.post(`${API_ROOT}/publish`, (req, res) => {
   });
 });
 
-// Handle request to upgrade to websocket protocol
+// Handle request to upgrade to websocke]t protocol
 server.on("upgrade", function (request, socket, head) {
   console.log("Parsing session from request...");
 

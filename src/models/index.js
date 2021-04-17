@@ -1,8 +1,6 @@
 "use strict";
 
-/**
- * @typedef {string} eventName
- */
+/**@typedef {string} eventName*/
 
 /**
  * @typedef {Object} Model
@@ -54,25 +52,50 @@
  * @returns {Model | Error} updated model or throw
  */
 
+/** @typedef {string} service - name of the service object to inject in adapter*/
+/** @typedef {number} timeout - call to adapter will timeout after `timeout` milliseconds*/
+
 /**
- * @typedef {string} service - name of the service object to inject in adapter
- * @typedef {number} timeout - call to adapter will timeout after `timeout` milliseconds
- *
+ * @typedef threshold threshold at which breaker will trip
+ * @property {number} errorRate - percentage of calls that threw an exception within last `intervalms` milliseconds
+ * @property {number} callVolume - total number of calls within last `intervalms` milliseconds
+ * @property {number} intervalms - period of time in which `callVolume` and `errorRate` took place
+ * @property {number} retryDelay - milliseconds to wait before retrying the call
+ * @property {function} fallbackFn - function to execute a workaround
+ */
+
+/**
  * @typedef {{
- *  [x: string]: {
- *    service: service,
- *    timeout?: timeout,
- *    callback?: function({model: Model})
- *    errorCallback?: function({model: Model, port: string, error:Error}),
- *    timeoutCallback?: function({model: Model, port: string}),
- *    consumesEvent?:string,
- *    producesEvent?:string,
- *    type?:'inbound'|'outbound',
- *    disabled?: boolean
- *    adapter?: string
- *  }
+ *  [x: string]: threshold
+ * }} circuitBreaker temporarily disable "short-circuit" calls to a unavailable service
+ */
+
+/**
+ * @typedef port a port is an interface that controls input to, and output from, the domain
+ * @property {string} service name of the service this port connects to
+ * @property {"inbound"|"outbound"} type inbound port requires primary/driving adapter,
+ * outbound port secondary/driven
+ * @property {string} [timeout] milliseconds to wait for a response before retrying or failing.
+ * specify 0 to disable, otherwise default value is used.
+ * @property {function({Model},{})} [callback] called once data arrives on port
+ * @property {function({model: Model, port: string, error:Error})} errorCallback
+ * @property {function({model: Model, port: string})} timeoutCallback
+ * @property {string} consumesEvent name of event that will cause this port to run
+ * @property {string} producesEvent name of event emitted after this port runs
+ * @property {boolean} [disabled] set to true to prevent this port from being used, default is false
+ * @property {string} [adapter] name of the adapter to bind to this port. By default binds adapter
+ * with same name as port
+ * @property {function()} [undo] function to run to reverse the effects of calling this port
+ * @property {circuitBreaker} circuitBreaker
+ */
+
+/**
+ * @typedef {{
+ *  [x: string]: port
  * }} ports - input/output ports for the domain
- *
+ */
+
+/**
  * @typedef {{
  *  [x: string]: {
  *    modelName:string,
@@ -80,7 +103,9 @@
  *    foreignKey:any,
  *  }
  * }} relations - define related domain entities
- *
+ */
+
+/**
  * @typedef {Array<function({
  *  eventName:string,
  *  eventType:string,
@@ -104,7 +129,9 @@
  *  type: "string" | "object" | "number" | "function" | "any" | (function(key,value):boolean)
  *  value(key, value):value
  * }} serializer
- *
+ */
+
+/**
  * @typedef {{
  *  [x:string]: {
  *    allow:string|function(*):boolean|Array<string|function(*):boolean>
@@ -113,7 +140,9 @@
  *    desc?:string
  *  }
  * }} accessControlList
- *
+ */
+
+/**
  * @typedef {{
  *  [x: string]: {
  *    command:string|function(Model):Promise<any>,
@@ -139,6 +168,15 @@
  */
 
 /**
+ * @typedef {{
+ *  factory:function(),
+ *  baseClass:"DataSourceMemory"|"DataSourceFile"|"DataSourceMongoDb",
+ *  url:string,
+ *  credentials?:string
+ * }} datasource
+ */
+
+/**
  * @typedef {Object} ModelSpecification Specify model data and behavior
  * @property {string} modelName name of model (case-insenstive)
  * @property {string} endpoint URI reference (e.g. plural of `modelName`)
@@ -149,7 +187,7 @@
  * @property {onUpdate} [onUpdate] - Function called to handle update requests. Called
  * before save.
  * @property {onDelete} [onDelete] - Function called before deletion.
- * @property {validate} [validate] -
+ * @property {validate} [validate] - Function called on load, create, update to validate input, etc
  * @property {ports} [ports] - input/output ports for the domain
  * @property {eventHandler[]} [eventHandlers] - callbacks invoked to handle application
  * events, e.g. CRUD events
@@ -160,9 +198,7 @@
  * URL parameter or query of the auto-generated REST API
  * @property {accessControlList} [accessControlList] - configure authorization
  * @property {endpoints} [endpoints] - additional custom API endpoints - specify inbound port
- * @property {{factory:import("../datasources/datasource-mongodb/"),url:string,credentials?:string}} [datasource] - custom datasource
- * for this model. If not set, the default set by the server is used.
- *
+ * @property {datasource} [datasource] - custom datasource for this model. If not set, the default set by the server is used.
  */
 
 import GlobalMixins from "./mixins";
