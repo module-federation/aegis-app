@@ -10,7 +10,7 @@ var serverConfig = {
   output: {
     path: path.resolve(__dirname, "dist"),
     publicPath:
-      "https://raw.githubusercontent.com/module-federation/MicroLib-Example/oldstyle-stream/dist",
+      "https://raw.githubusercontent.com/module-federation/MicroLib-Example/oldstyle-stream/dist/",
     libraryTarget: "commonjs",
   },
   devtool: "source-map",
