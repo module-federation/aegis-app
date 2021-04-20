@@ -9,7 +9,8 @@ var serverConfig = {
   entry: ["@babel/polyfill", path.resolve(__dirname, "src/index.js")],
   output: {
     path: path.resolve(__dirname, "dist"),
-    publicPath: "https://raw.githubusercontent.com/module-federation/MicroLib-Example/pre-npm/dist",
+    publicPath:
+      "https://raw.githubusercontent.com/module-federation/MicroLib-Example/oldstyle-stream/dist",
     libraryTarget: "commonjs",
   },
   devtool: "source-map",
