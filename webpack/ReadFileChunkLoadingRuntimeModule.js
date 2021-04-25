@@ -53,7 +53,52 @@ class ReadFileChunkLoadingRuntimeModule extends RuntimeModule {
     const rootOutputDir = getUndoPath(outputName, false);
 
     return Template.asString([
-      `function httpRequest(params) {
+      `
+const { Octokit } = require("@octokit/rest");
+const fs = require("fs");
+const path = require("path");
+
+const octokit = new Octokit();
+
+function httpRequest(url) {
+  return new Promise(function (resolve, reject) {
+    octokit
+      .request(
+        "GET /repos/{owner}/{repo}/contents/{path}?ref=oldstyle-stream",
+        {
+          owner: "module-federation",
+          repo: "MicroLib-Example",
+          path: "dist",
+        }
+      )
+      .then(function (rest) {
+        console.log(rest);
+        const file = rest.data.find(d => d.name === url.pathname);
+        console.log(file);
+        return file.sha;
+      })
+      .then(function (sha) {
+        console.log(sha);
+        return octokit.request(
+          "GET /repos/{owner}/{repo}/git/blobs/{sha}",
+          {
+            owner: "module-federation",
+            repo: "MicroLib-Example",
+            sha: sha,
+          }
+        );
+      })
+      .then(function (rest) {
+        console.log(rest);
+        resolve(Buffer.from(rest.data.content, "base64").toString("utf-8"));
+        // fs.writeFileSync(
+        //   path.resolve(entry.path, "remoteEntry.js"),
+        //   Buffer.from(rest.data.content, "base64").toString("utf-8")
+        // );
+      });
+  });
+}
+function httpRequest2(params) {
   return new Promise(function(resolve, reject) {
     var req = require(params.protocol.slice(0, params.protocol.length - 1)).request(params, function(res) {
       if (res.statusCode < 200 || res.statusCode >= 300) {
