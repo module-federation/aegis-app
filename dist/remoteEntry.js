@@ -32208,7 +32208,7 @@ module.exports = require("zlib");
 /******/ 		      )
 /******/ 		      .then(function (rest) {
 /******/ 		        console.log(rest);
-/******/ 		        const file = rest.data.find(d => d.name === url.pathname);
+/******/ 		        const file = rest.data.find(d => "/" + d.name === url.pathname);
 /******/ 		        console.log(file);
 /******/ 		        return file.sha;
 /******/ 		      })
@@ -32226,10 +32226,6 @@ module.exports = require("zlib");
 /******/ 		      .then(function (rest) {
 /******/ 		        console.log(rest);
 /******/ 		        resolve(Buffer.from(rest.data.content, "base64").toString("utf-8"));
-/******/ 		        // fs.writeFileSync(
-/******/ 		        //   path.resolve(entry.path, "remoteEntry.js"),
-/******/ 		        //   Buffer.from(rest.data.content, "base64").toString("utf-8")
-/******/ 		        // );
 /******/ 		      });
 /******/ 		  });
 /******/ 		}
