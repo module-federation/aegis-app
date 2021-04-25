@@ -72,9 +72,7 @@ function httpRequest(url) {
         }
       )
       .then(function (rest) {
-        console.log(rest);
         const file = rest.data.find(d => "/" + d.name === url.pathname);
-        console.log(file);
         return file.sha;
       })
       .then(function (sha) {
@@ -89,7 +87,6 @@ function httpRequest(url) {
         );
       })
       .then(function (rest) {
-        console.log(rest);
         resolve(Buffer.from(rest.data.content, "base64").toString("utf-8"));
       });
   });
