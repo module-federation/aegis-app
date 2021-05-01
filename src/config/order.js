@@ -1,5 +1,6 @@
 "use strict";
 
+console.log("loading models.order module...");
 import {
   orderFactory,
   readyToDelete,
