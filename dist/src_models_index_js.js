@@ -144,6 +144,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
+console.log("loading models.order module...");
 
 
 
@@ -156,12 +157,12 @@ var Order = {
   modelName: "order",
   endpoint: "orders",
   factory: _models_order__WEBPACK_IMPORTED_MODULE_0__.orderFactory,
-  datasource: {
-    factory: _datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_3__.DataSourceAdapterMongo,
-    url: "mongodb://localhost:27017",
-    cacheSize: 2000,
-    baseClass: "DataSourceMongoDb"
-  },
+  // datasource: {
+  //   factory: DataSourceAdapterMongo,
+  //   url: "mongodb://localhost:27017",
+  //   cacheSize: 2000,
+  //   baseClass: "DataSourceMongoDb",
+  // },
   dependencies: {
     uuid: _lib_utils__WEBPACK_IMPORTED_MODULE_2__.uuid
   },
