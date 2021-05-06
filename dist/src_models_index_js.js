@@ -157,12 +157,12 @@ var Order = {
   modelName: "order",
   endpoint: "orders",
   factory: _models_order__WEBPACK_IMPORTED_MODULE_0__.orderFactory,
-  datasource: {
-    factory: _datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_3__.DataSourceAdapterMongo,
-    url: "mongodb://localhost:27017",
-    cacheSize: 2000,
-    baseClass: "DataSourceMongoDb"
-  },
+  // datasource: {
+  //   factory: DataSourceAdapterMongo,
+  //   url: "mongodb://localhost:27017",
+  //   cacheSize: 2000,
+  //   baseClass: "DataSourceMongoDb",
+  // },
   dependencies: {
     uuid: _lib_utils__WEBPACK_IMPORTED_MODULE_2__.uuid
   },
