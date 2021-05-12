@@ -516,6 +516,9 @@ export function orderFactory(dependencies) {
     saveShippingDetails = false,
     requireSignature,
   }) {
+    if (!orderItems) {
+      throw new Error("missing order items");
+    }
     const total = calcTotal(orderItems);
     const signatureRequired = needsSignature(requireSignature, total);
     const order = {
