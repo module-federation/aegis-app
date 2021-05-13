@@ -3138,15 +3138,6 @@ function orderFactory(dependencies) {
           switch (_context6.prev = _context6.next) {
             case 0:
               orderItems = _ref7.orderItems, _ref7$email = _ref7.email, email = _ref7$email === void 0 ? null : _ref7$email, _ref7$lastName = _ref7.lastName, lastName = _ref7$lastName === void 0 ? null : _ref7$lastName, _ref7$firstName = _ref7.firstName, firstName = _ref7$firstName === void 0 ? null : _ref7$firstName, _ref7$customerId = _ref7.customerId, customerId = _ref7$customerId === void 0 ? null : _ref7$customerId, _ref7$billingAddress = _ref7.billingAddress, billingAddress = _ref7$billingAddress === void 0 ? null : _ref7$billingAddress, _ref7$shippingAddress = _ref7.shippingAddress, shippingAddress = _ref7$shippingAddress === void 0 ? null : _ref7$shippingAddress, _ref7$creditCardNumbe = _ref7.creditCardNumber, creditCardNumber = _ref7$creditCardNumbe === void 0 ? null : _ref7$creditCardNumbe, _ref7$shippingPriorit = _ref7.shippingPriority, shippingPriority = _ref7$shippingPriorit === void 0 ? null : _ref7$shippingPriorit, _ref7$autoCheckout = _ref7.autoCheckout, _autoCheckout = _ref7$autoCheckout === void 0 ? false : _ref7$autoCheckout, _ref7$saveShippingDet = _ref7.saveShippingDetails, saveShippingDetails = _ref7$saveShippingDet === void 0 ? false : _ref7$saveShippingDet, requireSignature = _ref7.requireSignature;
-
-              if (orderItems) {
-                _context6.next = 3;
-                break;
-              }
-
-              throw new Error("missing order items");
-
-            case 3:
               total = calcTotal(orderItems);
               signatureRequired = needsSignature(requireSignature, total);
               order = (_order = {
@@ -3169,7 +3160,7 @@ function orderFactory(dependencies) {
               }), _order);
               return _context6.abrupt("return", Object.freeze(order));
 
-            case 7:
+            case 5:
             case "end":
               return _context6.stop();
           }
