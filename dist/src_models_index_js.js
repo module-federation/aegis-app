@@ -41,7 +41,7 @@ var Customer = {
   validate: _models_mixins__WEBPACK_IMPORTED_MODULE_1__.validateModel,
   onDelete: _models_customer__WEBPACK_IMPORTED_MODULE_0__.okToDelete,
   datasource: {
-    factory: _datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_3__.DataSourceAdapterMongo,
+    factory: _datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_3__.DataSourceAdapterMongoDb,
     url: "mongodb://localhost:27017",
     cacheSize: 2000
   },
@@ -86,7 +86,6 @@ var Customer = {
 /*! namespace exports */
 /*! export Customer [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/customer.js .Customer */
 /*! export Order [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/order.js .Order */
-/*! export Product [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/product.js .Product */
 /*! export User [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/user.js .User */
 /*! other exports [not provided] [no usage info] */
 /*! runtime requirements: __webpack_require__, __webpack_exports__, __webpack_require__.d, __webpack_require__.r, __webpack_require__.* */
@@ -97,14 +96,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Order": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.Order,
 /* harmony export */   "User": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_1__.User,
-/* harmony export */   "Customer": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_2__.Customer,
-/* harmony export */   "Product": () => /* reexport safe */ _product__WEBPACK_IMPORTED_MODULE_3__.Product
+/* harmony export */   "Customer": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_2__.Customer
 /* harmony export */ });
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./order */ "./src/config/order.js");
 /* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./user */ "./src/config/user.js");
 /* harmony import */ var _customer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./customer */ "./src/config/customer.js");
-/* harmony import */ var _product__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./product */ "./src/config/product.js");
-
 
 
 
@@ -157,12 +153,12 @@ var Order = {
   modelName: "order",
   endpoint: "orders",
   factory: _models_order__WEBPACK_IMPORTED_MODULE_0__.orderFactory,
-  // datasource: {
-  //   factory: DataSourceAdapterMongo,
-  //   url: "mongodb://localhost:27017",
-  //   cacheSize: 2000,
-  //   baseClass: "DataSourceMongoDb",
-  // },
+  datasource: {
+    factory: _datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_3__.DataSourceAdapterMongoDb,
+    url: "mongodb://localhost:27017",
+    cacheSize: 2000,
+    baseClass: "DataSourceMongoDb"
+  },
   dependencies: {
     uuid: _lib_utils__WEBPACK_IMPORTED_MODULE_2__.uuid
   },
@@ -378,50 +374,6 @@ var Order = {
 
 /***/ }),
 
-/***/ "./src/config/product.js":
-/*!*******************************!*\
-  !*** ./src/config/product.js ***!
-  \*******************************/
-/*! namespace exports */
-/*! export Product [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Product": () => /* binding */ Product
-/* harmony export */ });
-/**
- * @type {import("../models").ModelSpecification}
- */
-var Product = {
-  endpoint: "products",
-  factory: function factory() {
-    return function (_ref) {
-      var a = _ref.a,
-          b = _ref.b;
-      return Object.freeze({
-        a: a,
-        b: b,
-        hi: function hi() {
-          return console.log("hi");
-        }
-      });
-    };
-  },
-  modelName: "product",
-  commands: {
-    hi: {
-      command: "hi",
-      acl: ["write"]
-    }
-  }
-};
-
-/***/ }),
-
 /***/ "./src/config/user.js":
 /*!****************************!*\
   !*** ./src/config/user.js ***!
@@ -467,7 +419,7 @@ var User = {
   !*** ./src/datasources/datasource-mongodb.js ***!
   \***********************************************/
 /*! namespace exports */
-/*! export DataSourceAdapterMongo [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export DataSourceAdapterMongoDb [provided] [no usage info] [missing usage info prevents renaming] */
 /*! other exports [not provided] [no usage info] */
 /*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
@@ -475,7 +427,7 @@ var User = {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "DataSourceAdapterMongo": () => /* binding */ DataSourceAdapterMongo
+/* harmony export */   "DataSourceAdapterMongoDb": () => /* binding */ DataSourceAdapterMongoDb
 /* harmony export */ });
 
 /**
@@ -504,9 +456,7 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-var DataSourceAdapterMongo = function DataSourceAdapterMongo(url, cacheSize, DataSourceMongoDb) {
-  //const MongoClient = require("mongodb").MongoClient;
-
+var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize, DataSourceMongoDb) {
   /**
    * MongoDB adapter extends in-memory datasource to support caching.
    * The cache is always updated first, which allows the system to run

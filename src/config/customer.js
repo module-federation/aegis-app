@@ -8,7 +8,7 @@ import {
   requireProperties,
 } from "../models/mixins";
 import { uuid } from "../lib/utils";
-import { DataSourceAdapterMongo } from "../datasources/datasource-mongodb";
+import { DataSourceAdapterMongoDb } from "../datasources/datasource-mongodb";
 
 /**
  * @type {import('../models/index').ModelSpecification}
@@ -21,7 +21,7 @@ export const Customer = {
   validate: validateModel,
   onDelete: okToDelete,
   datasource: {
-    factory: DataSourceAdapterMongo,
+    factory: DataSourceAdapterMongoDb,
     url: "mongodb://localhost:27017",
     cacheSize: 2000,
   },
