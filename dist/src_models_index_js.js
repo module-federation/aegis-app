@@ -2480,7 +2480,7 @@ var updateSignature = function updateSignature(o, propVal) {
 
 function readyToDelete(model) {
   if (![OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(model.orderStatus)) {
-    throw new Error("order process incomplete");
+    throw new Error("order must be canceled or completed");
   }
 
   return model;
