@@ -206,7 +206,7 @@ export function readyToDelete(model) {
   if (
     ![OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(model.orderStatus)
   ) {
-    throw new Error("order status incomplete");
+    throw new Error("order process incomplete");
   }
   return model;
 }
