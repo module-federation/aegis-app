@@ -120,7 +120,7 @@ export const requiredForGuest = propKey => o => {
 };
 
 /**
- * Value required to approve order.
+ * Value required to approve orde1r.
  * @param {*} propKey
  */
 export const requiredForApproval = propKey => o => {
@@ -201,12 +201,12 @@ export const updateSignature = (o, propVal) => ({
 
 /**
  * Don't delete orders before they're complete.
- */
+ */ lll;
 export function readyToDelete(model) {
   if (
     ![OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(model.orderStatus)
   ) {
-    throw new Error("order must be canceled or completed");
+    throw new Error("order must be can celed or completed");
   }
   return model;
 }
