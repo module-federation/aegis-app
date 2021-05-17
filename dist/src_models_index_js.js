@@ -2526,7 +2526,6 @@ var updateSignature = function updateSignature(o, propVal) {
  * Don't delete orders before they're complete.
  */
 
-lll;
 function readyToDelete(model) {
   if (![OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(model.orderStatus)) {
     throw new Error("order must be can celed or completed");

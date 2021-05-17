@@ -201,7 +201,7 @@ export const updateSignature = (o, propVal) => ({
 
 /**
  * Don't delete orders before they're complete.
- */ lll;
+ */
 export function readyToDelete(model) {
   if (
     ![OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(model.orderStatus)
