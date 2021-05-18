@@ -2479,10 +2479,6 @@ invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.SHIPPING)];
  */
 
 var statusChangeValid = function statusChangeValid(o, propVal) {
-  var _o$prevmodel;
-
-  if (!((_o$prevmodel = o[_mixins__WEBPACK_IMPORTED_MODULE_0__.prevmodel]) === null || _o$prevmodel === void 0 ? void 0 : _o$prevmodel.orderStatus)) return true;
-
   if (invalidStatusChanges.some(function (isc) {
     return isc(o, propVal);
   })) {

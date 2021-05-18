@@ -164,7 +164,6 @@ const invalidStatusChanges = [
  * Check that status changes are valid
  */
 export const statusChangeValid = (o, propVal) => {
-  if (!o[prevmodel]?.orderStatus) return true;
 
   if (invalidStatusChanges.some(isc => isc(o, propVal))) {
     throw new Error("invalid status change");
