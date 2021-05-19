@@ -162,12 +162,12 @@ function hotReload() {
 //   });
 //
 
-if (cluster.isMaster) {
-  cluster.fork();
-  startServer();
-} else {
-  hotReload();
-}
+// if (cluster.isMaster) {
+//   cluster.fork();
+//   startServer();
+// } else {
+//   hotReload();
+// }
 
 // let reloaded = false;
 // let serverRunning = false;
