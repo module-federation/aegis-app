@@ -1,0 +1,8 @@
+KAFKA_GROUP_ID=microlib-remote
+ENCRYPTION_PWD=secret
+ORDER_SVC_URL=http://localhost:8070/microlib/api/models/orders/
+SMARTY_AUTH_ID=xxxx
+SMARTY_AUTH_TOKEN=xxxx
+SQUARE_TOKEN=xxxx
+RELOAD_URL=https://localhost:8070/microlib/reload
+AUTH_ENABLED=false
