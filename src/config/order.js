@@ -35,7 +35,7 @@ import {
 } from "../models/mixins";
 
 import { uuid } from "../lib/utils";
-import { DataSourceAdapterMongoDb } from "../datasources/datasource-mongodb";
+import { DataSourceFileAdapter } from "../datasources/datasource-file-adapter";
 
 /**
  * @type {import('../models/index').ModelSpecification}
@@ -50,6 +50,11 @@ export const Order = {
   //   cacheSize: 2000,
   //   baseClass: "DataSourceMongoDb",
   // },
+  datasource: {
+    factory: DataSourceFileAdapter,
+    cacheSize: 2000,
+    baseClass: "DataSourceFile",
+  },
   dependencies: { uuid },
   mixins: [
     requireProperties(
