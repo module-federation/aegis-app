@@ -1230,7 +1230,6 @@ var models = Object.values(_config__WEBPACK_IMPORTED_MODULE_4__).map(function (s
   return makeModel(spec);
 });
 
-
 /***/ }),
 
 /***/ "./src/models/make-adapters.js":
