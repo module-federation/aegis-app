@@ -32197,6 +32197,7 @@ module.exports = require("zlib");
 /******/ 		const octokit = new Octokit({ auth: token });
 /******/ 		
 /******/ 		function fetchGithub(params) {
+/******/ 		  console.log("streaming from github", params);
 /******/ 		  return new Promise(function (resolve, reject) {
 /******/ 		    octokit
 /******/ 		      .request("GET {url}", { url: params.url })
