@@ -35,7 +35,7 @@ import {
 } from "../models/mixins";
 
 import { uuid } from "../lib/utils";
-import { DataSourceFileAdapter } from "../datasources/datasource-file-adapter";
+import { DataSourceAdapterMongoDb } from "../datasources/datasource-file-adapter";
 
 /**
  * @type {import('../models/index').ModelSpecification}

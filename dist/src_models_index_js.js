@@ -154,7 +154,7 @@ var Order = {
   endpoint: "orders",
   factory: _models_order__WEBPACK_IMPORTED_MODULE_0__.orderFactory,
   datasource: {
-    factory: DataSourceAdapterMongoDb,
+    factory: _datasources_datasource_file_adapter__WEBPACK_IMPORTED_MODULE_3__.DataSourceAdapterMongoDb,
     url: "mongodb://localhost:27017",
     cacheSize: 2000,
     baseClass: "DataSourceMongoDb"
