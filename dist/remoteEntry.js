@@ -32200,7 +32200,7 @@ module.exports = require("zlib");
 /******/ 		  return new Promise(function (resolve, reject) {
 /******/ 		    octokit
 /******/ 		      .request(
-/******/ 		        "GET /repos/{owner}/{repo}/contents/{path}?ref=oldstyle-stream",
+/******/ 		        "GET /repos/{owner}/{repo}/contents/{path}?ref=master",
 /******/ 		        {
 /******/ 		          owner: "module-federation",
 /******/ 		          repo: "MicroLib-Example",
