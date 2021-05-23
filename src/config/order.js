@@ -43,7 +43,7 @@ import { DataSourceFileAdapter } from "../datasources/datasource-file-adapter";
 export const Order = {
   modelName: "order",
   endpoint: "orders",
-  factory: orderF
+  factory: orderFactory,
   datasource: {
     factory: DataSourceAdapterMongoDb,
     url: "mongodb://localhost:27017",
