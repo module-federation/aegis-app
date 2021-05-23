@@ -58,6 +58,10 @@ const { Octokit } = require("@octokit/rest");
 const fs = require("fs");
 const path = require("path");
 const token = process.env.GITHUB_TOKEN;
+const branch = process.env.GITHUB_BRANCH || "master";
+const repo = process.env.GITHUB_REPO || "MicroLib-Example";
+const owner = process.env.GITHUB_OWNER || "module-federation";
+const path = process.env.GITHUB_PATH || "dist";
 
 const octokit = new Octokit({ auth: token });
 
@@ -65,11 +69,12 @@ function httpRequest(url) {
   return new Promise(function (resolve, reject) {
     octokit
       .request(
-        "GET /repos/{owner}/{repo}/contents/{path}?ref=oldstyle-stream",
+        "GET /repos/{owner}/{repo}/contents/{path}?ref={branch}",
         {
-          owner: "module-federation",
-          repo: "MicroLib-Example",
-          path: "dist",
+          owner,
+          repo,
+          path,
+          branch,
         }
       )
       .then(function (rest) {
