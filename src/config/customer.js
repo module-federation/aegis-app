@@ -21,6 +21,7 @@ export const Customer = {
   validate: validateModel,
   onDelete: okToDelete,
   datasource: {
+    
     factory: DataSourceAdapterMongoDb,
     url: "mongodb://localhost:27017",
     cacheSize: 2000,
