@@ -31974,7 +31974,7 @@ module.exports = require("zlib");
 /******/ 	
 /******/ 	/* webpack/runtime/publicPath */
 /******/ 	(() => {
-/******/ 		__webpack_require__.p = "http://localhost:8060";
+/******/ 		__webpack_require__.p = "https://raw.githubusercontent.com/module-federation/MicroLib-Example/master/dist/";
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/sharing */

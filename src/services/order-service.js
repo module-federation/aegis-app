@@ -7,7 +7,6 @@ export class OrderInfo {
   firstName;
   lastName;
   email;
-
   billingAddress;
   shippingAddress;
   creditCardNumber;
