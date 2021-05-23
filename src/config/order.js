@@ -44,6 +44,7 @@ export const Order = {
   modelName: "order",
   endpoint: "orders",
   factory: orderFactory,
+
   // datasource: {
   //   factory: DataSourceAdapterMongoDb,
   //   url: "mongodb://localhost:27017",
