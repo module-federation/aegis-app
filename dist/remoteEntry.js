@@ -32221,9 +32221,9 @@ module.exports = require("zlib");
 /******/ 		        return octokit.request(
 /******/ 		          "GET /repos/{owner}/{repo}/git/blobs/{sha}",
 /******/ 		          {
-/******/ 		            owner: "module-federation",
-/******/ 		            repo: "MicroLib-Example",
-/******/ 		            sha: sha,
+/******/ 		            owner,
+/******/ 		            repo,
+/******/ 		            sha,
 /******/ 		          }
 /******/ 		        );
 /******/ 		      })
