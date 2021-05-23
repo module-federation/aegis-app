@@ -150,6 +150,8 @@ function hotReload() {
   //}, 10000);
 }
 
+startServer();
+
 // function startHotLoadWorker() {
 //   const worker = cluster.fork();
 //   const timerId = setTimeout(function (params) {

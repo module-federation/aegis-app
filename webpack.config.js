@@ -1,6 +1,6 @@
 var path = require("path");
-const ModuleFederationPlugin = require("webpack").container
-  .ModuleFederationPlugin;
+const ModuleFederationPlugin =
+  require("webpack").container.ModuleFederationPlugin;
 const httpNode = require("./webpack/http-node");
 const NodemonPlugin = require("nodemon-webpack-plugin");
 
@@ -9,6 +9,7 @@ var serverConfig = {
   entry: ["@babel/polyfill", path.resolve(__dirname, "src/index.js")],
   output: {
     path: path.resolve(__dirname, "dist"),
+    //"http://localhost:8060",
     publicPath:
       "https://raw.githubusercontent.com/module-federation/MicroLib-Example/oldstyle-stream/dist/",
     libraryTarget: "commonjs",
