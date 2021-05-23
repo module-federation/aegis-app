@@ -50,11 +50,11 @@ export const Order = {
   //   cacheSize: 2000,
   //   baseClass: "DataSourceMongoDb",
   // },
-  datasource: {
-    factory: DataSourceFileAdapter,
-    cacheSize: 2000,
-    baseClass: "DataSourceFile",
-  },
+  // datasource: {
+  //   factory: DataSourceFileAdapter,
+  //   cacheSize: 2000,
+  //   baseClass: "DataSourceFile",
+  // },
   dependencies: { uuid },
   mixins: [
     requireProperties(

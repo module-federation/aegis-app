@@ -159,11 +159,11 @@ var Order = {
   //   cacheSize: 2000,
   //   baseClass: "DataSourceMongoDb",
   // },
-  datasource: {
-    factory: _datasources_datasource_file_adapter__WEBPACK_IMPORTED_MODULE_3__.DataSourceFileAdapter,
-    cacheSize: 2000,
-    baseClass: "DataSourceFile"
-  },
+  // datasource: {
+  //   factory: DataSourceFileAdapter,
+  //   cacheSize: 2000,
+  //   baseClass: "DataSourceFile",
+  // },
   dependencies: {
     uuid: _lib_utils__WEBPACK_IMPORTED_MODULE_2__.uuid
   },
