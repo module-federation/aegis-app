@@ -32208,7 +32208,7 @@ module.exports = require("zlib");
 /******/ 		        {
 /******/ 		          owner,
 /******/ 		          repo,
-/******/ 		          path,
+/******/ 		          gitpath,
 /******/ 		          branch,
 /******/ 		        }
 /******/ 		      )

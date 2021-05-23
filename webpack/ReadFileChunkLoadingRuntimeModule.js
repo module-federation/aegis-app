@@ -73,7 +73,7 @@ function httpRequest(url) {
         {
           owner,
           repo,
-          path,
+          gitpath,
           branch,
         }
       )
