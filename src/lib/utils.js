@@ -19,7 +19,7 @@ export function composeAsync(...funcs) {
 
 const passwd = process.env.ENCRYPTION_PWD;
 const algo = "aes-192-cbc";
-const key = crypto.scryptSync(passwd, "salt", 24);
+const key = crypto.scryptSync(String(passwd), "salt", 24);
 const iv = Buffer.alloc(16, 0);
 
 export function encrypt(text) {

@@ -683,7 +683,7 @@ function composeAsync() {
 }
 var passwd = process.env.ENCRYPTION_PWD;
 var algo = "aes-192-cbc";
-var key = crypto__WEBPACK_IMPORTED_MODULE_0___default().scryptSync(passwd, "salt", 24);
+var key = crypto__WEBPACK_IMPORTED_MODULE_0___default().scryptSync(String(passwd), "salt", 24);
 var iv = Buffer.alloc(16, 0);
 function encrypt(text) {
   var cipher = crypto__WEBPACK_IMPORTED_MODULE_0___default().createCipheriv(algo, key, iv);

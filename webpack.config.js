@@ -10,7 +10,6 @@ var serverConfig = {
   output: {
     path: path.resolve(__dirname, "dist"),
     publicPath: "http://localhost:8060",
-    //      "https://raw.githubusercontent.com/module-federation/MicroLib-Example/oldstyle-stream/dist/",
     libraryTarget: "commonjs",
   },
   devtool: "source-map",
