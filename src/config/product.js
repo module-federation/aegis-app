@@ -1,5 +1,5 @@
 export const Product = {
-  factory: () => () => ({ a, b }),
+  factory: () => (a) => ({ a, b }),
   modelName: "product",
   endpoint: "products",
 };

@@ -40,11 +40,11 @@ var Customer = {
   factory: _models_customer__WEBPACK_IMPORTED_MODULE_0__.customerFactory,
   validate: _models_mixins__WEBPACK_IMPORTED_MODULE_1__.validateModel,
   onDelete: _models_customer__WEBPACK_IMPORTED_MODULE_0__.okToDelete,
-  datasource: {
-    factory: _datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_3__.DataSourceAdapterMongoDb,
-    url: "mongodb://localhost:27017",
-    cacheSize: 2000
-  },
+  // datasource: {
+  //   factory: DataSourceAdapterMongoDb,
+  //   url: "mongodb://localhost:27017",
+  //   cacheSize: 2000,
+  // },
   mixins: [(0,_models_mixins__WEBPACK_IMPORTED_MODULE_1__.freezeProperties)("customerId"), (0,_models_mixins__WEBPACK_IMPORTED_MODULE_1__.requireProperties)("firstName", "lastName", "email", "shippingAddress", "billingAddress", "creditCardNumber"), (0,_models_mixins__WEBPACK_IMPORTED_MODULE_1__.validateProperties)([{
     propKey: "email",
     unique: {
@@ -159,11 +159,6 @@ var Order = {
     cacheSize: 2000,
     baseClass: "DataSourceMongoDb"
   },
-  // datasource: {
-  //   factory: DataSourceFileAdapter,
-  //   cacheSize: 2000,
-  //   baseClass: "DataSourceFile",
-  // },
   dependencies: {
     uuid: _lib_utils__WEBPACK_IMPORTED_MODULE_2__.uuid
   },
