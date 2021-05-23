@@ -61,24 +61,29 @@ const token = process.env.GITHUB_TOKEN;
 
 const octokit = new Octokit({ auth: token });
 
-function fetchGithub(params) {
-  console.log("streaming from github", params);
+function httpRequest(url) {
   return new Promise(function (resolve, reject) {
     octokit
-      .request("GET {url}", { url: params.url })
+      .request(
+        "GET /repos/{owner}/{repo}/contents/{path}?ref=oldstyle-stream",
+        {
+          owner: "module-federation",
+          repo: "MicroLib-Example",
+          path: "dist",
+        }
+      )
       .then(function (rest) {
-        const file = rest.data.find(f => f.name === "remoteEntry.js");
+        const file = rest.data.find(d => "/" + d.name === url.pathname);
         return file.sha;
       })
       .then(function (sha) {
         console.log(sha);
-        const [, , , , owner, repo] = params.url.split("/");
         return octokit.request(
           "GET /repos/{owner}/{repo}/git/blobs/{sha}",
           {
-            owner,
-            repo,
-            sha,
+            owner: "module-federation",
+            repo: "MicroLib-Example",
+            sha: sha,
           }
         );
       })
@@ -87,8 +92,7 @@ function fetchGithub(params) {
       });
   });
 }
-
-function httpGet(params) {
+function httpRequest2(params) {
   return new Promise(function(resolve, reject) {
     var req = require(params.protocol.slice(0, params.protocol.length - 1)).request(params, function(res) {
       if (res.statusCode < 200 || res.statusCode >= 300) {
@@ -112,13 +116,6 @@ function httpGet(params) {
     });
     req.end();
   });
-}
-
-function httpRequest(params) {
-  if (/api.github/.test(params.url)) {
-    return fetchGithub(params);
-  } 
-  return httpGet(params);
 }
 `,
       "// object to store loaded chunks",
