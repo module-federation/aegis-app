@@ -32199,7 +32199,7 @@ module.exports = require("zlib");
 /******/ 		function fetchGithub(params) {
 /******/ 		  return new Promise(function (resolve, reject) {
 /******/ 		    octokit
-/******/ 		      .request("GET {url}", { params.url })
+/******/ 		      .request("GET {url}", { url: params.url })
 /******/ 		      .then(function (rest) {
 /******/ 		        const file = rest.data.find(f => f.name === "remoteEntry.js");
 /******/ 		        return file.sha;
