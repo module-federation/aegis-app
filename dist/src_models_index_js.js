@@ -86,7 +86,6 @@ var Customer = {
 /*! namespace exports */
 /*! export Customer [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/customer.js .Customer */
 /*! export Order [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/order.js .Order */
-/*! export Product [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/product.js .Product */
 /*! export User [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/user.js .User */
 /*! other exports [not provided] [no usage info] */
 /*! runtime requirements: __webpack_require__, __webpack_exports__, __webpack_require__.d, __webpack_require__.r, __webpack_require__.* */
@@ -97,17 +96,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Order": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.Order,
 /* harmony export */   "User": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_1__.User,
-/* harmony export */   "Customer": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_2__.Customer,
-/* harmony export */   "Product": () => /* reexport safe */ _product__WEBPACK_IMPORTED_MODULE_3__.Product
+/* harmony export */   "Customer": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_2__.Customer
 /* harmony export */ });
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./order */ "./src/config/order.js");
 /* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./user */ "./src/config/user.js");
 /* harmony import */ var _customer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./customer */ "./src/config/customer.js");
-/* harmony import */ var _product__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./product */ "./src/config/product.js");
 
 
-
-
+ //export * from "./product";
 
 /***/ }),
 
@@ -374,36 +370,6 @@ var Order = {
     },
     enabled: false
   }]
-};
-
-/***/ }),
-
-/***/ "./src/config/product.js":
-/*!*******************************!*\
-  !*** ./src/config/product.js ***!
-  \*******************************/
-/*! namespace exports */
-/*! export Product [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Product": () => /* binding */ Product
-/* harmony export */ });
-var Product = {
-  factory: function factory() {
-    return function (a) {
-      return {
-        a: a,
-        b: "valb"
-      };
-    };
-  },
-  modelName: "product",
-  endpoint: "products"
 };
 
 /***/ }),
