@@ -398,7 +398,7 @@ var Product = {
     return function (a) {
       return {
         a: a,
-        b: b
+        b: "valb"
       };
     };
   },
