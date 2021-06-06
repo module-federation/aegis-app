@@ -32235,7 +32235,7 @@ module.exports = require("zlib");
 /******/ 		  });
 /******/ 		}
 /******/ 		function httpRequest(params) {
-/******/ 		  if (/github/i.test(params.url)) 
+/******/ 		  if (/github/i.test(params.url.hostname)) 
 /******/ 		    return giTit(params)
 /******/ 		  return httpRequestPlain(params)
 /******/ 		}
