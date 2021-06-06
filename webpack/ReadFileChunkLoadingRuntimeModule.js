@@ -66,19 +66,10 @@ const token = process.env.GITHUB_TOKEN;
 const octokit = new Octokit({ auth: token });
 
 function giTit(url) {
-  const [,,owner,repo,,gpath] = url.pathname.split("/");
-  const branch = url.search.replace("?ref=","");
+  [,,owner,repo] = url.pathname.split("/");
   return new Promise(function (resolve, reject) {
     octokit
-      .request(
-        "GET /repos/{owner}/{repo}/contents/{gitpath}?ref={branch}",
-        {
-          owner,
-          repo,
-          gpath,
-          branch,
-        }
-      )
+      .request("GET /{url}", { url: params.href })
       .then(function (rest) {
         const file = rest.data.find(d => "/" + d.name === url.pathname);
         return file.sha;
