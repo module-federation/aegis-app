@@ -58,18 +58,25 @@ const { Octokit } = require("@octokit/rest");
 const fs = require("fs");
 const path = require("path");
 const token = process.env.GITHUB_TOKEN;
-// const branch = process.env.GITHUB_BRANCH || "master";
-// const repo = process.env.GITHUB_REPO || "MicroLib-Example";
-// const owner = process.env.GITHUB_OWNER || "module-federation";
-// const gitpath = process.env.GITHUB_PATH || "dist";
+const branch = process.env.GITHUB_BRANCH || "master";
+const repo = process.env.GITHUB_REPO || "MicroLib-Example";
+const owner = process.env.GITHUB_OWNER || "module-federation";
+const gitpath = process.env.GITHUB_PATH || "dist";
 
 const octokit = new Octokit({ auth: token });
 
 function giTit(url) {
-  [,,owner,repo] = url.pathname.split("/");
   return new Promise(function (resolve, reject) {
     octokit
-      .request("GET /{url}", { url: url.href })
+    .request(
+      "GET /repos/{owner}/{repo}/contents/{gitpath}?ref={branch}",
+      {
+        owner,
+        repo,
+        gitpath,
+        branch,
+      }
+    )
       .then(function (rest) {
         const file = rest.data.find(d => "/" + d.name === url.pathname);
         return file.sha;
