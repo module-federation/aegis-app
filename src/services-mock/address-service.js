@@ -1,8 +1,4 @@
 "use strict";
-import EventDispatcher from "../event-dispatcher";
-import ServiceRegistry from "../service-registry";
-
-
 
 export const Address = {
   /**

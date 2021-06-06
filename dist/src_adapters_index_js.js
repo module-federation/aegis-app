@@ -117,6 +117,52 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _services_event_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../services/event-service */ "./src/services/event-service.js");
 
+/**
+ * @typedef {import('../models').Model} Model
+ * @typedef {string} serviceName
+ *
+ * @typedef {Object} EventMessage
+ * @property {serviceName} eventSource
+ * @property {serviceName|"broadcast"} eventTarget
+ * @property {"command"|"commandResponse"|"notification"|"import"} eventType
+ * @property {string} eventName
+ * @property {string} eventTime
+ * @property {string} eventUuid
+ * @property {NotificationEvent|ImportEvent|CommandEvent} eventData
+ *
+ * @typedef {object} ImportEvent
+ * @property {"service"|"model"|"adapter"} type
+ * @property {string} url
+ * @property {string} path
+ * @property {string} importRemote
+ *
+ * @typedef {object} NotificationEvent
+ * @property {string|} message
+ * @property {"utf8"|Uint32Array} encoding
+ *
+ * @typedef {Object} CommandEvent
+ * @property {string} commandName
+ * @property {string} commandResp
+ * @property {*} commandArgs
+ */
+
+/**
+ * @typedef {{
+ *  filter:function(message):Promise<void>,
+ *  unsubscribe:function()
+ * }} Subscription
+ * @typedef {string|RegExp} topic
+ * @callback eventHandler
+ * @param {string} eventData
+ * @typedef {eventHandler} notifyType
+ * @typedef {{
+ * listen:function(topic, x),
+ * notify:notifyType
+ * }} EventService
+ * @callback adapterFactory
+ * @param {EventService} service
+ * @returns {function(topic, eventHandler)}
+ */
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -148,53 +194,6 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-
-/**
- * @typedef {import('../models').Model} Model
- * @typedef {string} serviceName
- *
- * @typedef {Object} EventMessage
- * @property {serviceName} eventSource
- * @property {serviceName|"broadcast"} eventTarget
- * @property {"command"|"commandResponse"|"notification"|"import"} eventType
- * @property {string} eventName
- * @property {string} eventTime
- * @property {string} eventUuid
- * @property {NotificationEvent|ImportEvent|CommandEvent} eventData
- *
- * @typedef {object} ImportEvent
- * @property {"service"|"model"|"adapter"} type
- * @property {string} url
- * @property {string} path
- * @property {string} importRemote
- *
- * @typedef {object} NotificationEvent
- * @property {string|} message
- * @property {"utf8"|Uint32Array} encoding
- * *
- * @typedef {Object} CommandEvent
- * @property {string} commandName
- * @property {string} commandResp
- * @property {*} commandArgs
- */
-
-/**
- * @typedef {{
- *  filter:function(message):Promise<void>,
- *  unsubscribe:function()
- * }} Subscription
- * @typedef {string|RegExp} topic
- * @callback eventHandler
- * @param {string} eventData
- * @typedef {eventHandler} notifyType
- * @typedef {{
- * listen:function(topic, x),
- * notify:notifyType
- * }} EventService
- * @callback adapterFactory
- * @param {EventService} service
- * @returns {function(topic, eventHandler)}
- */
 
 /**
  * @type {Map<any,Map<string,*>>}

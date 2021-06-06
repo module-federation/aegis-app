@@ -1,6 +1,5 @@
 "use strict";
 
-import { Event } from "../services/event-service";
 /**
  * @typedef {import('../models').Model} Model
  * @typedef {string} serviceName
@@ -23,7 +22,7 @@ import { Event } from "../services/event-service";
  * @typedef {object} NotificationEvent
  * @property {string|} message
  * @property {"utf8"|Uint32Array} encoding
- * *
+ *
  * @typedef {Object} CommandEvent
  * @property {string} commandName
  * @property {string} commandResp
@@ -47,6 +46,7 @@ import { Event } from "../services/event-service";
  * @param {EventService} service
  * @returns {function(topic, eventHandler)}
  */
+import { Event } from "../services/event-service";
 
 /**
  * @type {Map<any,Map<string,*>>}

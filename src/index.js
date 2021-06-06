@@ -9,6 +9,7 @@ require("dotenv").config();
 const services = require("./service-registry").default;
 const cluster = require("cluster");
 const fs = require("fs");
+const _srv_ = require("./services");
 //const { handleEvents } = require("./services-mock/event-service");
 
 const app = express();

@@ -256,178 +256,45 @@ var Address = {
 
 /***/ }),
 
-/***/ "./src/services/event-service.js":
-/*!***************************************!*\
-  !*** ./src/services/event-service.js ***!
-  \***************************************/
+/***/ "./src/services/event-bus.js":
+/*!***********************************!*\
+  !*** ./src/services/event-bus.js ***!
+  \***********************************/
 /*! namespace exports */
-/*! export Event [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export EventBus [provided] [no usage info] [missing usage info prevents renaming] */
 /*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Event": () => /* binding */ Event
+/* harmony export */   "EventBus": () => /* binding */ EventBus
 /* harmony export */ });
-/* harmony import */ var kafkajs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! kafkajs */ "webpack/sharing/consume/default/kafkajs/kafkajs");
-/* harmony import */ var kafkajs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(kafkajs__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _adapters__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../adapters */ "./src/adapters/index.js");
+/* harmony import */ var _event_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./event-service */ "./src/services/event-service.js");
+ // Build EventBus client for host
 
 
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 
-var brokers = process.env.KAFKA_BROKERS || "localhost:9092";
-var topics = new RegExp(process.env.KAFKA_TOPICS) || /Channel/;
-var groupId = process.env.KAFKA_GROUP_ID || "MicroLib" + process.pid;
-var kafka = new kafkajs__WEBPACK_IMPORTED_MODULE_0__.Kafka({
-  clientId: "MicroLib",
-  brokers: brokers.split(",")
-});
-var consumer = kafka.consumer({
-  groupId: groupId
-});
-var producer = kafka.producer();
-/**
- * @typedef {EventService}
- */
+var _notify = (0,_adapters__WEBPACK_IMPORTED_MODULE_0__.notify)(_event_service__WEBPACK_IMPORTED_MODULE_1__.Event);
 
-var Event = {
-  listening: false,
-  topics: topics,
+var _listen = (0,_adapters__WEBPACK_IMPORTED_MODULE_0__.listen)(_event_service__WEBPACK_IMPORTED_MODULE_1__.Event);
 
-  /**
-   * Implements event consumer service.
-   * @param {string|RegExp} topic
-   * @param {function({message, topic})} callback
-   */
-  listen: function listen(topic, callback) {
-    var _this = this;
-
-    return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-      return regeneratorRuntime.wrap(function _callee2$(_context2) {
-        while (1) {
-          switch (_context2.prev = _context2.next) {
-            case 0:
-              _context2.prev = 0;
-              _context2.next = 3;
-              return consumer.connect();
-
-            case 3:
-              _context2.next = 5;
-              return consumer.subscribe({
-                topic: topic,
-                fromBeginning: true
-              });
-
-            case 5:
-              _this.listening = true;
-              _context2.next = 8;
-              return consumer.run({
-                eachMessage: function () {
-                  var _eachMessage = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(_ref) {
-                    var topic, message;
-                    return regeneratorRuntime.wrap(function _callee$(_context) {
-                      while (1) {
-                        switch (_context.prev = _context.next) {
-                          case 0:
-                            topic = _ref.topic, message = _ref.message;
-
-                            try {
-                              callback({
-                                topic: topic,
-                                message: message.value.toString()
-                              });
-                            } catch (error) {
-                              console.error(error);
-                            }
-
-                          case 2:
-                          case "end":
-                            return _context.stop();
-                        }
-                      }
-                    }, _callee);
-                  }));
-
-                  function eachMessage(_x) {
-                    return _eachMessage.apply(this, arguments);
-                  }
-
-                  return eachMessage;
-                }()
-              });
-
-            case 8:
-              _context2.next = 13;
-              break;
-
-            case 10:
-              _context2.prev = 10;
-              _context2.t0 = _context2["catch"](0);
-              console.error(_context2.t0);
-
-            case 13:
-            case "end":
-              return _context2.stop();
-          }
-        }
-      }, _callee2, null, [[0, 10]]);
-    }))();
-  },
-
-  /**
-   * Implemements event producer service.
-   * @param {string|RegExp} topic
-   * @param {string} message
-   */
+var model = {};
+var EventBus = {
   notify: function notify(topic, message) {
-    var _this2 = this;
-
-    return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
-      return regeneratorRuntime.wrap(function _callee3$(_context3) {
-        while (1) {
-          switch (_context3.prev = _context3.next) {
-            case 0:
-              _context3.prev = 0;
-              _context3.next = 3;
-              return producer.connect();
-
-            case 3:
-              _context3.next = 5;
-              return producer.send({
-                topic: topic,
-                messages: [{
-                  value: message
-                }]
-              });
-
-            case 5:
-              _context3.next = 7;
-              return producer.disconnect();
-
-            case 7:
-              _context3.next = 12;
-              break;
-
-            case 9:
-              _context3.prev = 9;
-              _context3.t0 = _context3["catch"](0);
-              console.error({
-                func: _this2.notify.name,
-                error: _context3.t0
-              });
-
-            case 12:
-            case "end":
-              return _context3.stop();
-          }
-        }
-      }, _callee3, null, [[0, 9]]);
-    }))();
+    return _notify({
+      model: model,
+      args: [topic, message]
+    });
+  },
+  listen: function listen(options) {
+    return _listen({
+      model: model,
+      args: [options]
+    });
   }
 };
 
@@ -440,6 +307,7 @@ var Event = {
 /*! namespace exports */
 /*! export Address [provided] [no usage info] [missing usage info prevents renaming] -> ./src/services/address-service.js .Address */
 /*! export Event [provided] [no usage info] [missing usage info prevents renaming] -> ./src/services/event-service.js .Event */
+/*! export EventBus [maybe provided (runtime-defined)] [no usage info] [provision prevents renaming (no use info)] */
 /*! export Payment [maybe provided (runtime-defined)] [no usage info] [provision prevents renaming (no use info)] */
 /*! export Shipping [maybe provided (runtime-defined)] [no usage info] [provision prevents renaming (no use info)] */
 /*! export default [not provided] [no usage info] [missing usage info prevents renaming] */
@@ -455,7 +323,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Event": () => /* reexport safe */ _event_service__WEBPACK_IMPORTED_MODULE_1__.Event,
 /* harmony export */   "Payment": () => /* reexport safe */ _payment_service__WEBPACK_IMPORTED_MODULE_3__.Payment,
 /* harmony export */   "Shipping": () => /* reexport safe */ _shipping_service__WEBPACK_IMPORTED_MODULE_4__.Shipping,
-/* harmony export */   "publishEvent": () => /* reexport safe */ _publish_event__WEBPACK_IMPORTED_MODULE_5__.publishEvent
+/* harmony export */   "publishEvent": () => /* reexport safe */ _publish_event__WEBPACK_IMPORTED_MODULE_5__.publishEvent,
+/* harmony export */   "EventBus": () => /* reexport safe */ _event_bus__WEBPACK_IMPORTED_MODULE_6__.EventBus
 /* harmony export */ });
 /* harmony import */ var _address_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./address-service */ "./src/services/address-service.js");
 /* harmony import */ var _event_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./event-service */ "./src/services/event-service.js");
@@ -467,6 +336,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _payment_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./payment-service */ "./src/services/payment-service.js");
 /* harmony import */ var _shipping_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./shipping-service */ "./src/services/shipping-service.js");
 /* harmony import */ var _publish_event__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./publish-event */ "./src/services/publish-event.js");
+/* harmony import */ var _event_bus__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./event-bus */ "./src/services/event-bus.js");
+
 
 
 
