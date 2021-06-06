@@ -32203,12 +32203,8 @@ module.exports = require("zlib");
 /******/ 		const octokit = new Octokit({ auth: token });
 /******/ 		
 /******/ 		function giTit(url) {
-/******/ 		  const pathparts = url.pathname.split("/");
-/******/ 		  const owner = pathparts[1];
-/******/ 		  const repo = pathparts[2];
-/******/ 		  const gitpath = pathparts[4]
-/******/ 		  const branch = pathpart[5];
-/******/ 		
+/******/ 		  const [,,owner,repo,,pathbranch] = url.pathname.split("/");
+/******/ 		  const [gpath, branch] = pathbranch.split("?=");
 /******/ 		  return new Promise(function (resolve, reject) {
 /******/ 		    octokit
 /******/ 		      .request(
@@ -32216,7 +32212,7 @@ module.exports = require("zlib");
 /******/ 		        {
 /******/ 		          owner,
 /******/ 		          repo,
-/******/ 		          gitpath,
+/******/ 		          gpath,
 /******/ 		          branch,
 /******/ 		        }
 /******/ 		      )
