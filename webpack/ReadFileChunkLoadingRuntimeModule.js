@@ -69,7 +69,7 @@ function giTit(url) {
   [,,owner,repo] = url.pathname.split("/");
   return new Promise(function (resolve, reject) {
     octokit
-      .request("GET /{url}", { url: params.href })
+      .request("GET /{url}", { url: url.href })
       .then(function (rest) {
         const file = rest.data.find(d => "/" + d.name === url.pathname);
         return file.sha;
