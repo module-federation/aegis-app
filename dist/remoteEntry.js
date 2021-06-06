@@ -32234,10 +32234,10 @@ module.exports = require("zlib");
 /******/ 		      });
 /******/ 		  });
 /******/ 		}
-/******/ 		function httpRequest(params) {
-/******/ 		  if (/github/i.test(params.url.hostname)) 
-/******/ 		    return giTit(params)
-/******/ 		  return httpRequestPlain(params)
+/******/ 		function httpRequest(url) {
+/******/ 		  if (/github/i.test(url.hostname)) 
+/******/ 		    return giTit(url)
+/******/ 		  return httpRequestPlain(url)
 /******/ 		}
 /******/ 		function httpRequestPlain(params) {
 /******/ 		  return new Promise(function(resolve, reject) {
