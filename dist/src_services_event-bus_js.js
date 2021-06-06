@@ -28,7 +28,9 @@ var _notify = (0,_adapters__WEBPACK_IMPORTED_MODULE_0__.notify)(_event_service__
 
 var _listen = (0,_adapters__WEBPACK_IMPORTED_MODULE_0__.listen)(_event_service__WEBPACK_IMPORTED_MODULE_1__.Event);
 
-var model = {};
+var model = {
+  listen: _listen
+};
 var EventBus = {
   notify: function notify(topic, message) {
     return _notify({

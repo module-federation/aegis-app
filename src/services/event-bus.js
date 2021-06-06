@@ -6,7 +6,7 @@ import { Event } from "./event-service";
 
 const _notify = notify(Event);
 const _listen = listen(Event);
-const model = {};
+const model = { listen: _listen };
 
 export const EventBus = {
   notify(topic, message) {
