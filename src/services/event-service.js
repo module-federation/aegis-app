@@ -4,7 +4,7 @@ import { Kafka } from "kafkajs";
 
 const brokers = process.env.KAFKA_BROKERS || "localhost:9092";
 const topics = new RegExp(process.env.KAFKA_TOPICS) || /Channel/;
-const groupId = process.env.KAFKA_GROUP_ID || "MicroLib" + process.pid;
+const groupId = (process.env.KAFKA_GROUP_ID || "MicroLib") + process.pid;
 
 const kafka = new Kafka({
   clientId: "MicroLib",

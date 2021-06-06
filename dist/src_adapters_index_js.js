@@ -1272,7 +1272,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 var brokers = process.env.KAFKA_BROKERS || "localhost:9092";
 var topics = new RegExp(process.env.KAFKA_TOPICS) || /Channel/;
-var groupId = process.env.KAFKA_GROUP_ID || "MicroLib" + process.pid;
+var groupId = (process.env.KAFKA_GROUP_ID || "MicroLib") + process.pid;
 var kafka = new kafkajs__WEBPACK_IMPORTED_MODULE_0__.Kafka({
   clientId: "MicroLib",
   brokers: brokers.split(",")
