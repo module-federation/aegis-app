@@ -66,8 +66,8 @@ const token = process.env.GITHUB_TOKEN;
 const octokit = new Octokit({ auth: token });
 
 function giTit(url) {
-  const [,,owner,repo,,pathbranch] = url.pathname.split("/");
-  const [gpath, branch] = pathbranch.split("?=");
+  const [,,owner,repo,,gpath] = url.pathname.split("/");
+  const branch = url.search.replace("?ref=","");
   return new Promise(function (resolve, reject) {
     octokit
       .request(
