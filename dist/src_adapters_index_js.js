@@ -214,7 +214,7 @@ function filterMatches(message) {
       func: filterMatches.name,
       filter: filter,
       result: result,
-      message: message.substring(0, 10) + "..."
+      message: message.substring(0, 30).concat("...")
     });
     return result;
   };

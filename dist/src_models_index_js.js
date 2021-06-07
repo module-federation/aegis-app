@@ -22,8 +22,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./order */ "./src/config/order.js");
 /* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./user */ "./src/config/user.js");
 
- // export * from "./customer";
-// export * from "./product";
+ //export * from "./customer";
+//export * from "./product";
 
 /***/ }),
 
