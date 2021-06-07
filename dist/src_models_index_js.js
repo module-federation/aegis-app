@@ -1179,11 +1179,8 @@ function makeModel(spec) {
   });
 }
 
-var modelsArray = Object.values(_config__WEBPACK_IMPORTED_MODULE_4__).map(function (spec) {
+var models = Object.values(_config__WEBPACK_IMPORTED_MODULE_4__).map(function (spec) {
   return makeModel(spec);
-});
-var models = modelsArray.reduce(function (p, c) {
-  return _objectSpread(_objectSpread({}, p), c);
 });
 
 /***/ }),

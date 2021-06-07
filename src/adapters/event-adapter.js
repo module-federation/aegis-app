@@ -62,7 +62,12 @@ function filterMatches(message) {
   return function (filter) {
     const regex = new RegExp(filter);
     const result = regex.test(message);
-    console.debug({ func: filterMatches.name, filter, result, message });
+    console.debug({
+      func: filterMatches.name,
+      filter,
+      result,
+      message: message.substring(0, 10) + "...",
+    });
     return result;
   };
 }
