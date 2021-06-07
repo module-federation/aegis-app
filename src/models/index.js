@@ -204,4 +204,6 @@ function makeModel(spec) {
   };
 }
 
-export const models = Object.values(modelSpecs).map(spec => makeModel(spec));
+const modelsArray = Object.values(modelSpecs).map(spec => makeModel(spec));
+
+export const models = modelsArray.reduce((p, c) => ({ ...p, ...c }));
