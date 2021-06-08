@@ -17,9 +17,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Customer": () => /* binding */ Customer
 /* harmony export */ });
-/* harmony import */ var _models_customer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../models/customer */ "./src/models/customer.js");
-/* harmony import */ var _models_mixins__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../models/mixins */ "./src/models/mixins.js");
-/* harmony import */ var _lib_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../lib/utils */ "./src/lib/utils.js");
+/* harmony import */ var _models_mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../models/mixins */ "./src/models/mixins.js");
+/* harmony import */ var _lib_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../lib/utils */ "./src/lib/utils.js");
+/* harmony import */ var _models_customer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../models/customer */ "./src/models/customer.js");
 /* harmony import */ var _datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../datasources/datasource-mongodb */ "./src/datasources/datasource-mongodb.js");
 
 
@@ -35,17 +35,17 @@ var Customer = {
   modelName: "customer",
   endpoint: "customers",
   dependencies: {
-    uuid: _lib_utils__WEBPACK_IMPORTED_MODULE_2__.uuid
+    uuid: _lib_utils__WEBPACK_IMPORTED_MODULE_1__.uuid
   },
-  factory: _models_customer__WEBPACK_IMPORTED_MODULE_0__.customerFactory,
-  validate: _models_mixins__WEBPACK_IMPORTED_MODULE_1__.validateModel,
-  onDelete: _models_customer__WEBPACK_IMPORTED_MODULE_0__.okToDelete,
+  factory: _models_customer__WEBPACK_IMPORTED_MODULE_2__.makeCustomerFactory,
+  validate: _models_mixins__WEBPACK_IMPORTED_MODULE_0__.validateModel,
+  onDelete: _models_customer__WEBPACK_IMPORTED_MODULE_2__.okToDelete,
   datasource: {
     factory: _datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_3__.DataSourceAdapterMongoDb,
     url: "mongodb://localhost:27017",
     cacheSize: 2000
   },
-  mixins: [(0,_models_mixins__WEBPACK_IMPORTED_MODULE_1__.freezeProperties)("customerId"), (0,_models_mixins__WEBPACK_IMPORTED_MODULE_1__.requireProperties)("firstName", "lastName", "email", "shippingAddress", "billingAddress", "creditCardNumber"), (0,_models_mixins__WEBPACK_IMPORTED_MODULE_1__.validateProperties)([{
+  mixins: [(0,_models_mixins__WEBPACK_IMPORTED_MODULE_0__.freezeProperties)("customerId"), (0,_models_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)("firstName", "lastName", "email", "shippingAddress", "billingAddress", "creditCardNumber"), (0,_models_mixins__WEBPACK_IMPORTED_MODULE_0__.validateProperties)([{
     propKey: "email",
     unique: {
       encrypted: true
@@ -156,7 +156,7 @@ console.log("loading models.order module...");
 var Order = {
   modelName: "order",
   endpoint: "orders",
-  factory: _models_order__WEBPACK_IMPORTED_MODULE_0__.orderFactory,
+  factory: _models_order__WEBPACK_IMPORTED_MODULE_0__.makeOrderFactory,
   // datasource: {
   //   factory: DataSourceAdapterMongoDb,
   //   url: "mongodb://localhost:27017",
@@ -868,7 +868,7 @@ function checkPayload(key) {
   !*** ./src/models/customer.js ***!
   \********************************/
 /*! namespace exports */
-/*! export customerFactory [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export makeCustomerFactory [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export okToDelete [provided] [no usage info] [missing usage info prevents renaming] */
 /*! other exports [not provided] [no usage info] */
 /*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
@@ -877,7 +877,7 @@ function checkPayload(key) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "customerFactory": () => /* binding */ customerFactory,
+/* harmony export */   "makeCustomerFactory": () => /* binding */ makeCustomerFactory,
 /* harmony export */   "okToDelete": () => /* binding */ okToDelete
 /* harmony export */ });
 
@@ -886,7 +886,7 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-function customerFactory(_ref) {
+function makeCustomerFactory(_ref) {
   var uuid = _ref.uuid;
   return function createCustomer() {
     var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -2228,7 +2228,7 @@ var GlobalMixins = [encryptPersonalInfo];
 /*! export freezeOnCompletion [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export handleOrderEvent [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export handleStatusChange [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export orderFactory [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export makeOrderFactory [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export orderPicked [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export orderShipped [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export orderTotalValid [provided] [no usage info] [missing usage info prevents renaming] */
@@ -2275,7 +2275,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "refundPayment": () => /* binding */ refundPayment,
 /* harmony export */   "handleStatusChange": () => /* binding */ handleStatusChange,
 /* harmony export */   "handleOrderEvent": () => /* binding */ handleOrderEvent,
-/* harmony export */   "orderFactory": () => /* binding */ orderFactory,
+/* harmony export */   "makeOrderFactory": () => /* binding */ makeOrderFactory,
 /* harmony export */   "approve": () => /* binding */ approve,
 /* harmony export */   "cancel": () => /* binding */ cancel,
 /* harmony export */   "submit": () => /* binding */ submit,
@@ -3105,7 +3105,7 @@ function needsSignature(input, orderTotal) {
  */
 
 
-function orderFactory(dependencies) {
+function makeOrderFactory(dependencies) {
   return /*#__PURE__*/function () {
     var _createOrder = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(_ref7) {
       var _order;
