@@ -1,6 +1,6 @@
 "use strict";
 
-export function customerFactory({ uuid }) {
+export function makeCustomerFactory({ uuid }) {
   return function createCustomer({
     firstName,
     lastName,

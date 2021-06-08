@@ -499,7 +499,7 @@ function needsSignature(input, orderTotal) {
  * Returns factory function for the Order model.
  * @param {*} dependencies - inject dependencies
  */
-export function orderFactory(dependencies) {
+export function makeOrderFactory(dependencies) {
   return async function createOrder({
     orderItems,
     email = null,

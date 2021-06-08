@@ -1,6 +1,5 @@
 "use strict";
 
-import { customerFactory, okToDelete } from "../models/customer";
 import {
   validateModel,
   freezeProperties,
@@ -8,6 +7,7 @@ import {
   requireProperties,
 } from "../models/mixins";
 import { uuid } from "../lib/utils";
+import { makeCustomerFactory, okToDelete } from "../models/customer";
 import { DataSourceAdapterMongoDb } from "../datasources/datasource-mongodb";
 
 /**
@@ -17,7 +17,7 @@ export const Customer = {
   modelName: "customer",
   endpoint: "customers",
   dependencies: { uuid },
-  factory: customerFactory,
+  factory: makeCustomerFactory,
   validate: validateModel,
   onDelete: okToDelete,
   datasource: {

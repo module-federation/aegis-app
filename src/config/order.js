@@ -2,7 +2,7 @@
 
 console.log("loading models.order module...");
 import {
-  orderFactory,
+  makeOrderFactory,
   readyToDelete,
   handleOrderEvent,
   orderShipped,
@@ -43,7 +43,7 @@ import { DataSourceAdapterMongoDb } from "../datasources/datasource-mongodb";
 export const Order = {
   modelName: "order",
   endpoint: "orders",
-  factory: orderFactory,
+  factory: makeOrderFactory,
   // datasource: {
   //   factory: DataSourceAdapterMongoDb,
   //   url: "mongodb://localhost:27017",
