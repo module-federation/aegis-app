@@ -12,9 +12,6 @@ var serverConfig = {
     publicPath: "http://cache.aegis.dev:8060",
     publicPath:
       "https://api.github.com/module-federation/MicroLib-Example/dist?ref=order-server",
-
-    //  publicPath:
-    //      "https://api.github.com/module-federation/MicroLib-Example/dist?ref=master",
     libraryTarget: "commonjs",
   },
   devtool: "source-map",
