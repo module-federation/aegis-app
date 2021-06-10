@@ -10,8 +10,8 @@ var serverConfig = {
   output: {
     path: path.resolve(__dirname, "dist"),
     publicPath: "http://cache.aegis.dev:8060",
-    //publicPath:
-    // "https://api.github.com/module-federation/MicroLib-Example/dist?ref=order-server",
+    publicPath:
+      "https://api.github.com/module-federation/MicroLib-Example/dist?ref=order-server",
 
     //  publicPath:
     //      "https://api.github.com/module-federation/MicroLib-Example/dist?ref=master",
