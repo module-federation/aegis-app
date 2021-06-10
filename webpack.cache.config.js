@@ -9,9 +9,9 @@ var serverConfig = {
   entry: ["@babel/polyfill", path.resolve(__dirname, "src/index.js")],
   output: {
     path: path.resolve(__dirname, "dist"),
-    //publicPath: "http://localhost:8060",
-    publicPath:
-      "https://api.github.com/module-federation/MicroLib-Example/dist?ref=order-server",
+    publicPath: "http://cache.aegis.dev:8060",
+    //publicPath:
+    // "https://api.github.com/module-federation/MicroLib-Example/dist?ref=order-server",
 
     //  publicPath:
     //      "https://api.github.com/module-federation/MicroLib-Example/dist?ref=master",
