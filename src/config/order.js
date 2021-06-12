@@ -228,14 +228,14 @@ export const Order = {
       callback: (order, payload) => order.refreshToken(payload.nonce),
     },
   },
-  relations: {
-    customer: {
-      modelName: "customer",
-      foreignKey: "customerId",
-      type: "manyToOne",
-      desc: "Many orders per customer, just one customer per order",
-    },
-  },
+  // relations: {
+  //   customer: {
+  //     modelName: "customer",
+  //     foreignKey: "customerId",
+  //     type: "manyToOne",
+  //     desc: "Many orders per customer, just one customer per order",
+  //   },
+  // },
   commands: {
     decrypt: {
       command: "decrypt",
