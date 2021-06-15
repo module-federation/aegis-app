@@ -32204,10 +32204,11 @@ module.exports = require("zlib");
 /******/ 		
 /******/ 		function githubFetch(url) {
 /******/ 		  console.info("github url", url);
+/******/ 		  const [,,,owner,repo,filedir,branch] = url.split(".");
 /******/ 		  return new Promise(function (resolve, reject) {
 /******/ 		    octokit
 /******/ 		      .request(
-/******/ 		        "GET /repos/{owner}/{repo}/contents/{gitpath}?ref={branch}",
+/******/ 		        "GET /repos/{owner}/{repo}/contents/{filedir}?ref={branch}",
 /******/ 		        {
 /******/ 		          owner,
 /******/ 		          repo,
