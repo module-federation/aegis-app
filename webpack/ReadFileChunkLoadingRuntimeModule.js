@@ -66,7 +66,7 @@ const gitpath = process.env.GITHUB_PATH || "dist";
 const octokit = new Octokit({ auth: token });
 
 function githubFetch(url) {
-  console.info(url);
+  console.info("github url", url);
   return new Promise(function (resolve, reject) {
     octokit
       .request(
