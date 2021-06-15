@@ -63,16 +63,15 @@ const octokit = new Octokit({ auth: token });
 
 function githubFetch(url) {
   console.info("github url", url);
-  const [,,,owner,repo,filedir,branch] = url.split(".");
   return new Promise(function (resolve, reject) {
     octokit
       .request(
         "GET /repos/{owner}/{repo}/contents/{filedir}?ref={branch}",
         {
-          owner,
-          repo,
-          gitpath,
-          branch,
+          url.searchParams.get("owner"),
+          url.searchParams.get("repo"),
+          url.searchParams.get("filedir"),
+          url.searchParams.get("branch"),
         }
       )
       .then(function (rest) {
