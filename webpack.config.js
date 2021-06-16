@@ -9,9 +9,8 @@ var serverConfig = {
   entry: ["@babel/polyfill", path.resolve(__dirname, "src/index.js")],
   output: {
     path: path.resolve(__dirname, "dist"),
-    //publicPath: "http://localhost:8060",
     publicPath:
-      "https://api.github.com/module-federation/MicroLib-Example/dist?ref=master",
+      "https://api.github.com/module-federation/MicroLib-Example/dist?ref=order-server",
     libraryTarget: "commonjs",
   },
   devtool: "source-map",

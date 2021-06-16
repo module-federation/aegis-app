@@ -66,17 +66,18 @@ const gitpath = process.env.GITHUB_PATH || "dist";
 const octokit = new Octokit({ auth: token });
 
 function githubFetch(url) {
+  console.info("github url", url);
   return new Promise(function (resolve, reject) {
     octokit
-    .request(
-      "GET /repos/{owner}/{repo}/contents/{gitpath}?ref={branch}",
-      {
-        owner,
-        repo,
-        gitpath,
-        branch,
-      }
-    )
+      .request(
+        "GET /repos/{owner}/{repo}/contents/{gitpath}?ref={branch}",
+        {
+          owner,
+          repo,
+          gitpath,
+          branch,
+        }
+      )
       .then(function (rest) {
         const file = rest.data.find(d => "/" + d.name === url.pathname);
         return file.sha;
@@ -100,9 +101,9 @@ function githubFetch(url) {
 function httpRequest(url) {
   if (/github/i.test(url.hostname)) 
     return githubFetch(url)
-  return httpRequestPlain(url)
+  return httpGet(url)
 }
-function httpRequestPlain(params) {
+function httpGet(params) {
   return new Promise(function(resolve, reject) {
     var req = require(params.protocol.slice(0, params.protocol.length - 1)).request(params, function(res) {
       if (res.statusCode < 200 || res.statusCode >= 300) {
