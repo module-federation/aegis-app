@@ -58,6 +58,10 @@ const { Octokit } = require("@octokit/rest");
 const fs = require("fs");
 const path = require("path");
 const token = process.env.GITHUB_TOKEN;
+const branch = process.env.GITHUB_BRANCH || "master";
+const repo = process.env.GITHUB_REPO || "MicroLib-Example";
+const owner = process.env.GITHUB_OWNER || "module-federation";
+const gitpath = process.env.GITHUB_PATH || "dist";
 
 const octokit = new Octokit({ auth: token });
 
@@ -66,12 +70,12 @@ function githubFetch(url) {
   return new Promise(function (resolve, reject) {
     octokit
       .request(
-        "GET /repos/{owner}/{repo}/contents/{filedir}?ref={branch}",
+        "GET /repos/{owner}/{repo}/contents/{gitpath}?ref={branch}",
         {
-          url.searchParams.get("owner"),
-          url.searchParams.get("repo"),
-          url.searchParams.get("filedir"),
-          url.searchParams.get("branch"),
+          owner,
+          repo,
+          gitpath,
+          branch,
         }
       )
       .then(function (rest) {
