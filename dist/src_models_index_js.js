@@ -2720,30 +2720,30 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
             _context2.prev = 0;
 
             if (!order.paymentAccepted()) {
-              _context2.next = 4;
+              _context2.next = 3;
               break;
             }
 
-            // don't block the caller by waiting
-            order.pickOrder(orderPicked);
-            return _context2.abrupt("return");
+            return _context2.abrupt("return", order.pickOrder(orderPicked));
 
-          case 4:
-            order.emit("PayAuthFail", "Payment authorization problem");
-            _context2.next = 10;
-            break;
+          case 3:
+            _context2.next = 5;
+            return order.emit("PayAuthFail", "Payment authorization problem");
 
-          case 7:
-            _context2.prev = 7;
+          case 5:
+            return _context2.abrupt("return", order);
+
+          case 8:
+            _context2.prev = 8;
             _context2.t0 = _context2["catch"](0);
             handleError(_context2.t0, order, OrderStatus.APPROVED);
 
-          case 10:
+          case 11:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[0, 7]]);
+    }, _callee2, null, [[0, 8]]);
   }));
 
   return function (_x3) {
@@ -2783,23 +2783,25 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
-            try {
-              console.debug({
-                func: OrderStatus.CANCELED,
-                desc: "calling undo",
-                orderNo: order.orderNo
-              });
-              order.undo();
-            } catch (error) {
-              handleError(error, order, OrderStatus.CANCELED);
-            }
+            _context4.prev = 0;
+            console.debug({
+              func: OrderStatus.CANCELED,
+              desc: "calling undo",
+              orderNo: order.orderNo
+            });
+            return _context4.abrupt("return", order.undo());
 
-          case 1:
+          case 5:
+            _context4.prev = 5;
+            _context4.t0 = _context4["catch"](0);
+            handleError(_context4.t0, order, OrderStatus.CANCELED);
+
+          case 8:
           case "end":
             return _context4.stop();
         }
       }
-    }, _callee4);
+    }, _callee4, null, [[0, 5]]);
   }));
 
   return function (_x5) {
@@ -3007,7 +3009,7 @@ function _cancel() {
 
           case 2:
             updated = _context17.sent;
-            handleStatusChange(updated);
+            return _context17.abrupt("return", handleStatusChange(updated));
 
           case 4:
           case "end":
@@ -3080,12 +3082,11 @@ function _returnInventory() {
         switch (_context19.prev = _context19.next) {
           case 0:
             console.log(returnInventory.name);
-            _context19.next = 3;
-            return order.update({
+            return _context19.abrupt("return", order.update({
               orderStatus: OrderStatus.CANCELED
-            });
+            }));
 
-          case 3:
+          case 2:
           case "end":
             return _context19.stop();
         }
@@ -3106,12 +3107,11 @@ function _returnShipment() {
         switch (_context20.prev = _context20.next) {
           case 0:
             console.log(returnShipment.name);
-            _context20.next = 3;
-            return order.update({
+            return _context20.abrupt("return", order.update({
               orderStatus: OrderStatus.CANCELED
-            });
+            }));
 
-          case 3:
+          case 2:
           case "end":
             return _context20.stop();
         }
@@ -3132,12 +3132,11 @@ function _returnDelivery() {
         switch (_context21.prev = _context21.next) {
           case 0:
             console.log(returnDelivery.name);
-            _context21.next = 3;
-            return order.update({
+            return _context21.abrupt("return", order.update({
               orderStatus: OrderStatus.CANCELED
-            });
+            }));
 
-          case 3:
+          case 2:
           case "end":
             return _context21.stop();
         }
@@ -3158,12 +3157,11 @@ function _cancelPayment() {
         switch (_context22.prev = _context22.next) {
           case 0:
             console.log(cancelPayment.name);
-            _context22.next = 3;
-            return order.update({
+            return _context22.abrupt("return", order.update({
               orderStatus: OrderStatus.CANCELED
-            });
+            }));
 
-          case 3:
+          case 2:
           case "end":
             return _context22.stop();
         }

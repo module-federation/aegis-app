@@ -420,11 +420,10 @@ const OrderActions = {
   [OrderStatus.APPROVED]: async order => {
     try {
       if (order.paymentAccepted()) {
-        // don't block the caller by waiting
-        order.pickOrder(orderPicked);
-        return;
+        return order.pickOrder(orderPicked);
       }
-      order.emit("PayAuthFail", "Payment authorization problem");
+      await order.emit("PayAuthFail", "Payment authorization problem");
+      return order;
     } catch (error) {
       handleError(error, order, OrderStatus.APPROVED);
     }
@@ -453,7 +452,7 @@ const OrderActions = {
         desc: "calling undo",
         orderNo: order.orderNo,
       });
-      order.undo();
+      return order.undo();
     } catch (error) {
       handleError(error, order, OrderStatus.CANCELED);
     }
@@ -569,7 +568,7 @@ export async function approve(order) {
  */
 export async function cancel(order) {
   const updated = await order.update({ orderStatus: OrderStatus.CANCELED });
-  handleStatusChange(updated);
+  return handleStatusChange(updated);
 }
 
 export async function submit(order) {
