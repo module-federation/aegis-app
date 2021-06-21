@@ -222,6 +222,11 @@ var Order = {
       foreignKey: "customerId",
       type: "manyToOne",
       desc: "Many orders per customer, just one customer per order"
+    },
+    product: {
+      modelName: "product",
+      foreignKey: "productId",
+      type: "manyToOne"
     }
   },
   commands: {
@@ -3053,6 +3058,7 @@ function errorCallback(_ref8) {
       error = _ref8.error;
   console.error("error...", port, error);
   return order.undo();
+  "";
 }
 /**
  *

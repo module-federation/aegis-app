@@ -235,6 +235,11 @@ export const Order = {
       type: "manyToOne",
       desc: "Many orders per customer, just one customer per order",
     },
+    product: {
+      modelName: "product",
+      foreignKey: "productId",
+      type: "manyToOne",
+    },
   },
   commands: {
     decrypt: {
