@@ -33,7 +33,8 @@ import { async, encrypt } from "../lib/utils";
  * @property {function({key1:any,keyN:any}, boolean):Promise<Order>} update - update the order,
  * set the second arg to false to turn off validation.
  * @property {'APPROVED'|'SHIPPING'|'CANCELED'|'COMPLETED'} orderStatus
- * @property {function():Promise<import("../models/index").Model>} customer - retrieves related customer object.
+ * @property {function(...args):Promise<import("../models/index").Model>} customer - retrieves related customer object
+ * or, if args are provided, creates a new customer object ("fromModel" will use all the properties of order as args.)
  * @property {function(string,Order)} emit - broadcast domain event
  * @property {function():boolean} paymentAccepted - payment approved and funds reserved
  * @property {function():boolean} autoCheckout - whether or not to immediately submit the order
@@ -355,7 +356,10 @@ async function getCustomerOrder(order) {
   // new customer. The framework has a built-in handler
   // that calls the model's `addModel` function.
   if (order.saveShippingDetails) {
-    await async(order.emit(CREATE_CUSTOMER_EVENT, order));
+    const customer = await order.customer("fromModel");
+    if (customer) {
+      return order.update({ customerId: customer.getId() });
+    }
   }
 
   return order;
@@ -581,7 +585,8 @@ export async function submit(order) {
  */
 export function errorCallback({ port, model: order, error }) {
   console.error("error...", port, error);
-  return order.undo();``
+  return order.undo();
+  ``;
 }
 
 /**

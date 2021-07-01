@@ -2136,7 +2136,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
  * @property {function({key1:any,keyN:any}, boolean):Promise<Order>} update - update the order,
  * set the second arg to false to turn off validation.
  * @property {'APPROVED'|'SHIPPING'|'CANCELED'|'COMPLETED'} orderStatus
- * @property {function():Promise<import("../models/index").Model>} customer - retrieves related customer object.
+ * @property {function(...args):Promise<import("../models/index").Model>} customer - retrieves related customer object
+ * or, if args are provided, creates a new customer object ("fromModel" will use all the properties of order as args.)
  * @property {function(string,Order)} emit - broadcast domain event
  * @property {function():boolean} paymentAccepted - payment approved and funds reserved
  * @property {function():boolean} autoCheckout - whether or not to immediately submit the order
@@ -2578,7 +2579,8 @@ function getCustomerOrder(_x) {
 
 function _getCustomerOrder() {
   _getCustomerOrder = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(order) {
-    var customer, decrypted, updated;
+    var customer, decrypted, updated, _customer;
+
     return regeneratorRuntime.wrap(function _callee13$(_context13) {
       while (1) {
         switch (_context13.prev = _context13.next) {
@@ -2620,17 +2622,29 @@ function _getCustomerOrder() {
 
           case 11:
             if (!order.saveShippingDetails) {
-              _context13.next = 14;
+              _context13.next = 17;
               break;
             }
 
             _context13.next = 14;
-            return (0,_lib_utils__WEBPACK_IMPORTED_MODULE_2__.async)(order.emit(CREATE_CUSTOMER_EVENT, order));
+            return order.customer("fromModel");
 
           case 14:
+            _customer = _context13.sent;
+
+            if (!_customer) {
+              _context13.next = 17;
+              break;
+            }
+
+            return _context13.abrupt("return", order.update({
+              customerId: _customer.getId()
+            }));
+
+          case 17:
             return _context13.abrupt("return", order);
 
-          case 15:
+          case 18:
           case "end":
             return _context13.stop();
         }
