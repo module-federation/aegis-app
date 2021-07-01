@@ -270,12 +270,12 @@ var Subscription = function Subscription(_ref) {
             switch (_context.prev = _context.next) {
               case 0:
                 if (!filters) {
-                  _context.next = 6;
+                  _context.next = 7;
                   break;
                 }
 
                 if (!filters.every(filterMatches(message))) {
-                  _context.next = 5;
+                  _context.next = 6;
                   break;
                 }
 
@@ -284,23 +284,26 @@ var Subscription = function Subscription(_ref) {
                   _this.unsubscribe();
                 }
 
-                callback({
+                _context.next = 5;
+                return callback({
                   message: message,
                   subscription: _this
                 });
-                return _context.abrupt("return");
 
               case 5:
                 return _context.abrupt("return");
 
               case 6:
-                // no filters defined, just invoke the callback.
-                callback({
+                return _context.abrupt("return");
+
+              case 7:
+                _context.next = 9;
+                return callback({
                   message: message,
                   subscription: _this
                 });
 
-              case 7:
+              case 9:
               case "end":
                 return _context.stop();
             }

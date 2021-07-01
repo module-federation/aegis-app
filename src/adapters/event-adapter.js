@@ -118,14 +118,14 @@ const Subscription = function ({ id, callback, topic, filters, once, model }) {
             // Only looking for 1 msg, got it.
             this.unsubscribe();
           }
-          callback({ message, subscription: this });
+          await callback({ message, subscription: this });
           return;
         }
         // no match
         return;
       }
       // no filters defined, just invoke the callback.
-      callback({ message, subscription: this });
+      await callback({ message, subscription: this });
     },
   };
 };
