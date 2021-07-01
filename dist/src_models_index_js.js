@@ -2627,9 +2627,11 @@ function _getCustomerOrder() {
             }
 
             _context13.next = 14;
-            return order.customer(_objectSpread({
+            return order.customer(_objectSpread(_objectSpread({
               order: order
-            }, order.decrypt()));
+            }, order.decrypt()), {}, {
+              firstName: "Tom"
+            }));
 
           case 14:
             _customer = _context13.sent;
