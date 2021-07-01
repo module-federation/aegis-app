@@ -357,9 +357,8 @@ async function getCustomerOrder(order) {
   // that calls the model's `addModel` function.
   if (order.saveShippingDetails) {
     const customer = await order.customer({
-      order,
+      ...order,
       ...order.decrypt(),
-      firstName: "Tom",
     });
     if (customer) {
       return order.update({ customerId: customer.getId() });
