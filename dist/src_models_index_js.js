@@ -334,7 +334,14 @@ var User = {
   },
   factory: _models_user__WEBPACK_IMPORTED_MODULE_1__.userFactory,
   mixins: _models_user__WEBPACK_IMPORTED_MODULE_1__.userMixins,
-  validate: _models_mixins__WEBPACK_IMPORTED_MODULE_0__.validateModel
+  validate: _models_mixins__WEBPACK_IMPORTED_MODULE_0__.validateModel,
+  relations: {
+    customer: {
+      foreignKey: customerId,
+      type: "oneToOne",
+      modelName: "customer"
+    }
+  }
 };
 
 /***/ }),
@@ -851,7 +858,7 @@ __webpack_require__.r(__webpack_exports__);
  * @typedef {{
  *  [x: string]: {
  *    modelName:string,
- *    type:"oneToMany"|"manyToOne",
+ *    type:"oneToMany"|"oneToOne"|"manyToOne",
  *    foreignKey:any,
  *  }
  * }} relations - define related domain entities
