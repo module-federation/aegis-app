@@ -1,6 +1,5 @@
 "use strict";
 
-console.log("loading models.order module...");
 import {
   makeOrderFactory,
   readyToDelete,
@@ -34,8 +33,8 @@ import {
   validateModel,
 } from "../models/mixins";
 
-import { uuid } from "../lib/utils";
 import { DataSourceAdapterMongoDb } from "../datasources/datasource-mongodb";
+import { nanoid } from "nanoid";
 
 /**
  * @type {import('../models/index').ModelSpecification}
@@ -50,7 +49,7 @@ export const Order = {
     cacheSize: 2000,
     baseClass: "DataSourceMongoDb",
   },
-  dependencies: { uuid },
+  dependencies: { uuid: () => nanoid(8) },
   mixins: [
     requireProperties(
       "orderItems",
