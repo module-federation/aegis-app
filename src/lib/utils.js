@@ -1,7 +1,7 @@
 "use strict";
 
 import crypto from "crypto";
-import nanoid from "nanoid";
+import { nanoid } from "nanoid";
 
 export function compose(...funcs) {
   return function (initVal) {

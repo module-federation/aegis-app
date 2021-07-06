@@ -92,7 +92,7 @@ function uuid() {
   // return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
   //   (c ^ (crypto.randomBytes(16)[0] & (15 >> (c / 4)))).toString(16)
   // );
-  return (0,nanoid__WEBPACK_IMPORTED_MODULE_1__.default)();
+  return (0,nanoid__WEBPACK_IMPORTED_MODULE_1__.nanoid)();
 }
 function makeArray(v) {
   return Array.isArray(v) ? v : [v];
@@ -881,7 +881,6 @@ var Shipping = {
 /*! namespace exports */
 /*! export customAlphabet [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export customRandom [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export default [not provided] [no usage info] [missing usage info prevents renaming] */
 /*! export nanoid [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export random [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export urlAlphabet [provided] [no usage info] [missing usage info prevents renaming] -> ./node_modules/nanoid/url-alphabet/index.js .urlAlphabet */
