@@ -34,7 +34,7 @@ __webpack_require__.r(__webpack_exports__);
 /*! namespace exports */
 /*! export Order [provided] [no usage info] [missing usage info prevents renaming] */
 /*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -44,8 +44,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _models_order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../models/order */ "./src/models/order.js");
 /* harmony import */ var _models_mixins__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../models/mixins */ "./src/models/mixins.js");
-/* harmony import */ var _lib_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../lib/utils */ "./src/lib/utils.js");
-/* harmony import */ var _datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../datasources/datasource-mongodb */ "./src/datasources/datasource-mongodb.js");
+/* harmony import */ var _datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../datasources/datasource-mongodb */ "./src/datasources/datasource-mongodb.js");
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! nanoid */ "webpack/sharing/consume/default/nanoid/nanoid");
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(nanoid__WEBPACK_IMPORTED_MODULE_3__);
 
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
@@ -60,7 +61,6 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-console.log("loading models.order module...");
 
 
 
@@ -74,13 +74,15 @@ var Order = {
   endpoint: "orders",
   factory: _models_order__WEBPACK_IMPORTED_MODULE_0__.makeOrderFactory,
   datasource: {
-    factory: _datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_3__.DataSourceAdapterMongoDb,
+    factory: _datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_2__.DataSourceAdapterMongoDb,
     url: "mongodb://localhost:27017",
     cacheSize: 2000,
     baseClass: "DataSourceMongoDb"
   },
   dependencies: {
-    uuid: _lib_utils__WEBPACK_IMPORTED_MODULE_2__.uuid
+    uuid: function uuid() {
+      return (0,nanoid__WEBPACK_IMPORTED_MODULE_3__.nanoid)(8);
+    }
   },
   mixins: [(0,_models_mixins__WEBPACK_IMPORTED_MODULE_1__.requireProperties)("orderItems", (0,_models_order__WEBPACK_IMPORTED_MODULE_0__.requiredForGuest)(["lastName", "firstName", "billingAddress", "shippingAddress", "creditCardNumber", "email"]), (0,_models_order__WEBPACK_IMPORTED_MODULE_0__.requiredForApproval)("paymentAuthorization"), (0,_models_order__WEBPACK_IMPORTED_MODULE_0__.requiredForCompletion)("proofOfDelivery")), (0,_models_mixins__WEBPACK_IMPORTED_MODULE_1__.freezeProperties)("orderNo", "customerId", (0,_models_order__WEBPACK_IMPORTED_MODULE_0__.freezeOnApproval)(["email", "lastName", "firstName", "orderItems", "orderTotal", "billingAddress", "shippingAddress", "creditCardNumber", "paymentAuthorization"]), (0,_models_order__WEBPACK_IMPORTED_MODULE_0__.freezeOnCompletion)("*")), (0,_models_mixins__WEBPACK_IMPORTED_MODULE_1__.updateProperties)([{
     propKey: "orderItems",
