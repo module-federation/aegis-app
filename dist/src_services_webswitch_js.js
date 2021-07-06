@@ -196,6 +196,7 @@ function _webswitchConnect() {
   return _webswitchConnect.apply(this, arguments);
 }
 
+var webswitchConnection;
 function publishEvent(_x5, _x6) {
   return _publishEvent.apply(this, arguments);
 }
@@ -205,7 +206,6 @@ function _publishEvent() {
     var useWebswitch,
         hostname,
         serializedEvent,
-        webswitchConnection,
         _args4 = arguments;
     return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {

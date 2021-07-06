@@ -100,13 +100,13 @@ async function webswitchConnect(client, url, observer) {
     client.connect(url);
   });
 }
+let webswitchConnection;
 
 export async function publishEvent(event, observer, useWebswitch = true) {
   if (!event) return;
 
   const hostname = await getHostName();
   const serializedEvent = JSON.stringify(event);
-  let webswitchConnection;
 
   if (useWebswitch) {
     if (!(webswitchConnection && webswitchConnection.connected)) {
