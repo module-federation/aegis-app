@@ -22,21 +22,29 @@ async function getHostName() {
   return "localhost";
 }
 
-async function httpClient({ hostname, port, path, method, payload = "" }) {
+async function httpClient({
+  hostname,
+  port,
+  path,
+  method = "GET",
+  payload = null,
+}) {
   return new Promise(function (resolve, reject) {
     const contentLength = ["POST", "PATCH"].includes(method)
       ? Buffer.byteLength(payload)
       : 0;
+    const contentHeaders = { "Content-Type": "application/json" };
+    const headers =
+      contentLength > 0
+        ? { ...contentHeaders, "Content-Length": contentLength }
+        : contentHeaders;
 
     const options = {
       hostname,
       port,
       path,
       method,
-      headers: {
-        "Content-Type": "application/json",
-        "Content-Length": contentLength,
-      },
+      headers,
     };
 
     const req = http.request(options, res => {
@@ -55,8 +63,8 @@ async function httpClient({ hostname, port, path, method, payload = "" }) {
 
     // Write data to request body
     if (contentLength > 0) req.write(payload);
-    req.end();
 
+    req.end();
   });
 }
 
@@ -104,7 +112,8 @@ export async function publishEvent(event, observer, useWebswitch = true) {
 
   if (useWebswitch) {
     if (!(webswitchConnection && webswitchConnection.connected)) {
-      await httpClient({ hostname, port: PORT, path: "/login", method: "GET" });
+      // login
+      await httpClient({ hostname, port: PORT, path: "/login" });
 
       webswitchConnection = await webswitchConnect(
         new websocket.client(),
