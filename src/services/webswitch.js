@@ -113,7 +113,12 @@ export async function publishEvent(event, observer, useWebswitch = true) {
   if (useWebswitch) {
     if (!(webswitchConnection && webswitchConnection.connected)) {
       // login
-      await httpClient({ hostname, port: PORT, path: "/login" });
+      await httpClient({
+        hostname,
+        port: PORT,
+        path: "/login",
+        method: "POST",
+      });
 
       webswitchConnection = await webswitchConnect(
         new websocket.client(),

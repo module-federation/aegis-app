@@ -1066,7 +1066,8 @@ function _publishEvent() {
             return httpClient({
               hostname: hostname,
               port: PORT,
-              path: "/login"
+              path: "/login",
+              method: "POST"
             });
 
           case 11:
