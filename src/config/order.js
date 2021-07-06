@@ -44,12 +44,12 @@ export const Order = {
   modelName: "order",
   endpoint: "orders",
   factory: makeOrderFactory,
-  // datasource: {
-  //   factory: DataSourceAdapterMongoDb,
-  //   url: "mongodb://localhost:27017",
-  //   cacheSize: 2000,
-  //   baseClass: "DataSourceMongoDb",
-  // },
+  datasource: {
+    factory: DataSourceAdapterMongoDb,
+    url: "mongodb://localhost:27017",
+    cacheSize: 2000,
+    baseClass: "DataSourceMongoDb",
+  },
   dependencies: { uuid },
   mixins: [
     requireProperties(
