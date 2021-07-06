@@ -23,34 +23,40 @@ async function getHostName() {
 }
 
 async function httpClient({ hostname, port, path, method, payload = "" }) {
-  const options = {
-    hostname,
-    port,
-    path,
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      "Content-Length": ["POST", "PATCH"].includes(method)
-        ? Buffer.byteLength(payload)
-        : 0,
-    },
-  };
+  return new Promise(function (resolve, reject) {
+    const contentLength = ["POST", "PATCH"].includes(method)
+      ? Buffer.byteLength(payload)
+      : 0;
 
-  const req = http.request(options, res => {
-    res.setEncoding("utf8");
-    res.on("data", chunk => {
-      console.log(chunk);
+    const options = {
+      hostname,
+      port,
+      path,
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": contentLength,
+      },
+    };
+
+    const req = http.request(options, res => {
+      res.setEncoding("utf8");
+      res.on("data", chunk => {
+        console.log(chunk);
+      });
+      res.on("end", () => {});
     });
-    res.on("end", () => {});
-  });
 
-  req.on("error", e => {
-    // console.error(`problem with request: ${e.message}`);
-  });
+    req.on("error", e => {
+      reject(e);
+    });
 
-  // Write data to request body
-  if (["POST", "PATCH"].includes(method)) req.write(payload);
-  req.end();
+    // Write data to request body
+    if (contentLength > 0) req.write(payload);
+    req.end();
+
+    req.on("finish", resolve);
+  });
 }
 
 /**
@@ -96,8 +102,8 @@ export async function publishEvent(event, observer, useWebswitch = true) {
   let webswitchConnection;
 
   if (useWebswitch) {
-    if (!webswitchConnection || !webswitchConnection.connected) {
-      httpClient({ hostname, PORT, path: "/login", method: "GET" });
+    if (!(webswitchConnection && webswitchConnection.connected)) {
+      await httpClient({ hostname, PORT, path: "/login", method: "GET" });
 
       webswitchConnection = await webswitchConnect(
         new websocket.client(),

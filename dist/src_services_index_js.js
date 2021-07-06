@@ -923,37 +923,42 @@ function httpClient(_x) {
 
 function _httpClient() {
   _httpClient = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(_ref) {
-    var hostname, port, path, method, _ref$payload, payload, options, req;
+    var hostname, port, path, method, _ref$payload, payload;
 
     return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
             hostname = _ref.hostname, port = _ref.port, path = _ref.path, method = _ref.method, _ref$payload = _ref.payload, payload = _ref$payload === void 0 ? "" : _ref$payload;
-            options = {
-              hostname: hostname,
-              port: port,
-              path: path,
-              method: method,
-              headers: {
-                "Content-Type": "application/json",
-                "Content-Length": ["POST", "PATCH"].includes(method) ? Buffer.byteLength(payload) : 0
-              }
-            };
-            req = http__WEBPACK_IMPORTED_MODULE_0___default().request(options, function (res) {
-              res.setEncoding("utf8");
-              res.on("data", function (chunk) {
-                console.log(chunk);
+            return _context2.abrupt("return", new Promise(function (resolve, reject) {
+              var contentLength = ["POST", "PATCH"].includes(method) ? Buffer.byteLength(payload) : 0;
+              var options = {
+                hostname: hostname,
+                port: port,
+                path: path,
+                method: method,
+                headers: {
+                  "Content-Type": "application/json",
+                  "Content-Length": contentLength
+                }
+              };
+              var req = http__WEBPACK_IMPORTED_MODULE_0___default().request(options, function (res) {
+                res.setEncoding("utf8");
+                res.on("data", function (chunk) {
+                  console.log(chunk);
+                });
+                res.on("end", function () {});
               });
-              res.on("end", function () {});
-            });
-            req.on("error", function (e) {// console.error(`problem with request: ${e.message}`);
-            }); // Write data to request body
+              req.on("error", function (e) {
+                reject(e);
+              }); // Write data to request body
 
-            if (["POST", "PATCH"].includes(method)) req.write(payload);
-            req.end();
+              if (contentLength > 0) req.write(payload);
+              req.end();
+              req.on("finish", resolve);
+            }));
 
-          case 6:
+          case 2:
           case "end":
             return _context2.stop();
         }
@@ -1039,33 +1044,36 @@ function _publishEvent() {
             serializedEvent = JSON.stringify(event);
 
             if (!useWebswitch) {
-              _context4.next = 16;
+              _context4.next = 17;
               break;
             }
 
-            if (!(!webswitchConnection || !webswitchConnection.connected)) {
-              _context4.next = 13;
+            if (webswitchConnection && webswitchConnection.connected) {
+              _context4.next = 14;
               break;
             }
 
-            httpClient({
+            _context4.next = 11;
+            return httpClient({
               hostname: hostname,
               PORT: PORT,
               path: "/login",
               method: "GET"
             });
-            _context4.next = 12;
+
+          case 11:
+            _context4.next = 13;
             return webswitchConnect(new (websocket__WEBPACK_IMPORTED_MODULE_1___default().client)(), "ws://".concat(hostname, ":").concat(PORT).concat(PATH), observer);
 
-          case 12:
+          case 13:
             webswitchConnection = _context4.sent;
 
-          case 13:
+          case 14:
             webswitchConnection.sendUTF(serializedEvent);
-            _context4.next = 17;
+            _context4.next = 18;
             break;
 
-          case 16:
+          case 17:
             httpClient({
               hostname: hostname,
               port: port,
@@ -1074,7 +1082,7 @@ function _publishEvent() {
               payload: serialziedEvent
             });
 
-          case 17:
+          case 18:
           case "end":
             return _context4.stop();
         }
