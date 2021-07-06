@@ -65,7 +65,7 @@ export async function publishEvent(event, observer, useWebswitch = true) {
   let webswitchConnection;
 
   if (useWebswitch) {
-    if (!webswitchConnnection || !webswitchConnection.connected) {
+    if (!webswitchConnection || !webswitchConnection.connected) {
       webswitchConnection = await webswitchConnect(
         new websocket.client(),
         `ws://${host}:${PORT}${PATH}`,

@@ -999,7 +999,7 @@ function _publishEvent() {
               break;
             }
 
-            if (!(!webswitchConnnection || !webswitchConnection.connected)) {
+            if (!(!webswitchConnection || !webswitchConnection.connected)) {
               _context3.next = 12;
               break;
             }
