@@ -139,13 +139,12 @@ function _httpClient() {
                   res.on("error", function (e) {
                     return console.warn(httpClient.name, e.message);
                   });
-                  res.on("end", function () {});
+                  res.on("end", resolve);
                 });
                 req.on("error", function (e) {
                   reject(e);
                 });
-                req.on("connect", resolve);
-                if (contentLength > 0) req.on("finish", function () {
+                if (contentLength > 0) req.on("connect", function () {
                   return req.write(payload);
                 });
               } catch (e) {
@@ -191,6 +190,7 @@ function _webswitchConnect() {
                   });
                   connection.on("error", function (error) {
                     console.warn(webswitchConnect.name, error.message);
+                    reject(error);
                   });
                   resolve(connection);
                 });
@@ -249,16 +249,17 @@ function _publishEvent() {
             serializedEvent = JSON.stringify(event);
 
             if (!useWebswitch) {
-              _context4.next = 17;
+              _context4.next = 23;
               break;
             }
 
             if (webswitchConnection && webswitchConnection.connected) {
-              _context4.next = 15;
+              _context4.next = 21;
               break;
             }
 
-            _context4.next = 11;
+            _context4.prev = 9;
+            _context4.next = 12;
             return httpClient({
               hostname: hostname,
               port: PORT,
@@ -266,24 +267,26 @@ function _publishEvent() {
               method: "POST"
             });
 
-          case 11:
-            _context4.next = 13;
+          case 12:
+            _context4.next = 14;
             return webswitchConnect(new (websocket__WEBPACK_IMPORTED_MODULE_1___default().client)(), "ws://".concat(hostname, ":").concat(PORT).concat(PATH), observer);
 
-          case 13:
+          case 14:
             webswitchConnection = _context4.sent;
-
-            try {
-              webswitchConnection.sendUTF(serializedEvent);
-            } catch (e) {
-              console.warn(publishEvent.name, e.message);
-            }
-
-          case 15:
-            _context4.next = 18;
+            webswitchConnection.sendUTF(serializedEvent);
+            _context4.next = 21;
             break;
 
-          case 17:
+          case 18:
+            _context4.prev = 18;
+            _context4.t0 = _context4["catch"](9);
+            console.warn(publishEvent.name, _context4.t0.message);
+
+          case 21:
+            _context4.next = 24;
+            break;
+
+          case 23:
             httpClient({
               hostname: hostname,
               port: port,
@@ -292,12 +295,12 @@ function _publishEvent() {
               payload: serialziedEvent
             });
 
-          case 18:
+          case 24:
           case "end":
             return _context4.stop();
         }
       }
-    }, _callee4);
+    }, _callee4, null, [[9, 18]]);
   }));
   return _publishEvent.apply(this, arguments);
 }

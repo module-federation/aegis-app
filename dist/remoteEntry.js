@@ -31809,7 +31809,7 @@ var moduleMap = {
 		return __webpack_require__.e("src_adapters_index_js").then(() => () => (__webpack_require__(/*! ./src/adapters */ "./src/adapters/index.js")));
 	},
 	"./services": () => {
-		return Promise.all([__webpack_require__.e("vendors-node_modules_websocket_index_js"), __webpack_require__.e("src_adapters_index_js"), __webpack_require__.e("src_services_index_js")]).then(() => () => (__webpack_require__(/*! ./src/services */ "./src/services/index.js")));
+		return Promise.all([__webpack_require__.e("vendors-node_modules_websocket_index_js"), __webpack_require__.e("src_adapters_index_js"), __webpack_require__.e("src_services_webswitch_js"), __webpack_require__.e("src_services_index_js")]).then(() => () => (__webpack_require__(/*! ./src/services */ "./src/services/index.js")));
 	},
 	"./validations": () => {
 		return __webpack_require__.e("src_models_mixins_js").then(() => () => (__webpack_require__(/*! ./src/models/mixins */ "./src/models/mixins.js")));

@@ -52,13 +52,12 @@ async function httpClient({
         res.setEncoding("utf8");
         res.on("data", chunk => console.log(chunk));
         res.on("error", e => console.warn(httpClient.name, e.message));
-        res.on("end", () => {});
+        res.on("end", resolve);
       });
       req.on("error", e => {
         reject(e);
       });
-      req.on("connect", resolve);
-      if (contentLength > 0) req.on("finish", () => req.write(payload));
+      if (contentLength > 0) req.on("connect", () => req.write(payload));
     } catch (e) {
       console.warn(httpClient.name, e.message);
     }
@@ -93,6 +92,7 @@ async function webswitchConnect(client, url, observer) {
 
         connection.on("error", function (error) {
           console.warn(webswitchConnect.name, error.message);
+          reject(error);
         });
 
         resolve(connection);
@@ -120,21 +120,21 @@ export async function publishEvent(event, observer, useWebswitch = true) {
 
   if (useWebswitch) {
     if (!(webswitchConnection && webswitchConnection.connected)) {
-      // login
-      await httpClient({
-        hostname,
-        port: PORT,
-        path: "/login",
-        method: "POST",
-      });
-
-      webswitchConnection = await webswitchConnect(
-        new websocket.client(),
-        `ws://${hostname}:${PORT}${PATH}`,
-        observer
-      );
-
       try {
+        // login
+        await httpClient({
+          hostname,
+          port: PORT,
+          path: "/login",
+          method: "POST",
+        });
+
+        webswitchConnection = await webswitchConnect(
+          new websocket.client(),
+          `ws://${hostname}:${PORT}${PATH}`,
+          observer
+        );
+
         webswitchConnection.sendUTF(serializedEvent);
       } catch (e) {
         console.warn(publishEvent.name, e.message);
