@@ -128,11 +128,11 @@ function _httpClient() {
               });
               req.on("error", function (e) {
                 reject(e);
-              }); // Write data to request body
+              });
+              req.on("finish", resolve); // Write data to request body
 
               if (contentLength > 0) req.write(payload);
               req.end();
-              req.on("finish", resolve);
             }));
 
           case 2:
@@ -233,7 +233,7 @@ function _publishEvent() {
             _context4.next = 11;
             return httpClient({
               hostname: hostname,
-              PORT: PORT,
+              port: PORT,
               path: "/login",
               method: "GET"
             });

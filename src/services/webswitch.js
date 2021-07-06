@@ -51,11 +51,12 @@ async function httpClient({ hostname, port, path, method, payload = "" }) {
       reject(e);
     });
 
+    req.on("finish", resolve);
+
     // Write data to request body
     if (contentLength > 0) req.write(payload);
     req.end();
 
-    req.on("finish", resolve);
   });
 }
 
@@ -103,7 +104,7 @@ export async function publishEvent(event, observer, useWebswitch = true) {
 
   if (useWebswitch) {
     if (!(webswitchConnection && webswitchConnection.connected)) {
-      await httpClient({ hostname, PORT, path: "/login", method: "GET" });
+      await httpClient({ hostname, port: PORT, path: "/login", method: "GET" });
 
       webswitchConnection = await webswitchConnect(
         new websocket.client(),
