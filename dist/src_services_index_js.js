@@ -329,8 +329,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Event": () => /* reexport safe */ _event_service__WEBPACK_IMPORTED_MODULE_1__.Event,
 /* harmony export */   "Payment": () => /* reexport safe */ _payment_service__WEBPACK_IMPORTED_MODULE_3__.Payment,
 /* harmony export */   "Shipping": () => /* reexport safe */ _shipping_service__WEBPACK_IMPORTED_MODULE_4__.Shipping,
-/* harmony export */   "publishEvent": () => /* reexport safe */ _publish_event__WEBPACK_IMPORTED_MODULE_5__.publishEvent,
-/* harmony export */   "EventBus": () => /* reexport safe */ _event_bus__WEBPACK_IMPORTED_MODULE_6__.EventBus
+/* harmony export */   "EventBus": () => /* reexport safe */ _event_bus__WEBPACK_IMPORTED_MODULE_5__.EventBus,
+/* harmony export */   "publishEvent": () => /* reexport safe */ _webswitch__WEBPACK_IMPORTED_MODULE_6__.publishEvent
 /* harmony export */ });
 /* harmony import */ var _address_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./address-service */ "./src/services/address-service.js");
 /* harmony import */ var _event_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./event-service */ "./src/services/event-service.js");
@@ -341,8 +341,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (unknown) */ __webpack_require__.d(__webpack_exports__, __WEBPACK_REEXPORT_OBJECT__);
 /* harmony import */ var _payment_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./payment-service */ "./src/services/payment-service.js");
 /* harmony import */ var _shipping_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./shipping-service */ "./src/services/shipping-service.js");
-/* harmony import */ var _publish_event__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./publish-event */ "./src/services/publish-event.js");
-/* harmony import */ var _event_bus__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./event-bus */ "./src/services/event-bus.js");
+/* harmony import */ var _event_bus__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./event-bus */ "./src/services/event-bus.js");
+/* harmony import */ var _webswitch__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./webswitch */ "./src/services/webswitch.js");
 
 
 
@@ -611,142 +611,6 @@ var Payment = {
 
 /***/ }),
 
-/***/ "./src/services/publish-event.js":
-/*!***************************************!*\
-  !*** ./src/services/publish-event.js ***!
-  \***************************************/
-/*! namespace exports */
-/*! export publishEvent [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "publishEvent": () => /* binding */ publishEvent
-/* harmony export */ });
-/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! http */ "http");
-/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(http__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var websocket__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! websocket */ "./node_modules/websocket/index.js");
-/* harmony import */ var websocket__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(websocket__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var dns_promises__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! dns/promises */ "dns/promises");
-/* harmony import */ var dns_promises__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(dns_promises__WEBPACK_IMPORTED_MODULE_2__);
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
-
-
-
-var FQDN = "remote.aegis.com";
-var PORT = 8060;
-var PATH = "/api/publish";
-function publishEvent(_x) {
-  return _publishEvent.apply(this, arguments);
-}
-
-function _publishEvent() {
-  _publishEvent = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(event) {
-    var useWebSocket,
-        host,
-        serialized,
-        client,
-        options,
-        req,
-        _args = arguments;
-    return regeneratorRuntime.wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            useWebSocket = _args.length > 1 && _args[1] !== undefined ? _args[1] : true;
-
-            if (event) {
-              _context.next = 3;
-              break;
-            }
-
-            return _context.abrupt("return");
-
-          case 3:
-            _context.next = 5;
-            return dns_promises__WEBPACK_IMPORTED_MODULE_2___default().lookup(FQDN);
-
-          case 5:
-            if (!_context.sent) {
-              _context.next = 9;
-              break;
-            }
-
-            _context.t0 = FQDN;
-            _context.next = 10;
-            break;
-
-          case 9:
-            _context.t0 = "localhost";
-
-          case 10:
-            host = _context.t0;
-            serialized = JSON.stringify(event);
-
-            if (useWebSocket) {
-              client = new (websocket__WEBPACK_IMPORTED_MODULE_1___default().client)();
-              client.on("connectFailed", function (error) {
-                console.log("Connect Error: " + error.toString());
-              });
-              client.on("connect", function (connection) {
-                console.log("WebSocket Client Connected");
-                connection.on("error", function (error) {
-                  console.log("Connection Error: " + error.toString());
-                });
-                connection.on("close", function () {
-                  console.log("echo-protocol Connection Closed");
-                });
-                connection.on("message", function (message) {
-                  if (message.type === "utf8") {
-                    console.log("Received: '" + message.utf8Data + "'");
-                  }
-                });
-                connection.sendUTF(serialized);
-              });
-              client.connect("ws://".concat(host, ":").concat(PORT).concat(PATH), "echo-protocol");
-            } else {
-              options = {
-                hostname: host,
-                port: 8060,
-                path: PATH,
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "Content-Length": Buffer.byteLength(serialized)
-                }
-              };
-              req = http__WEBPACK_IMPORTED_MODULE_0___default().request(options, function (res) {
-                res.setEncoding("utf8");
-                res.on("data", function (chunk) {
-                  console.log(chunk);
-                });
-                res.on("end", function () {});
-              });
-              req.on("error", function (e) {// console.error(`problem with request: ${e.message}`);
-              }); // Write data to request body
-
-              req.write(serialized);
-              req.end();
-            }
-
-          case 13:
-          case "end":
-            return _context.stop();
-        }
-      }
-    }, _callee);
-  }));
-  return _publishEvent.apply(this, arguments);
-}
-
-/***/ }),
-
 /***/ "./src/services/shipping-service.js":
 /*!******************************************!*\
   !*** ./src/services/shipping-service.js ***!
@@ -958,6 +822,232 @@ var Shipping = {
     return event.eventData[key];
   }
 };
+
+/***/ }),
+
+/***/ "./src/services/webswitch.js":
+/*!***********************************!*\
+  !*** ./src/services/webswitch.js ***!
+  \***********************************/
+/*! namespace exports */
+/*! export publishEvent [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "publishEvent": () => /* binding */ publishEvent
+/* harmony export */ });
+/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! http */ "http");
+/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(http__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var websocket__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! websocket */ "./node_modules/websocket/index.js");
+/* harmony import */ var websocket__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(websocket__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var dns_promises__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! dns/promises */ "dns/promises");
+/* harmony import */ var dns_promises__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(dns_promises__WEBPACK_IMPORTED_MODULE_2__);
+/**
+ * WEBSWITCH (c)
+ * websocket clients connect to a common server,
+ * which broadcasts any messages it receives.
+ */
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
+
+
+var FQDN = process.env.WEBSWITCH_HOST || "webswitch.aegis.com";
+var PORT = 8060;
+var PATH = "/api/publish";
+
+function getHostName() {
+  return _getHostName.apply(this, arguments);
+}
+/**
+ * Connect to Webswitch server.
+ * @returns {Promise<websocket.connection>}
+ */
+
+
+function _getHostName() {
+  _getHostName = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.prev = 0;
+            _context.next = 3;
+            return dns_promises__WEBPACK_IMPORTED_MODULE_2___default().lookup(FQDN);
+
+          case 3:
+            if (!_context.sent) {
+              _context.next = 7;
+              break;
+            }
+
+            _context.t0 = FQDN;
+            _context.next = 8;
+            break;
+
+          case 7:
+            _context.t0 = "localhost";
+
+          case 8:
+            return _context.abrupt("return", _context.t0);
+
+          case 11:
+            _context.prev = 11;
+            _context.t1 = _context["catch"](0);
+            console.warn("dns lookup", _context.t1);
+
+          case 14:
+            return _context.abrupt("return", "localhost");
+
+          case 15:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, null, [[0, 11]]);
+  }));
+  return _getHostName.apply(this, arguments);
+}
+
+function webswitchConnect(_x, _x2, _x3) {
+  return _webswitchConnect.apply(this, arguments);
+}
+
+function _webswitchConnect() {
+  _webswitchConnect = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(client, url, observer) {
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            return _context2.abrupt("return", new Promise(function (resolve, reject) {
+              console.debug("connecting to...", url);
+              client.on("connect", function (connection) {
+                console.debug("connected to", url, connection.remoteAddress);
+                connection.on("message", function (message) {
+                  console.debug("received message from", url);
+
+                  if (message.type === "utf8") {
+                    var event = JSON.parse(message);
+                    observer.notify(event.eventName, {
+                      message: message,
+                      address: connection.remoteAddress
+                    });
+                  }
+                });
+                resolve(connection);
+              });
+              client.on("connectFailed", function (error) {
+                reject(error);
+              });
+              client.connect(url);
+            }));
+
+          case 1:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+  return _webswitchConnect.apply(this, arguments);
+}
+
+function publishEvent(_x4, _x5) {
+  return _publishEvent.apply(this, arguments);
+}
+
+function _publishEvent() {
+  _publishEvent = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(event, observer) {
+    var useWebswitch,
+        host,
+        serializedEvent,
+        webswitchConnection,
+        options,
+        req,
+        _args3 = arguments;
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            useWebswitch = _args3.length > 2 && _args3[2] !== undefined ? _args3[2] : true;
+
+            if (event) {
+              _context3.next = 3;
+              break;
+            }
+
+            return _context3.abrupt("return");
+
+          case 3:
+            _context3.next = 5;
+            return getHostName();
+
+          case 5:
+            host = _context3.sent;
+            serializedEvent = JSON.stringify(event);
+
+            if (!useWebswitch) {
+              _context3.next = 15;
+              break;
+            }
+
+            if (!(!websocketConnnection || !webswitchConnection.connected)) {
+              _context3.next = 12;
+              break;
+            }
+
+            _context3.next = 11;
+            return webswitchConnect(new (websocket__WEBPACK_IMPORTED_MODULE_1___default().client)(), "ws://".concat(host, ":").concat(PORT).concat(PATH), observer);
+
+          case 11:
+            webswitchConnection = _context3.sent;
+
+          case 12:
+            webswitchConnection.sendUTF(serializedEvent);
+            _context3.next = 20;
+            break;
+
+          case 15:
+            options = {
+              hostname: host,
+              port: 8060,
+              path: PATH,
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Content-Length": Buffer.byteLength(serializedEvent)
+              }
+            };
+            req = http__WEBPACK_IMPORTED_MODULE_0___default().request(options, function (res) {
+              res.setEncoding("utf8");
+              res.on("data", function (chunk) {
+                console.log(chunk);
+              });
+              res.on("end", function () {});
+            });
+            req.on("error", function (e) {// console.error(`problem with request: ${e.message}`);
+            }); // Write data to request body
+
+            req.write(serializedEvent);
+            req.end();
+
+          case 20:
+          case "end":
+            return _context3.stop();
+        }
+      }
+    }, _callee3);
+  }));
+  return _publishEvent.apply(this, arguments);
+}
 
 /***/ })
 

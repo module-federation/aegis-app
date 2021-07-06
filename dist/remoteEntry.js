@@ -31816,6 +31816,9 @@ var moduleMap = {
 	},
 	"./event-bus": () => {
 		return Promise.all([__webpack_require__.e("src_adapters_index_js"), __webpack_require__.e("src_services_event-bus_js")]).then(() => () => (__webpack_require__(/*! ./src/services/event-bus */ "./src/services/event-bus.js")));
+	},
+	"./webswitch": () => {
+		return Promise.all([__webpack_require__.e("vendors-node_modules_websocket_index_js"), __webpack_require__.e("src_services_webswitch_js")]).then(() => () => (__webpack_require__(/*! ./src/services/webswitch */ "./src/services/webswitch.js")));
 	}
 };
 var get = (module) => {

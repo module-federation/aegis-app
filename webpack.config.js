@@ -44,6 +44,7 @@ var serverConfig = {
         "./services": "./src/services",
         "./validations": "./src/models/mixins",
         "./event-bus": "./src/services/event-bus",
+        "./webswitch": "./src/services/webswitch"
       },
       shared: {
         axios: {
