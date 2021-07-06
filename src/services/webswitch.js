@@ -47,57 +47,64 @@ async function httpClient({
       headers,
     };
 
-    const req = http.request(options, res => {
-      res.setEncoding("utf8");
-      res.on("data", chunk => {
-        console.log(chunk);
+    try {
+      const req = http.request(options, res => {
+        res.setEncoding("utf8");
+        res.on("data", chunk => console.log(chunk));
+        res.on("error", e => console.warn(httpClient.name, e.message));
+        res.on("end", () => {});
       });
-      res.on("end", () => {});
-    });
-
-    req.on("error", e => {
-      reject(e);
-    });
-
-    req.on("finish", resolve);
-
-    // Write data to request body
-    if (contentLength > 0) req.write(payload);
+      req.on("error", e => {
+        reject(e);
+      });
+      req.on("connect", resolve);
+      if (contentLength > 0) req.on("finish", () => req.write(payload));
+    } catch (e) {
+      console.warn(httpClient.name, e.message);
+    }
   });
 }
 
 /**
  * Connect to Webswitch server.
+ * @param {websocket.client} client
  * @returns {Promise<websocket.connection>}
  */
 async function webswitchConnect(client, url, observer) {
   return new Promise(function (resolve, reject) {
-    console.debug("connecting to...", url);
+    try {
+      console.debug("connecting to...", url);
 
-    client.on("connect", function (connection) {
-      console.debug("...connected to", url, connection.remoteAddress);
+      client.on("connect", function (connection) {
+        console.debug("...connected to", url, connection.remoteAddress);
 
-      connection.on("message", function (message) {
-        console.debug("received message from", url);
+        connection.on("message", function (message) {
+          console.debug("received message from", url);
 
-        if (message.type === "utf8") {
-          const event = JSON.parse(message);
+          if (message.type === "utf8") {
+            const event = JSON.parse(message);
 
-          observer.notify(event.eventName, {
-            message,
-            address: connection.remoteAddress,
-          });
-        }
+            observer.notify(event.eventName, {
+              message,
+              address: connection.remoteAddress,
+            });
+          }
+        });
+
+        connection.on("error", function (error) {
+          console.warn(webswitchConnect.name, error.message);
+        });
+
+        resolve(connection);
       });
 
-      resolve(connection);
-    });
-
-    client.on("connectFailed", function (error) {
-      reject(error);
-    });
-
-    client.connect(url);
+      client.on("connectFailed", function (error) {
+        reject(error);
+      });
+      client.connect(url);
+    } catch (e) {
+      console.warn(webswitchConnect.name, e.message);
+    }
   });
 }
 let webswitchConnection;
@@ -123,8 +130,13 @@ export async function publishEvent(event, observer, useWebswitch = true) {
         `ws://${hostname}:${PORT}${PATH}`,
         observer
       );
+
+      try {
+        webswitchConnection.sendUTF(serializedEvent);
+      } catch (e) {
+        console.warn(publishEvent.name, e.message);
+      }
     }
-    webswitchConnection.sendUTF(serializedEvent);
   } else {
     httpClient({
       hostname,

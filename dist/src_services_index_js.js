@@ -923,6 +923,7 @@ function httpClient(_x) {
 }
 /**
  * Connect to Webswitch server.
+ * @param {websocket.client} client
  * @returns {Promise<websocket.connection>}
  */
 
@@ -951,19 +952,28 @@ function _httpClient() {
                 method: method,
                 headers: headers
               };
-              var req = http__WEBPACK_IMPORTED_MODULE_0___default().request(options, function (res) {
-                res.setEncoding("utf8");
-                res.on("data", function (chunk) {
-                  console.log(chunk);
-                });
-                res.on("end", function () {});
-              });
-              req.on("error", function (e) {
-                reject(e);
-              });
-              req.on("finish", resolve); // Write data to request body
 
-              if (contentLength > 0) req.write(payload);
+              try {
+                var req = http__WEBPACK_IMPORTED_MODULE_0___default().request(options, function (res) {
+                  res.setEncoding("utf8");
+                  res.on("data", function (chunk) {
+                    return console.log(chunk);
+                  });
+                  res.on("error", function (e) {
+                    return console.warn(httpClient.name, e.message);
+                  });
+                  res.on("end", function () {});
+                });
+                req.on("error", function (e) {
+                  reject(e);
+                });
+                req.on("connect", resolve);
+                if (contentLength > 0) req.on("finish", function () {
+                  return req.write(payload);
+                });
+              } catch (e) {
+                console.warn(httpClient.name, e.message);
+              }
             }));
 
           case 2:
@@ -987,26 +997,33 @@ function _webswitchConnect() {
         switch (_context3.prev = _context3.next) {
           case 0:
             return _context3.abrupt("return", new Promise(function (resolve, reject) {
-              console.debug("connecting to...", url);
-              client.on("connect", function (connection) {
-                console.debug("...connected to", url, connection.remoteAddress);
-                connection.on("message", function (message) {
-                  console.debug("received message from", url);
+              try {
+                console.debug("connecting to...", url);
+                client.on("connect", function (connection) {
+                  console.debug("...connected to", url, connection.remoteAddress);
+                  connection.on("message", function (message) {
+                    console.debug("received message from", url);
 
-                  if (message.type === "utf8") {
-                    var event = JSON.parse(message);
-                    observer.notify(event.eventName, {
-                      message: message,
-                      address: connection.remoteAddress
-                    });
-                  }
+                    if (message.type === "utf8") {
+                      var event = JSON.parse(message);
+                      observer.notify(event.eventName, {
+                        message: message,
+                        address: connection.remoteAddress
+                      });
+                    }
+                  });
+                  connection.on("error", function (error) {
+                    console.warn(webswitchConnect.name, error.message);
+                  });
+                  resolve(connection);
                 });
-                resolve(connection);
-              });
-              client.on("connectFailed", function (error) {
-                reject(error);
-              });
-              client.connect(url);
+                client.on("connectFailed", function (error) {
+                  reject(error);
+                });
+                client.connect(url);
+              } catch (e) {
+                console.warn(webswitchConnect.name, e.message);
+              }
             }));
 
           case 1:
@@ -1057,7 +1074,7 @@ function _publishEvent() {
             }
 
             if (webswitchConnection && webswitchConnection.connected) {
-              _context4.next = 14;
+              _context4.next = 15;
               break;
             }
 
@@ -1076,8 +1093,13 @@ function _publishEvent() {
           case 13:
             webswitchConnection = _context4.sent;
 
-          case 14:
-            webswitchConnection.sendUTF(serializedEvent);
+            try {
+              webswitchConnection.sendUTF(serializedEvent);
+            } catch (e) {
+              console.warn(publishEvent.name, e.message);
+            }
+
+          case 15:
             _context4.next = 18;
             break;
 
