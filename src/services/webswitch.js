@@ -101,6 +101,9 @@ async function webswitchConnect(client, url, observer) {
       client.on("connectFailed", function (error) {
         reject(error);
       });
+      client.on("error", function (error) {
+        reject(error);
+      });
       client.connect(url);
     } catch (e) {
       console.warn(webswitchConnect.name, e.message);

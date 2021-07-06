@@ -197,6 +197,9 @@ function _webswitchConnect() {
                 client.on("connectFailed", function (error) {
                   reject(error);
                 });
+                client.on("error", function (error) {
+                  reject(error);
+                });
                 client.connect(url);
               } catch (e) {
                 console.warn(webswitchConnect.name, e.message);
