@@ -114,7 +114,7 @@ function _httpClient() {
               method: method,
               headers: {
                 "Content-Type": "application/json",
-                "Content-Length": Buffer.byteLength(payload)
+                "Content-Length": ["POST", "PATCH"].includes(method) ? Buffer.byteLength(payload) : 0
               }
             };
             req = http__WEBPACK_IMPORTED_MODULE_0___default().request(options, function (res) {
@@ -127,7 +127,7 @@ function _httpClient() {
             req.on("error", function (e) {// console.error(`problem with request: ${e.message}`);
             }); // Write data to request body
 
-            req.write(payload);
+            if (["POST", "PATCH"].includes(method)) req.write(payload);
             req.end();
 
           case 6:
@@ -229,7 +229,7 @@ function _publishEvent() {
               hostname: hostname,
               PORT: PORT,
               path: "/login",
-              method: "POST"
+              method: "GET"
             });
             _context4.next = 12;
             return webswitchConnect(new (websocket__WEBPACK_IMPORTED_MODULE_1___default().client)(), "ws://".concat(hostname, ":").concat(PORT).concat(PATH), observer);

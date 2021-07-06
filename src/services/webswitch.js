@@ -30,7 +30,9 @@ async function httpClient({ hostname, port, path, method, payload = "" }) {
     method,
     headers: {
       "Content-Type": "application/json",
-      "Content-Length": Buffer.byteLength(payload),
+      "Content-Length": ["POST", "PATCH"].includes(method)
+        ? Buffer.byteLength(payload)
+        : 0,
     },
   };
 
@@ -47,7 +49,7 @@ async function httpClient({ hostname, port, path, method, payload = "" }) {
   });
 
   // Write data to request body
-  req.write(payload);
+  if (["POST", "PATCH"].includes(method)) req.write(payload);
   req.end();
 }
 
@@ -95,7 +97,7 @@ export async function publishEvent(event, observer, useWebswitch = true) {
 
   if (useWebswitch) {
     if (!webswitchConnection || !webswitchConnection.connected) {
-      httpClient({ hostname, PORT, path: "/login", method: "POST" });
+      httpClient({ hostname, PORT, path: "/login", method: "GET" });
 
       webswitchConnection = await webswitchConnect(
         new websocket.client(),
