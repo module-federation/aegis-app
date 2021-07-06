@@ -141,7 +141,6 @@ function _httpClient() {
               req.on("finish", resolve); // Write data to request body
 
               if (contentLength > 0) req.write(payload);
-              req.end();
             }));
 
           case 2:

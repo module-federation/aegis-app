@@ -63,8 +63,6 @@ async function httpClient({
 
     // Write data to request body
     if (contentLength > 0) req.write(payload);
-
-    req.end();
   });
 }
 
