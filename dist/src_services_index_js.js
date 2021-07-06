@@ -35,7 +35,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! crypto */ "crypto");
 /* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(crypto__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! nanoid */ "./node_modules/nanoid/index.js");
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! nanoid */ "webpack/sharing/consume/default/nanoid/nanoid");
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(nanoid__WEBPACK_IMPORTED_MODULE_1__);
 
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -627,35 +628,121 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var http__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! http */ "http");
 /* harmony import */ var http__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(http__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var websocket__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! websocket */ "./node_modules/websocket/index.js");
+/* harmony import */ var websocket__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(websocket__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var dns_promises__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! dns/promises */ "dns/promises");
+/* harmony import */ var dns_promises__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(dns_promises__WEBPACK_IMPORTED_MODULE_2__);
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
-function publishEvent(event) {
-  if (!event) {
-    return;
-  }
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-  var serialized = JSON.stringify(event);
-  var options = {
-    hostname: "localhost",
-    port: 8060,
-    path: "/api/publish",
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Content-Length": Buffer.byteLength(serialized)
-    }
-  };
-  var req = http__WEBPACK_IMPORTED_MODULE_0___default().request(options, function (res) {
-    res.setEncoding("utf8");
-    res.on("data", function (chunk) {
-      console.log(chunk);
-    });
-    res.on("end", function () {});
-  });
-  req.on("error", function (e) {// console.error(`problem with request: ${e.message}`);
-  }); // Write data to request body
 
-  req.write(serialized);
-  req.end();
+
+
+var FQDN = "remote.aegis.com";
+var PORT = 8060;
+var PATH = "/api/publish";
+function publishEvent(_x) {
+  return _publishEvent.apply(this, arguments);
+}
+
+function _publishEvent() {
+  _publishEvent = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(event) {
+    var useWebSocket,
+        host,
+        serialized,
+        client,
+        options,
+        req,
+        _args = arguments;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            useWebSocket = _args.length > 1 && _args[1] !== undefined ? _args[1] : true;
+
+            if (event) {
+              _context.next = 3;
+              break;
+            }
+
+            return _context.abrupt("return");
+
+          case 3:
+            _context.next = 5;
+            return dns_promises__WEBPACK_IMPORTED_MODULE_2___default().lookup(FQDN);
+
+          case 5:
+            if (!_context.sent) {
+              _context.next = 9;
+              break;
+            }
+
+            _context.t0 = FQDN;
+            _context.next = 10;
+            break;
+
+          case 9:
+            _context.t0 = "localhost";
+
+          case 10:
+            host = _context.t0;
+            serialized = JSON.stringify(event);
+
+            if (useWebSocket) {
+              client = new (websocket__WEBPACK_IMPORTED_MODULE_1___default().client)();
+              client.on("connectFailed", function (error) {
+                console.log("Connect Error: " + error.toString());
+              });
+              client.on("connect", function (connection) {
+                console.log("WebSocket Client Connected");
+                connection.on("error", function (error) {
+                  console.log("Connection Error: " + error.toString());
+                });
+                connection.on("close", function () {
+                  console.log("echo-protocol Connection Closed");
+                });
+                connection.on("message", function (message) {
+                  if (message.type === "utf8") {
+                    console.log("Received: '" + message.utf8Data + "'");
+                  }
+                });
+                connection.sendUTF(serialized);
+              });
+              client.connect("ws://".concat(host, ":").concat(PORT).concat(PATH), "echo-protocol");
+            } else {
+              options = {
+                hostname: host,
+                port: 8060,
+                path: PATH,
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Content-Length": Buffer.byteLength(serialized)
+                }
+              };
+              req = http__WEBPACK_IMPORTED_MODULE_0___default().request(options, function (res) {
+                res.setEncoding("utf8");
+                res.on("data", function (chunk) {
+                  console.log(chunk);
+                });
+                res.on("end", function () {});
+              });
+              req.on("error", function (e) {// console.error(`problem with request: ${e.message}`);
+              }); // Write data to request body
+
+              req.write(serialized);
+              req.end();
+            }
+
+          case 13:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }));
+  return _publishEvent.apply(this, arguments);
 }
 
 /***/ }),
@@ -871,134 +958,6 @@ var Shipping = {
     return event.eventData[key];
   }
 };
-
-/***/ }),
-
-/***/ "./node_modules/nanoid/index.js":
-/*!**************************************!*\
-  !*** ./node_modules/nanoid/index.js ***!
-  \**************************************/
-/*! namespace exports */
-/*! export customAlphabet [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export customRandom [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export nanoid [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export random [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export urlAlphabet [provided] [no usage info] [missing usage info prevents renaming] -> ./node_modules/nanoid/url-alphabet/index.js .urlAlphabet */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_exports__, __webpack_require__.d, __webpack_require__.r, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "nanoid": () => /* binding */ nanoid,
-/* harmony export */   "customAlphabet": () => /* binding */ customAlphabet,
-/* harmony export */   "customRandom": () => /* binding */ customRandom,
-/* harmony export */   "urlAlphabet": () => /* reexport safe */ _url_alphabet_index_js__WEBPACK_IMPORTED_MODULE_1__.urlAlphabet,
-/* harmony export */   "random": () => /* binding */ random
-/* harmony export */ });
-/* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! crypto */ "crypto");
-/* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(crypto__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _url_alphabet_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./url-alphabet/index.js */ "./node_modules/nanoid/url-alphabet/index.js");
-
-
-
-
-// We reuse buffers with the same size to avoid memory fragmentations
-// for better performance.
-let buffers = {}
-let random = bytes => {
-  let buffer = buffers[bytes]
-  if (!buffer) {
-    // `Buffer.allocUnsafe()` is faster because it doesn’t flush the memory.
-    // Memory flushing is unnecessary since the buffer allocation itself resets
-    // the memory with the new bytes.
-    buffer = Buffer.allocUnsafe(bytes)
-    if (bytes <= 255) buffers[bytes] = buffer
-  }
-  return crypto__WEBPACK_IMPORTED_MODULE_0___default().randomFillSync(buffer)
-}
-
-let customRandom = (alphabet, size, getRandom) => {
-  // First, a bitmask is necessary to generate the ID. The bitmask makes bytes
-  // values closer to the alphabet size. The bitmask calculates the closest
-  // `2^31 - 1` number, which exceeds the alphabet size.
-  // For example, the bitmask for the alphabet size 30 is 31 (00011111).
-  let mask = (2 << (31 - Math.clz32((alphabet.length - 1) | 1))) - 1
-  // Though, the bitmask solution is not perfect since the bytes exceeding
-  // the alphabet size are refused. Therefore, to reliably generate the ID,
-  // the random bytes redundancy has to be satisfied.
-
-  // Note: every hardware random generator call is performance expensive,
-  // because the system call for entropy collection takes a lot of time.
-  // So, to avoid additional system calls, extra bytes are requested in advance.
-
-  // Next, a step determines how many random bytes to generate.
-  // The number of random bytes gets decided upon the ID size, mask,
-  // alphabet size, and magic number 1.6 (using 1.6 peaks at performance
-  // according to benchmarks).
-  let step = Math.ceil((1.6 * mask * size) / alphabet.length)
-
-  return () => {
-    let id = ''
-    while (true) {
-      let bytes = getRandom(step)
-      // A compact alternative for `for (var i = 0; i < step; i++)`.
-      let i = step
-      while (i--) {
-        // Adding `|| ''` refuses a random byte that exceeds the alphabet size.
-        id += alphabet[bytes[i] & mask] || ''
-        // `id.length + 1 === size` is a more compact option.
-        if (id.length === +size) return id
-      }
-    }
-  }
-}
-
-let customAlphabet = (alphabet, size) => customRandom(alphabet, size, random)
-
-let nanoid = (size = 21) => {
-  let bytes = random(size)
-  let id = ''
-  // A compact alternative for `for (var i = 0; i < step; i++)`.
-  while (size--) {
-    // It is incorrect to use bytes exceeding the alphabet size.
-    // The following mask reduces the random byte in the 0-255 value
-    // range to the 0-63 value range. Therefore, adding hacks, such
-    // as empty string fallback or magic numbers, is unneccessary because
-    // the bitmask trims bytes down to the alphabet size.
-    id += _url_alphabet_index_js__WEBPACK_IMPORTED_MODULE_1__.urlAlphabet[bytes[size] & 63]
-  }
-  return id
-}
-
-
-
-
-/***/ }),
-
-/***/ "./node_modules/nanoid/url-alphabet/index.js":
-/*!***************************************************!*\
-  !*** ./node_modules/nanoid/url-alphabet/index.js ***!
-  \***************************************************/
-/*! namespace exports */
-/*! export urlAlphabet [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "urlAlphabet": () => /* binding */ urlAlphabet
-/* harmony export */ });
-// This alphabet uses `A-Za-z0-9_-` symbols. The genetic algorithm helped
-// optimize the gzip compression for this alphabet.
-let urlAlphabet =
-  'ModuleSymbhasOwnPr-0123456789ABCDEFGHNRVfgctiUvz_KqYTJkLxpZXIjQW'
-
-
-
 
 /***/ })
 

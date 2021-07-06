@@ -42,6 +42,7 @@ var serverConfig = {
         "./models": "./src/models",
         "./adapters": "./src/adapters",
         "./services": "./src/services",
+        "./validations": "./src/models/mixins",
         "./event-bus": "./src/services/event-bus",
       },
       shared: {
@@ -52,6 +53,9 @@ var serverConfig = {
           eager: true,
         },
         kafkajs: {
+          eager: true,
+        },
+        nanoid: {
           eager: true,
         },
       },

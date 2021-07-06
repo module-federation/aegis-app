@@ -360,9 +360,9 @@ async function getCustomerOrder(order) {
       ...order,
       ...order.decrypt(),
     });
-    if (customer) {
-      return order.update({ customerId: customer.getId() });
-    }
+    // if (customer) {
+    //   return order.update({ customerId: customer.getId() });
+    // }
   }
 
   return order;
