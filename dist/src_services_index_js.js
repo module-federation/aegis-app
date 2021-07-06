@@ -1055,7 +1055,7 @@ function _publishEvent() {
               method: "POST"
             });
             _context4.next = 12;
-            return webswitchConnect(new (websocket__WEBPACK_IMPORTED_MODULE_1___default().client)(), "ws://".concat(host, ":").concat(PORT).concat(PATH), observer);
+            return webswitchConnect(new (websocket__WEBPACK_IMPORTED_MODULE_1___default().client)(), "ws://".concat(hostname, ":").concat(PORT).concat(PATH), observer);
 
           case 12:
             webswitchConnection = _context4.sent;
