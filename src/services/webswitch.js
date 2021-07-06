@@ -27,7 +27,7 @@ async function httpClient({
   port,
   path,
   method = "GET",
-  payload = null,
+  payload = "",
 }) {
   return new Promise(function (resolve, reject) {
     const contentLength = ["POST", "PATCH"].includes(method)

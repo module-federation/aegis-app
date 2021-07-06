@@ -935,7 +935,7 @@ function _httpClient() {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            hostname = _ref.hostname, port = _ref.port, path = _ref.path, _ref$method = _ref.method, method = _ref$method === void 0 ? "GET" : _ref$method, _ref$payload = _ref.payload, payload = _ref$payload === void 0 ? null : _ref$payload;
+            hostname = _ref.hostname, port = _ref.port, path = _ref.path, _ref$method = _ref.method, method = _ref$method === void 0 ? "GET" : _ref$method, _ref$payload = _ref.payload, payload = _ref$payload === void 0 ? "" : _ref$payload;
             return _context2.abrupt("return", new Promise(function (resolve, reject) {
               var contentLength = ["POST", "PATCH"].includes(method) ? Buffer.byteLength(payload) : 0;
               var contentHeaders = {
