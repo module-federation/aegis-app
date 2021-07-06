@@ -107,7 +107,7 @@ function _webswitchConnect() {
             return _context2.abrupt("return", new Promise(function (resolve, reject) {
               console.debug("connecting to...", url);
               client.on("connect", function (connection) {
-                console.debug("connected to", url, connection.remoteAddress);
+                console.debug("...connected to", url, connection.remoteAddress);
                 connection.on("message", function (message) {
                   console.debug("received message from", url);
 
@@ -176,7 +176,7 @@ function _publishEvent() {
               break;
             }
 
-            if (!(!websocketConnnection || !webswitchConnection.connected)) {
+            if (!(!webswitchConnnection || !webswitchConnection.connected)) {
               _context3.next = 12;
               break;
             }

@@ -3,7 +3,7 @@
  * websocket clients connect to a common server,
  * which broadcasts any messages it receives.
  */
-"use strict"
+"use strict";
 
 import http from "http";
 import websocket from "websocket";
@@ -31,7 +31,7 @@ async function webswitchConnect(client, url, observer) {
     console.debug("connecting to...", url);
 
     client.on("connect", function (connection) {
-      console.debug("connected to", url, connection.remoteAddress);
+      console.debug("...connected to", url, connection.remoteAddress);
 
       connection.on("message", function (message) {
         console.debug("received message from", url);
@@ -65,7 +65,7 @@ export async function publishEvent(event, observer, useWebswitch = true) {
   let webswitchConnection;
 
   if (useWebswitch) {
-    if (!websocketConnnection || !webswitchConnection.connected) {
+    if (!webswitchConnnection || !webswitchConnection.connected) {
       webswitchConnection = await webswitchConnect(
         new websocket.client(),
         `ws://${host}:${PORT}${PATH}`,
