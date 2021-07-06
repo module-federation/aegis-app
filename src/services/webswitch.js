@@ -86,10 +86,10 @@ async function webswitchConnect(client, url, observer) {
             const event = JSON.parse(message);
             console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", event);
 
-            // observer.notify(event.eventName, {
-            //   message,
-            //   address: connection.remoteAddress,
-            // });
+            observer.notify(event.eventName, {
+              message,
+              address: connection.remoteAddress,
+            });
           }
         });
 

@@ -183,10 +183,11 @@ function _webswitchConnect() {
 
                     if (message.type === "utf8") {
                       var event = JSON.parse(message);
-                      console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", event); // observer.notify(event.eventName, {
-                      //   message,
-                      //   address: connection.remoteAddress,
-                      // });
+                      console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", event);
+                      observer.notify(event.eventName, {
+                        message: message,
+                        address: connection.remoteAddress
+                      });
                     }
                   });
                   connection.on("error", function (error) {
