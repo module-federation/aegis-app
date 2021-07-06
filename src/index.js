@@ -80,6 +80,7 @@ app.post(`${API_ROOT}/publish`, (req, res) => {
   console.log({ event: req.body });
   //handleEvents(req, res);
   wss.clients.forEach(function each(client) {
+    if (client.url === req.url) return;
     if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify({ event: req.body }));
     }

@@ -179,9 +179,11 @@ function _webswitchConnect() {
                   console.debug("...connected to", url, connection.remoteAddress);
                   connection.on("message", function (message) {
                     console.debug("received message from", url);
+                    console.debug("@@@@@@@@@@@@@@@@@@@@@@@", message);
 
                     if (message.type === "utf8") {
                       var event = JSON.parse(message);
+                      console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", event);
                       observer.notify(event.eventName, {
                         message: message,
                         address: connection.remoteAddress

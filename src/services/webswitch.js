@@ -80,8 +80,11 @@ async function webswitchConnect(client, url, observer) {
         connection.on("message", function (message) {
           console.debug("received message from", url);
 
+          console.debug("@@@@@@@@@@@@@@@@@@@@@@@", message);
+
           if (message.type === "utf8") {
             const event = JSON.parse(message);
+            console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", event);
 
             observer.notify(event.eventName, {
               message,
