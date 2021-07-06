@@ -9,7 +9,7 @@ import http from "http";
 import websocket from "websocket";
 import dns from "dns/promises";
 
-const FQDN = process.env.WEBSWITCH_HOST || "webswitch.aegis.com";
+const FQDN = process.env.WEBSWITCH_HOST || "webswitch.aegis.dev";
 const PORT = 8060;
 const PATH = "/api/publish";
 
@@ -20,6 +20,35 @@ async function getHostName() {
     console.warn("dns lookup", error);
   }
   return "localhost";
+}
+
+async function httpClient({ hostname, port, path, method, payload = "" }) {
+  const options = {
+    hostname,
+    port,
+    path,
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      "Content-Length": Buffer.byteLength(payload),
+    },
+  };
+
+  const req = http.request(options, res => {
+    res.setEncoding("utf8");
+    res.on("data", chunk => {
+      console.log(chunk);
+    });
+    res.on("end", () => {});
+  });
+
+  req.on("error", e => {
+    // console.error(`problem with request: ${e.message}`);
+  });
+
+  // Write data to request body
+  req.write(payload);
+  req.end();
 }
 
 /**
@@ -60,12 +89,14 @@ async function webswitchConnect(client, url, observer) {
 export async function publishEvent(event, observer, useWebswitch = true) {
   if (!event) return;
 
-  const host = await getHostName();
+  const hostname = await getHostName();
   const serializedEvent = JSON.stringify(event);
   let webswitchConnection;
 
   if (useWebswitch) {
     if (!webswitchConnection || !webswitchConnection.connected) {
+      httpClient({ hostname, PORT, path: "/login", method: "POST" });
+      
       webswitchConnection = await webswitchConnect(
         new websocket.client(),
         `ws://${host}:${PORT}${PATH}`,
@@ -74,31 +105,12 @@ export async function publishEvent(event, observer, useWebswitch = true) {
     }
     webswitchConnection.sendUTF(serializedEvent);
   } else {
-    const options = {
-      hostname: host,
-      port: 8060,
-      path: PATH,
+    httpClient({
+      hostname,
+      port,
+      path,
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Content-Length": Buffer.byteLength(serializedEvent),
-      },
-    };
-
-    const req = http.request(options, res => {
-      res.setEncoding("utf8");
-      res.on("data", chunk => {
-        console.log(chunk);
-      });
-      res.on("end", () => {});
+      payload: serialziedEvent,
     });
-
-    req.on("error", e => {
-      // console.error(`problem with request: ${e.message}`);
-    });
-
-    // Write data to request body
-    req.write(serializedEvent);
-    req.end();
   }
 }

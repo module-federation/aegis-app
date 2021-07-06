@@ -860,18 +860,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
-var FQDN = process.env.WEBSWITCH_HOST || "webswitch.aegis.com";
+var FQDN = process.env.WEBSWITCH_HOST || "webswitch.aegis.dev";
 var PORT = 8060;
 var PATH = "/api/publish";
 
 function getHostName() {
   return _getHostName.apply(this, arguments);
 }
-/**
- * Connect to Webswitch server.
- * @returns {Promise<websocket.connection>}
- */
-
 
 function _getHostName() {
   _getHostName = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
@@ -917,17 +912,68 @@ function _getHostName() {
   return _getHostName.apply(this, arguments);
 }
 
-function webswitchConnect(_x, _x2, _x3) {
-  return _webswitchConnect.apply(this, arguments);
+function httpClient(_x) {
+  return _httpClient.apply(this, arguments);
 }
+/**
+ * Connect to Webswitch server.
+ * @returns {Promise<websocket.connection>}
+ */
 
-function _webswitchConnect() {
-  _webswitchConnect = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(client, url, observer) {
+
+function _httpClient() {
+  _httpClient = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(_ref) {
+    var hostname, port, path, method, _ref$payload, payload, options, req;
+
     return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            return _context2.abrupt("return", new Promise(function (resolve, reject) {
+            hostname = _ref.hostname, port = _ref.port, path = _ref.path, method = _ref.method, _ref$payload = _ref.payload, payload = _ref$payload === void 0 ? "" : _ref$payload;
+            options = {
+              hostname: hostname,
+              port: port,
+              path: path,
+              method: method,
+              headers: {
+                "Content-Type": "application/json",
+                "Content-Length": Buffer.byteLength(payload)
+              }
+            };
+            req = http__WEBPACK_IMPORTED_MODULE_0___default().request(options, function (res) {
+              res.setEncoding("utf8");
+              res.on("data", function (chunk) {
+                console.log(chunk);
+              });
+              res.on("end", function () {});
+            });
+            req.on("error", function (e) {// console.error(`problem with request: ${e.message}`);
+            }); // Write data to request body
+
+            req.write(payload);
+            req.end();
+
+          case 6:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+  return _httpClient.apply(this, arguments);
+}
+
+function webswitchConnect(_x2, _x3, _x4) {
+  return _webswitchConnect.apply(this, arguments);
+}
+
+function _webswitchConnect() {
+  _webswitchConnect = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(client, url, observer) {
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            return _context3.abrupt("return", new Promise(function (resolve, reject) {
               console.debug("connecting to...", url);
               client.on("connect", function (connection) {
                 console.debug("...connected to", url, connection.remoteAddress);
@@ -952,99 +998,88 @@ function _webswitchConnect() {
 
           case 1:
           case "end":
-            return _context2.stop();
-        }
-      }
-    }, _callee2);
-  }));
-  return _webswitchConnect.apply(this, arguments);
-}
-
-function publishEvent(_x4, _x5) {
-  return _publishEvent.apply(this, arguments);
-}
-
-function _publishEvent() {
-  _publishEvent = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(event, observer) {
-    var useWebswitch,
-        host,
-        serializedEvent,
-        webswitchConnection,
-        options,
-        req,
-        _args3 = arguments;
-    return regeneratorRuntime.wrap(function _callee3$(_context3) {
-      while (1) {
-        switch (_context3.prev = _context3.next) {
-          case 0:
-            useWebswitch = _args3.length > 2 && _args3[2] !== undefined ? _args3[2] : true;
-
-            if (event) {
-              _context3.next = 3;
-              break;
-            }
-
-            return _context3.abrupt("return");
-
-          case 3:
-            _context3.next = 5;
-            return getHostName();
-
-          case 5:
-            host = _context3.sent;
-            serializedEvent = JSON.stringify(event);
-
-            if (!useWebswitch) {
-              _context3.next = 15;
-              break;
-            }
-
-            if (!(!webswitchConnection || !webswitchConnection.connected)) {
-              _context3.next = 12;
-              break;
-            }
-
-            _context3.next = 11;
-            return webswitchConnect(new (websocket__WEBPACK_IMPORTED_MODULE_1___default().client)(), "ws://".concat(host, ":").concat(PORT).concat(PATH), observer);
-
-          case 11:
-            webswitchConnection = _context3.sent;
-
-          case 12:
-            webswitchConnection.sendUTF(serializedEvent);
-            _context3.next = 20;
-            break;
-
-          case 15:
-            options = {
-              hostname: host,
-              port: 8060,
-              path: PATH,
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "Content-Length": Buffer.byteLength(serializedEvent)
-              }
-            };
-            req = http__WEBPACK_IMPORTED_MODULE_0___default().request(options, function (res) {
-              res.setEncoding("utf8");
-              res.on("data", function (chunk) {
-                console.log(chunk);
-              });
-              res.on("end", function () {});
-            });
-            req.on("error", function (e) {// console.error(`problem with request: ${e.message}`);
-            }); // Write data to request body
-
-            req.write(serializedEvent);
-            req.end();
-
-          case 20:
-          case "end":
             return _context3.stop();
         }
       }
     }, _callee3);
+  }));
+  return _webswitchConnect.apply(this, arguments);
+}
+
+function publishEvent(_x5, _x6) {
+  return _publishEvent.apply(this, arguments);
+}
+
+function _publishEvent() {
+  _publishEvent = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(event, observer) {
+    var useWebswitch,
+        hostname,
+        serializedEvent,
+        webswitchConnection,
+        _args4 = arguments;
+    return regeneratorRuntime.wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            useWebswitch = _args4.length > 2 && _args4[2] !== undefined ? _args4[2] : true;
+
+            if (event) {
+              _context4.next = 3;
+              break;
+            }
+
+            return _context4.abrupt("return");
+
+          case 3:
+            _context4.next = 5;
+            return getHostName();
+
+          case 5:
+            hostname = _context4.sent;
+            serializedEvent = JSON.stringify(event);
+
+            if (!useWebswitch) {
+              _context4.next = 16;
+              break;
+            }
+
+            if (!(!webswitchConnection || !webswitchConnection.connected)) {
+              _context4.next = 13;
+              break;
+            }
+
+            httpClient({
+              hostname: hostname,
+              PORT: PORT,
+              path: "/login",
+              method: "POST"
+            });
+            _context4.next = 12;
+            return webswitchConnect(new (websocket__WEBPACK_IMPORTED_MODULE_1___default().client)(), "ws://".concat(host, ":").concat(PORT).concat(PATH), observer);
+
+          case 12:
+            webswitchConnection = _context4.sent;
+
+          case 13:
+            webswitchConnection.sendUTF(serializedEvent);
+            _context4.next = 17;
+            break;
+
+          case 16:
+            httpClient({
+              hostname: hostname,
+              port: port,
+              path: path,
+              method: "POST",
+              payload: serialziedEvent
+            });
+
+          case 17:
+          case "end":
+            return _context4.stop();
+        }
+      }
+    }, _callee4);
   }));
   return _publishEvent.apply(this, arguments);
 }
