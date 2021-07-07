@@ -68,7 +68,7 @@ async function httpsClient({
       });
       if (payload) req.on("connect", () => req.write(payload));
     } catch (e) {
-      console.warn(httpClient.name, e.message);
+      console.warn(httpsClient.name, e.message);
     }
   });
 }
