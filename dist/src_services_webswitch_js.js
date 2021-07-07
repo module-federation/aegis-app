@@ -116,7 +116,7 @@ function _httpsClient() {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            hostname = _ref.hostname, port = _ref.port, path = _ref.path, _ref$protocol = _ref.protocol, protocol = _ref$protocol === void 0 ? "https" : _ref$protocol, _ref$method = _ref.method, method = _ref$method === void 0 ? "GET" : _ref$method, _ref$payload = _ref.payload, payload = _ref$payload === void 0 ? null : _ref$payload, _ref$safe = _ref.safe, safe = _ref$safe === void 0 ? true : _ref$safe;
+            hostname = _ref.hostname, port = _ref.port, path = _ref.path, _ref$protocol = _ref.protocol, protocol = _ref$protocol === void 0 ? "https" : _ref$protocol, _ref$method = _ref.method, method = _ref$method === void 0 ? "GET" : _ref$method, _ref$payload = _ref.payload, payload = _ref$payload === void 0 ? "" : _ref$payload, _ref$safe = _ref.safe, safe = _ref$safe === void 0 ? true : _ref$safe;
             return _context2.abrupt("return", new Promise(function (resolve, reject) {
               var normal = {
                 hostname: hostname,

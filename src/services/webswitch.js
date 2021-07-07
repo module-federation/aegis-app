@@ -41,7 +41,7 @@ async function httpsClient({
   path,
   protocol = "https",
   method = "GET",
-  payload = null,
+  payload = "",
   safe = true,
 }) {
   return new Promise(function (resolve, reject) {
