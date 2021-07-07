@@ -17,12 +17,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "publishEvent": () => /* binding */ publishEvent
 /* harmony export */ });
-/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! http */ "http");
-/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(http__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var websocket__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! websocket */ "./node_modules/websocket/index.js");
-/* harmony import */ var websocket__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(websocket__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var dns_promises__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! dns/promises */ "dns/promises");
-/* harmony import */ var dns_promises__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(dns_promises__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var ws__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ws */ "./node_modules/ws/index.js");
+/* harmony import */ var ws__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(ws__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var dns_promises__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! dns/promises */ "dns/promises");
+/* harmony import */ var dns_promises__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(dns_promises__WEBPACK_IMPORTED_MODULE_1__);
 /**
  * WEBSWITCH (c)
  * websocket clients connect to a common server,
@@ -42,7 +40,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
-
 var FQDN = process.env.WEBSWITCH_HOST || "webswitch.aegis.dev";
 var PORT = 8060;
 var PATH = "/api/publish";
@@ -59,10 +56,12 @@ function _getHostName() {
           case 0:
             _context.prev = 0;
             _context.next = 3;
-            return dns_promises__WEBPACK_IMPORTED_MODULE_2___default().lookup(FQDN);
+            return dns_promises__WEBPACK_IMPORTED_MODULE_1___default().lookup(FQDN);
 
           case 3:
-            if (!_context.sent) {
+            if (!function (address) {
+              return console.log(address);
+            }) {
               _context.next = 7;
               break;
             }
@@ -95,52 +94,56 @@ function _getHostName() {
   return _getHostName.apply(this, arguments);
 }
 
-function httpClient(_x) {
-  return _httpClient.apply(this, arguments);
+function getHeaders(method, payload) {
+  var contentLength = ["POST", "PATCH"].includes(method) ? Buffer.byteLength(payload) : 0;
+  var contentHeaders = {
+    "Content-Type": "application/json"
+  };
+  return contentLength > 0 ? _objectSpread(_objectSpread({}, contentHeaders), {}, {
+    "Content-Length": contentLength
+  }) : contentHeaders;
 }
-/**
- * Connect to Webswitch server.
- * @param {websocket.client} client
- * @returns {Promise<websocket.connection>}
- */
 
+function httpsClient(_x) {
+  return _httpsClient.apply(this, arguments);
+}
 
-function _httpClient() {
-  _httpClient = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(_ref) {
-    var hostname, port, path, _ref$method, method, _ref$payload, payload;
+function _httpsClient() {
+  _httpsClient = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(_ref) {
+    var hostname, port, path, _ref$protocol, protocol, _ref$method, method, _ref$payload, payload, _ref$safe, safe;
 
     return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            hostname = _ref.hostname, port = _ref.port, path = _ref.path, _ref$method = _ref.method, method = _ref$method === void 0 ? "GET" : _ref$method, _ref$payload = _ref.payload, payload = _ref$payload === void 0 ? "" : _ref$payload;
+            hostname = _ref.hostname, port = _ref.port, path = _ref.path, _ref$protocol = _ref.protocol, protocol = _ref$protocol === void 0 ? "https" : _ref$protocol, _ref$method = _ref.method, method = _ref$method === void 0 ? "GET" : _ref$method, _ref$payload = _ref.payload, payload = _ref$payload === void 0 ? "" : _ref$payload, _ref$safe = _ref.safe, safe = _ref$safe === void 0 ? true : _ref$safe;
             return _context2.abrupt("return", new Promise(function (resolve, reject) {
-              var contentLength = ["POST", "PATCH"].includes(method) ? Buffer.byteLength(payload) : 0;
-              var contentHeaders = {
-                "Content-Type": "application/json"
-              };
-              var headers = contentLength > 0 ? _objectSpread(_objectSpread({}, contentHeaders), {}, {
-                "Content-Length": contentLength
-              }) : contentHeaders;
-              var options = {
+              var normal = {
                 hostname: hostname,
                 port: port,
                 path: path,
                 method: method,
-                headers: headers
+                headers: getHeaders(method, payload)
               };
+              var options = safe ? normal : _objectSpread(_objectSpread({}, normal), {}, {
+                rejectUnauthorized: false
+              });
+              var chunks = [];
 
               try {
-                var req = http__WEBPACK_IMPORTED_MODULE_0___default().request(options, function (res) {
+                var req = __webpack_require__("./src/services sync recursive")(protocol).request(options, function (res) {
                   res.setEncoding("utf8");
                   res.on("data", function (chunk) {
-                    return console.log(chunk);
+                    return chunks.push(chunk);
                   });
                   res.on("error", function (e) {
                     return console.warn(httpClient.name, e.message);
                   });
-                  res.on("end", resolve);
+                  res.on("end", function () {
+                    return resolve(chunks.join(""));
+                  });
                 });
+
                 req.on("error", function (e) {
                   reject(e);
                 });
@@ -159,140 +162,81 @@ function _httpClient() {
       }
     }, _callee2);
   }));
-  return _httpClient.apply(this, arguments);
+  return _httpsClient.apply(this, arguments);
 }
 
-function webswitchConnect(_x2, _x3, _x4) {
-  return _webswitchConnect.apply(this, arguments);
-}
-
-function _webswitchConnect() {
-  _webswitchConnect = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(client, url, observer) {
-    return regeneratorRuntime.wrap(function _callee3$(_context3) {
-      while (1) {
-        switch (_context3.prev = _context3.next) {
-          case 0:
-            return _context3.abrupt("return", new Promise(function (resolve, reject) {
-              try {
-                console.debug("connecting to...", url);
-                client.on("connect", function (connection) {
-                  console.debug("...connected to", url, connection.remoteAddress);
-                  resolve(connection);
-                });
-                client.on("connectFailed", function (error) {
-                  reject(error);
-                });
-                client.on("error", function (error) {
-                  reject(error);
-                });
-                client.connect(url);
-              } catch (e) {
-                console.warn(webswitchConnect.name, e.message);
-              }
-            }));
-
-          case 1:
-          case "end":
-            return _context3.stop();
-        }
-      }
-    }, _callee3);
-  }));
-  return _webswitchConnect.apply(this, arguments);
-}
-
-var webswitchConnection;
-function publishEvent(_x5, _x6) {
+var webswitchClient;
+function publishEvent(_x2, _x3) {
   return _publishEvent.apply(this, arguments);
 }
 
 function _publishEvent() {
-  _publishEvent = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(event, observer) {
+  _publishEvent = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(event, observer) {
     var useWebswitch,
         hostname,
         serializedEvent,
-        _args4 = arguments;
-    return regeneratorRuntime.wrap(function _callee4$(_context4) {
+        _args3 = arguments;
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
-        switch (_context4.prev = _context4.next) {
+        switch (_context3.prev = _context3.next) {
           case 0:
-            useWebswitch = _args4.length > 2 && _args4[2] !== undefined ? _args4[2] : true;
+            useWebswitch = _args3.length > 2 && _args3[2] !== undefined ? _args3[2] : true;
 
             if (event) {
-              _context4.next = 3;
+              _context3.next = 3;
               break;
             }
 
-            return _context4.abrupt("return");
+            return _context3.abrupt("return");
 
           case 3:
-            _context4.next = 5;
+            _context3.next = 5;
             return getHostName();
 
           case 5:
-            hostname = _context4.sent;
+            hostname = _context3.sent;
             serializedEvent = JSON.stringify(event);
+            _context3.prev = 7;
 
             if (!useWebswitch) {
-              _context4.next = 27;
+              _context3.next = 19;
               break;
             }
 
-            if (!(!webswitchConnection || !webswitchConnection.connected)) {
-              _context4.next = 25;
+            if (!(!webswitchClient || !webswitchClient.OPEN)) {
+              _context3.next = 16;
               break;
             }
 
-            console.debug("calling");
-            _context4.prev = 10;
-            _context4.next = 13;
-            return httpClient({
+            console.debug("calling", event); // login first
+
+            _context3.next = 13;
+            return httpsClient({
               hostname: hostname,
               port: PORT,
               path: "/login",
-              method: "POST"
+              method: "POST",
+              protocol: "http"
             });
 
           case 13:
-            _context4.next = 15;
-            return webswitchConnect(new (websocket__WEBPACK_IMPORTED_MODULE_1___default().client)(), "ws://".concat(hostname, ":").concat(PORT).concat(PATH), observer);
-
-          case 15:
-            webswitchConnection = _context4.sent;
-            webswitchConnection.on("message", function (message) {
-              console.debug("received message from", url);
-              console.debug("@@@@@@@@@@@@@@@@@@@@@@@", message);
-
-              if (message.type === "utf8") {
-                var _event = JSON.parse(message);
-
-                console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", _event);
-                observer.notify(_event.eventName, {
-                  message: message,
-                  address: connection.remoteAddress
-                });
-              }
+            webswitchClient = new (ws__WEBPACK_IMPORTED_MODULE_0___default())("ws://".concat(hostname, ":").concat(PORT).concat(PATH));
+            webswitchClient.on("open", function () {
+              webswitchClient.send(serializedEvent);
             });
-            webswitchConnection.on("error", function (error) {
-              console.warn(webswitchConnect.name, error.message);
-              reject(error);
+            webswitchClient.on("message", function (message) {
+              var event = JSON.parse(message);
+              console.debug(publishEvent.name, message);
+              observer.notify(event.eventName, event);
             });
-            webswitchConnection.sendUTF(serializedEvent);
-            _context4.next = 25;
+
+          case 16:
+            webswitchClient.send(serializedEvent);
+            _context3.next = 20;
             break;
 
-          case 21:
-            _context4.prev = 21;
-            _context4.t0 = _context4["catch"](10);
-            console.warn(publishEvent.name, _context4.t0.message);
-            return _context4.abrupt("return");
-
-          case 25:
-            _context4.next = 28;
-            break;
-
-          case 27:
-            httpClient({
+          case 19:
+            httpsClient({
               hostname: hostname,
               port: port,
               path: path,
@@ -300,15 +244,45 @@ function _publishEvent() {
               payload: serialziedEvent
             });
 
-          case 28:
+          case 20:
+            _context3.next = 25;
+            break;
+
+          case 22:
+            _context3.prev = 22;
+            _context3.t0 = _context3["catch"](7);
+            console.warn(publishEvent.name, _context3.t0.message);
+
+          case 25:
           case "end":
-            return _context4.stop();
+            return _context3.stop();
         }
       }
-    }, _callee4, null, [[10, 21]]);
+    }, _callee3, null, [[7, 22]]);
   }));
   return _publishEvent.apply(this, arguments);
 }
+
+/***/ }),
+
+/***/ "./src/services sync recursive":
+/*!***************************!*\
+  !*** ./src/services sync ***!
+  \***************************/
+/*! default exports */
+/*! exports [not provided] [no usage info] */
+/*! runtime requirements: module, __webpack_require__.o */
+/***/ ((module) => {
+
+function webpackEmptyContext(req) {
+	var e = new Error("Cannot find module '" + req + "'");
+	e.code = 'MODULE_NOT_FOUND';
+	throw e;
+}
+webpackEmptyContext.keys = () => [];
+webpackEmptyContext.resolve = webpackEmptyContext;
+webpackEmptyContext.id = "./src/services sync recursive";
+module.exports = webpackEmptyContext;
 
 /***/ })
 

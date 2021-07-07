@@ -5,8 +5,7 @@
  */
 "use strict";
 
-import http from "http";
-import websocket from "websocket";
+import WebSocket from "ws";
 import dns from "dns/promises";
 
 const FQDN = process.env.WEBSWITCH_HOST || "webswitch.aegis.dev";
@@ -15,44 +14,54 @@ const PATH = "/api/publish";
 
 async function getHostName() {
   try {
-    return (await dns.lookup(FQDN)) ? FQDN : "localhost";
+    return (await dns.lookup(FQDN), address => console.log(address))
+      ? FQDN
+      : "localhost";
   } catch (error) {
     console.warn("dns lookup", error);
   }
   return "localhost";
 }
 
-async function httpClient({
+function getHeaders(method, payload) {
+  const contentLength = ["POST", "PATCH"].includes(method)
+    ? Buffer.byteLength(payload)
+    : 0;
+
+  const contentHeaders = { "Content-Type": "application/json" };
+
+  return contentLength > 0
+    ? { ...contentHeaders, "Content-Length": contentLength }
+    : contentHeaders;
+}
+
+async function httpsClient({
   hostname,
   port,
   path,
+  protocol = "https",
   method = "GET",
   payload = "",
+  safe = true,
 }) {
   return new Promise(function (resolve, reject) {
-    const contentLength = ["POST", "PATCH"].includes(method)
-      ? Buffer.byteLength(payload)
-      : 0;
-    const contentHeaders = { "Content-Type": "application/json" };
-    const headers =
-      contentLength > 0
-        ? { ...contentHeaders, "Content-Length": contentLength }
-        : contentHeaders;
-
-    const options = {
+    const normal = {
       hostname,
       port,
       path,
       method,
-      headers,
+      headers: getHeaders(method, payload),
     };
 
+    const options = safe ? normal : { ...normal, rejectUnauthorized: false };
+    const chunks = [];
+
     try {
-      const req = http.request(options, res => {
+      const req = require(protocol).request(options, res => {
         res.setEncoding("utf8");
-        res.on("data", chunk => console.log(chunk));
+        res.on("data", chunk => chunks.push(chunk));
         res.on("error", e => console.warn(httpClient.name, e.message));
-        res.on("end", resolve);
+        res.on("end", () => resolve(chunks.join("")));
       });
       req.on("error", e => {
         reject(e);
@@ -64,34 +73,7 @@ async function httpClient({
   });
 }
 
-/**
- * Connect to Webswitch server.
- * @param {websocket.client} client
- * @returns {Promise<websocket.connection>}
- */
-async function webswitchConnect(client, url, observer) {
-  return new Promise(function (resolve, reject) {
-    try {
-      console.debug("connecting to...", url);
-
-      client.on("connect", function (connection) {
-        console.debug("...connected to", url, connection.remoteAddress);
-        resolve(connection);
-      });
-
-      client.on("connectFailed", function (error) {
-        reject(error);
-      });
-      client.on("error", function (error) {
-        reject(error);
-      });
-      client.connect(url);
-    } catch (e) {
-      console.warn(webswitchConnect.name, e.message);
-    }
-  });
-}
-let webswitchConnection;
+let webswitchClient;
 
 export async function publishEvent(event, observer, useWebswitch = true) {
   if (!event) return;
@@ -99,57 +81,40 @@ export async function publishEvent(event, observer, useWebswitch = true) {
   const hostname = await getHostName();
   const serializedEvent = JSON.stringify(event);
 
-  if (useWebswitch) {
-    if (!webswitchConnection || !webswitchConnection.connected) {
-      console.debug("calling");
-      try {
-        // login
-        await httpClient({
+  try {
+    if (useWebswitch) {
+      if (!webswitchClient || !webswitchClient.OPEN) {
+        console.debug("calling", event);
+        // login first
+        await httpsClient({
           hostname,
           port: PORT,
           path: "/login",
           method: "POST",
+          protocol: "http",
         });
 
-        webswitchConnection = await webswitchConnect(
-          new websocket.client(),
-          `ws://${hostname}:${PORT}${PATH}`,
-          observer
-        );
-
-        webswitchConnection.on("message", function (message) {
-          console.debug("received message from", url);
-
-          console.debug("@@@@@@@@@@@@@@@@@@@@@@@", message);
-
-          if (message.type === "utf8") {
-            const event = JSON.parse(message);
-            console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", event);
-
-            observer.notify(event.eventName, {
-              message,
-              address: connection.remoteAddress,
-            });
-          }
+        webswitchClient = new WebSocket(`ws://${hostname}:${PORT}${PATH}`);
+        webswitchClient.on("open", function () {
+          webswitchClient.send(serializedEvent);
         });
-
-        webswitchConnection.on("error", function (error) {
-          console.warn(webswitchConnect.name, error.message);
-          reject(error);
+        webswitchClient.on("message", function (message) {
+          const event = JSON.parse(message);
+          console.debug(publishEvent.name, message);
+          observer.notify(event.eventName, event);
         });
-        webswitchConnection.sendUTF(serializedEvent);
-      } catch (e) {
-        console.warn(publishEvent.name, e.message);
-        return;
       }
+      webswitchClient.send(serializedEvent);
+    } else {
+      httpsClient({
+        hostname,
+        port,
+        path,
+        method: "POST",
+        payload: serialziedEvent,
+      });
     }
-  } else {
-    httpClient({
-      hostname,
-      port,
-      path,
-      method: "POST",
-      payload: serialziedEvent,
-    });
+  } catch (e) {
+    console.warn(publishEvent.name, e.message);
   }
 }
