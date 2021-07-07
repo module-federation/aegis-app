@@ -844,6 +844,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var ws__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(ws__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var dns_promises__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! dns/promises */ "dns/promises");
 /* harmony import */ var dns_promises__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(dns_promises__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! http */ "http");
+/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(http__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var https__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! https */ "https");
+/* harmony import */ var https__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(https__WEBPACK_IMPORTED_MODULE_3__);
 /**
  * WEBSWITCH (c)
  * websocket clients connect to a common server,
@@ -860,6 +864,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
 
 
 
@@ -927,6 +933,11 @@ function getHeaders(method, payload) {
   }) : contentHeaders;
 }
 
+var client = {
+  http: (http__WEBPACK_IMPORTED_MODULE_2___default()),
+  https: (https__WEBPACK_IMPORTED_MODULE_3___default())
+};
+
 function httpsClient(_x) {
   return _httpsClient.apply(this, arguments);
 }
@@ -954,7 +965,7 @@ function _httpsClient() {
               var chunks = [];
 
               try {
-                var req = __webpack_require__("./src/services sync recursive")(protocol).request(options, function (res) {
+                var req = client[protocol].request(options, function (res) {
                   res.setEncoding("utf8");
                   res.on("data", function (chunk) {
                     return chunks.push(chunk);
@@ -966,7 +977,6 @@ function _httpsClient() {
                     return resolve(chunks.join(""));
                   });
                 });
-
                 req.on("error", function (e) {
                   reject(e);
                 });
@@ -1085,27 +1095,6 @@ function _publishEvent() {
   }));
   return _publishEvent.apply(this, arguments);
 }
-
-/***/ }),
-
-/***/ "./src/services sync recursive":
-/*!***************************!*\
-  !*** ./src/services sync ***!
-  \***************************/
-/*! default exports */
-/*! exports [not provided] [no usage info] */
-/*! runtime requirements: module, __webpack_require__.o */
-/***/ ((module) => {
-
-function webpackEmptyContext(req) {
-	var e = new Error("Cannot find module '" + req + "'");
-	e.code = 'MODULE_NOT_FOUND';
-	throw e;
-}
-webpackEmptyContext.keys = () => [];
-webpackEmptyContext.resolve = webpackEmptyContext;
-webpackEmptyContext.id = "./src/services sync recursive";
-module.exports = webpackEmptyContext;
 
 /***/ })
 

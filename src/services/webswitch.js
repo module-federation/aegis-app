@@ -7,6 +7,8 @@
 
 import WebSocket from "ws";
 import dns from "dns/promises";
+import http from "http";
+import https from "https";
 
 const FQDN = process.env.WEBSWITCH_HOST || "webswitch.aegis.dev";
 const PORT = 8060;
@@ -35,6 +37,11 @@ function getHeaders(method, payload) {
     : contentHeaders;
 }
 
+const client = {
+  http: http,
+  https: https,
+};
+
 async function httpsClient({
   hostname,
   port,
@@ -57,7 +64,7 @@ async function httpsClient({
     const chunks = [];
 
     try {
-      const req = require(protocol).request(options, res => {
+      const req = client[protocol].request(options, res => {
         res.setEncoding("utf8");
         res.on("data", chunk => chunks.push(chunk));
         res.on("error", e => console.warn(httpsClient.name, e.message));
