@@ -183,11 +183,10 @@ function _webswitchConnect() {
 
                     if (message.type === "utf8") {
                       var event = JSON.parse(message);
-                      console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", event);
-                      observer.notify(event.eventName, {
-                        message: message,
-                        address: connection.remoteAddress
-                      });
+                      console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", event); // observer.notify(event.eventName, {
+                      //   message,
+                      //   address: connection.remoteAddress,
+                      // });
                     }
                   });
                   connection.on("error", function (error) {
@@ -251,17 +250,18 @@ function _publishEvent() {
             serializedEvent = JSON.stringify(event);
 
             if (!useWebswitch) {
-              _context4.next = 23;
+              _context4.next = 25;
               break;
             }
 
-            if (webswitchConnection && webswitchConnection.connected) {
-              _context4.next = 21;
+            if (!(!webswitchConnection || !webswitchConnection.connected)) {
+              _context4.next = 22;
               break;
             }
 
-            _context4.prev = 9;
-            _context4.next = 12;
+            console.debug("calling");
+            _context4.prev = 10;
+            _context4.next = 13;
             return httpClient({
               hostname: hostname,
               port: PORT,
@@ -269,26 +269,27 @@ function _publishEvent() {
               method: "POST"
             });
 
-          case 12:
-            _context4.next = 14;
+          case 13:
+            _context4.next = 15;
             return webswitchConnect(new (websocket__WEBPACK_IMPORTED_MODULE_1___default().client)(), "ws://".concat(hostname, ":").concat(PORT).concat(PATH), observer);
 
-          case 14:
+          case 15:
             webswitchConnection = _context4.sent;
-            webswitchConnection.sendUTF(serializedEvent);
-            _context4.next = 21;
+            _context4.next = 22;
             break;
 
           case 18:
             _context4.prev = 18;
-            _context4.t0 = _context4["catch"](9);
+            _context4.t0 = _context4["catch"](10);
             console.warn(publishEvent.name, _context4.t0.message);
+            return _context4.abrupt("return");
 
-          case 21:
-            _context4.next = 24;
+          case 22:
+            webswitchConnection.sendUTF(serializedEvent);
+            _context4.next = 26;
             break;
 
-          case 23:
+          case 25:
             httpClient({
               hostname: hostname,
               port: port,
@@ -297,12 +298,12 @@ function _publishEvent() {
               payload: serialziedEvent
             });
 
-          case 24:
+          case 26:
           case "end":
             return _context4.stop();
         }
       }
-    }, _callee4, null, [[9, 18]]);
+    }, _callee4, null, [[10, 18]]);
   }));
   return _publishEvent.apply(this, arguments);
 }

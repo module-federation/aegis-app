@@ -86,10 +86,10 @@ async function webswitchConnect(client, url, observer) {
             const event = JSON.parse(message);
             console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", event);
 
-            observer.notify(event.eventName, {
-              message,
-              address: connection.remoteAddress,
-            });
+            // observer.notify(event.eventName, {
+            //   message,
+            //   address: connection.remoteAddress,
+            // });
           }
         });
 
@@ -122,7 +122,8 @@ export async function publishEvent(event, observer, useWebswitch = true) {
   const serializedEvent = JSON.stringify(event);
 
   if (useWebswitch) {
-    if (!(webswitchConnection && webswitchConnection.connected)) {
+    if (!webswitchConnection || !webswitchConnection.connected) {
+      console.debug("calling");
       try {
         // login
         await httpClient({
@@ -137,12 +138,12 @@ export async function publishEvent(event, observer, useWebswitch = true) {
           `ws://${hostname}:${PORT}${PATH}`,
           observer
         );
-
-        webswitchConnection.sendUTF(serializedEvent);
       } catch (e) {
         console.warn(publishEvent.name, e.message);
+        return;
       }
     }
+    webswitchConnection.sendUTF(serializedEvent);
   } else {
     httpClient({
       hostname,
