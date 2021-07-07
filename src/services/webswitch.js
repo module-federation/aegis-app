@@ -41,7 +41,7 @@ async function httpsClient({
   path,
   protocol = "https",
   method = "GET",
-  payload = "",
+  payload = null,
   safe = true,
 }) {
   return new Promise(function (resolve, reject) {
@@ -60,13 +60,13 @@ async function httpsClient({
       const req = require(protocol).request(options, res => {
         res.setEncoding("utf8");
         res.on("data", chunk => chunks.push(chunk));
-        res.on("error", e => console.warn(httpClient.name, e.message));
+        res.on("error", e => console.warn(httpsClient.name, e.message));
         res.on("end", () => resolve(chunks.join("")));
       });
       req.on("error", e => {
         reject(e);
       });
-      if (contentLength > 0) req.on("connect", () => req.write(payload));
+      if (payload) req.on("connect", () => req.write(payload));
     } catch (e) {
       console.warn(httpClient.name, e.message);
     }
