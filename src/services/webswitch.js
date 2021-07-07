@@ -76,28 +76,6 @@ async function webswitchConnect(client, url, observer) {
 
       client.on("connect", function (connection) {
         console.debug("...connected to", url, connection.remoteAddress);
-
-        connection.on("message", function (message) {
-          console.debug("received message from", url);
-
-          console.debug("@@@@@@@@@@@@@@@@@@@@@@@", message);
-
-          if (message.type === "utf8") {
-            const event = JSON.parse(message);
-            console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", event);
-
-            // observer.notify(event.eventName, {
-            //   message,
-            //   address: connection.remoteAddress,
-            // });
-          }
-        });
-
-        connection.on("error", function (error) {
-          console.warn(webswitchConnect.name, error.message);
-          reject(error);
-        });
-
         resolve(connection);
       });
 
@@ -138,12 +116,33 @@ export async function publishEvent(event, observer, useWebswitch = true) {
           `ws://${hostname}:${PORT}${PATH}`,
           observer
         );
+
+        webswitchConnection.on("message", function (message) {
+          console.debug("received message from", url);
+
+          console.debug("@@@@@@@@@@@@@@@@@@@@@@@", message);
+
+          if (message.type === "utf8") {
+            const event = JSON.parse(message);
+            console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", event);
+
+            observer.notify(event.eventName, {
+              message,
+              address: connection.remoteAddress,
+            });
+          }
+        });
+
+        webswitchConnection.on("error", function (error) {
+          console.warn(webswitchConnect.name, error.message);
+          reject(error);
+        });
+        webswitchConnection.sendUTF(serializedEvent);
       } catch (e) {
         console.warn(publishEvent.name, e.message);
         return;
       }
     }
-    webswitchConnection.sendUTF(serializedEvent);
   } else {
     httpClient({
       hostname,

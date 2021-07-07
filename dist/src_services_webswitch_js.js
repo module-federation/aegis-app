@@ -177,22 +177,6 @@ function _webswitchConnect() {
                 console.debug("connecting to...", url);
                 client.on("connect", function (connection) {
                   console.debug("...connected to", url, connection.remoteAddress);
-                  connection.on("message", function (message) {
-                    console.debug("received message from", url);
-                    console.debug("@@@@@@@@@@@@@@@@@@@@@@@", message);
-
-                    if (message.type === "utf8") {
-                      var event = JSON.parse(message);
-                      console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", event); // observer.notify(event.eventName, {
-                      //   message,
-                      //   address: connection.remoteAddress,
-                      // });
-                    }
-                  });
-                  connection.on("error", function (error) {
-                    console.warn(webswitchConnect.name, error.message);
-                    reject(error);
-                  });
                   resolve(connection);
                 });
                 client.on("connectFailed", function (error) {
@@ -250,12 +234,12 @@ function _publishEvent() {
             serializedEvent = JSON.stringify(event);
 
             if (!useWebswitch) {
-              _context4.next = 25;
+              _context4.next = 27;
               break;
             }
 
             if (!(!webswitchConnection || !webswitchConnection.connected)) {
-              _context4.next = 22;
+              _context4.next = 25;
               break;
             }
 
@@ -275,21 +259,39 @@ function _publishEvent() {
 
           case 15:
             webswitchConnection = _context4.sent;
-            _context4.next = 22;
+            webswitchConnection.on("message", function (message) {
+              console.debug("received message from", url);
+              console.debug("@@@@@@@@@@@@@@@@@@@@@@@", message);
+
+              if (message.type === "utf8") {
+                var _event = JSON.parse(message);
+
+                console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", _event);
+                observer.notify(_event.eventName, {
+                  message: message,
+                  address: connection.remoteAddress
+                });
+              }
+            });
+            webswitchConnection.on("error", function (error) {
+              console.warn(webswitchConnect.name, error.message);
+              reject(error);
+            });
+            webswitchConnection.sendUTF(serializedEvent);
+            _context4.next = 25;
             break;
 
-          case 18:
-            _context4.prev = 18;
+          case 21:
+            _context4.prev = 21;
             _context4.t0 = _context4["catch"](10);
             console.warn(publishEvent.name, _context4.t0.message);
             return _context4.abrupt("return");
 
-          case 22:
-            webswitchConnection.sendUTF(serializedEvent);
-            _context4.next = 26;
+          case 25:
+            _context4.next = 28;
             break;
 
-          case 25:
+          case 27:
             httpClient({
               hostname: hostname,
               port: port,
@@ -298,12 +300,12 @@ function _publishEvent() {
               payload: serialziedEvent
             });
 
-          case 26:
+          case 28:
           case "end":
             return _context4.stop();
         }
       }
-    }, _callee4, null, [[10, 18]]);
+    }, _callee4, null, [[10, 21]]);
   }));
   return _publishEvent.apply(this, arguments);
 }
