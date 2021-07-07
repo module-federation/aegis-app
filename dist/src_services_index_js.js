@@ -933,11 +933,6 @@ function getHeaders(method, payload) {
   }) : contentHeaders;
 }
 
-var client = {
-  http: (http__WEBPACK_IMPORTED_MODULE_2___default()),
-  https: (https__WEBPACK_IMPORTED_MODULE_3___default())
-};
-
 function httpsClient(_x) {
   return _httpsClient.apply(this, arguments);
 }
@@ -963,6 +958,10 @@ function _httpsClient() {
                 rejectUnauthorized: false
               });
               var chunks = [];
+              var client = {
+                http: (http__WEBPACK_IMPORTED_MODULE_2___default()),
+                https: (https__WEBPACK_IMPORTED_MODULE_3___default())
+              };
 
               try {
                 var req = client[protocol].request(options, function (res) {
@@ -978,7 +977,7 @@ function _httpsClient() {
                   });
                 });
                 req.on("error", function (e) {
-                  reject(e);
+                  return reject(e);
                 });
                 if (payload) req.on("connect", function () {
                   return req.write(payload);
@@ -1032,12 +1031,12 @@ function _publishEvent() {
             _context3.prev = 7;
 
             if (!useWebswitch) {
-              _context3.next = 19;
+              _context3.next = 20;
               break;
             }
 
             if (!(!webswitchClient || !webswitchClient.OPEN)) {
-              _context3.next = 16;
+              _context3.next = 17;
               break;
             }
 
@@ -1053,8 +1052,10 @@ function _publishEvent() {
             });
 
           case 13:
+            console.debug("logged in");
             webswitchClient = new (ws__WEBPACK_IMPORTED_MODULE_0___default())("ws://".concat(hostname, ":").concat(PORT).concat(PATH));
             webswitchClient.on("open", function () {
+              console.debug("sending");
               webswitchClient.send(serializedEvent);
             });
             webswitchClient.on("message", function (message) {
@@ -1063,12 +1064,12 @@ function _publishEvent() {
               observer.notify(event.eventName, event);
             });
 
-          case 16:
+          case 17:
             webswitchClient.send(serializedEvent);
-            _context3.next = 20;
+            _context3.next = 21;
             break;
 
-          case 19:
+          case 20:
             httpsClient({
               hostname: hostname,
               port: port,
@@ -1077,21 +1078,21 @@ function _publishEvent() {
               payload: serialziedEvent
             });
 
-          case 20:
-            _context3.next = 25;
+          case 21:
+            _context3.next = 26;
             break;
 
-          case 22:
-            _context3.prev = 22;
+          case 23:
+            _context3.prev = 23;
             _context3.t0 = _context3["catch"](7);
             console.warn(publishEvent.name, _context3.t0.message);
 
-          case 25:
+          case 26:
           case "end":
             return _context3.stop();
         }
       }
-    }, _callee3, null, [[7, 22]]);
+    }, _callee3, null, [[7, 23]]);
   }));
   return _publishEvent.apply(this, arguments);
 }

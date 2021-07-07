@@ -37,11 +37,6 @@ function getHeaders(method, payload) {
     : contentHeaders;
 }
 
-const client = {
-  http: http,
-  https: https,
-};
-
 async function httpsClient({
   hostname,
   port,
@@ -62,6 +57,10 @@ async function httpsClient({
 
     const options = safe ? normal : { ...normal, rejectUnauthorized: false };
     const chunks = [];
+    const client = {
+      http: http,
+      https: https,
+    };
 
     try {
       const req = client[protocol].request(options, res => {
@@ -70,9 +69,7 @@ async function httpsClient({
         res.on("error", e => console.warn(httpsClient.name, e.message));
         res.on("end", () => resolve(chunks.join("")));
       });
-      req.on("error", e => {
-        reject(e);
-      });
+      req.on("error", e => reject(e));
       if (payload) req.on("connect", () => req.write(payload));
     } catch (e) {
       console.warn(httpsClient.name, e.message);
@@ -101,8 +98,11 @@ export async function publishEvent(event, observer, useWebswitch = true) {
           protocol: "http",
         });
 
+        console.debug("logged in");
+
         webswitchClient = new WebSocket(`ws://${hostname}:${PORT}${PATH}`);
         webswitchClient.on("open", function () {
+          console.debug("sending");
           webswitchClient.send(serializedEvent);
         });
         webswitchClient.on("message", function (message) {
