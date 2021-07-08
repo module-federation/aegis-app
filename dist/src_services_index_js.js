@@ -1024,7 +1024,7 @@ function _publishEvent() {
                   // });
 
                   webswitchClient.on("message", function (message) {
-                    // const event = JSON.parse(message);
+                    var event = JSON.parse(message);
                     console.debug(message);
                     observer.notify(event.eventName, event);
                   });
