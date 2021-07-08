@@ -5806,7 +5806,14 @@
     "signal-exit" "^3.0.2"
     "typedarray-to-buffer" "^3.1.5"
 
-"ws@^7.5.2":
+"ws-heartbeat@^1.2.0":
+  "integrity" "sha512-HlN5j2LEFU5O3onX/poHEEwOduF4QYPWrY956CYe+nJQP4tU7aAM+8KciNFlZ1wDEX1/ZnLFP3QNMqnTgMmBkw=="
+  "resolved" "https://registry.npmjs.org/ws-heartbeat/-/ws-heartbeat-1.2.0.tgz"
+  "version" "1.2.0"
+  dependencies:
+    "ws" "7"
+
+"ws@^7.5.2", "ws@7":
   "integrity" "sha512-lkF7AWRicoB9mAgjeKbGqVUekLnSNO4VjKVnuPHpQeOxZOErX6BPXwJk70nFslRCEEA8EVW7ZjKwXaP9N+1sKQ=="
   "resolved" "https://registry.npmjs.org/ws/-/ws-7.5.2.tgz"
   "version" "7.5.2"

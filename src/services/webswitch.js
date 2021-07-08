@@ -10,8 +10,10 @@ import dns from "dns/promises";
 import http from "http";
 import https from "https";
 
+//import { setWsHeartbeat } from "ws-heartbeat/client";
+
 const FQDN = process.env.WEBSWITCH_HOST || "webswitch.aegis.dev";
-const PORT = 8060;
+const PORT = 8062;
 const PATH = "/api/publish";
 
 async function getHostName() {
@@ -77,6 +79,7 @@ async function httpsClient({
   });
 }
 
+/**@type import("ws/lib/websocket") */
 let webswitchClient;
 
 export async function publishEvent(event, observer, useWebswitch = true) {
@@ -87,31 +90,46 @@ export async function publishEvent(event, observer, useWebswitch = true) {
 
   try {
     if (useWebswitch) {
-      if (!webswitchClient || !webswitchClient.OPEN) {
+      function webswitch() {
         console.debug("calling", event);
-        // login first
-        await httpsClient({
-          hostname,
-          port: PORT,
-          path: "/login",
-          method: "POST",
-          protocol: "http",
-        });
-
-        console.debug("logged in");
 
         webswitchClient = new WebSocket(`ws://${hostname}:${PORT}${PATH}`);
+
+        setTimeout(() => {
+          webswitchClient.ping();
+        }, 30000);
+
+        const timerId = setTimeout(() => {
+          webswitchClient.terminate();
+          webswitch();
+        }, 60000);
+
+        webswitchClient.on("pong", function () {
+          clearTimeout(timerId);
+          setTimeout(() => webswitchClient.ping(), 30000);
+        });
+
         webswitchClient.on("open", function () {
+          console.log("readyState", webswitchClient.readyState);
           console.debug("sending");
           webswitchClient.send(serializedEvent);
         });
+
         webswitchClient.on("message", function (message) {
-          const event = JSON.parse(message);
-          console.debug(publishEvent.name, message);
+          // const event = JSON.parse(message);
+          console.debug(message);
           observer.notify(event.eventName, event);
         });
+
+        webswitchClient.send(serializedEvent);
       }
-      webswitchClient.send(serializedEvent);
+
+      if (!webswitchClient) {
+        webswitch();
+        return;
+      }
+
+      webswitch();
     } else {
       httpsClient({
         hostname,
