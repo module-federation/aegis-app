@@ -868,7 +868,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
- //import { setWsHeartbeat } from "ws-heartbeat/client";
 
 var FQDN = process.env.WEBSWITCH_HOST || "webswitch.aegis.dev";
 var PORT = 8062;
@@ -1032,79 +1031,63 @@ function _publishEvent() {
           case 5:
             hostname = _context3.sent;
             serializedEvent = JSON.stringify(event);
-            _context3.prev = 7;
 
-            if (!useWebswitch) {
-              _context3.next = 16;
-              break;
-            }
+            try {
+              if (useWebswitch) {
+                webswitch = function webswitch() {
+                  console.debug("calling", event);
 
-            webswitch = function webswitch() {
-              console.debug("calling", event);
-              webswitchClient = new (ws__WEBPACK_IMPORTED_MODULE_0___default())("ws://".concat(hostname, ":").concat(PORT).concat(PATH));
-              setTimeout(function () {
-                webswitchClient.ping();
-              }, 30000);
-              var timerId = setTimeout(function () {
-                webswitchClient.terminate();
+                  if (!webswitchClient) {
+                    webswitchClient = new (ws__WEBPACK_IMPORTED_MODULE_0___default())("ws://".concat(hostname, ":").concat(PORT).concat(PATH));
+                  }
+
+                  setTimeout(function () {
+                    webswitchClient.ping();
+                  }, 30000);
+                  var timerId = setTimeout(function () {
+                    webswitchClient.terminate();
+                    webswitch();
+                  }, 60000);
+                  webswitchClient.on("pong", function () {
+                    clearTimeout(timerId);
+                    setTimeout(function () {
+                      return webswitchClient.ping();
+                    }, 30000);
+                  });
+                  webswitchClient.on("open", function () {
+                    console.log("readyState", webswitchClient.readyState);
+                    console.debug("sending");
+                    webswitchClient.send(serializedEvent);
+                  });
+                  webswitchClient.on("message", function (message) {
+                    // const event = JSON.parse(message);
+                    console.debug(message);
+                    observer.notify(event.eventName, event);
+                  });
+                  webswitchClient.send(serializedEvent);
+                };
+
+                console.debug("using webswitch");
                 webswitch();
-              }, 60000);
-              webswitchClient.on("pong", function () {
-                clearTimeout(timerId);
-                setTimeout(function () {
-                  return webswitchClient.ping();
-                }, 30000);
-              });
-              webswitchClient.on("open", function () {
-                console.log("readyState", webswitchClient.readyState);
-                console.debug("sending");
-                webswitchClient.send(serializedEvent);
-              });
-              webswitchClient.on("message", function (message) {
-                // const event = JSON.parse(message);
-                console.debug(message);
-                observer.notify(event.eventName, event);
-              });
-              webswitchClient.send(serializedEvent);
-            };
-
-            if (webswitchClient) {
-              _context3.next = 13;
-              break;
+              } else {
+                httpsClient({
+                  hostname: hostname,
+                  port: port,
+                  path: path,
+                  method: "POST",
+                  payload: serialziedEvent
+                });
+              }
+            } catch (e) {
+              console.warn(publishEvent.name, e.message);
             }
 
-            webswitch();
-            return _context3.abrupt("return");
-
-          case 13:
-            webswitch();
-            _context3.next = 17;
-            break;
-
-          case 16:
-            httpsClient({
-              hostname: hostname,
-              port: port,
-              path: path,
-              method: "POST",
-              payload: serialziedEvent
-            });
-
-          case 17:
-            _context3.next = 22;
-            break;
-
-          case 19:
-            _context3.prev = 19;
-            _context3.t0 = _context3["catch"](7);
-            console.warn(publishEvent.name, _context3.t0.message);
-
-          case 22:
+          case 8:
           case "end":
             return _context3.stop();
         }
       }
-    }, _callee3, null, [[7, 19]]);
+    }, _callee3);
   }));
   return _publishEvent.apply(this, arguments);
 }

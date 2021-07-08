@@ -10,8 +10,6 @@ import dns from "dns/promises";
 import http from "http";
 import https from "https";
 
-//import { setWsHeartbeat } from "ws-heartbeat/client";
-
 const FQDN = process.env.WEBSWITCH_HOST || "webswitch.aegis.dev";
 const PORT = 8062;
 const PATH = "/api/publish";
@@ -90,10 +88,14 @@ export async function publishEvent(event, observer, useWebswitch = true) {
 
   try {
     if (useWebswitch) {
+      console.debug("using webswitch");
+
       function webswitch() {
         console.debug("calling", event);
 
-        webswitchClient = new WebSocket(`ws://${hostname}:${PORT}${PATH}`);
+        if (!webswitchClient) {
+          webswitchClient = new WebSocket(`ws://${hostname}:${PORT}${PATH}`);
+        }
 
         setTimeout(() => {
           webswitchClient.ping();
@@ -122,11 +124,6 @@ export async function publishEvent(event, observer, useWebswitch = true) {
         });
 
         webswitchClient.send(serializedEvent);
-      }
-
-      if (!webswitchClient) {
-        webswitch();
-        return;
       }
 
       webswitch();
