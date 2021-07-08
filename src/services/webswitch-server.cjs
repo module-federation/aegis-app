@@ -22,17 +22,20 @@
 // });
 const WebSocketServer = require("ws").Server;
 const wss = new WebSocketServer({ clientTracking: true, port: 8062 });
+const nanoid = require("nanoid").nanoid;
 
 wss.broadcast = function (data, sender) {
   wss.clients.forEach(function (client) {
-    if (client.OPEN && client !== sender) {
+    if (client.OPEN && client.webswitchId !== sender.webswitchId) {
+      console.debug("sending to client", client.webswitchId);
       client.send(data);
     }
   });
 };
 
 wss.on("connection", function (client) {
-  console.log("client connected", client.url);
+  client.webswitchId = nanoid();
+  console.log("client connected", client.webswitchId);
   client.addListener("ping", function () {
     client.pong();
   });
