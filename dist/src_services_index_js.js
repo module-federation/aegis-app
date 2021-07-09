@@ -878,9 +878,7 @@ function _getHostName() {
             return dns_promises__WEBPACK_IMPORTED_MODULE_1___default().lookup(FQDN);
 
           case 3:
-            if (!function (address) {
-              return console.log(address);
-            }) {
+            if (!_context.sent) {
               _context.next = 7;
               break;
             }
@@ -916,85 +914,37 @@ function _getHostName() {
 var ws;
 function publishEvent(_x, _x2) {
   return _publishEvent.apply(this, arguments);
-} // setTimeout(() => {
-//   webswitchClient.ping();
-// }, 30000);
-// const timerId = setTimeout(() => {
-//   webswitchClient.terminate();
-//   webswitch();
-// }, 60000);
-// webswitchClient.on("pong", function () {
-//   clearTimeout(timerId);
-//   setTimeout(() => webswitchClient.ping(), 30000);
-// });
-// function getHeaders(method, payload) {
-//   const contentLength = ["POST", "PATCH"].includes(method)
-//     ? Buffer.byteLength(payload)
-//     : 0;
-//   const contentHeaders = { "Content-Type": "application/json" };
-//   return contentLength > 0
-//     ? { ...contentHeaders, "Content-Length": contentLength }
-//     : contentHeaders;
-// }
-// async function httpsClient({
-//   hostname,
-//   port,
-//   path,
-//   protocol = "https",
-//   method = "GET",
-//   payload = "",
-//   safe = true,
-// }) {
-//   return new Promise(function (resolve, reject) {
-//     const normal = {
-//       hostname,
-//       port,
-//       path,
-//       method,
-//       headers: getHeaders(method, payload),
-//     };
-//     const options = safe ? normal : { ...normal, rejectUnauthorized: false };
-//     const chunks = [];
-//     const client = {
-//       http: http,
-//       https: https,
-//     };
-//     try {
-//       const req = client[protocol].request(options, res => {
-//         res.setEncoding("utf8");
-//         res.on("data", chunk => chunks.push(chunk));
-//         res.on("error", e => console.warn(httpsClient.name, e.message));
-//         res.on("end", () => resolve(chunks.join("")));
-//       });
-//       req.on("error", e => reject(e));
-//       if (payload) req.on("connect", () => req.write(payload));
-//     } catch (e) {
-//       console.warn(httpsClient.name, e.message);
-//     }
-//   });
-// }
-// else {
-//   httpsClient({
-//     hostname,
-//     port,
-//     path,
-//     method: "POST",
-//     payload: serialziedEvent,
-//   });
-// }
+}
 
 function _publishEvent() {
   _publishEvent = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(event, observer) {
-    var useWebswitch,
-        hostname,
-        serializedEvent,
-        webswitch,
-        _args2 = arguments;
+    var hostname, serializedEvent, webswitch;
     return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            useWebswitch = _args2.length > 2 && _args2[2] !== undefined ? _args2[2] : true;
+            webswitch = function _webswitch() {
+              console.debug("webswitch sending", event);
+
+              if (!ws) {
+                ws = new (ws__WEBPACK_IMPORTED_MODULE_0___default())("ws://".concat(hostname, ":").concat(PORT).concat(PATH));
+                ws.on("message", function (message) {
+                  console.debug(message);
+                  var event = JSON.parse(message);
+                  console.debug(event);
+                  observer.notify(event.eventName, event);
+                });
+                ws.on("open", function () {
+                  ws.send(serializedEvent);
+                });
+                ws.on("error", function (error) {
+                  console.error("webswitchClient.on(error)", error);
+                });
+                return;
+              }
+
+              ws.send(serializedEvent);
+            };
 
             if (event) {
               _context2.next = 3;
@@ -1012,29 +962,6 @@ function _publishEvent() {
             serializedEvent = JSON.stringify(event);
 
             try {
-              webswitch = function webswitch() {
-                console.debug("sending", event);
-
-                if (!ws) {
-                  ws = new (ws__WEBPACK_IMPORTED_MODULE_0___default())("ws://".concat(hostname, ":").concat(PORT).concat(PATH));
-                  ws.on("message", function (message) {
-                    var event = JSON.parse(message);
-                    console.debug(message);
-                    console.debug(event);
-                    observer.notify(event.eventName, event);
-                  });
-                  ws.on("open", function () {
-                    ws.send(serializedEvent);
-                  });
-                  ws.on("error", function (error) {
-                    console.error("webswitchClient.on(error)", error);
-                  });
-                  return;
-                }
-
-                ws.send(serializedEvent);
-              };
-
               webswitch();
             } catch (e) {
               console.warn(publishEvent.name, e.message);
