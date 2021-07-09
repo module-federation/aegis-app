@@ -949,6 +949,7 @@ function _publishEvent() {
                 ws.on("message", function (message) {
                   console.debug(message);
                   var event = JSON.parse(message);
+                  console.debug("webswitch received", event);
 
                   if (event.eventName) {
                     observer.notify(event.eventName, event);
