@@ -122,15 +122,17 @@ function _publishEvent() {
               console.debug("webswitch sending", event);
 
               if (!ws) {
-                ws = new (ws__WEBPACK_IMPORTED_MODULE_0___default())("ws://".concat(hostname, ":").concat(PORT).concat(PATH), "webswitch");
+                ws = new (ws__WEBPACK_IMPORTED_MODULE_0___default())("ws://".concat(hostname, ":").concat(PORT).concat(PATH));
                 ws.on("message", function (message) {
                   console.debug(message);
                   var event = JSON.parse(message);
-                  console.debug(event);
-                  observer.notify(event.eventName, event);
+
+                  if (event.eventName) {
+                    observer.notify(event.eventName, event);
+                  }
                 });
                 ws.on("open", function () {
-                  ws.send(ws.protocol);
+                  ws.send(JSON.stringify("webswitch"));
                 });
                 ws.on("error", function (error) {
                   console.error("webswitchClient.on(error)", error);

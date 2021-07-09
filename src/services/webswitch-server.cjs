@@ -25,16 +25,20 @@ server.on("connection", function (client) {
   });
 
   client.on("message", function (message) {
-    if (client.webswitchInit) {
-      server.broadcast(message, client);
-      return;
-    }
-    const msg = JSON.parse(message.toString());
-    console.log("msg", msg);
-    if (msg === "webswitch") {
-      console.log("client initialized");
-      client.webswitchInit = true;
-      return;
+    try {
+      if (client.webswitchInit) {
+        server.broadcast(message, client);
+        return;
+      }
+      const msg = JSON.parse(message.toString());
+      console.log("msg", msg);
+      if (msg === "webswitch") {
+        console.log("client initialized");
+        client.webswitchInit = true;
+        return;
+      }
+    } catch (e) {
+      console.error(e);
     }
 
     client.terminate();
