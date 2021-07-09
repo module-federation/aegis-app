@@ -25,16 +25,17 @@ server.on("connection", function (client) {
   });
 
   client.on("message", function (message) {
-    console.debug("received msg, protocol", message, client.protocol);
     if (client.webswitchInit) {
       server.broadcast(message, client);
       return;
     }
+
     if (message.toString() === client.protocol) {
-      console.log("true setting webswitchInit");
+      console.log("client initialized");
       client.webswitchInit = true;
       return;
     }
+
     client.terminate();
     console.log("terminated potential imposter client", client.webswitchId);
   });

@@ -3,7 +3,7 @@
  * websocket clients connect to a common server,
  * which broadcasts any messages it receives.
  */
-("use strict");
+"use strict";
 
 import WebSocket from "ws";
 import dns from "dns/promises";
@@ -31,7 +31,7 @@ async function getHostName() {
 /**@type import("ws/lib/websocket") */
 let ws;
 
-export async function publishEvent(event) {
+export async function publishEvent(event, observer) {
   if (!event) return;
 
   const hostname = await getHostName();
@@ -47,6 +47,7 @@ export async function publishEvent(event) {
         console.debug(message);
         const event = JSON.parse(message);
         console.debug(event);
+        observer.notify(event.eventName, event);
       });
 
       ws.on("open", function () {
@@ -58,7 +59,16 @@ export async function publishEvent(event) {
       });
       return;
     }
-    ws.send(serializedEvent);
+
+    function send() {
+      if (ws.readyState) {
+        ws.send(serializedEvent);
+        return;
+      }
+      setTimeout(() => send(), 1000);
+    }
+
+    send();
   }
 
   try {

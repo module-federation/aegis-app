@@ -3,7 +3,7 @@
  * websocket clients connect to a common server,
  * which broadcasts any messages it receives.
  */
-("use strict");
+"use strict";
 
 import WebSocket from "ws";
 import dns from "dns/promises";
@@ -46,11 +46,10 @@ export async function publishEvent(event) {
       ws.on("message", function (message) {
         console.debug(message);
         const event = JSON.parse(message);
-        console.debug(event);
+        // console.debug(event);
       });
 
       ws.on("open", function () {
-        ws.send(serializedEvent);
         ws.send(ws.protocol);
       });
 
@@ -59,7 +58,16 @@ export async function publishEvent(event) {
       });
       return;
     }
-    ws.send(serializedEvent);
+
+    function send() {
+      if (ws.readyState) {
+        ws.send(serializedEvent);
+        return;
+      }
+      setTimeout(() => send(), 1000);
+    }
+
+    send();
   }
 
   try {
@@ -69,7 +77,5 @@ export async function publishEvent(event) {
   }
 }
 
-publishEvent("webswitch");
-publishEvent("hello again");
-
-setTimeout(() => publishEvent("webswitch"), 2000);
+publishEvent("hello1");
+setTimeout(() => publishEvent("hello2"), 1000);

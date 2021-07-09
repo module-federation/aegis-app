@@ -857,9 +857,47 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
-var FQDN = process.env.WEBSWITCH_HOST || "webswitch.aegis.io";
+var FQDN = process.env.WEBSWITCH_HOST || "webswitch.aegis.dev";
 var PORT = 8062;
 var PATH = "/webswitch/broadcast";
+
+function lookup(_x) {
+  return _lookup.apply(this, arguments);
+}
+
+function _lookup() {
+  _lookup = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(hostname) {
+    var result;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.prev = 0;
+            _context.next = 3;
+            return dns_promises__WEBPACK_IMPORTED_MODULE_1___default().lookup(hostname);
+
+          case 3:
+            result = _context.sent;
+            console.debug("server address", result, result.address);
+            return _context.abrupt("return", result.address);
+
+          case 8:
+            _context.prev = 8;
+            _context.t0 = _context["catch"](0);
+            console.warn("dns lookup", _context.t0);
+
+          case 11:
+            return _context.abrupt("return", null);
+
+          case 12:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, null, [[0, 8]]);
+  }));
+  return _lookup.apply(this, arguments);
+}
 
 function getHostName() {
   return _getHostName.apply(this, arguments);
@@ -868,66 +906,46 @@ function getHostName() {
 
 
 function _getHostName() {
-  _getHostName = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-    return regeneratorRuntime.wrap(function _callee$(_context) {
+  _getHostName = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+    var hostname;
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
-        switch (_context.prev = _context.next) {
+        switch (_context2.prev = _context2.next) {
           case 0:
-            _context.prev = 0;
-            _context.next = 3;
-            return dns_promises__WEBPACK_IMPORTED_MODULE_1___default().lookup(FQDN);
+            _context2.next = 2;
+            return lookup(FQDN);
 
-          case 3:
-            if (!_context.sent) {
-              _context.next = 7;
-              break;
-            }
+          case 2:
+            hostname = _context2.sent;
+            return _context2.abrupt("return", hostname ? hostname : "localhost");
 
-            _context.t0 = FQDN;
-            _context.next = 8;
-            break;
-
-          case 7:
-            _context.t0 = "localhost";
-
-          case 8:
-            return _context.abrupt("return", _context.t0);
-
-          case 11:
-            _context.prev = 11;
-            _context.t1 = _context["catch"](0);
-            console.warn("dns lookup", _context.t1);
-
-          case 14:
-            return _context.abrupt("return", "localhost");
-
-          case 15:
+          case 4:
           case "end":
-            return _context.stop();
+            return _context2.stop();
         }
       }
-    }, _callee, null, [[0, 11]]);
+    }, _callee2);
   }));
   return _getHostName.apply(this, arguments);
 }
 
 var ws;
-function publishEvent(_x, _x2) {
+function publishEvent(_x2, _x3) {
   return _publishEvent.apply(this, arguments);
 }
 
 function _publishEvent() {
-  _publishEvent = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(event, observer) {
+  _publishEvent = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(event, observer) {
     var hostname, serializedEvent, webswitch;
-    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
-        switch (_context2.prev = _context2.next) {
+        switch (_context3.prev = _context3.next) {
           case 0:
             webswitch = function _webswitch() {
               console.debug("webswitch sending", event);
 
               if (!ws) {
-                ws = new (ws__WEBPACK_IMPORTED_MODULE_0___default())("ws://".concat(hostname, ":").concat(PORT).concat(PATH));
+                ws = new (ws__WEBPACK_IMPORTED_MODULE_0___default())("ws://".concat(hostname, ":").concat(PORT).concat(PATH), "webswitch");
                 ws.on("message", function (message) {
                   console.debug(message);
                   var event = JSON.parse(message);
@@ -935,7 +953,7 @@ function _publishEvent() {
                   observer.notify(event.eventName, event);
                 });
                 ws.on("open", function () {
-                  ws.send(serializedEvent);
+                  ws.send(ws.protocol);
                 });
                 ws.on("error", function (error) {
                   console.error("webswitchClient.on(error)", error);
@@ -943,22 +961,33 @@ function _publishEvent() {
                 return;
               }
 
-              ws.send(serializedEvent);
+              function send() {
+                if (ws.readyState) {
+                  ws.send(serializedEvent);
+                  return;
+                }
+
+                setTimeout(function () {
+                  return send();
+                }, 1000);
+              }
+
+              send();
             };
 
             if (event) {
-              _context2.next = 3;
+              _context3.next = 3;
               break;
             }
 
-            return _context2.abrupt("return");
+            return _context3.abrupt("return");
 
           case 3:
-            _context2.next = 5;
+            _context3.next = 5;
             return getHostName();
 
           case 5:
-            hostname = _context2.sent;
+            hostname = _context3.sent;
             serializedEvent = JSON.stringify(event);
 
             try {
@@ -969,10 +998,10 @@ function _publishEvent() {
 
           case 8:
           case "end":
-            return _context2.stop();
+            return _context3.stop();
         }
       }
-    }, _callee2);
+    }, _callee3);
   }));
   return _publishEvent.apply(this, arguments);
 }
