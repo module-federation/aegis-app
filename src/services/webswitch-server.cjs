@@ -29,8 +29,9 @@ server.on("connection", function (client) {
       server.broadcast(message, client);
       return;
     }
-
-    if (message.toString() === client.protocol) {
+    const msg = JSON.parse(message.toString());
+    console.log("msg", msg);
+    if (msg === "webswitch") {
       console.log("client initialized");
       client.webswitchInit = true;
       return;
