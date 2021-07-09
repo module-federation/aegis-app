@@ -8,9 +8,9 @@
 import WebSocket from "ws";
 import dns from "dns/promises";
 
-const FQDN = process.env.WEBSWITCH_HOST || "webswitch.aegis.dev";
+const FQDN = process.env.WEBSWITCH_HOST || "webswitch.aegis.io";
 const PORT = 8062;
-const PATH = "/api/publish";
+const PATH = "/webswitch/broadcast";
 
 async function getHostName() {
   try {
@@ -54,7 +54,7 @@ export async function publishEvent(event, observer) {
     }
     ws.send(serializedEvent);
   }
-  
+
   try {
     webswitch();
   } catch (e) {

@@ -34,9 +34,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
-var FQDN = process.env.WEBSWITCH_HOST || "webswitch.aegis.dev";
+var FQDN = process.env.WEBSWITCH_HOST || "webswitch.aegis.io";
 var PORT = 8062;
-var PATH = "/api/publish";
+var PATH = "/webswitch/broadcast";
 
 function getHostName() {
   return _getHostName.apply(this, arguments);
