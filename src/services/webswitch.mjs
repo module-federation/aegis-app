@@ -3,146 +3,73 @@
  * websocket clients connect to a common server,
  * which broadcasts any messages it receives.
  */
-"use strict";
+("use strict");
 
 import WebSocket from "ws";
 import dns from "dns/promises";
-import http from "http";
-import https from "https";
-
-//import { setWsHeartbeat } from "ws-heartbeat/client";
 
 const FQDN = process.env.WEBSWITCH_HOST || "webswitch.aegis.dev";
 const PORT = 8062;
-const PATH = "/api/publish";
+const PATH = "/webswitch/broadcast";
 
-async function getHostName() {
+async function lookup(hostname) {
   try {
-    return (await dns.lookup(FQDN), address => console.log(address))
-      ? FQDN
-      : "localhost";
+    const result = await dns.lookup(hostname);
+    console.debug("server address", result, result.address);
+    return result.address;
   } catch (error) {
     console.warn("dns lookup", error);
   }
-  return "localhost";
+  return null;
 }
 
-function getHeaders(method, payload) {
-  const contentLength = ["POST", "PATCH"].includes(method)
-    ? Buffer.byteLength(payload)
-    : 0;
-
-  const contentHeaders = { "Content-Type": "application/json" };
-
-  return contentLength > 0
-    ? { ...contentHeaders, "Content-Length": contentLength }
-    : contentHeaders;
-}
-
-async function httpsClient({
-  hostname,
-  port,
-  path,
-  protocol = "https",
-  method = "GET",
-  payload = "",
-  safe = true,
-}) {
-  return new Promise(function (resolve, reject) {
-    const normal = {
-      hostname,
-      port,
-      path,
-      method,
-      headers: getHeaders(method, payload),
-    };
-
-    const options = safe ? normal : { ...normal, rejectUnauthorized: false };
-    const chunks = [];
-    const client = {
-      http: http,
-      https: https,
-    };
-
-    try {
-      const req = client[protocol].request(options, res => {
-        res.setEncoding("utf8");
-        res.on("data", chunk => chunks.push(chunk));
-        res.on("error", e => console.warn(httpsClient.name, e.message));
-        res.on("end", () => resolve(chunks.join("")));
-      });
-      req.on("error", e => reject(e));
-      if (payload) req.on("connect", () => req.write(payload));
-    } catch (e) {
-      console.warn(httpsClient.name, e.message);
-    }
-  });
+async function getHostName() {
+  const hostname = await lookup(FQDN);
+  return hostname ? hostname : "localhost";
 }
 
 /**@type import("ws/lib/websocket") */
-let webswitchClient;
+let ws;
 
-export async function publishEvent(event, useWebswitch = true) {
+export async function publishEvent(event) {
   if (!event) return;
 
   const hostname = await getHostName();
   const serializedEvent = JSON.stringify(event);
 
-  try {
-    if (useWebswitch) {
-      function webswitch() {
-        //if (!webswitchClient || !webswitchClient.OPEN) {
-        console.debug("calling", event);
+  function webswitch() {
+    console.debug("webswitch sending", event);
 
-        console.debug("logged in");
+    if (!ws) {
+      ws = new WebSocket(`ws://${hostname}:${PORT}${PATH}`, "webswitch");
 
-        webswitchClient = new WebSocket(`ws://${hostname}:${PORT}${PATH}`);
-
-        setTimeout(() => {
-          webswitchClient.ping();
-        }, 30000);
-
-        const timerId = setTimeout(() => {
-          webswitchClient.terminate();
-          webswitch();
-        }, 60000);
-
-        webswitchClient.on("pong", function () {
-          clearTimeout(timerId);
-        });
-
-        webswitchClient.on("open", function () {
-          console.log("readyState", webswitchClient.readyState);
-          console.debug("sending");
-          webswitchClient.send(serializedEvent);
-        });
-        webswitchClient.on("message", function (message) {
-          // const event = JSON.parse(message);
-          console.debug(message);
-          //observer.notify(event.eventName, event);
-        });
-        setTimeout(() => webswitchClient.send("timeout"), 1000);
-
-        //}
-        webswitchClient.send(serializedEvent);
-      }
-      if (!webswitchClient) {
-        webswitch();
-        return;
-      }
-      webswitch();
-    } else {
-      httpsClient({
-        hostname,
-        port,
-        path,
-        method: "POST",
-        payload: serialziedEvent,
+      ws.on("message", function (message) {
+        console.debug(message);
+        const event = JSON.parse(message);
+        console.debug(event);
       });
+
+      ws.on("open", function () {
+        ws.send(serializedEvent);
+        ws.send(ws.protocol);
+      });
+
+      ws.on("error", function (error) {
+        console.error("webswitchClient.on(error)", error);
+      });
+      return;
     }
+    ws.send(serializedEvent);
+  }
+
+  try {
+    webswitch();
   } catch (e) {
     console.warn(publishEvent.name, e.message);
   }
 }
 
-publishEvent("hello");
+publishEvent("webswitch");
+publishEvent("hello again");
+
+setTimeout(() => publishEvent("webswitch"), 2000);
