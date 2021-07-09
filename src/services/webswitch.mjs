@@ -41,7 +41,7 @@ export async function publishEvent(event) {
     console.debug("webswitch sending", event);
 
     if (!ws) {
-      ws = new WebSocket(`ws://${hostname}:${PORT}${PATH}`, "webswitch");
+      ws = new WebSocket(`ws://${hostname}:${PORT}${PATH}`);
 
       ws.on("message", function (message) {
         console.debug(message);
@@ -50,7 +50,7 @@ export async function publishEvent(event) {
       });
 
       ws.on("open", function () {
-        ws.send(ws.protocol);
+        ws.send(JSON.stringify("webswitch"));
       });
 
       ws.on("error", function (error) {
@@ -77,5 +77,6 @@ export async function publishEvent(event) {
   }
 }
 
-publishEvent("hello1");
-setTimeout(() => publishEvent("hello2"), 1000);
+publishEvent("webswitch1");
+publishEvent("webswitch2");
+setTimeout(() => publishEvent("webswitch3"), 1000);
