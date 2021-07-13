@@ -30,11 +30,11 @@ async function getHostName() {
 
 /**@type import("ws/lib/websocket") */
 let ws;
+const hostname = await getHostName();
 
 export async function publishEvent(event) {
   if (!event) return;
 
-  const hostname = await getHostName();
   const serializedEvent = JSON.stringify(event);
 
   function webswitch() {
