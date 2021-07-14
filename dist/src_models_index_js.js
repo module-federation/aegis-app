@@ -1517,7 +1517,7 @@ function _getCustomerOrder() {
 
           case 11:
             if (!order.saveShippingDetails) {
-              _context13.next = 23;
+              _context13.next = 25;
               break;
             }
 
@@ -1528,13 +1528,17 @@ function _getCustomerOrder() {
               email: email,
               creditCardNumber: creditCardNumber
             };
-            _customer = order.customer(userData);
+            _context13.next = 16;
+            return order.customer(userData);
+
+          case 16:
+            _customer = _context13.sent;
             console.assert(_customer.getId(), "customer not created");
             console.debug("customer id", _customer.getId());
-            _context13.next = 19;
+            _context13.next = 21;
             return _customer.orders();
 
-          case 19:
+          case 21:
             custOrders = _context13.sent;
             custOrder = custOrders.reduce(function (o) {
               return o.getId() === order.getId();
@@ -1542,10 +1546,10 @@ function _getCustomerOrder() {
             console.assert(custOrder.customerId === _customer.getId(), "customer doesnt have at least one order and fk=pks");
             return _context13.abrupt("return", custOrder);
 
-          case 23:
+          case 25:
             return _context13.abrupt("return", order);
 
-          case 24:
+          case 26:
           case "end":
             return _context13.stop();
         }
