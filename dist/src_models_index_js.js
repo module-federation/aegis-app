@@ -1002,12 +1002,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
-/**w
- * @typedef {string|RegExp} topic
- * @typedef {function(string)} eventCallback
- * @typedef {import('../adapters/index').adapterFunction} adapterFunction
- * @typedef {string} id
- *
+/** @typedef {string|RegExp} topic*/
+
+/** @typedef {function(string)} eventCallback*/
+
+/** @typedef {import('../adapters/index').adapterFunction} adapterFunction*/
+
+/** @typedef {string} id */
+
+/** @typedef {import("./customer").Customer} Customer */
+
+/**
  * @typedef {Object} Order
  * @property {function(topic,eventCallback)} listen - listen for events
  * @property {import('../adapters/event-adapter').notifyType} notify
@@ -1016,11 +1021,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
  * @property {adapterFunction} verifyDelivery - verify the order was received by the customer
  * @property {adapterFunction} trackShipment
  * @property {adapterFunction} refundPayment
- * @property {adapterFunction} compensate - undo all transactions up to this point
+ * @property {adapterFunction} undo - undo all transactions up to this point
  * @property {function():Promise<Order>} pickOrder - pick the items and get them ready for shipment
  * @property {adapterFunction} authorizePayment - verify payment info, credit avail
- * @property {import('../adapters/shipping-adapter')} shipOrder
- * {import('../adapters/shipping-adapter').shipOrder} shipOrder -
+ * @property {import('../adapters/shipping-adapter').shipOrder} shipOrder -
  * calls shipping service to request delivery
  * @property {function(Order):Promise<void>} save - saves order
  * @property {function():Promise<Order>} find - finds order
@@ -1030,12 +1034,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
  * @property {function():Order} decrypt - decrypts encypted properties
  * @property {function({key1:any,keyN:any}, boolean):Promise<Order>} update - update the order,
  * set the second arg to false to turn off validation.
- * @property {'APPROVED'|'SHIPPING'|'CANCELED'|'COMPLETED'} orderStatus
- * @property {function(...args):Promise<import("../models/index").Model>} customer - retrieves related customer object
- * or, if args are provided, creates a new customer object ("fromModel" will use all the properties of order as args.)
- * @property {function(string,Order)} emit - broadcast domain event
+ * @property {'PENDING'|'APPROVED'|'SHIPPING'|'CANCELED'|'COMPLETED'} orderStatus
+ * @property {function(...args):Promise<import("../models/index").Model>} customer - retrieves related customer object,
+ * or if args are provided, creates a new customer object, using the provided args as the input.
+ * @property {function(string,Order):Promise} emit - broadcast domain event
  * @property {function():boolean} paymentAccepted - payment approved and funds reserved
  * @property {function():boolean} autoCheckout - whether or not to immediately submit the order
+ * @property {boolean} saveShippingDetails save customer shipping and payment details as a customer record
+ * @property {{itemId:string,price:number,qty:number}[]} orderItems
+ * @property {Symbol} customerId {@link Customer}
  */
 
 var orderStatus = "orderStatus";
@@ -1048,7 +1055,6 @@ var OrderStatus = {
   COMPLETE: "COMPLETE",
   CANCELED: "CANCELED"
 };
-var CREATE_CUSTOMER_EVENT = "addModel:CREATECUSTOMER";
 /**
  *
  * @param {*} items
@@ -1474,7 +1480,7 @@ function getCustomerOrder(_x) {
 
 function _getCustomerOrder() {
   _getCustomerOrder = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(order) {
-    var customer, decrypted, updated, _order$order$decrypt, firstName, lastName, email, creditCardNumber, shippingAddress, billingAddress, userData, _customer, custOrders, custOrder;
+    var customer, decrypted, updated, _order$order$decrypt, firstName, lastName, email, creditCardNumber, shippingAddress, billingAddress, userData, _customer;
 
     return regeneratorRuntime.wrap(function _callee13$(_context13) {
       while (1) {
@@ -1517,7 +1523,7 @@ function _getCustomerOrder() {
 
           case 11:
             if (!order.saveShippingDetails) {
-              _context13.next = 25;
+              _context13.next = 19;
               break;
             }
 
@@ -1535,23 +1541,13 @@ function _getCustomerOrder() {
 
           case 16:
             _customer = _context13.sent;
-            console.assert(_customer.getId(), "customer not created");
-            console.debug("customer id", _customer.getId());
-            _context13.next = 21;
-            return _customer.orders();
-
-          case 21:
-            custOrders = _context13.sent;
-            custOrder = custOrders.reduce(function (o) {
-              return o.getId() === order.getId();
-            });
-            console.assert(custOrder.customerId === _customer.getId(), "customer doesnt have at least one order and fk=pks");
-            return _context13.abrupt("return", custOrder);
-
-          case 25:
+            console.info("customer created", _customer);
             return _context13.abrupt("return", order);
 
-          case 26:
+          case 19:
+            return _context13.abrupt("return", order);
+
+          case 20:
           case "end":
             return _context13.stop();
         }
