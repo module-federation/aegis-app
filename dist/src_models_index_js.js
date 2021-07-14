@@ -1474,7 +1474,7 @@ function getCustomerOrder(_x) {
 
 function _getCustomerOrder() {
   _getCustomerOrder = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(order) {
-    var customer, decrypted, updated, _order$order$decrypt, firstName, lastName, email, creditCardNumber, userData, _customer, custOrders, custOrder;
+    var customer, decrypted, updated, _order$order$decrypt, firstName, lastName, email, creditCardNumber, shippingAddress, billingAddress, userData, _customer, custOrders, custOrder;
 
     return regeneratorRuntime.wrap(function _callee13$(_context13) {
       while (1) {
@@ -1521,12 +1521,14 @@ function _getCustomerOrder() {
               break;
             }
 
-            _order$order$decrypt = _objectSpread(_objectSpread({}, order), order.decrypt()), firstName = _order$order$decrypt.firstName, lastName = _order$order$decrypt.lastName, email = _order$order$decrypt.email, creditCardNumber = _order$order$decrypt.creditCardNumber;
+            _order$order$decrypt = _objectSpread(_objectSpread({}, order), order.decrypt()), firstName = _order$order$decrypt.firstName, lastName = _order$order$decrypt.lastName, email = _order$order$decrypt.email, creditCardNumber = _order$order$decrypt.creditCardNumber, shippingAddress = _order$order$decrypt.shippingAddress, billingAddress = _order$order$decrypt.billingAddress;
             userData = {
               firstName: firstName,
               lastName: lastName,
               email: email,
-              creditCardNumber: creditCardNumber
+              creditCardNumber: creditCardNumber,
+              shippingAddress: shippingAddress,
+              billingAddress: billingAddress
             };
             _context13.next = 16;
             return order.customer(userData);

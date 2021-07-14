@@ -356,7 +356,14 @@ async function getCustomerOrder(order) {
   // new customer. The framework has a built-in handler
   // that calls the model's `addModel` function.
   if (order.saveShippingDetails) {
-    const { firstName, lastName, email, creditCardNumber } = {
+    const {
+      firstName,
+      lastName,
+      email,
+      creditCardNumber,
+      shippingAddress,
+      billingAddress,
+    } = {
       ...order,
       ...order.decrypt(),
     };
@@ -366,6 +373,8 @@ async function getCustomerOrder(order) {
       lastName,
       email,
       creditCardNumber,
+      shippingAddress,
+      billingAddress,
     };
 
     const customer = await order.customer(userData);
