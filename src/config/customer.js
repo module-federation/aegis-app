@@ -6,9 +6,9 @@ import {
   validateProperties,
   requireProperties,
 } from "../models/mixins";
-import { uuid } from "../lib/utils";
 import { makeCustomerFactory, okToDelete } from "../models/customer";
 import { DataSourceAdapterMongoDb } from "../datasources/datasource-mongodb";
+import { nanoid } from "nanoid";
 
 /**
  * @type {import('../models/index').ModelSpecification}
@@ -16,7 +16,7 @@ import { DataSourceAdapterMongoDb } from "../datasources/datasource-mongodb";
 export const Customer = {
   modelName: "customer",
   endpoint: "customers",
-  dependencies: { uuid },
+  dependencies: { uuid: () => nanoid(8) },
   factory: makeCustomerFactory,
   validate: validateModel,
   onDelete: okToDelete,
