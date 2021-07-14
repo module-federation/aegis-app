@@ -1517,7 +1517,7 @@ function _getCustomerOrder() {
 
           case 11:
             if (!order.saveShippingDetails) {
-              _context13.next = 15;
+              _context13.next = 16;
               break;
             }
 
@@ -1526,11 +1526,12 @@ function _getCustomerOrder() {
 
           case 14:
             _customer = _context13.sent;
-
-          case 15:
             return _context13.abrupt("return", order);
 
           case 16:
+            return _context13.abrupt("return", order);
+
+          case 17:
           case "end":
             return _context13.stop();
         }
