@@ -52,8 +52,6 @@ export const OrderStatus = {
   CANCELED: "CANCELED",
 };
 
-const CREATE_CUSTOMER_EVENT = "addModel:CREATECUSTOMER";
-
 /**
  *
  * @param {*} items
@@ -379,16 +377,8 @@ async function getCustomerOrder(order) {
 
     const customer = await order.customer(userData);
 
-    console.assert(customer.getId(), "customer not created");
-    console.debug("customer id", customer.getId());
-    const custOrders = await customer.orders();
-    const custOrder = custOrders.reduce(o => o.getId() === order.getId());
-    console.assert(
-      custOrder.customerId === customer.getId(),
-      "customer doesnt have at least one order and fk=pks"
-    );
-
-    return custOrder;
+    console.info("customer created", customer);
+    return order;
   }
 
   return order;
