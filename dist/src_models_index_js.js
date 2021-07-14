@@ -1474,7 +1474,7 @@ function getCustomerOrder(_x) {
 
 function _getCustomerOrder() {
   _getCustomerOrder = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(order) {
-    var customer, decrypted, updated, _customer;
+    var customer, decrypted, updated, _order$order$decrypt, userData, _customer;
 
     return regeneratorRuntime.wrap(function _callee13$(_context13) {
       while (1) {
@@ -1517,21 +1517,35 @@ function _getCustomerOrder() {
 
           case 11:
             if (!order.saveShippingDetails) {
-              _context13.next = 16;
+              _context13.next = 24;
               break;
             }
 
-            _context13.next = 14;
-            return order.customer(_objectSpread(_objectSpread({}, order), order.decrypt()));
+            userData = (_order$order$decrypt = _objectSpread(_objectSpread({}, order), order.decrypt()), firstName = _order$order$decrypt.firstName, lastName = _order$order$decrypt.lastName, email = _order$order$decrypt.email, creditCardNumber = _order$order$decrypt.creditCardNumber, _order$order$decrypt);
+            _context13.next = 15;
+            return order.customer(userData);
 
-          case 14:
+          case 15:
             _customer = _context13.sent;
+            _context13.t0 = console;
+            _context13.next = 19;
+            return order.update({
+              comment: "test"
+            });
+
+          case 19:
+            _context13.t1 = _context13.sent.customerId;
+            _context13.t2 = _customer.getId();
+            _context13.t3 = _context13.t1 === _context13.t2;
+
+            _context13.t0.assert.call(_context13.t0, _context13.t3, "customer not created correctly");
+
             return _context13.abrupt("return", order);
 
-          case 16:
+          case 24:
             return _context13.abrupt("return", order);
 
-          case 17:
+          case 25:
           case "end":
             return _context13.stop();
         }
