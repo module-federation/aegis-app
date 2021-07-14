@@ -1474,7 +1474,7 @@ function getCustomerOrder(_x) {
 
 function _getCustomerOrder() {
   _getCustomerOrder = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(order) {
-    var customer, decrypted, updated, _order$order$decrypt, userData, _customer;
+    var customer, decrypted, updated, _order$order$decrypt, userData, _customer, custOrders, custOrder;
 
     return regeneratorRuntime.wrap(function _callee13$(_context13) {
       while (1) {
@@ -1517,7 +1517,7 @@ function _getCustomerOrder() {
 
           case 11:
             if (!order.saveShippingDetails) {
-              _context13.next = 25;
+              _context13.next = 24;
               break;
             }
 
@@ -1528,23 +1528,22 @@ function _getCustomerOrder() {
           case 15:
             _customer = _context13.sent;
             console.assert(_customer.getId(), "customer not created");
-            _context13.t0 = console;
+            console.debug("customer id", _customer.getId());
             _context13.next = 20;
             return _customer.orders();
 
           case 20:
-            _context13.t1 = _context13.sent[0].customerId;
-            _context13.t2 = _customer.getId();
-            _context13.t3 = _context13.t1 === _context13.t2;
+            custOrders = _context13.sent;
+            custOrder = custOrders.reduce(function (o) {
+              return o.getId() === order.getId();
+            });
+            console.assert(custOrder.customerId === _customer.getId(), "customer doesnt have at least one order and fk=pks");
+            return _context13.abrupt("return", custOrder);
 
-            _context13.t0.assert.call(_context13.t0, _context13.t3, "customer has at least one order and fk=pks");
-
+          case 24:
             return _context13.abrupt("return", order);
 
           case 25:
-            return _context13.abrupt("return", order);
-
-          case 26:
           case "end":
             return _context13.stop();
         }
