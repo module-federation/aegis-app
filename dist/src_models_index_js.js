@@ -1474,7 +1474,7 @@ function getCustomerOrder(_x) {
 
 function _getCustomerOrder() {
   _getCustomerOrder = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(order) {
-    var customer, decrypted, updated, _order$order$decrypt, userData, _customer, custOrders, custOrder;
+    var customer, decrypted, updated, _order$order$decrypt, firstName, lastName, email, creditCardNumber, userData, _customer, custOrders, custOrder;
 
     return regeneratorRuntime.wrap(function _callee13$(_context13) {
       while (1) {
@@ -1517,22 +1517,24 @@ function _getCustomerOrder() {
 
           case 11:
             if (!order.saveShippingDetails) {
-              _context13.next = 24;
+              _context13.next = 23;
               break;
             }
 
-            userData = (_order$order$decrypt = _objectSpread(_objectSpread({}, order), order.decrypt()), firstName = _order$order$decrypt.firstName, lastName = _order$order$decrypt.lastName, email = _order$order$decrypt.email, creditCardNumber = _order$order$decrypt.creditCardNumber, _order$order$decrypt);
-            _context13.next = 15;
-            return order.customer(userData);
-
-          case 15:
-            _customer = _context13.sent;
+            _order$order$decrypt = _objectSpread(_objectSpread({}, order), order.decrypt()), firstName = _order$order$decrypt.firstName, lastName = _order$order$decrypt.lastName, email = _order$order$decrypt.email, creditCardNumber = _order$order$decrypt.creditCardNumber;
+            userData = {
+              firstName: firstName,
+              lastName: lastName,
+              email: email,
+              creditCardNumber: creditCardNumber
+            };
+            _customer = order.customer(userData);
             console.assert(_customer.getId(), "customer not created");
             console.debug("customer id", _customer.getId());
-            _context13.next = 20;
+            _context13.next = 19;
             return _customer.orders();
 
-          case 20:
+          case 19:
             custOrders = _context13.sent;
             custOrder = custOrders.reduce(function (o) {
               return o.getId() === order.getId();
@@ -1540,10 +1542,10 @@ function _getCustomerOrder() {
             console.assert(custOrder.customerId === _customer.getId(), "customer doesnt have at least one order and fk=pks");
             return _context13.abrupt("return", custOrder);
 
-          case 24:
+          case 23:
             return _context13.abrupt("return", order);
 
-          case 25:
+          case 24:
           case "end":
             return _context13.stop();
         }
