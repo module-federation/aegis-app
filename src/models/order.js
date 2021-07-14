@@ -365,7 +365,7 @@ async function getCustomerOrder(order) {
 
     console.assert(customer.getId(), "customer not created");
     console.assert(
-      customer.orders()[0].customerId === customer.getId(),
+      (await customer.orders())[0].customerId === customer.getId(),
       "customer has at least one order and fk=pks"
     );
 
