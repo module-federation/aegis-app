@@ -11,7 +11,7 @@ import { async, encrypt } from "../lib/utils";
 /** @typedef {import("./customer").Customer} Customer */
 
 /**
- * @typedef {Object} Order
+ * @typedef {Object} Order The Order Service
  * @property {function(topic,eventCallback)} listen - listen for events
  * @property {import('../adapters/event-adapter').notifyType} notify
  * @property {adapterFunction} validateAddress - returns valid address or throws exception
@@ -355,29 +355,7 @@ async function getCustomerOrder(order) {
   }
   // Save the info as a new customer
   if (order.saveShippingDetails) {
-    const {
-      firstName,
-      lastName,
-      email,
-      creditCardNumber,
-      shippingAddress,
-      billingAddress,
-    } = {
-      ...order,
-      ...order.decrypt(),
-    };
-
-    const customerData = {
-      firstName,
-      lastName,
-      email,
-      creditCardNumber,
-      shippingAddress,
-      billingAddress,
-    };
-
-    const customer = await order.customer(customerData);
-
+    const customer = await order.customer({ ...order, ...order.decrypt() });
     console.info("customer created", customer);
     return order;
   }
