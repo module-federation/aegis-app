@@ -2,11 +2,91 @@ exports.id = "src_models_index_js";
 exports.ids = ["src_models_index_js"];
 exports.modules = {
 
+/***/ "./src/config/customer.js":
+/*!********************************!*\
+  !*** ./src/config/customer.js ***!
+  \********************************/
+/*! namespace exports */
+/*! export Customer [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Customer": () => /* binding */ Customer
+/* harmony export */ });
+/* harmony import */ var _models_mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../models/mixins */ "./src/models/mixins.js");
+/* harmony import */ var _models_customer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../models/customer */ "./src/models/customer.js");
+/* harmony import */ var _datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../datasources/datasource-mongodb */ "./src/datasources/datasource-mongodb.js");
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! nanoid */ "webpack/sharing/consume/default/nanoid/nanoid");
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(nanoid__WEBPACK_IMPORTED_MODULE_3__);
+
+
+
+
+
+
+/**
+ * @type {import('../models/index').ModelSpecification}
+ */
+
+var Customer = {
+  modelName: "customer",
+  endpoint: "customers",
+  dependencies: {
+    uuid: function uuid() {
+      return (0,nanoid__WEBPACK_IMPORTED_MODULE_3__.nanoid)(8);
+    }
+  },
+  factory: _models_customer__WEBPACK_IMPORTED_MODULE_1__.makeCustomerFactory,
+  validate: _models_mixins__WEBPACK_IMPORTED_MODULE_0__.validateModel,
+  onDelete: _models_customer__WEBPACK_IMPORTED_MODULE_1__.okToDelete,
+  // datasource: {
+  //   factory: DataSourceAdapterMongoDb,
+  //   url: "mongodb://localhost:27017",
+  //   cacheSize: 2000,
+  //   baseClass: "DataSourceMongoDb",
+  // },
+  mixins: [(0,_models_mixins__WEBPACK_IMPORTED_MODULE_0__.freezeProperties)("customerId"), (0,_models_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)("firstName", "lastName", "email", "shippingAddress", "billingAddress", "creditCardNumber"), (0,_models_mixins__WEBPACK_IMPORTED_MODULE_0__.validateProperties)([{
+    propKey: "email",
+    // unique: { encrypted: true },
+    regex: "email"
+  }, {
+    propKey: "creditCardNumber",
+    regex: "creditCard"
+  }])],
+  relations: {
+    orders: {
+      modelName: "order",
+      type: "oneToMany",
+      foreignKey: "customerId"
+    }
+  },
+  commands: {
+    decrypt: {
+      command: "decrypt",
+      acl: ["read", "decrypt"]
+    }
+  },
+  accessControlList: {
+    customer: {
+      allow: "read",
+      type: "relation",
+      desc: "Allow orders to see customers."
+    }
+  }
+};
+
+/***/ }),
+
 /***/ "./src/config/index.js":
 /*!*****************************!*\
   !*** ./src/config/index.js ***!
   \*****************************/
 /*! namespace exports */
+/*! export Customer [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/customer.js .Customer */
 /*! export Order [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/order.js .Order */
 /*! export User [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/user.js .User */
 /*! other exports [not provided] [no usage info] */
@@ -17,13 +97,15 @@ exports.modules = {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Order": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.Order,
-/* harmony export */   "User": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_1__.User
+/* harmony export */   "User": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_1__.User,
+/* harmony export */   "Customer": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_2__.Customer
 /* harmony export */ });
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./order */ "./src/config/order.js");
 /* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./user */ "./src/config/user.js");
+/* harmony import */ var _customer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./customer */ "./src/config/customer.js");
 
- // export * from "./customer";
-// export * from "./product";
+
+ // export * from "./product";
 
 /***/ }),
 
@@ -147,11 +229,18 @@ var Order = {
       producesEvent: "paymentAuthorized",
       undo: _models_order__WEBPACK_IMPORTED_MODULE_0__.cancelPayment
     },
+    checkInventory: {
+      service: "Inventory",
+      type: "outbound",
+      consumesEvent: "paymentAuthorized",
+      producesEvent: "itemsAvailable",
+      undo: _models_order__WEBPACK_IMPORTED_MODULE_0__.returnInventory
+    },
     pickOrder: {
       service: "Inventory",
       type: "outbound",
       keys: "pickupAddress",
-      consumesEvent: "pickOrder",
+      consumesEvent: "itemsAvailable",
       producesEvent: "orderPicked",
       undo: _models_order__WEBPACK_IMPORTED_MODULE_0__.returnInventory
     },
@@ -626,6 +715,95 @@ function checkPayload(key) {
       model: model
     });
   });
+}
+
+/***/ }),
+
+/***/ "./src/models/customer.js":
+/*!********************************!*\
+  !*** ./src/models/customer.js ***!
+  \********************************/
+/*! namespace exports */
+/*! export makeCustomerFactory [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export okToDelete [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "makeCustomerFactory": () => /* binding */ makeCustomerFactory,
+/* harmony export */   "okToDelete": () => /* binding */ okToDelete
+/* harmony export */ });
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+function makeCustomerFactory(dependencies) {
+  return function createCustomer() {
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        firstName = _ref.firstName,
+        lastName = _ref.lastName,
+        shippingAddress = _ref.shippingAddress,
+        creditCardNumber = _ref.creditCardNumber,
+        _ref$billingAddress = _ref.billingAddress,
+        billingAddress = _ref$billingAddress === void 0 ? shippingAddress : _ref$billingAddress,
+        phone = _ref.phone,
+        email = _ref.email,
+        userId = _ref.userId;
+
+    return Object.freeze({
+      customerId: dependencies.uuid(),
+      firstName: firstName,
+      lastName: lastName,
+      creditCardNumber: creditCardNumber,
+      shippingAddress: shippingAddress,
+      billingAddress: billingAddress,
+      phone: phone,
+      email: email,
+      userId: userId
+    });
+  };
+}
+function okToDelete(_x) {
+  return _okToDelete.apply(this, arguments);
+}
+
+function _okToDelete() {
+  _okToDelete = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(customer) {
+    var orders;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.prev = 0;
+            _context.next = 3;
+            return customer.orders();
+
+          case 3:
+            orders = _context.sent;
+            return _context.abrupt("return", orders.length > 0);
+
+          case 7:
+            _context.prev = 7;
+            _context.t0 = _context["catch"](0);
+            console.error({
+              func: okToDelete.name,
+              error: _context.t0
+            });
+            return _context.abrupt("return", true);
+
+          case 11:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, null, [[0, 7]]);
+  }));
+  return _okToDelete.apply(this, arguments);
 }
 
 /***/ }),
@@ -1480,7 +1658,7 @@ function getCustomerOrder(_x) {
 
 function _getCustomerOrder() {
   _getCustomerOrder = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(order) {
-    var customer, decrypted, updated, _order$order$decrypt, firstName, lastName, email, creditCardNumber, shippingAddress, billingAddress, userData, _customer;
+    var customer, decrypted, updated, _order$order$decrypt, firstName, lastName, email, creditCardNumber, shippingAddress, billingAddress, customerData, _customer;
 
     return regeneratorRuntime.wrap(function _callee13$(_context13) {
       while (1) {
@@ -1528,7 +1706,7 @@ function _getCustomerOrder() {
             }
 
             _order$order$decrypt = _objectSpread(_objectSpread({}, order), order.decrypt()), firstName = _order$order$decrypt.firstName, lastName = _order$order$decrypt.lastName, email = _order$order$decrypt.email, creditCardNumber = _order$order$decrypt.creditCardNumber, shippingAddress = _order$order$decrypt.shippingAddress, billingAddress = _order$order$decrypt.billingAddress;
-            userData = {
+            customerData = {
               firstName: firstName,
               lastName: lastName,
               email: email,
@@ -1537,7 +1715,7 @@ function _getCustomerOrder() {
               billingAddress: billingAddress
             };
             _context13.next = 16;
-            return order.customer(userData);
+            return order.customer(customerData);
 
           case 16:
             _customer = _context13.sent;

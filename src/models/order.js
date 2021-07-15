@@ -353,9 +353,7 @@ async function getCustomerOrder(order) {
     });
     return updated;
   }
-  // Tell the customer service to try creating a
-  // new customer. The framework has a built-in handler
-  // that calls the model's `addModel` function.
+  // Save the info as a new customer
   if (order.saveShippingDetails) {
     const {
       firstName,
@@ -369,7 +367,7 @@ async function getCustomerOrder(order) {
       ...order.decrypt(),
     };
 
-    const userData = {
+    const customerData = {
       firstName,
       lastName,
       email,
@@ -378,7 +376,7 @@ async function getCustomerOrder(order) {
       billingAddress,
     };
 
-    const customer = await order.customer(userData);
+    const customer = await order.customer(customerData);
 
     console.info("customer created", customer);
     return order;
@@ -402,6 +400,15 @@ const OrderActions = {
     try {
       // If requester is a customer, get shipping data from customer service.
       const customerOrder = await getCustomerOrder(order);
+
+      // const inventoryAvailable = await customerOrder.checkInventory();
+      // if (!inventoryAvailable) {
+      //   // Design the system so this is impossible.
+      //   customerOrder.emit(
+      //     customerOrder.checkInventory.name,
+      //     "item displayted to, and selected by, customer is not available!"
+      //   );
+      // }
 
       // Authorize payment for the current total.
       const payment = await async(
