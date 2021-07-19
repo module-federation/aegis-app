@@ -2,8 +2,8 @@
   const messages = document.querySelector("#messages");
   const wsButton = document.querySelector("#wsButton");
   const wsSendButton = document.querySelector("#wsSendButton");
-  const logoutButton = document.querySelector("#logout");
-  const loginButton = document.querySelector("#login");
+  // const logoutButton = document.querySelector("#logout");
+  // const loginButton = document.querySelector("#login");
   const clearButton = document.querySelector("#clear");
 
   function prettifyJson(json) {
@@ -37,30 +37,6 @@
     messages.scrollTop = messages.scrollHeight;
   }
 
-  function handleResponse(response) {
-    return response.ok
-      ? response.json().then(data => JSON.stringify(data, null, 2))
-      : Promise.reject(new Error("Unexpected response"));
-  }
-
-  loginButton.onclick = function () {
-    fetch("/login", { method: "POST", credentials: "same-origin" })
-      .then(handleResponse)
-      .then(showMessage)
-      .catch(function (err) {
-        showMessage(err.message);
-      });
-  };
-
-  logoutButton.onclick = function () {
-    fetch("/logout", { method: "DELETE", credentials: "same-origin" })
-      .then(handleResponse)
-      .then(showMessage)
-      .catch(function (err) {
-        showMessage(err.message);
-      });
-  };
-
   let ws;
 
   wsButton.onclick = function () {
@@ -69,12 +45,13 @@
       ws.close();
     }
 
-    ws = new WebSocket(`ws://${location.host}`);
+    ws = new WebSocket(`ws://${location.host}:8062`);
     ws.onerror = function () {
       showMessage("WebSocket error");
     };
     ws.onopen = function () {
       showMessage("WebSocket connection established");
+      ws.send("webswitch");
     };
     ws.onclose = function () {
       showMessage("WebSocket connection closed");
