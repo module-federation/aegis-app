@@ -169,7 +169,7 @@ export const Order = {
       producesEvent: "orderPicked",
       undo: returnInventory,
       circuitBreaker: {
-        default: {
+        portTimeout_order: {
           callVolume: 1,
           errorRate: 1,
           intervalMs: 1,
@@ -184,7 +184,7 @@ export const Order = {
       producesEvent: "orderShipped",
       undo: returnShipment,
       circuitBreaker: {
-        default: {
+        portTimeout_order: {
           callVolume: 1,
           errorRate: 1,
           intervalMs: 1,
@@ -198,7 +198,7 @@ export const Order = {
       consumesEvent: "orderShipped",
       producesEvent: "orderDelivered",
       circuitBreaker: {
-        default: {
+        portTimeout_order: {
           callVolume: 1,
           errorRate: 1,
           intervalMs: 1,
@@ -213,7 +213,7 @@ export const Order = {
       producesEvent: "deliveryVerified",
       undo: returnDelivery,
       circuitBreaker: {
-        default: {
+        portTimeout_order: {
           callVolume: 1,
           errorRate: 1,
           intervalMs: 1,
@@ -228,7 +228,7 @@ export const Order = {
       producesEvent: "workflowComplete",
       undo: refundPayment,
       circuitBreaker: {
-        default: {
+        portTimeout_order: {
           callVolume: 1,
           errorRate: 1,
           intervalMs: 1,
