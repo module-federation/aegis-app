@@ -68,11 +68,25 @@
  *    consumesEvent?:string,
  *    producesEvent?:string,
  *    type?:'inbound'|'outbound',
- *    disabled?: boolean
- *    adapter?: string
+ *    disabled?: boolean,
+ *    adapter?: string,
+ *    circuitBreaker?: thresholds
  *  }
  * }} ports - input/output ports for the domain
- *
+ */
+
+/**
+ * @typedef {{
+ *  [x:string]: {
+ *    errorRate:number
+ *    callVolume:number,
+ *    intervalMs:number,
+ *    fallbackFn:function()
+ *  },
+ * }} thresholds - thresholds for different errors
+ */
+
+/**
  * @typedef {{
  *  [x: string]: {
  *    modelName:string,
@@ -104,7 +118,8 @@
  *  type: "string" | "object" | "number" | "function" | "any" | (function(key,value):boolean)
  *  value(key, value):value
  * }} serializer
- *
+ */
+/**
  * @typedef {{
  *  [x:string]: {
  *    allow:string|function(*):boolean|Array<string|function(*):boolean>
@@ -113,7 +128,8 @@
  *    desc?:string
  *  }
  * }} accessControlList
- *
+ */
+/**
  * @typedef {{
  *  [x: string]: {
  *    command:string|function(Model):Promise<any>,

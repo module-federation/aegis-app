@@ -43,12 +43,12 @@ export const Order = {
   modelName: "order",
   endpoint: "orders",
   factory: makeOrderFactory,
-  datasource: {
-    factory: DataSourceAdapterMongoDb,
-    url: "mongodb://localhost:27017",
-    cacheSize: 2000,
-    baseClass: "DataSourceMongoDb",
-  },
+  // datasource: {
+  //   factory: DataSourceAdapterMongoDb,
+  //   url: "mongodb://localhost:27017",
+  //   cacheSize: 2000,
+  //   baseClass: "DataSourceMongoDb",
+  // },
   dependencies: { uuid: () => nanoid(8) },
   mixins: [
     requireProperties(
@@ -154,13 +154,13 @@ export const Order = {
       producesEvent: "paymentAuthorized",
       undo: cancelPayment,
     },
-    checkInventory: {
-      service: "Inventory",
-      type: "outbound",
-      consumesEvent: "paymentAuthorized",
-      producesEvent: "itemsAvailable",
-      undo: returnInventory,
-    },
+    // checkInventory: {
+    //   service: "Inventory",
+    //   type: "outbound",
+    //   consumesEvent: "paymentAuthorized",
+    //   producesEvent: "itemsAvailable",
+    //   undo: returnInventory,
+    // },
     pickOrder: {
       service: "Inventory",
       type: "outbound",
@@ -168,6 +168,13 @@ export const Order = {
       consumesEvent: "itemsAvailable",
       producesEvent: "orderPicked",
       undo: returnInventory,
+      circuitBreaker: {
+        default: {
+          callVolume: 1,
+          errorRate: 1,
+          intervalMs: 1,
+        },
+      },
     },
     shipOrder: {
       service: "Shipping",
@@ -176,6 +183,13 @@ export const Order = {
       consumesEvent: "orderPicked",
       producesEvent: "orderShipped",
       undo: returnShipment,
+      circuitBreaker: {
+        default: {
+          callVolume: 1,
+          errorRate: 1,
+          intervalMs: 1,
+        },
+      },
     },
     trackShipment: {
       service: "Shipping",
@@ -183,6 +197,13 @@ export const Order = {
       keys: ["trackingStatus", "trackingId"],
       consumesEvent: "orderShipped",
       producesEvent: "orderDelivered",
+      circuitBreaker: {
+        default: {
+          callVolume: 1,
+          errorRate: 1,
+          intervalMs: 1,
+        },
+      },
     },
     verifyDelivery: {
       service: "Shipping",
@@ -191,6 +212,13 @@ export const Order = {
       consumesEvent: "orderDelivered",
       producesEvent: "deliveryVerified",
       undo: returnDelivery,
+      circuitBreaker: {
+        default: {
+          callVolume: 1,
+          errorRate: 1,
+          intervalMs: 1,
+        },
+      },
     },
     completePayment: {
       service: "Payment",
@@ -199,6 +227,13 @@ export const Order = {
       consumesEvent: "deliveryVerified",
       producesEvent: "workflowComplete",
       undo: refundPayment,
+      circuitBreaker: {
+        default: {
+          callVolume: 1,
+          errorRate: 1,
+          intervalMs: 1,
+        },
+      },
     },
     cancelShipment: {
       service: "Shipping",
