@@ -1,5 +1,5 @@
-exports.id = "src_services_webswitch_js";
-exports.ids = ["src_services_webswitch_js"];
+exports.id = 579;
+exports.ids = [579];
 exports.modules = {
 
 /***/ "./src/services/webswitch.js":
@@ -190,4 +190,4 @@ function _publishEvent() {
 
 };
 ;
-//# sourceMappingURL=src_services_webswitch_js.js.map
+//# sourceMappingURL=579.js.map

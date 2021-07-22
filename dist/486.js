@@ -1,5 +1,5 @@
-exports.id = "src_models_index_js";
-exports.ids = ["src_models_index_js"];
+exports.id = 486;
+exports.ids = [486];
 exports.modules = {
 
 /***/ "./src/config/index.js":
@@ -3103,4 +3103,4 @@ var Shipping = {
 
 };
 ;
-//# sourceMappingURL=src_models_index_js.js.map
+//# sourceMappingURL=486.js.map

@@ -21,6 +21,20 @@ var serverConfig = {
   module: {
     rules: [
       {
+        test: /\.wasm$/,
+        type: "webassembly/async",
+      },
+    ],
+  },
+  experiments: {
+    asyncWebAssembly: true,
+  },
+  optimization: {
+    chunkIds: "deterministic", // To keep filename consistent between different modes (for example building only)
+  },
+  module: {
+    rules: [
+      {
         test: /\.js?$/,
         exclude: /node_modules/,
         use: {
@@ -44,7 +58,8 @@ var serverConfig = {
         "./services": "./src/services",
         "./validations": "./src/models/mixins",
         "./event-bus": "./src/services/event-bus",
-        "./webswitch": "./src/services/webswitch"
+        "./webswitch": "./src/services/webswitch",
+        "./wasm": "./src/wasm/factorial.wasm",
       },
       shared: {
         axios: {

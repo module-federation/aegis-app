@@ -1,5 +1,5 @@
-exports.id = "src_services_event-bus_js";
-exports.ids = ["src_services_event-bus_js"];
+exports.id = 778;
+exports.ids = [778];
 exports.modules = {
 
 /***/ "./src/services/event-bus.js":
@@ -50,4 +50,4 @@ var EventBus = {
 
 };
 ;
-//# sourceMappingURL=src_services_event-bus_js.js.map
+//# sourceMappingURL=778.js.map

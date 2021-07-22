@@ -1,5 +1,5 @@
-exports.id = "src_adapters_index_js";
-exports.ids = ["src_adapters_index_js"];
+exports.id = 610;
+exports.ids = [610];
 exports.modules = {
 
 /***/ "./src/adapters/address-adapter.js":
@@ -1428,4 +1428,4 @@ var Event = {
 
 };
 ;
-//# sourceMappingURL=src_adapters_index_js.js.map
+//# sourceMappingURL=610.js.map

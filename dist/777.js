@@ -1,5 +1,5 @@
-exports.id = "vendors-node_modules_ws_index_js";
-exports.ids = ["vendors-node_modules_ws_index_js"];
+exports.id = 777;
+exports.ids = [777];
 exports.modules = {
 
 /***/ "./node_modules/bufferutil/fallback.js":
@@ -4356,4 +4356,4 @@ function socketOnError() {
 
 };
 ;
-//# sourceMappingURL=vendors-node_modules_ws_index_js.js.map
+//# sourceMappingURL=777.js.map

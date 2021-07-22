@@ -1,5 +1,5 @@
-exports.id = "src_services_index_js";
-exports.ids = ["src_services_index_js"];
+exports.id = 662;
+exports.ids = [662];
 exports.modules = {
 
 /***/ "./src/lib/utils.js":
@@ -1013,4 +1013,4 @@ function _publishEvent() {
 
 };
 ;
-//# sourceMappingURL=src_services_index_js.js.map
+//# sourceMappingURL=662.js.map
