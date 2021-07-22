@@ -1,0 +1,1 @@
+import { factorial } from "./math";
