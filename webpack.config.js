@@ -59,7 +59,7 @@ var serverConfig = {
         "./validations": "./src/models/mixins",
         "./event-bus": "./src/services/event-bus",
         "./webswitch": "./src/services/webswitch",
-        "./wasm": "./src/wasm/cpp-demo.wasm",
+        "./wasm": "./src/wasm/demo.wasm",
       },
       shared: {
         axios: {

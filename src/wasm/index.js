@@ -1,2 +1,1 @@
-export * from "cpp-demo.wasm";
-export * from "cpp-demo.js";
+export * from "./demo.js";
