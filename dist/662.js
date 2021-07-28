@@ -860,13 +860,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 var FQDN = process.env.WEBSWITCH_HOST || "webswitch.aegis.dev";
 var PORT = 8062;
 var PATH = "/webswitch/broadcast";
+/**
+ * Lookup IP address of WebSwitch server.
+ */
 
-function lookup(_x) {
-  return _lookup.apply(this, arguments);
+function getServerAddress() {
+  return _getServerAddress.apply(this, arguments);
 }
+/**@type import("ws/lib/websocket") */
 
-function _lookup() {
-  _lookup = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(hostname) {
+
+function _getServerAddress() {
+  _getServerAddress = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
     var result;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
@@ -874,20 +879,20 @@ function _lookup() {
           case 0:
             _context.prev = 0;
             _context.next = 3;
-            return dns_promises__WEBPACK_IMPORTED_MODULE_1___default().lookup(hostname);
+            return dns_promises__WEBPACK_IMPORTED_MODULE_1___default().lookup(FQDN);
 
           case 3:
             result = _context.sent;
-            console.debug("server address", result, result.address);
-            return _context.abrupt("return", result.address);
+            console.debug("server address", result);
+            return _context.abrupt("return", (result === null || result === void 0 ? void 0 : result.address) ? result.address : "localhost");
 
           case 8:
             _context.prev = 8;
             _context.t0 = _context["catch"](0);
-            console.warn("dns lookup", _context.t0);
+            console.error("dns lookup", _context.t0);
 
           case 11:
-            return _context.abrupt("return", null);
+            return _context.abrupt("return", "localhost");
 
           case 12:
           case "end":
@@ -896,115 +901,88 @@ function _lookup() {
       }
     }, _callee, null, [[0, 8]]);
   }));
-  return _lookup.apply(this, arguments);
+  return _getServerAddress.apply(this, arguments);
 }
 
-function getHostName() {
-  return _getHostName.apply(this, arguments);
+var ws;
+var serverAddress = getServerAddress().then(function (result) {
+  return result.address;
+});
+function publishEvent(_x, _x2) {
+  return _publishEvent.apply(this, arguments);
 }
-/**@type import("ws/lib/websocket") */
 
-
-function _getHostName() {
-  _getHostName = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-    var hostname;
+function _publishEvent() {
+  _publishEvent = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(event, observer) {
     return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            _context2.next = 2;
-            return lookup(FQDN);
+            if (event) {
+              _context2.next = 2;
+              break;
+            }
+
+            return _context2.abrupt("return");
 
           case 2:
-            hostname = _context2.sent;
-            return _context2.abrupt("return", hostname ? hostname : "localhost");
+            serverAddress.then(function (address) {
+              var serializedEvent = JSON.stringify(event);
 
-          case 4:
+              function webswitch() {
+                console.debug("webswitch sending", event);
+
+                if (!ws) {
+                  ws = new (ws__WEBPACK_IMPORTED_MODULE_0___default())("ws://".concat(address, ":").concat(PORT).concat(PATH));
+                  ws.on("message", function (message) {
+                    try {
+                      var _event = JSON.parse(message);
+
+                      if (_event.eventName && observer) {
+                        observer.notify(_event.eventName, _event);
+                      } else {
+                        console.warn("no eventName or observer", message);
+                      }
+                    } catch (error) {
+                      console.error(ws.on.name, message, error);
+                    }
+                  });
+                  ws.on("open", function () {
+                    ws.send(JSON.stringify("webswitch"));
+                  });
+                  ws.on("error", function (error) {
+                    console.error(ws.on.name, error);
+                  });
+                }
+
+                function send() {
+                  if (ws.readyState) {
+                    ws.send(serializedEvent);
+                  } else {
+                    setTimeout(function () {
+                      return send();
+                    }, 1000);
+                  }
+                }
+
+                send();
+              }
+
+              try {
+                webswitch();
+              } catch (e) {
+                console.warn(publishEvent.name, e.message);
+              }
+            })["catch"](function (e) {
+              return console.error(e);
+            });
+
+          case 3:
           case "end":
             return _context2.stop();
         }
       }
     }, _callee2);
-  }));
-  return _getHostName.apply(this, arguments);
-}
-
-var ws;
-function publishEvent(_x2, _x3) {
-  return _publishEvent.apply(this, arguments);
-}
-
-function _publishEvent() {
-  _publishEvent = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(event, observer) {
-    var hostname, serializedEvent, webswitch;
-    return regeneratorRuntime.wrap(function _callee3$(_context3) {
-      while (1) {
-        switch (_context3.prev = _context3.next) {
-          case 0:
-            webswitch = function _webswitch() {
-              console.debug("webswitch sending", event);
-
-              if (!ws) {
-                ws = new (ws__WEBPACK_IMPORTED_MODULE_0___default())("ws://".concat(hostname, ":").concat(PORT).concat(PATH));
-                ws.on("message", function (message) {
-                  console.debug(message);
-                  var event = JSON.parse(message);
-                  console.debug("webswitch received", event);
-
-                  if (event.eventName) {
-                    observer.notify(event.eventName, event);
-                  }
-                });
-                ws.on("open", function () {
-                  ws.send(JSON.stringify("webswitch"));
-                });
-                ws.on("error", function (error) {
-                  console.error("webswitchClient.on(error)", error);
-                });
-                return;
-              }
-
-              function send() {
-                if (ws.readyState) {
-                  ws.send(serializedEvent);
-                  return;
-                }
-
-                setTimeout(function () {
-                  return send();
-                }, 1000);
-              }
-
-              send();
-            };
-
-            if (event) {
-              _context3.next = 3;
-              break;
-            }
-
-            return _context3.abrupt("return");
-
-          case 3:
-            _context3.next = 5;
-            return getHostName();
-
-          case 5:
-            hostname = _context3.sent;
-            serializedEvent = JSON.stringify(event);
-
-            try {
-              webswitch();
-            } catch (e) {
-              console.warn(publishEvent.name, e.message);
-            }
-
-          case 8:
-          case "end":
-            return _context3.stop();
-        }
-      }
-    }, _callee3);
   }));
   return _publishEvent.apply(this, arguments);
 }

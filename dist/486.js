@@ -162,7 +162,7 @@ var Order = {
       producesEvent: "orderPicked",
       undo: _models_order__WEBPACK_IMPORTED_MODULE_0__.returnInventory,
       circuitBreaker: {
-        portTimeout_order: {
+        portTimeout_pickOrder_order: {
           callVolume: 1,
           errorRate: 1,
           intervalMs: 1
@@ -177,7 +177,7 @@ var Order = {
       producesEvent: "orderShipped",
       undo: _models_order__WEBPACK_IMPORTED_MODULE_0__.returnShipment,
       circuitBreaker: {
-        portTimeout_order: {
+        portTimeout_shipOrder_order: {
           callVolume: 1,
           errorRate: 1,
           intervalMs: 1
@@ -191,7 +191,7 @@ var Order = {
       consumesEvent: "orderShipped",
       producesEvent: "orderDelivered",
       circuitBreaker: {
-        portTimeout_order: {
+        portTimeout_trackShipment_order: {
           callVolume: 1,
           errorRate: 1,
           intervalMs: 1
@@ -206,7 +206,7 @@ var Order = {
       producesEvent: "deliveryVerified",
       undo: _models_order__WEBPACK_IMPORTED_MODULE_0__.returnDelivery,
       circuitBreaker: {
-        portTimeout_order: {
+        portTimeout_verifyDelivery_order: {
           callVolume: 1,
           errorRate: 1,
           intervalMs: 1
@@ -221,7 +221,7 @@ var Order = {
       producesEvent: "workflowComplete",
       undo: _models_order__WEBPACK_IMPORTED_MODULE_0__.refundPayment,
       circuitBreaker: {
-        portTimeout_order: {
+        portTimeout_completePayment_order: {
           callVolume: 1,
           errorRate: 1,
           intervalMs: 1
@@ -1493,7 +1493,7 @@ function _paymentAuthorized() {
   return _paymentAuthorized.apply(this, arguments);
 }
 
-function refundPayment() {
+function refundPayment(_x) {
   return _refundPayment.apply(this, arguments);
 }
 /**
@@ -1504,23 +1504,17 @@ function refundPayment() {
  */
 
 function _refundPayment() {
-  _refundPayment = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12() {
-    var options,
-        payload,
-        order,
-        changes,
-        _args12 = arguments;
+  _refundPayment = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12(order) {
     return regeneratorRuntime.wrap(function _callee12$(_context12) {
       while (1) {
         switch (_context12.prev = _context12.next) {
           case 0:
-            options = _args12.length > 0 && _args12[0] !== undefined ? _args12[0] : {};
-            payload = _args12.length > 1 && _args12[1] !== undefined ? _args12[1] : {};
-            order = options.model;
-            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)("refundReceipt", options, payload, refundPayment.name);
-            return _context12.abrupt("return", order.update(changes));
+            order.refundPayment(function (options, payload) {
+              var changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)("refundReceipt", options, payload, refundPayment.name);
+              return order.update(changes);
+            });
 
-          case 5:
+          case 1:
           case "end":
             return _context12.stop();
         }
@@ -1530,7 +1524,7 @@ function _refundPayment() {
   return _refundPayment.apply(this, arguments);
 }
 
-function getCustomerOrder(_x) {
+function getCustomerOrder(_x2) {
   return _getCustomerOrder.apply(this, arguments);
 }
 /**
@@ -1540,14 +1534,14 @@ function getCustomerOrder(_x) {
 
 function _getCustomerOrder() {
   _getCustomerOrder = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(order) {
-    var customer, decrypted, updated, _customer;
+    var customer, custInfo, update, _custInfo, _customer;
 
     return regeneratorRuntime.wrap(function _callee13$(_context13) {
       while (1) {
         switch (_context13.prev = _context13.next) {
           case 0:
             if (!order.customerId) {
-              _context13.next = 11;
+              _context13.next = 12;
               break;
             }
 
@@ -1566,39 +1560,38 @@ function _getCustomerOrder() {
 
           case 6:
             // Add customer data to the order
-            decrypted = customer.decrypt();
-            _context13.next = 9;
-            return order.update({
-              creditCardNumber: decrypted.creditCardNumber,
-              shippingAddress: decrypted.shippingAddress,
-              billingAddress: decrypted.billingAddress,
-              email: decrypted.email,
-              lastName: decrypted.lastName,
+            custInfo = _objectSpread(_objectSpread({}, customer.decrypt()), {}, {
               firstName: customer.firstName
             });
+            _context13.next = 9;
+            return order.update(custInfo);
 
           case 9:
-            updated = _context13.sent;
-            return _context13.abrupt("return", updated);
+            update = _context13.sent;
+            console.info("update order with data from existing customer", custInfo);
+            return _context13.abrupt("return", update);
 
-          case 11:
+          case 12:
             if (!order.saveShippingDetails) {
-              _context13.next = 17;
+              _context13.next = 19;
               break;
             }
 
-            _context13.next = 14;
-            return order.customer(_objectSpread(_objectSpread({}, order), order.decrypt()));
+            _custInfo = _objectSpread(_objectSpread({}, order.decrypt()), {}, {
+              firstName: order.firstName
+            });
+            _context13.next = 16;
+            return order.customer(_custInfo);
 
-          case 14:
+          case 16:
             _customer = _context13.sent;
-            console.info("customer created", _customer);
+            console.info("create new customer with data from order", _customer);
             return _context13.abrupt("return", order);
 
-          case 17:
+          case 19:
             return _context13.abrupt("return", order);
 
-          case 18:
+          case 20:
           case "end":
             return _context13.stop();
         }
@@ -1681,7 +1674,7 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
     }, _callee, null, [[0, 22]]);
   }));
 
-  return function (_x2) {
+  return function (_x3) {
     return _ref.apply(this, arguments);
   };
 }()), _defineProperty(_OrderActions, OrderStatus.APPROVED, function () {
@@ -1719,7 +1712,7 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
     }, _callee2, null, [[0, 8]]);
   }));
 
-  return function (_x3) {
+  return function (_x4) {
     return _ref2.apply(this, arguments);
   };
 }()), _defineProperty(_OrderActions, OrderStatus.SHIPPING, function () {
@@ -1747,7 +1740,7 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
     }, _callee3);
   }));
 
-  return function (_x4) {
+  return function (_x5) {
     return _ref3.apply(this, arguments);
   };
 }()), _defineProperty(_OrderActions, OrderStatus.CANCELED, function () {
@@ -1777,7 +1770,7 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
     }, _callee4, null, [[0, 5]]);
   }));
 
-  return function (_x5) {
+  return function (_x6) {
     return _ref4.apply(this, arguments);
   };
 }()), _defineProperty(_OrderActions, OrderStatus.COMPLETE, function () {
@@ -1797,7 +1790,7 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
     }, _callee5);
   }));
 
-  return function (_x6) {
+  return function (_x7) {
     return _ref5.apply(this, arguments);
   };
 }()), _OrderActions);
@@ -1806,7 +1799,7 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
  * @param {Order} order
  */
 
-function handleStatusChange(_x7) {
+function handleStatusChange(_x8) {
   return _handleStatusChange.apply(this, arguments);
 }
 /**
@@ -1832,7 +1825,7 @@ function _handleStatusChange() {
   return _handleStatusChange.apply(this, arguments);
 }
 
-function handleOrderEvent(_x8) {
+function handleOrderEvent(_x9) {
   return _handleOrderEvent.apply(this, arguments);
 }
 /**
@@ -1918,7 +1911,7 @@ function makeOrderFactory(dependencies) {
       }, _callee6);
     }));
 
-    function createOrder(_x9) {
+    function createOrder(_x10) {
       return _createOrder.apply(this, arguments);
     }
 
@@ -1930,7 +1923,7 @@ function makeOrderFactory(dependencies) {
  * @param {*} order
  */
 
-function approve(_x10) {
+function approve(_x11) {
   return _approve.apply(this, arguments);
 }
 /**
@@ -1964,7 +1957,7 @@ function _approve() {
   return _approve.apply(this, arguments);
 }
 
-function cancel(_x11) {
+function cancel(_x12) {
   return _cancel.apply(this, arguments);
 }
 
@@ -1994,7 +1987,7 @@ function _cancel() {
   return _cancel.apply(this, arguments);
 }
 
-function submit(_x12) {
+function submit(_x13) {
   return _submit.apply(this, arguments);
 }
 /**
@@ -2045,7 +2038,7 @@ function timeoutCallback(_ref9) {
  * @param {*} param0
  */
 
-function returnInventory(_x13) {
+function returnInventory(_x14) {
   return _returnInventory.apply(this, arguments);
 }
 
@@ -2070,7 +2063,7 @@ function _returnInventory() {
   return _returnInventory.apply(this, arguments);
 }
 
-function returnShipment(_x14) {
+function returnShipment(_x15) {
   return _returnShipment.apply(this, arguments);
 }
 
@@ -2095,7 +2088,7 @@ function _returnShipment() {
   return _returnShipment.apply(this, arguments);
 }
 
-function returnDelivery(_x15) {
+function returnDelivery(_x16) {
   return _returnDelivery.apply(this, arguments);
 }
 
@@ -2120,7 +2113,7 @@ function _returnDelivery() {
   return _returnDelivery.apply(this, arguments);
 }
 
-function cancelPayment(_x16) {
+function cancelPayment(_x17) {
   return _cancelPayment.apply(this, arguments);
 }
 

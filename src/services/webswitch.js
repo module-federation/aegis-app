@@ -12,70 +12,75 @@ const FQDN = process.env.WEBSWITCH_HOST || "webswitch.aegis.dev";
 const PORT = 8062;
 const PATH = "/webswitch/broadcast";
 
-async function lookup(hostname) {
+/**
+ * Lookup IP address of WebSwitch server.
+ */
+async function getServerAddress() {
   try {
-    const result = await dns.lookup(hostname);
-    console.debug("server address", result, result.address);
-    return result.address;
+    const result = await dns.lookup(FQDN);
+    console.debug("server address", result);
+    return result?.address ? result.address : "localhost";
   } catch (error) {
-    console.warn("dns lookup", error);
+    console.error("dns lookup", error);
   }
-  return null;
-}
-
-async function getHostName() {
-  const hostname = await lookup(FQDN);
-  return hostname ? hostname : "localhost";
+  return "localhost";
 }
 
 /**@type import("ws/lib/websocket") */
 let ws;
+const serverAddress = getServerAddress().then(result => result.address);
 
 export async function publishEvent(event, observer) {
   if (!event) return;
 
-  const hostname = await getHostName();
-  const serializedEvent = JSON.stringify(event);
+  serverAddress
+    .then(function (address) {
+      const serializedEvent = JSON.stringify(event);
 
-  function webswitch() {
-    console.debug("webswitch sending", event);
+      function webswitch() {
+        console.debug("webswitch sending", event);
 
-    if (!ws) {
-      ws = new WebSocket(`ws://${hostname}:${PORT}${PATH}`);
+        if (!ws) {
+          ws = new WebSocket(`ws://${address}:${PORT}${PATH}`);
 
-      ws.on("message", function (message) {
-        console.debug(message);
-        const event = JSON.parse(message);
-        console.debug("webswitch received", event);
-        if (event.eventName) {
-          observer.notify(event.eventName, event);
+          ws.on("message", function (message) {
+            try {
+              const event = JSON.parse(message);
+              if (event.eventName && observer) {
+                observer.notify(event.eventName, event);
+              } else {
+                console.warn("no eventName or observer", message);
+              }
+            } catch (error) {
+              console.error(ws.on.name, message, error);
+            }
+          });
+
+          ws.on("open", function () {
+            ws.send(JSON.stringify("webswitch"));
+          });
+
+          ws.on("error", function (error) {
+            console.error(ws.on.name, error);
+          });
         }
-      });
 
-      ws.on("open", function () {
-        ws.send(JSON.stringify("webswitch"));
-      });
+        function send() {
+          if (ws.readyState) {
+            ws.send(serializedEvent);
+          } else {
+            setTimeout(() => send(), 1000);
+          }
+        }
 
-      ws.on("error", function (error) {
-        console.error("webswitchClient.on(error)", error);
-      });
-      return;
-    }
-
-    function send() {
-      if (ws.readyState) {
-        ws.send(serializedEvent);
-        return;
+        send();
       }
-      setTimeout(() => send(), 1000);
-    }
 
-    send();
-  }
-
-  try {
-    webswitch();
-  } catch (e) {
-    console.warn(publishEvent.name, e.message);
-  }
+      try {
+        webswitch();
+      } catch (e) {
+        console.warn(publishEvent.name, e.message);
+      }
+    })
+    .catch(e => console.error(e));
 }

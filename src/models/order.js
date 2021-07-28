@@ -314,15 +314,16 @@ export async function paymentAuthorized(options = {}, payload = {}) {
  * @param {*} payload
  * @returns
  */
-export async function refundPayment(options = {}, payload = {}) {
-  const { model: order } = options;
-  const changes = checkPayload(
-    "refundReceipt",
-    options,
-    payload,
-    refundPayment.name
-  );
-  return order.update(changes);
+export async function refundPayment(order) {
+  order.refundPayment((options, payload) => {
+    const changes = checkPayload(
+      "refundReceipt",
+      options,
+      payload,
+      refundPayment.name
+    );
+    return order.update(changes);
+  });
 }
 
 /**
@@ -342,21 +343,19 @@ async function getCustomerOrder(order) {
     }
 
     // Add customer data to the order
-    const decrypted = customer.decrypt();
-    const updated = await order.update({
-      creditCardNumber: decrypted.creditCardNumber,
-      shippingAddress: decrypted.shippingAddress,
-      billingAddress: decrypted.billingAddress,
-      email: decrypted.email,
-      lastName: decrypted.lastName,
-      firstName: customer.firstName,
-    });
-    return updated;
+    const custInfo = { ...customer.decrypt(), firstName: customer.firstName };
+    const update = await order.update(custInfo);
+
+    console.info("update order with data from existing customer", custInfo);
+    return update;
   }
-  // Save the info as a new customer
+
+  // Create a new customer from the shipping details
   if (order.saveShippingDetails) {
-    const customer = await order.customer({ ...order, ...order.decrypt() });
-    console.info("customer created", customer);
+    const custInfo = { ...order.decrypt(), firstName: order.firstName };
+    const customer = await order.customer(custInfo);
+
+    console.info("create new customer with data from order", customer);
     return order;
   }
 

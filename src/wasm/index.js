@@ -1,1 +1,2 @@
-import { factorial } from "./math";
+export * from "cpp-demo.wasm";
+export * from "cpp-demo.js";

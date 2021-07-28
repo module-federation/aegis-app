@@ -31,7 +31,6 @@ server.on("connection", function (client) {
         return;
       }
       const msg = JSON.parse(message.toString());
-      console.log("msg", msg);
       if (msg === "webswitch") {
         console.log("client initialized");
         client.webswitchInit = true;
