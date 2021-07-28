@@ -1,5 +1,5 @@
-exports.id = 357;
-exports.ids = [357];
+exports.id = 254;
+exports.ids = [254];
 exports.modules = {
 
 /***/ "./src/wasm/demo.js":
@@ -3077,29 +3077,8 @@ if (( false ? 0 : _typeof(exports)) === 'object' && ( false ? 0 : _typeof(module
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));else {}
 
-/***/ }),
-
-/***/ "./src/wasm/index.js":
-/*!***************************!*\
-  !*** ./src/wasm/index.js ***!
-  \***************************/
-/*! namespace exports */
-/*! export default [not provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [maybe provided (runtime-defined)] [no usage info] -> ./src/wasm/demo.js */
-/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_exports__, __webpack_require__.d, __webpack_require__.r, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _demo_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./demo.js */ "./src/wasm/demo.js");
-/* harmony import */ var _demo_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_demo_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ var __WEBPACK_REEXPORT_OBJECT__ = {};
-/* harmony reexport (unknown) */ for(const __WEBPACK_IMPORT_KEY__ in _demo_js__WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== "default") __WEBPACK_REEXPORT_OBJECT__[__WEBPACK_IMPORT_KEY__] = () => _demo_js__WEBPACK_IMPORTED_MODULE_0__[__WEBPACK_IMPORT_KEY__]
-/* harmony reexport (unknown) */ __webpack_require__.d(__webpack_exports__, __WEBPACK_REEXPORT_OBJECT__);
-
-
 /***/ })
 
 };
 ;
-//# sourceMappingURL=357.js.map
+//# sourceMappingURL=254.js.map
