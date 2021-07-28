@@ -315,6 +315,7 @@ export async function paymentAuthorized(options = {}, payload = {}) {
  * @returns
  */
 export async function refundPayment(order) {
+  // call port by same name.
   order.refundPayment((options, payload) => {
     const changes = checkPayload(
       "refundReceipt",
@@ -322,7 +323,7 @@ export async function refundPayment(order) {
       payload,
       refundPayment.name
     );
-    return order.update(changes);
+    return order.update({ ...changes, orderStatus: OrderStatus.CANCELED });
   });
 }
 
