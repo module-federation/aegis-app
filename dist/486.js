@@ -1509,9 +1509,12 @@ function _refundPayment() {
       while (1) {
         switch (_context12.prev = _context12.next) {
           case 0:
+            // call port by same name.
             order.refundPayment(function (options, payload) {
               var changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)("refundReceipt", options, payload, refundPayment.name);
-              return order.update(changes);
+              return order.update(_objectSpread(_objectSpread({}, changes), {}, {
+                orderStatus: OrderStatus.CANCELED
+              }));
             });
 
           case 1:
