@@ -7,7 +7,7 @@ import {
   requireProperties,
 } from "../models/mixins";
 import { makeCustomerFactory, okToDelete } from "../models/customer";
-import { DataSourceAdapterMongoDb } from "../datasources/datasource-mongodb";
+import { DataSourceAdapterMongoDb } from "../adapters/datasources/datasource-mongodb";
 import { nanoid } from "nanoid";
 
 /**

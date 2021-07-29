@@ -1,5 +1,13 @@
 "use strict";
 
+function getSecret() {
+  return process.env.MONGODB_CREDS || { user: null, pass: null, token: null };
+}
+
+function archive(id) {
+  console.debug("mock archive", id);
+}
+
 /**
  * Datasource adapter factory.
  * @param {string} url database url
@@ -17,13 +25,22 @@ export const DataSourceAdapterMongoDb = function (
    * The cache is always updated first, which allows the system to run
    * even when the database is offline.
    */
-  class DataSourceMongoDbCustom extends DataSourceMongoDb {
+  class DataSourceMongoDbArchive extends DataSourceMongoDb {
     constructor(datasource, factory, name) {
       super(datasource, factory, name);
       this.url = url;
       this.cacheSize = cacheSize;
+      this.creds = getSecret();
+    }
+
+    /**
+     * @override
+     */
+    delete(id) {
+      console.debug("archive", id);
+      archive(id);
     }
   }
 
-  return DataSourceMongoDbCustom;
+  return DataSourceMongoDbArchive;
 };
