@@ -1,8 +1,6 @@
 var path = require("path");
-const ModuleFederationPlugin =
-  require("webpack").container.ModuleFederationPlugin;
+const { ModuleFederationPlugin } = require("webpack").container;
 const httpNode = require("./webpack/http-node");
-const NodemonPlugin = require("nodemon-webpack-plugin");
 
 var serverConfig = {
   target: httpNode,
@@ -47,7 +45,6 @@ var serverConfig = {
     ],
   },
   plugins: [
-    new NodemonPlugin(),
     new ModuleFederationPlugin({
       name: "microservices",
       library: { type: "commonjs-module" },
@@ -59,7 +56,7 @@ var serverConfig = {
         "./validations": "./src/models/mixins",
         "./event-bus": "./src/services/event-bus",
         "./webswitch": "./src/services/webswitch",
-        "./wasm": "./src/wasm/demo.js",
+        "./wasm": "./src/wasm",
       },
       shared: {
         axios: {

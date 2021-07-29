@@ -46,7 +46,7 @@ export const Order = {
   datasource: {
     factory: DataSourceAdapterMongoDb,
     url: "mongodb://localhost:27017",
-    cacheSize: 2000,
+    cacheSize: 4000,
     baseClass: "DataSourceMongoDb",
   },
   dependencies: { uuid: () => nanoid(8) },

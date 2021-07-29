@@ -182,7 +182,7 @@
  */
 
 import GlobalMixins from "./mixins";
-import makeAdapters from "./make-adapters";
+import makeAdapters from "./bind-adapters";
 
 // Service dependencies
 import * as services from "../services-mock";
