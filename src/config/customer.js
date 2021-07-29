@@ -5,13 +5,13 @@ import {
   freezeProperties,
   validateProperties,
   requireProperties,
-} from "../models/mixins";
-import { makeCustomerFactory, okToDelete } from "../models/customer";
+} from "../domain/mixins";
+import { makeCustomerFactory, okToDelete } from "../domain/customer";
 import { DataSourceAdapterMongoDb } from "../adapters/datasources/datasource-mongodb";
 import { nanoid } from "nanoid";
 
 /**
- * @type {import('../models/index').ModelSpecification}
+ * @type {import('../domain/index').ModelSpecification}
  */
 export const Customer = {
   modelName: "customer",

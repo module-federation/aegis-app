@@ -94,9 +94,9 @@ export class OrderService {
 //   }
 
 //   async handleStatusChange(status) {
-//     require('../models/order').statusChangeValid(this.order, status);
+//     require('../domain/order').statusChangeValid(this.order, status);
 //     this.order.orderStatus = status;
-//     await require('../models/order').handleStatusChange(this.order);
+//     await require('../domain/order').handleStatusChange(this.order);
 //   }
 
 //   addOrderItem(itemId, price, qty = 1) {

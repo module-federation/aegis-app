@@ -18,7 +18,7 @@ import util from "util";
  */
 
 /**
- * @typedef {import("../models/index").Model} Model
+ * @typedef {import("../domain/index").Model} Model
  */
 
 /**

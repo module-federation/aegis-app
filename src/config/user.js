@@ -1,7 +1,7 @@
 "use strict";
 
-import { validateModel } from "../models/mixins";
-import { userFactory, userMixins } from "../models/user";
+import { validateModel } from "../domain/mixins";
+import { userFactory, userMixins } from "../domain/user";
 import { uuid } from "../lib/utils";
 
 /**

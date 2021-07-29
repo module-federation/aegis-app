@@ -16,7 +16,7 @@
  *  trackShipment:function(),
  *  verifyDelivery:function()
  * }} InventoryAdapter
- * @typedef {import('../models/order').Order} Order
+ * @typedef {import('../domain/order').Order} Order
  * @typedef {InventoryAdapter} service 
  * @typedef {{
  *  listen:function(topic,RegExp,eventCallback)

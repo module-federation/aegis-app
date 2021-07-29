@@ -33,7 +33,7 @@ import { async, encrypt } from "../lib/utils";
  * @property {function({key1:any,keyN:any}, boolean):Promise<Order>} update - update the order,
  * set the second arg to false to turn off validation.
  * @property {'PENDING'|'APPROVED'|'SHIPPING'|'CANCELED'|'COMPLETED'} orderStatus
- * @property {function(...args):Promise<import("../models/index").Model>} customer - retrieves related customer object,
+ * @property {function(...args):Promise<import("../domain/index").Model>} customer - retrieves related customer object,
  * or if args are provided, creates a new customer object, using the provided args as the input.
  * @property {function(string,Order):Promise} emit - broadcast domain event
  * @property {function():boolean} paymentAccepted - payment approved and funds reserved

@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @typedef {import('../models/order').Order} Order
+ * @typedef {import('../domain/order').Order} Order
  * @typedef
  * @callback adapterFactory
  * @param {service} service

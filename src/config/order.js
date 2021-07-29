@@ -23,7 +23,7 @@ import {
   requiredForApproval,
   approve,
   cancel,
-} from "../models/order";
+} from "../domain/order";
 
 import {
   requireProperties,
@@ -31,13 +31,13 @@ import {
   updateProperties,
   validateProperties,
   validateModel,
-} from "../models/mixins";
+} from "../domain/mixins";
 
 import { DataSourceAdapterMongoDb } from "../adapters/datasources/datasource-mongodb";
 import { nanoid } from "nanoid";
 
 /**
- * @type {import('../models/index').ModelSpecification}
+ * @type {import('../domain/index').ModelSpecification}
  */
 export const Order = {
   modelName: "order",
