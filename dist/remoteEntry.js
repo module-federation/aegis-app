@@ -31821,7 +31821,7 @@ var moduleMap = {
 		return Promise.all([__webpack_require__.e(777), __webpack_require__.e(579)]).then(() => () => (__webpack_require__(/*! ./src/services/webswitch */ "./src/services/webswitch.js")));
 	},
 	"./wasm": () => {
-		return __webpack_require__.e(357).then(() => () => (__webpack_require__(/*! ./src/wasm */ "./src/wasm/index.js")));
+		return __webpack_require__.e(254).then(() => () => (__webpack_require__(/*! ./src/wasm/demo.js */ "./src/wasm/demo.js")));
 	}
 };
 var get = (module) => {
