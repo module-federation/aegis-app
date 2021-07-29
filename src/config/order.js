@@ -33,7 +33,7 @@ import {
   validateModel,
 } from "../models/mixins";
 
-import { DataSourceAdapterMongoDb } from "../datasources/datasource-mongodb";
+import { DataSourceAdapterMongoDb } from "../adapters/datasources/datasource-mongodb";
 import { nanoid } from "nanoid";
 
 /**
@@ -154,13 +154,6 @@ export const Order = {
       producesEvent: "paymentAuthorized",
       undo: cancelPayment,
     },
-    // checkInventory: {
-    //   service: "Inventory",
-    //   type: "outbound",
-    //   consumesEvent: "paymentAuthorized",
-    //   producesEvent: "itemsAvailable",
-    //   undo: returnInventory,
-    // },
     pickOrder: {
       service: "Inventory",
       type: "outbound",
@@ -189,6 +182,17 @@ export const Order = {
           errorRate: 1,
           intervalMs: 1,
         },
+        portRetryFailed_order: {
+          callVolume: 2,
+          errorRate: 2,
+          intervalMs: 2,
+          fallbackFn: cancel,
+        },
+        default: {
+          callVolume: 3,
+          errorRate: 3,
+          intervalMs: 3,
+        },
       },
     },
     trackShipment: {
@@ -198,7 +202,7 @@ export const Order = {
       consumesEvent: "orderShipped",
       producesEvent: "orderDelivered",
       circuitBreaker: {
-        portTimeout_trackShipment_order: {
+        portRetryFailed_order: {
           callVolume: 1,
           errorRate: 1,
           intervalMs: 1,
