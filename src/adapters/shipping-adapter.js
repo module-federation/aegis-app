@@ -17,7 +17,7 @@
  */
 
 /**
- * @typedef {import('../models/order').Order} Order
+ * @typedef {import('../domain/order').Order} Order
  */
 
 /**

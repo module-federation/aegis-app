@@ -50,13 +50,10 @@ var serverConfig = {
       library: { type: "commonjs-module" },
       filename: "remoteEntry.js",
       exposes: {
-        "./models": "./src/models",
+        "./domain": "./src/domain",
         "./adapters": "./src/adapters",
         "./services": "./src/services",
-        "./validations": "./src/models/mixins",
         "./event-bus": "./src/services/event-bus",
-        "./webswitch": "./src/services/webswitch",
-        "./wasm": "./src/wasm",
       },
       shared: {
         axios: {

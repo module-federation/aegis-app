@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @typedef {import('../models').Model} Model
+ * @typedef {import('../domain').Model} Model
  * @typedef {string} serviceName
  *
  * @typedef {Object} EventMessage
@@ -82,7 +82,7 @@ function filterMatches(message) {
  *  topic:topic,
  *  filter:string|RegExp,
  *  once:boolean,
- *  model:import("../models").Model
+ *  model:import("../domain").Model
  * }} options
  */
 const Subscription = function ({ id, callback, topic, filters, once, model }) {

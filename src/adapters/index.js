@@ -7,6 +7,6 @@ export * from "./event-adapter";
 export * from "./inventory-adapter";
 
 /**
- * @typedef {import('../models').Model} Model
+ * @typedef {import('../domain').Model} Model
  * @typedef {function(function(eventCallback):Promise<Model>)} adapterFunction
  */

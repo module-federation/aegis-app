@@ -19,7 +19,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 
 /**
- * @typedef {import('../models/order').Order} Order
+ * @typedef {import('../domain/order').Order} Order
  * @typedef {string} address
  * @callback adapterFactory
  * @param {service} service
@@ -118,7 +118,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _services_event_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../services/event-service */ "./src/services/event-service.js");
 
 /**
- * @typedef {import('../models').Model} Model
+ * @typedef {import('../domain').Model} Model
  * @typedef {string} serviceName
  *
  * @typedef {Object} EventMessage
@@ -228,7 +228,7 @@ function filterMatches(message) {
  *  topic:topic,
  *  filter:string|RegExp,
  *  once:boolean,
- *  model:import("../models").Model
+ *  model:import("../domain").Model
  * }} options
  */
 
@@ -497,7 +497,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
- * @typedef {import('../models').Model} Model
+ * @typedef {import('../domain').Model} Model
  * @typedef {function(function(eventCallback):Promise<Model>)} adapterFunction
  */
 
@@ -535,7 +535,7 @@ __webpack_require__.r(__webpack_exports__);
  *  trackShipment:function(),
  *  verifyDelivery:function()
  * }} InventoryAdapter
- * @typedef {import('../models/order').Order} Order
+ * @typedef {import('../domain/order').Order} Order
  * @typedef {InventoryAdapter} service 
  * @typedef {{
  *  listen:function(topic,RegExp,eventCallback)
@@ -677,7 +677,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 
 /**
- * @typedef {import('../models/order').Order} Order
+ * @typedef {import('../domain/order').Order} Order
  * @typedef
  * @callback adapterFactory
  * @param {service} service
@@ -857,7 +857,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 /**
- * @typedef {import('../models/order').Order} Order
+ * @typedef {import('../domain/order').Order} Order
  */
 
 /**

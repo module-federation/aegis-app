@@ -5,7 +5,7 @@ import { userFactory, userMixins } from "../domain/user";
 import { uuid } from "../lib/utils";
 
 /**
- * @type {import('../models').ModelSpecification}
+ * @type {import('../domain').ModelSpecification}
  */
 export const User = {
   modelName: "user",

@@ -115,7 +115,7 @@ export class OrderService {
 
 //   async createOrder() {
 //     if (this.local) {
-//       const Order = require('../models').Order;
+//       const Order = require('../domain').Order;
 //       console.log(Order.dependencies);
 //       const createOrder = Order.factory(Order.dependencies);
 //       this.order = await createOrder(this.orderInfo)

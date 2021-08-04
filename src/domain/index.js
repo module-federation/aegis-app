@@ -155,7 +155,7 @@
  */
 
 /**
- * @typedef {Object} ModelSpecification Specify model data and behavior
+ * @typedef {Object} ModelSpecification Specify domain model info and action
  * @property {string} modelName name of model (case-insenstive)
  * @property {string} endpoint URI reference (e.g. plural of `modelName`)
  * @property {function(...args): any} factory factory function that creates the model
@@ -182,13 +182,13 @@
  */
 
 import GlobalMixins from "./mixins";
-import makeAdapters from "./bind-adapters";
+import bindAdapters from "./bind-adapters";
 
 // Service dependencies
-import * as services from "../services-mock";
+import * as services from "../services/mock";
 import * as adapters from "../adapters";
 
-// Models
+// Model properties
 import * as modelSpecs from "../config";
 
 const requiredProps = ["modelName", "endpoint", "factory"];
@@ -215,7 +215,7 @@ function makeModel(spec) {
     mixins: mixins.concat(GlobalMixins),
     dependencies: {
       ...dependencies,
-      ...makeAdapters(spec.ports, adapters, services),
+      ...bindAdapters(spec.ports, adapters, services),
     },
   };
 }
