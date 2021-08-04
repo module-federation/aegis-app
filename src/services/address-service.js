@@ -1,6 +1,6 @@
 "use strict";
 
-const uuid = require("../lib/utils").uuid;
+const uuid = require("../domain/utils").uuid;
 const SmartyStreetsSDK = require("smartystreets-javascript-sdk");
 
 const SmartyStreetsCore = SmartyStreetsSDK.core;

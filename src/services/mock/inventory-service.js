@@ -1,6 +1,6 @@
 "use strict";
 
-import { Event } from "../services/event-service";
+import { Event } from "../../services/event-service";
 
 function sendEvent({ eventData, eventName }) {
   setTimeout(async () => {

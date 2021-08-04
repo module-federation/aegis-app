@@ -2,7 +2,7 @@
 
 import { prevmodel } from "./mixins";
 import checkPayload from "./check-payload";
-import { async, encrypt } from "../lib/utils";
+import { async, encrypt } from "../domain/utils";
 
 /** @typedef {string|RegExp} topic*/
 /** @typedef {function(string)} eventCallback*/

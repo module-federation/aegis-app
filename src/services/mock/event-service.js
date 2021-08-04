@@ -1,7 +1,7 @@
 "use strict";
 
-import { EventDispatcher } from "../event-dispatcher";
-import { Registry } from "../service-registry";
+import { EventDispatcher } from "../../event-dispatcher";
+import { Registry } from "../../service-registry";
 
 const shippingChannel = "shippingChannel";
 const inventoryChannel = "inventoryChannel";

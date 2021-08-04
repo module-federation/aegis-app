@@ -1,7 +1,7 @@
 "use strict";
 
 import { EventDispatcher } from "./event-dispatcher";
-import { uuid } from "./lib/utils";
+import { uuid } from "./domain/utils";
 
 export const Registry = {
   eventNames: {

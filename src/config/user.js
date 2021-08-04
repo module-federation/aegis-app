@@ -2,7 +2,7 @@
 
 import { validateModel } from "../domain/mixins";
 import { userFactory, userMixins } from "../domain/user";
-import { uuid } from "../lib/utils";
+import { uuid } from "../domain/utils";
 
 /**
  * @type {import('../domain').ModelSpecification}

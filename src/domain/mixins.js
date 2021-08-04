@@ -1,6 +1,6 @@
 "use strict";
 
-import { hash, encrypt, decrypt, compose } from "../lib/utils";
+import { hash, encrypt, decrypt, compose } from "../domain/utils";
 import util from "util";
 
 /**
@@ -296,64 +296,68 @@ function parseKeys(o, ...propKeys) {
  * Names (or functions that return names) of properties to encrypt
  * @returns {functionalMixin} mixin function
  */
-export const encryptProperties = (...propKeys) => o => {
-  const keys = parseKeys(o, ...propKeys);
+export const encryptProperties =
+  (...propKeys) =>
+  o => {
+    const keys = parseKeys(o, ...propKeys);
 
-  const encryptProps = obj => {
-    return keys
-      .map(key => (obj[key] ? { [key]: encrypt(obj[key]) } : {}))
-      .reduce((p, c) => ({ ...p, ...c }));
-  };
-
-  return {
-    encryptProperties() {
-      return encryptProps(this);
-    },
-
-    ...addValidation({
-      model: o,
-      name: encryptProperties.name,
-      input: enableValidation.onUpdate,
-      output: enableValidation.onCreate,
-      order: 99,
-    }),
-
-    decrypt() {
+    const encryptProps = obj => {
       return keys
-        .map(key => (this[key] ? { [key]: decrypt(this[key]) } : {}))
+        .map(key => (obj[key] ? { [key]: encrypt(obj[key]) } : {}))
         .reduce((p, c) => ({ ...p, ...c }));
-    },
+    };
+
+    return {
+      encryptProperties() {
+        return encryptProps(this);
+      },
+
+      ...addValidation({
+        model: o,
+        name: encryptProperties.name,
+        input: enableValidation.onUpdate,
+        output: enableValidation.onCreate,
+        order: 99,
+      }),
+
+      decrypt() {
+        return keys
+          .map(key => (this[key] ? { [key]: decrypt(this[key]) } : {}))
+          .reduce((p, c) => ({ ...p, ...c }));
+      },
+    };
   };
-};
 
 /**
  * Prevent properties from being modified.
  * Accepts a property name or a function that returns a property name.
  * @param  {Array<string | function(*):string | RegExp>} propKeys - names of properties to freeze
  */
-export const freezeProperties = (...propKeys) => o => {
-  const preventUpdates = obj => {
-    const keys = parseKeys(obj, ...propKeys);
+export const freezeProperties =
+  (...propKeys) =>
+  o => {
+    const preventUpdates = obj => {
+      const keys = parseKeys(obj, ...propKeys);
 
-    const sideEffects = Object.keys(obj).filter(key => keys.includes(key));
-    if (sideEffects?.length > 0) {
-      throw new Error(`cannot update readonly properties: ${sideEffects}`);
-    }
+      const sideEffects = Object.keys(obj).filter(key => keys.includes(key));
+      if (sideEffects?.length > 0) {
+        throw new Error(`cannot update readonly properties: ${sideEffects}`);
+      }
+    };
+
+    return {
+      freezeProperties() {
+        preventUpdates(this);
+      },
+
+      ...addValidation({
+        model: o,
+        name: freezeProperties.name,
+        input: enableValidation.onUpdate,
+        order: 20,
+      }),
+    };
   };
-
-  return {
-    freezeProperties() {
-      preventUpdates(this);
-    },
-
-    ...addValidation({
-      model: o,
-      name: freezeProperties.name,
-      input: enableValidation.onUpdate,
-      order: 20,
-    }),
-  };
-};
 
 /**
  * Enforce required fields.
@@ -361,57 +365,61 @@ export const freezeProperties = (...propKeys) => o => {
  * required property key names - can be a function or regex
  * that returns the property key names
  */
-export const requireProperties = (...propKeys) => o => {
-  const keys = parseKeys(o, ...propKeys);
+export const requireProperties =
+  (...propKeys) =>
+  o => {
+    const keys = parseKeys(o, ...propKeys);
 
-  function requireProps(obj) {
-    const missing = keys.filter(key => key && !obj[key]);
-    if (missing?.length > 0) {
-      throw new Error(`missing required properties: ${missing}`);
+    function requireProps(obj) {
+      const missing = keys.filter(key => key && !obj[key]);
+      if (missing?.length > 0) {
+        throw new Error(`missing required properties: ${missing}`);
+      }
     }
-  }
-  return {
-    requireProperties() {
-      requireProps(this);
-    },
+    return {
+      requireProperties() {
+        requireProps(this);
+      },
 
-    ...addValidation({
-      model: o,
-      name: requireProperties.name,
-      output: enableValidation.onCreateAndUpdate,
-      order: 75,
-    }),
+      ...addValidation({
+        model: o,
+        name: requireProperties.name,
+        output: enableValidation.onCreateAndUpdate,
+        order: 75,
+      }),
+    };
   };
-};
 
 /**
  * Hash passwords.
  * @param {*} hash hash algorithm
  * @param  {Array<string | function(*):string | RegExp>} propKeys name of password props
  */
-export const hashPasswords = (...propKeys) => o => {
-  const keys = parseKeys(o, ...propKeys);
+export const hashPasswords =
+  (...propKeys) =>
+  o => {
+    const keys = parseKeys(o, ...propKeys);
 
-  function hashPwds(obj) {
-    return keys
-      .map(key => (obj[key] ? { [key]: hash(obj[key]) } : {}))
-      .reduce((p, c) => ({ ...p, ...c }));
-  }
+    function hashPwds(obj) {
+      return keys
+        .map(key => (obj[key] ? { [key]: hash(obj[key]) } : {}))
+        .reduce((p, c) => ({ ...p, ...c }));
+    }
 
-  return {
-    hashPasswords() {
-      return hashPwds(this);
-    },
+    return {
+      hashPasswords() {
+        return hashPwds(this);
+      },
 
-    ...addValidation({
-      model: o,
-      name: hashPasswords.name,
-      input: enableValidation.onUpdate,
-      output: enableValidation.onCreate,
-      order: 80,
-    }),
+      ...addValidation({
+        model: o,
+        name: hashPasswords.name,
+        input: enableValidation.onUpdate,
+        output: enableValidation.onCreate,
+        order: 80,
+      }),
+    };
   };
-};
 
 const internalPropList = [];
 
@@ -419,41 +427,48 @@ const internalPropList = [];
  * Reject unknown properties in user input. Allow only approved keys.
  * @param  {...any} propKeys
  */
-export const allowProperties = (...propKeys) => o => {
-  function rejectUnknownProps() {
-    const keys = parseKeys(o, ...propKeys);
+export const allowProperties =
+  (...propKeys) =>
+  o => {
+    function rejectUnknownProps() {
+      const keys = parseKeys(o, ...propKeys);
 
-    const allowList = keys.concat(internalPropList);
-    const unknownProps = Object.keys(o).filter(key => !allowList.includes(key));
+      const allowList = keys.concat(internalPropList);
+      const unknownProps = Object.keys(o).filter(
+        key => !allowList.includes(key)
+      );
 
-    if (unknownProps?.length > 0) {
-      throw new Error(`invalid properties: ${unknownProps}`);
+      if (unknownProps?.length > 0) {
+        throw new Error(`invalid properties: ${unknownProps}`);
+      }
     }
-  }
 
-  return {
-    rejectUnknownProperties() {
-      return rejectUnknownProps(this);
-    },
+    return {
+      rejectUnknownProperties() {
+        return rejectUnknownProps(this);
+      },
 
-    ...addValidation({
-      model: o,
-      name: "rejectUnknownProperties",
-      input: enableValidation.onUpdate,
-      order: 15,
-    }),
+      ...addValidation({
+        model: o,
+        name: "rejectUnknownProperties",
+        input: enableValidation.onUpdate,
+        order: 15,
+      }),
+    };
   };
-};
 
 /**
  * Test regular expressions
  */
 export const RegEx = {
   email: /^(.+)@(.+){2,}\.(.+){2,}$/,
-  ipv4Address: /^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])$/,
-  ipv6Address: /^((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*::((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*|((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4})){7}$/,
+  ipv4Address:
+    /^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])$/,
+  ipv6Address:
+    /^((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*::((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*|((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4})){7}$/,
   phone: /^[1-9]\d{2}-\d{3}-\d{4}/,
-  creditCard: /^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/,
+  creditCard:
+    /^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/,
   ssn: /^(?!666|000|9\\d{2})\\d{3}-(?!00)\\d{2}-(?!0{4})\\d{4}$/,
   /**
    * Allow caller to pass a keyword that refers to one of the regex above
@@ -613,22 +628,24 @@ export const updateProperties = updaters => o => {
  * @param {boolean} onUpdate - invoke on update
  * @param  {...any} args - pass arguments
  */
-export const invokePort = (fn, onCreate, onUpdate, ...args) => async o => {
-  return {
-    ...o,
-    invokePort() {
-      console.log({ func: "invokePort", fn, args });
-      return this[fn](...args).then(o => o);
-    },
+export const invokePort =
+  (fn, onCreate, onUpdate, ...args) =>
+  async o => {
+    return {
+      ...o,
+      invokePort() {
+        console.log({ func: "invokePort", fn, args });
+        return this[fn](...args).then(o => o);
+      },
 
-    ...addValidation({
-      model: o,
-      name: "invokePort",
-      output: enableValidation.onUpdate,
-      order: 85,
-    }),
+      ...addValidation({
+        model: o,
+        name: "invokePort",
+        output: enableValidation.onUpdate,
+        order: 85,
+      }),
+    };
   };
-};
 
 /**
  * Set a validation that calls a model method or provided function.
@@ -639,39 +656,43 @@ export const invokePort = (fn, onCreate, onUpdate, ...args) => async o => {
  * @param  {...any} args - pass arguments to the method/function
  * @return {Model}
  */
-export const execMethod = (fn, onCreate, onUpdate, ...args) => async o => {
-  const functionType = {
-    function: (fn, obj, ...args) => fn(obj, ...args).then(o => o),
-    string: (fn, obj, ...args) => obj[fn](...args).then(o => o),
-  };
+export const execMethod =
+  (fn, onCreate, onUpdate, ...args) =>
+  async o => {
+    const functionType = {
+      function: (fn, obj, ...args) => fn(obj, ...args).then(o => o),
+      string: (fn, obj, ...args) => obj[fn](...args).then(o => o),
+    };
 
-  return {
-    ...o,
-    async execMethod() {
-      const model = await functionType[typeof fn](fn, this, ...args);
-      return model;
-    },
+    return {
+      ...o,
+      async execMethod() {
+        const model = await functionType[typeof fn](fn, this, ...args);
+        return model;
+      },
 
-    ...addValidation({
-      model: o,
-      name: "execMethod",
-      output: enableValidation.onUpdate,
-      order: 40,
-    }),
+      ...addValidation({
+        model: o,
+        name: "execMethod",
+        output: enableValidation.onUpdate,
+        order: 40,
+      }),
+    };
   };
-};
 
 /**
  * Create a method on a model.
  * @param {*} fn
  * @param  {...any} args
  */
-export const createMethod = (fn, ...args) => o => {
-  return {
-    ...o,
-    [fn.name]: () => fn(...args),
+export const createMethod =
+  (fn, ...args) =>
+  o => {
+    return {
+      ...o,
+      [fn.name]: () => fn(...args),
+    };
   };
-};
 
 /**
  * Check the value of the property before returning its key.
