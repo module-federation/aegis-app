@@ -54,6 +54,7 @@ var serverConfig = {
         "./adapters": "./src/adapters",
         "./services": "./src/services",
         "./event-bus": "./src/services/event-bus",
+        "./wasm": "./src/assemblyscript",
       },
       shared: {
         axios: {
