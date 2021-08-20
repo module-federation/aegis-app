@@ -38,7 +38,7 @@ var serverConfig = {
       library: { type: "commonjs-module" },
       filename: "remoteEntry.js",
       exposes: {
-        "./model-cache": "./src/models",
+        "./model-cache": "./src/domain",
         "./adapter-cache": "./src/adapters",
         "./service-cache": "./src/services",
         "./event-bus": "./src/services/event-bus",
