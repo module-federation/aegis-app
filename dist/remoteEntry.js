@@ -31792,7 +31792,7 @@ module.exports = (batch, sender, Result, keyTranslationFormat) => {
 
 "use strict";
 var moduleMap = {
-	"./domain": () => {
+	"./models": () => {
 		return Promise.all([__webpack_require__.e(610), __webpack_require__.e(583)]).then(() => () => (__webpack_require__(/*! ./src/domain */ "./src/domain/index.js")));
 	},
 	"./adapters": () => {

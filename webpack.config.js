@@ -50,7 +50,7 @@ var serverConfig = {
       library: { type: "commonjs-module" },
       filename: "remoteEntry.js",
       exposes: {
-        "./domain": "./src/domain",
+        "./models": "./src/domain",
         "./adapters": "./src/adapters",
         "./services": "./src/services",
         "./event-bus": "./src/services/event-bus",
