@@ -8,7 +8,7 @@ var serverConfig = {
   output: {
     path: path.resolve(__dirname, "dist"),
     publicPath:
-      "https://api.github.com?owner=module-federation&repo=microlib-example&filedir=dist&branch=master",
+      "https://api.github.com?owner=module-federation&repo=microlib-example&filedir=dist&branch=cache",
     libraryTarget: "commonjs",
   },
   devtool: "source-map",
@@ -50,9 +50,9 @@ var serverConfig = {
       library: { type: "commonjs-module" },
       filename: "remoteEntry.js",
       exposes: {
-        "./models": "./src/domain",
-        "./adapters": "./src/adapters",
-        "./services": "./src/services",
+        "./model-cache": "./src/domain",
+        "./adapter-cache": "./src/adapters",
+        "./service-cache": "./src/services",
         "./event-bus": "./src/services/event-bus",
       },
       shared: {
