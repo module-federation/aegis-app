@@ -46,7 +46,7 @@ var serverConfig = {
   },
   plugins: [
     new ModuleFederationPlugin({
-      name: "microservices",
+      name: "distributed-cache",
       library: { type: "commonjs-module" },
       filename: "remoteEntry.js",
       exposes: {
