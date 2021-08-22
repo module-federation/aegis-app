@@ -9,7 +9,8 @@ var serverConfig = {
   entry: ["@babel/polyfill", path.resolve(__dirname, "src/index.js")],
   output: {
     path: path.resolve(__dirname, "dist"),
-    publicPath: "http://cache.aegis.dev:8060",
+    publicPath:
+      "https://api.github.com?owner=module-federation&repo=microlib-example&filedir=dist&branch=cache",
     libraryTarget: "commonjs",
   },
   devtool: "source-map",
