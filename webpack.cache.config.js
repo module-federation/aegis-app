@@ -3,7 +3,7 @@ const ModuleFederationPlugin =
   require("webpack").container.ModuleFederationPlugin;
 const httpNode = require("./webpack/http-node");
 const NodemonPlugin = require("nodemon-webpack-plugin");
-
+ 
 var serverConfig = {
   target: httpNode,
   entry: ["@babel/polyfill", path.resolve(__dirname, "src/index.js")],
@@ -16,7 +16,7 @@ var serverConfig = {
   devtool: "source-map",
   resolve: {
     extensions: [".js"],
-  },
+   },
   mode: "development",
   module: {
     rules: [
