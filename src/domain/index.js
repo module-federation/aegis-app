@@ -183,20 +183,16 @@
 
 import GlobalMixins from "./mixins";
 import bindAdapters from "./bind-adapters";
-
 // Service dependencies
-import * as services from "../services/mock";
+import * as services from "../../test/mock";
 import * as adapters from "../adapters";
-
 // Model properties
 import * as modelSpecs from "../config";
 
-const requiredProps = ["modelName", "endpoint", "factory"];
-
 function validateSpec(spec) {
-  const missing = requiredProps.filter(key => !spec[key]);
+  const missing = ["modelName", "endpoint", "factory"].filter(key => !spec[key]);
   if (missing?.length > 0) {
-    throw new Error(`missing properties: ${missing} > ${Object.entries(spec)}`);
+    throw new Error(`missing properties: ${missing}, spec: ${Object.entries(spec)}`);
   }
 }
 
@@ -206,10 +202,8 @@ function validateSpec(spec) {
  */
 function makeModel(spec) {
   validateSpec(spec);
-
   const mixins = spec.mixins || [];
   const dependencies = spec.dependencies || {};
-
   return {
     ...spec,
     mixins: mixins.concat(GlobalMixins),
