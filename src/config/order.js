@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 
 import {
   makeOrderFactory,
@@ -22,331 +22,281 @@ import {
   requiredForGuest,
   requiredForApproval,
   approve,
-  cancel,
-} from "../domain/order";
+  cancel
+} from '../domain/order'
 
 import {
   requireProperties,
   freezeProperties,
   updateProperties,
   validateProperties,
-  validateModel,
-} from "../domain/mixins";
+  validateModel
+} from '../domain/mixins'
 
-import { DataSourceAdapterMongoDb } from "../adapters/datasources/datasource-mongodb";
-import { nanoid } from "nanoid";
+import { DataSourceAdapterMongoDb } from '../adapters/datasources/datasource-mongodb'
+import { nanoid } from 'nanoid'
 
 /**
  * @type {import('../domain/index').ModelSpecification}
  */
 export const Order = {
-  modelName: "order",
-  endpoint: "orders",
+  modelName: 'order',
+  endpoint: 'orders',
   factory: makeOrderFactory,
-  // datasource: {
-  //   factory: DataSourceAdapterMongoDb,
-  //   //url: "mongodb://localhost:27017",
-  //   url: "mongodb://aegis.module-federation.org:27017",
-  //   cacheSize: 4000,
-  //   baseClass: "DataSourceMongoDb",
-  // },
+  datasource: {
+    factory: DataSourceAdapterMongoDb,
+    url: 'mongodb://localhost:27017',
+    //url: "mongodb://aegis.module-federation.org:27017",
+    cacheSize: 4000,
+    baseClass: 'DataSourceMongoDb'
+  },
   dependencies: { uuid: () => nanoid(8) },
   mixins: [
     requireProperties(
-      "orderItems",
+      'orderItems',
       requiredForGuest([
-        "lastName",
-        "firstName",
-        "billingAddress",
-        "shippingAddress",
-        "creditCardNumber",
-        "email",
+        'lastName',
+        'firstName',
+        'billingAddress',
+        'shippingAddress',
+        'creditCardNumber',
+        'email'
       ]),
-      requiredForApproval("paymentAuthorization"),
-      requiredForCompletion("proofOfDelivery")
+      requiredForApproval('paymentAuthorization'),
+      requiredForCompletion('proofOfDelivery')
     ),
     freezeProperties(
-      "orderNo",
-      "customerId",
+      'orderNo',
+      'customerId',
       freezeOnApproval([
-        "email",
-        "lastName",
-        "firstName",
-        "orderItems",
-        "orderTotal",
-        "billingAddress",
-        "shippingAddress",
-        "creditCardNumber",
-        "paymentAuthorization",
+        'email',
+        'lastName',
+        'firstName',
+        'orderItems',
+        'orderTotal',
+        'billingAddress',
+        'shippingAddress',
+        'creditCardNumber',
+        'paymentAuthorization'
       ]),
-      freezeOnCompletion("*")
+      freezeOnCompletion('*')
     ),
     updateProperties([
       {
-        propKey: "orderItems",
-        update: recalcTotal,
+        propKey: 'orderItems',
+        update: recalcTotal
       },
       {
-        propKey: "orderItems",
-        update: updateSignature,
-      },
+        propKey: 'orderItems',
+        update: updateSignature
+      }
     ]),
     validateProperties([
       {
-        propKey: "orderStatus",
+        propKey: 'orderStatus',
         values: Object.values(OrderStatus),
-        isValid: statusChangeValid,
+        isValid: statusChangeValid
       },
       {
-        propKey: "orderTotal",
+        propKey: 'orderTotal',
         maxnum: 99999.99,
-        isValid: orderTotalValid,
+        isValid: orderTotalValid
       },
       {
-        propKey: "email",
-        regex: "email",
+        propKey: 'email',
+        regex: 'email'
       },
       {
-        propKey: "creditCardNumber",
-        regex: "creditCard",
+        propKey: 'creditCardNumber',
+        regex: 'creditCard'
       },
       {
-        propKey: "phone",
-        regex: "phone",
-      },
-    ]),
+        propKey: 'phone',
+        regex: 'phone'
+      }
+    ])
   ],
   validate: validateModel,
   onDelete: readyToDelete,
   eventHandlers: [handleOrderEvent],
   ports: {
     listen: {
-      service: "Event",
-      type: "outbound",
-      timeout: 0,
+      service: 'Event',
+      type: 'outbound',
+      timeout: 0
     },
     notify: {
-      service: "Event",
-      type: "outbound",
-      timeout: 0,
+      service: 'Event',
+      type: 'outbound',
+      timeout: 0
     },
     save: {
-      service: "Persistence",
-      type: "outbound",
-      timeout: 0,
+      service: 'Persistence',
+      type: 'outbound',
+      timeout: 0
     },
     find: {
-      service: "Persistence",
-      type: "outbound",
-      timeout: 0,
+      service: 'Persistence',
+      type: 'outbound',
+      timeout: 0
     },
     validateAddress: {
-      service: "Address",
-      type: "outbound",
-      keys: "shippingAddress",
-      producesEvent: "addressValidated",
-      disabled: true,
+      service: 'Address',
+      type: 'outbound',
+      keys: 'shippingAddress',
+      producesEvent: 'addressValidated',
+      disabled: true
     },
     authorizePayment: {
-      service: "Payment",
-      type: "outbound",
-      keys: "paymentAuthorization",
-      consumesEvent: "startWorkflow",
-      producesEvent: "paymentAuthorized",
-      undo: cancelPayment,
+      service: 'Payment',
+      type: 'outbound',
+      keys: 'paymentAuthorization',
+      consumesEvent: 'startWorkflow',
+      producesEvent: 'paymentAuthorized',
+      undo: cancelPayment
     },
     pickOrder: {
-      service: "Inventory",
-      type: "outbound",
-      keys: "pickupAddress",
-      consumesEvent: "itemsAvailable",
-      producesEvent: "orderPicked",
+      service: 'Inventory',
+      type: 'outbound',
+      keys: 'pickupAddress',
+      consumesEvent: 'itemsAvailable',
+      producesEvent: 'orderPicked',
       undo: returnInventory,
       circuitBreaker: {
         portTimeout_pickOrder_order: {
           callVolume: 1,
           errorRate: 1,
-          intervalMs: 1,
-        },
-      },
+          intervalMs: 1
+        }
+      }
     },
     shipOrder: {
-      service: "Shipping",
-      type: "outbound",
+      service: 'Shipping',
+      type: 'outbound',
       callback: orderShipped,
-      consumesEvent: "orderPicked",
-      producesEvent: "orderShipped",
+      consumesEvent: 'orderPicked',
+      producesEvent: 'orderShipped',
       undo: returnShipment,
       circuitBreaker: {
         portTimeout_shipOrder_order: {
           callVolume: 1,
           errorRate: 1,
-          intervalMs: 1,
+          intervalMs: 1
         },
         portRetryFailed_order: {
           callVolume: 2,
           errorRate: 2,
           intervalMs: 2,
-          fallbackFn: cancel,
+          fallbackFn: cancel
         },
         default: {
           callVolume: 3,
           errorRate: 3,
-          intervalMs: 3,
-        },
-      },
+          intervalMs: 3
+        }
+      }
     },
     trackShipment: {
-      service: "Shipping",
-      type: "outbound",
-      keys: ["trackingStatus", "trackingId"],
-      consumesEvent: "orderShipped",
-      producesEvent: "orderDelivered",
+      service: 'Shipping',
+      type: 'outbound',
+      keys: ['trackingStatus', 'trackingId'],
+      consumesEvent: 'orderShipped',
+      producesEvent: 'orderDelivered',
       circuitBreaker: {
         portRetryFailed_order: {
           callVolume: 1,
           errorRate: 1,
-          intervalMs: 1,
-        },
-      },
+          intervalMs: 1
+        }
+      }
     },
     verifyDelivery: {
-      service: "Shipping",
-      type: "outbound",
-      keys: "proofOfDelivery",
-      consumesEvent: "orderDelivered",
-      producesEvent: "deliveryVerified",
+      service: 'Shipping',
+      type: 'outbound',
+      keys: 'proofOfDelivery',
+      consumesEvent: 'orderDelivered',
+      producesEvent: 'deliveryVerified',
       undo: returnDelivery,
       circuitBreaker: {
         portTimeout_verifyDelivery_order: {
           callVolume: 1,
           errorRate: 1,
-          intervalMs: 1,
-        },
-      },
+          intervalMs: 1
+        }
+      }
     },
     completePayment: {
-      service: "Payment",
-      type: "outbound",
+      service: 'Payment',
+      type: 'outbound',
       callback: paymentCompleted,
-      consumesEvent: "deliveryVerified",
-      producesEvent: "workflowComplete",
+      consumesEvent: 'deliveryVerified',
+      producesEvent: 'workflowComplete',
       undo: refundPayment,
       circuitBreaker: {
         portTimeout_completePayment_order: {
           callVolume: 1,
           errorRate: 1,
-          intervalMs: 1,
-        },
-      },
+          intervalMs: 1
+        }
+      }
     },
     cancelShipment: {
-      service: "Shipping",
-      type: "outbound",
+      service: 'Shipping',
+      type: 'outbound'
     },
     refundPayment: {
-      service: "Payment",
-      type: "outbound",
-    },
-    oauthCallback: {
-      type: "inbound",
-      adapter: "endpoints.oauthCallback",
-      keys: ["nonce"],
-      producesEvent: "refreshToken",
-    },
-    refreshToken: {
-      type: "outbound",
-      service: "oauth",
-      settings: {
-        urls: [
-          "facebook.com/oauth",
-          "oauth.google.com",
-          "indentity.service.com/oauth",
-        ],
-      },
-      consumesEvent: "refreshToken",
-      producesEvent: "tokenRefreshed",
-    },
-  },
-  endpoints: {
-    oauthCallback: {
-      uri: "oauth-callback",
-      callback: (order, payload) => order.refreshToken(payload.nonce),
-    },
+      service: 'Payment',
+      type: 'outbound'
+    }
   },
   relations: {
     customer: {
-      modelName: "customer",
-      foreignKey: "customerId",
-      type: "manyToOne",
-      desc: "Many orders per customer, just one customer per order",
+      modelName: 'customer',
+      foreignKey: 'customerId',
+      type: 'manyToOne',
+      desc: 'Many orders per customer, just one customer per order'
     },
     product: {
-      modelName: "product",
-      foreignKey: "productId",
-      type: "manyToOne",
-    },
+      modelName: 'product',
+      foreignKey: 'productId',
+      type: 'manyToOne'
+    }
   },
   commands: {
     decrypt: {
-      command: "decrypt",
-      acl: ["read", "decrypt"],
+      command: 'decrypt',
+      acl: ['read', 'decrypt']
     },
     approve: {
       command: approve,
-      acl: ["write", "approve"],
+      acl: ['write', 'approve']
     },
     cancel: {
       command: cancel,
-      acl: ["write", "cancel"],
-    },
-  },
-  accessControlList: {
-    admin: {
-      allow: ["read", "delete", "decrypt"],
-      type: "role",
-    },
-    owner: {
-      allow: "*",
-      deny: "delete",
-      type: "role",
-    },
-    delegate: {
-      allow: delegator => [...delegator.permissions],
-      deny: "delete",
-      type: "role",
-    },
-    approver: {
-      allow: "approve",
-      type: "role",
-    },
-    orders: {
-      allow: "read",
-      type: "relation",
-      desc: "Allow customer model to see orders",
-    },
+      acl: ['write', 'cancel']
+    }
   },
   serializers: [
     {
-      on: "deserialize",
-      key: "creditCardNumber",
-      type: "string",
+      on: 'deserialize',
+      key: 'creditCardNumber',
+      type: 'string',
       value: (key, value) => decrypt(value),
-      enabled: false,
+      enabled: false
     },
     {
-      on: "deserialize",
-      key: "shippingAddress",
-      type: "string",
+      on: 'deserialize',
+      key: 'shippingAddress',
+      type: 'string',
       value: (key, value) => decrypt(value),
-      enabled: false,
+      enabled: false
     },
     {
-      on: "deserialize",
-      key: "billingAddress",
-      type: "string",
+      on: 'deserialize',
+      key: 'billingAddress',
+      type: 'string',
       value: (key, value) => decrypt(value),
-      enabled: false,
-    },
-  ],
-};
+      enabled: false
+    }
+  ]
+}
