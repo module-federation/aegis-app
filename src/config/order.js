@@ -242,23 +242,25 @@ export const Order = {
           .getDeploymentService('MLops')
           .startDeployment(callback, model, trainingDataLoc),
       consumesEvent: 'mlDeploymentRequested',
-      producesEvent: 'mlDeploymentProcessed',
+      producesEvent: 'mlDeploymentVerified',
       internal: true // no 3rd party comms, handled by appmesh
     },
-    mlVerifyDeployment: {
-      service: 'MLops',
-      type: 'outbound',
-      consumesEvent: 'mlDeploymentProcessed',
-      producesEvent: 'mlDeploymentVerified',
-      adapter: service => ({ args: [id] }) => service.verifyDeployment(id),
-      internal: true
-    },
-    mlStartTraining: {
+    mlTrainModel: {
       service: 'MLops',
       type: 'outbound',
       consumesEvent: 'mlDeploymentVerified',
-      producesEvent: 'mlDeploymentComplete',
-      adapter: service => ({ args: [id] }) => service.startTraining(id),
+      producesEvent: 'mlModelConverged',
+      adapter: service => ({ args: [callback, id] }) =>
+        service.startTraining(id, callback),
+      internal: true
+    },
+    mlReportLearning: {
+      service: 'MLops',
+      type: 'outbound',
+      consumesEvent: 'mlModelConverged',
+      producesEvent: 'mlReportLearning',
+      adapter: service => ({ args: [callback, id] }) =>
+        service.sendResults(id, callback),
       internal: true
     }
   },
