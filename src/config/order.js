@@ -216,29 +216,15 @@ export const Order = {
       keys: 'proofOfDelivery',
       consumesEvent: 'orderDelivered',
       producesEvent: 'deliveryVerified',
-      undo: returnDelivery,
-      circuitBreaker: {
-        portTimeout_verifyDelivery_order: {
-          callVolume: 1,
-          errorRate: 1,
-          intervalMs: 1
-        }
-      }
+      undo: returnDelivery
     },
     completePayment: {
       service: 'Payment',
       type: 'outbound',
       callback: paymentCompleted,
       consumesEvent: 'deliveryVerified',
-      producesEvent: 'workflowComplete',
-      undo: refundPayment,
-      circuitBreaker: {
-        portTimeout_completePayment_order: {
-          callVolume: 1,
-          errorRate: 1,
-          intervalMs: 1
-        }
-      }
+      producesEvent: 'orderComplete',
+      undo: refundPayment
     },
     cancelShipment: {
       service: 'Shipping',
@@ -247,6 +233,33 @@ export const Order = {
     refundPayment: {
       service: 'Payment',
       type: 'outbound'
+    },
+    mlDeployModel: {
+      service: 'MLops',
+      type: 'outbound',
+      adapter: service => ({ model, args: [callback, trainingDataLoc] }) =>
+        service
+          .getDeploymentService('MLops')
+          .startDeployment(callback, model, trainingDataLoc),
+      consumesEvent: 'mlDeploymentRequested',
+      producesEvent: 'mlDeploymentProcessed',
+      internal: true // no 3rd party comms, handled by appmesh
+    },
+    mlVerifyDeployment: {
+      service: 'MLops',
+      type: 'outbound',
+      consumesEvent: 'mlDeploymentProcessed',
+      producesEvent: 'mlDeploymentVerified',
+      adapter: service => ({ args: [id] }) => service.verifyDeployment(id),
+      internal: true
+    },
+    mlStartTraining: {
+      service: 'MLops',
+      type: 'outbound',
+      consumesEvent: 'mlDeploymentVerified',
+      producesEvent: 'mlDeploymentComplete',
+      adapter: service => ({ args: [id] }) => service.startTraining(id),
+      internal: true
     }
   },
   relations: {
