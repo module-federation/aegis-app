@@ -151,17 +151,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(nanoid__WEBPACK_IMPORTED_MODULE_3__);
 
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
@@ -172,90 +172,90 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
  */
 
 var Order = {
-  modelName: "order",
-  endpoint: "orders",
+  modelName: 'order',
+  endpoint: 'orders',
   factory: _domain_order__WEBPACK_IMPORTED_MODULE_0__.makeOrderFactory,
-  // datasource: {
-  //   factory: DataSourceAdapterMongoDb,
-  //   //url: "mongodb://localhost:27017",
-  //   url: "mongodb://aegis.module-federation.org:27017",
-  //   cacheSize: 4000,
-  //   baseClass: "DataSourceMongoDb",
-  // },
+  datasource: {
+    factory: _adapters_datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_2__.DataSourceAdapterMongoDb,
+    url: 'mongodb://localhost:27017',
+    //url: "mongodb://aegis.module-federation.org:27017",
+    cacheSize: 4000,
+    baseClass: 'DataSourceMongoDb'
+  },
   dependencies: {
     uuid: function uuid() {
       return (0,nanoid__WEBPACK_IMPORTED_MODULE_3__.nanoid)(8);
     }
   },
-  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.requireProperties)("orderItems", (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForGuest)(["lastName", "firstName", "billingAddress", "shippingAddress", "creditCardNumber", "email"]), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForApproval)("paymentAuthorization"), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForCompletion)("proofOfDelivery")), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.freezeProperties)("orderNo", "customerId", (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.freezeOnApproval)(["email", "lastName", "firstName", "orderItems", "orderTotal", "billingAddress", "shippingAddress", "creditCardNumber", "paymentAuthorization"]), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.freezeOnCompletion)("*")), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.updateProperties)([{
-    propKey: "orderItems",
+  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.requireProperties)('orderItems', (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForGuest)(['lastName', 'firstName', 'billingAddress', 'shippingAddress', 'creditCardNumber', 'email']), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForApproval)('paymentAuthorization'), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForCompletion)('proofOfDelivery')), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.freezeProperties)('orderNo', 'customerId', (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.freezeOnApproval)(['email', 'lastName', 'firstName', 'orderItems', 'orderTotal', 'billingAddress', 'shippingAddress', 'creditCardNumber', 'paymentAuthorization']), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.freezeOnCompletion)('*')), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.updateProperties)([{
+    propKey: 'orderItems',
     update: _domain_order__WEBPACK_IMPORTED_MODULE_0__.recalcTotal
   }, {
-    propKey: "orderItems",
+    propKey: 'orderItems',
     update: _domain_order__WEBPACK_IMPORTED_MODULE_0__.updateSignature
   }]), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.validateProperties)([{
-    propKey: "orderStatus",
+    propKey: 'orderStatus',
     values: Object.values(_domain_order__WEBPACK_IMPORTED_MODULE_0__.OrderStatus),
     isValid: _domain_order__WEBPACK_IMPORTED_MODULE_0__.statusChangeValid
   }, {
-    propKey: "orderTotal",
+    propKey: 'orderTotal',
     maxnum: 99999.99,
     isValid: _domain_order__WEBPACK_IMPORTED_MODULE_0__.orderTotalValid
   }, {
-    propKey: "email",
-    regex: "email"
+    propKey: 'email',
+    regex: 'email'
   }, {
-    propKey: "creditCardNumber",
-    regex: "creditCard"
+    propKey: 'creditCardNumber',
+    regex: 'creditCard'
   }, {
-    propKey: "phone",
-    regex: "phone"
+    propKey: 'phone',
+    regex: 'phone'
   }])],
   validate: _domain_mixins__WEBPACK_IMPORTED_MODULE_1__.validateModel,
   onDelete: _domain_order__WEBPACK_IMPORTED_MODULE_0__.readyToDelete,
   eventHandlers: [_domain_order__WEBPACK_IMPORTED_MODULE_0__.handleOrderEvent],
   ports: {
     listen: {
-      service: "Event",
-      type: "outbound",
+      service: 'Event',
+      type: 'outbound',
       timeout: 0
     },
     notify: {
-      service: "Event",
-      type: "outbound",
+      service: 'Event',
+      type: 'outbound',
       timeout: 0
     },
     save: {
-      service: "Persistence",
-      type: "outbound",
+      service: 'Persistence',
+      type: 'outbound',
       timeout: 0
     },
     find: {
-      service: "Persistence",
-      type: "outbound",
+      service: 'Persistence',
+      type: 'outbound',
       timeout: 0
     },
     validateAddress: {
-      service: "Address",
-      type: "outbound",
-      keys: "shippingAddress",
-      producesEvent: "addressValidated",
+      service: 'Address',
+      type: 'outbound',
+      keys: 'shippingAddress',
+      producesEvent: 'addressValidated',
       disabled: true
     },
     authorizePayment: {
-      service: "Payment",
-      type: "outbound",
-      keys: "paymentAuthorization",
-      consumesEvent: "startWorkflow",
-      producesEvent: "paymentAuthorized",
+      service: 'Payment',
+      type: 'outbound',
+      keys: 'paymentAuthorization',
+      consumesEvent: 'startWorkflow',
+      producesEvent: 'paymentAuthorized',
       undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.cancelPayment
     },
     pickOrder: {
-      service: "Inventory",
-      type: "outbound",
-      keys: "pickupAddress",
-      consumesEvent: "itemsAvailable",
-      producesEvent: "orderPicked",
+      service: 'Inventory',
+      type: 'outbound',
+      keys: 'pickupAddress',
+      consumesEvent: 'itemsAvailable',
+      producesEvent: 'orderPicked',
       undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.returnInventory,
       circuitBreaker: {
         portTimeout_pickOrder_order: {
@@ -266,11 +266,11 @@ var Order = {
       }
     },
     shipOrder: {
-      service: "Shipping",
-      type: "outbound",
+      service: 'Shipping',
+      type: 'outbound',
       callback: _domain_order__WEBPACK_IMPORTED_MODULE_0__.orderShipped,
-      consumesEvent: "orderPicked",
-      producesEvent: "orderShipped",
+      consumesEvent: 'orderPicked',
+      producesEvent: 'orderShipped',
       undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.returnShipment,
       circuitBreaker: {
         portTimeout_shipOrder_order: {
@@ -292,11 +292,11 @@ var Order = {
       }
     },
     trackShipment: {
-      service: "Shipping",
-      type: "outbound",
-      keys: ["trackingStatus", "trackingId"],
-      consumesEvent: "orderShipped",
-      producesEvent: "orderDelivered",
+      service: 'Shipping',
+      type: 'outbound',
+      keys: ['trackingStatus', 'trackingId'],
+      consumesEvent: 'orderShipped',
+      producesEvent: 'orderDelivered',
       circuitBreaker: {
         portRetryFailed_order: {
           callVolume: 1,
@@ -306,141 +306,127 @@ var Order = {
       }
     },
     verifyDelivery: {
-      service: "Shipping",
-      type: "outbound",
-      keys: "proofOfDelivery",
-      consumesEvent: "orderDelivered",
-      producesEvent: "deliveryVerified",
-      undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.returnDelivery,
-      circuitBreaker: {
-        portTimeout_verifyDelivery_order: {
-          callVolume: 1,
-          errorRate: 1,
-          intervalMs: 1
-        }
-      }
+      service: 'Shipping',
+      type: 'outbound',
+      keys: 'proofOfDelivery',
+      consumesEvent: 'orderDelivered',
+      producesEvent: 'deliveryVerified',
+      undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.returnDelivery
     },
     completePayment: {
-      service: "Payment",
-      type: "outbound",
+      service: 'Payment',
+      type: 'outbound',
       callback: _domain_order__WEBPACK_IMPORTED_MODULE_0__.paymentCompleted,
-      consumesEvent: "deliveryVerified",
-      producesEvent: "workflowComplete",
-      undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.refundPayment,
-      circuitBreaker: {
-        portTimeout_completePayment_order: {
-          callVolume: 1,
-          errorRate: 1,
-          intervalMs: 1
-        }
-      }
+      consumesEvent: 'deliveryVerified',
+      producesEvent: 'orderComplete',
+      undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.refundPayment
     },
     cancelShipment: {
-      service: "Shipping",
-      type: "outbound"
+      service: 'Shipping',
+      type: 'outbound'
     },
     refundPayment: {
-      service: "Payment",
-      type: "outbound"
+      service: 'Payment',
+      type: 'outbound'
     },
-    oauthCallback: {
-      type: "inbound",
-      adapter: "endpoints.oauthCallback",
-      keys: ["nonce"],
-      producesEvent: "refreshToken"
-    },
-    refreshToken: {
-      type: "outbound",
-      service: "oauth",
-      settings: {
-        urls: ["facebook.com/oauth", "oauth.google.com", "indentity.service.com/oauth"]
+    mlDeployModel: {
+      service: 'MLops',
+      type: 'outbound',
+      adapter: function adapter(service) {
+        return function (_ref) {
+          var model = _ref.model,
+              _ref$args = _slicedToArray(_ref.args, 2),
+              callback = _ref$args[0],
+              trainingDataLoc = _ref$args[1];
+
+          return service.getDeploymentService('MLops').startDeployment(callback, model, trainingDataLoc);
+        };
       },
-      consumesEvent: "refreshToken",
-      producesEvent: "tokenRefreshed"
-    }
-  },
-  endpoints: {
-    oauthCallback: {
-      uri: "oauth-callback",
-      callback: function callback(order, payload) {
-        return order.refreshToken(payload.nonce);
-      }
+      consumesEvent: 'mlDeploymentRequested',
+      producesEvent: 'mlDeploymentVerified',
+      internal: true // no 3rd party comms, handled by appmesh
+
+    },
+    mlTrainModel: {
+      service: 'MLops',
+      type: 'outbound',
+      consumesEvent: 'mlDeploymentVerified',
+      producesEvent: 'mlModelConverged',
+      adapter: function adapter(service) {
+        return function (_ref2) {
+          var _ref2$args = _slicedToArray(_ref2.args, 2),
+              callback = _ref2$args[0],
+              id = _ref2$args[1];
+
+          return service.startTraining(id, callback);
+        };
+      },
+      internal: true
+    },
+    mlReportLearning: {
+      service: 'MLops',
+      type: 'outbound',
+      consumesEvent: 'mlModelConverged',
+      producesEvent: 'mlReportLearning',
+      adapter: function adapter(service) {
+        return function (_ref3) {
+          var _ref3$args = _slicedToArray(_ref3.args, 2),
+              callback = _ref3$args[0],
+              id = _ref3$args[1];
+
+          return service.sendResults(id, callback);
+        };
+      },
+      internal: true
     }
   },
   relations: {
     customer: {
-      modelName: "customer",
-      foreignKey: "customerId",
-      type: "manyToOne",
-      desc: "Many orders per customer, just one customer per order"
+      modelName: 'customer',
+      foreignKey: 'customerId',
+      type: 'manyToOne',
+      desc: 'Many orders per customer, just one customer per order'
     },
     product: {
-      modelName: "product",
-      foreignKey: "productId",
-      type: "manyToOne"
+      modelName: 'product',
+      foreignKey: 'productId',
+      type: 'manyToOne'
     }
   },
   commands: {
     decrypt: {
-      command: "decrypt",
-      acl: ["read", "decrypt"]
+      command: 'decrypt',
+      acl: ['read', 'decrypt']
     },
     approve: {
       command: _domain_order__WEBPACK_IMPORTED_MODULE_0__.approve,
-      acl: ["write", "approve"]
+      acl: ['write', 'approve']
     },
     cancel: {
       command: _domain_order__WEBPACK_IMPORTED_MODULE_0__.cancel,
-      acl: ["write", "cancel"]
-    }
-  },
-  accessControlList: {
-    admin: {
-      allow: ["read", "delete", "decrypt"],
-      type: "role"
-    },
-    owner: {
-      allow: "*",
-      deny: "delete",
-      type: "role"
-    },
-    delegate: {
-      allow: function allow(delegator) {
-        return _toConsumableArray(delegator.permissions);
-      },
-      deny: "delete",
-      type: "role"
-    },
-    approver: {
-      allow: "approve",
-      type: "role"
-    },
-    orders: {
-      allow: "read",
-      type: "relation",
-      desc: "Allow customer model to see orders"
+      acl: ['write', 'cancel']
     }
   },
   serializers: [{
-    on: "deserialize",
-    key: "creditCardNumber",
-    type: "string",
+    on: 'deserialize',
+    key: 'creditCardNumber',
+    type: 'string',
     value: function value(key, _value) {
       return decrypt(_value);
     },
     enabled: false
   }, {
-    on: "deserialize",
-    key: "shippingAddress",
-    type: "string",
+    on: 'deserialize',
+    key: 'shippingAddress',
+    type: 'string',
     value: function value(key, _value2) {
       return decrypt(_value2);
     },
     enabled: false
   }, {
-    on: "deserialize",
-    key: "billingAddress",
-    type: "string",
+    on: 'deserialize',
+    key: 'billingAddress',
+    type: 'string',
     value: function value(key, _value3) {
       return decrypt(_value3);
     },
@@ -478,8 +464,8 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 var User = {
-  modelName: "user",
-  endpoint: "users",
+  modelName: 'user',
+  endpoint: 'users',
   dependencies: {
     uuid: _domain_utils__WEBPACK_IMPORTED_MODULE_2__.uuid
   },
@@ -488,9 +474,29 @@ var User = {
   validate: _domain_mixins__WEBPACK_IMPORTED_MODULE_0__.validateModel,
   relations: {
     customer: {
-      foreignKey: "customerId",
-      type: "oneToOne",
-      modelName: "customer"
+      foreignKey: 'customerId',
+      type: 'oneToOne',
+      modelName: 'customer'
+    }
+  },
+  commands: {
+    runFibonacci: {
+      command: function command(model) {
+        function run() {
+          var x = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : model.fibonacci;
+
+          if (x === 0) {
+            return 0;
+          }
+
+          if (x === 1) {
+            return 1;
+          }
+
+          return fibonacci(x - 1) + fibonacci(x - 2);
+        }
+      },
+      acl: ['read', 'write']
     }
   }
 };
