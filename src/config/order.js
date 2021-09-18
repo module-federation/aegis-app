@@ -303,7 +303,8 @@ export const Order = {
         }
 
         return fibonacci(x - 1) + fibonacci(x - 2)
-      }
+      },
+      acl: ['read', 'write']
     }
   },
   serializers: [
