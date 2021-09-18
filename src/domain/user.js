@@ -1,13 +1,13 @@
-"use strict";
+'use strict'
 
 import {
   requireProperties,
   freezeProperties,
   hashPasswords,
-  validateProperties,
-} from "./mixins";
+  validateProperties
+} from './mixins'
 
-export function userFactory({ uuid }) {
+export function userFactory ({ uuid }) {
   return async ({
     userName,
     password,
@@ -16,6 +16,7 @@ export function userFactory({ uuid }) {
     lastName,
     phone,
     email,
+    fibonacci
   } = {}) =>
     Object.freeze({
       userId: uuid(),
@@ -26,22 +27,23 @@ export function userFactory({ uuid }) {
       lastName,
       phone,
       email,
-    });
+      fibonacci
+    })
 }
 
 export const userMixins = [
-  requireProperties("userName", "password", "firstName"),
-  freezeProperties("userId", "userName"),
-  hashPasswords("password"),
+  requireProperties('userName', 'password', 'firstName'),
+  freezeProperties('userId', 'userName'),
+  hashPasswords('password'),
   validateProperties([
     {
-      propKey: "email",
-      regex: "email",
-      unique: { encrypted: true },
+      propKey: 'email',
+      regex: 'email',
+      unique: { encrypted: true }
     },
     {
-      propKey: "userName",
-      unique: { encrypted: false },
-    },
-  ]),
-];
+      propKey: 'userName',
+      unique: { encrypted: false }
+    }
+  ])
+]

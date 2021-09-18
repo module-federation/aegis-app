@@ -3069,13 +3069,14 @@ function userFactory(_ref) {
         lastName,
         phone,
         email,
+        fibonacci,
         _args = arguments;
 
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _ref3 = _args.length > 0 && _args[0] !== undefined ? _args[0] : {}, userName = _ref3.userName, password = _ref3.password, customerId = _ref3.customerId, firstName = _ref3.firstName, lastName = _ref3.lastName, phone = _ref3.phone, email = _ref3.email;
+            _ref3 = _args.length > 0 && _args[0] !== undefined ? _args[0] : {}, userName = _ref3.userName, password = _ref3.password, customerId = _ref3.customerId, firstName = _ref3.firstName, lastName = _ref3.lastName, phone = _ref3.phone, email = _ref3.email, fibonacci = _ref3.fibonacci;
             return _context.abrupt("return", Object.freeze({
               userId: uuid(),
               password: password,
@@ -3084,7 +3085,8 @@ function userFactory(_ref) {
               firstName: firstName,
               lastName: lastName,
               phone: phone,
-              email: email
+              email: email,
+              fibonacci: fibonacci
             }));
 
           case 2:
@@ -3095,14 +3097,14 @@ function userFactory(_ref) {
     }, _callee);
   }));
 }
-var userMixins = [(0,_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)("userName", "password", "firstName"), (0,_mixins__WEBPACK_IMPORTED_MODULE_0__.freezeProperties)("userId", "userName"), (0,_mixins__WEBPACK_IMPORTED_MODULE_0__.hashPasswords)("password"), (0,_mixins__WEBPACK_IMPORTED_MODULE_0__.validateProperties)([{
-  propKey: "email",
-  regex: "email",
+var userMixins = [(0,_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)('userName', 'password', 'firstName'), (0,_mixins__WEBPACK_IMPORTED_MODULE_0__.freezeProperties)('userId', 'userName'), (0,_mixins__WEBPACK_IMPORTED_MODULE_0__.hashPasswords)('password'), (0,_mixins__WEBPACK_IMPORTED_MODULE_0__.validateProperties)([{
+  propKey: 'email',
+  regex: 'email',
   unique: {
     encrypted: true
   }
 }, {
-  propKey: "userName",
+  propKey: 'userName',
   unique: {
     encrypted: false
   }
