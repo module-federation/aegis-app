@@ -495,6 +495,8 @@ var User = {
 
           return fibonacci(x - 1) + fibonacci(x - 2);
         }
+
+        return run(model.fibonacci);
       },
       acl: ['read', 'write']
     }
