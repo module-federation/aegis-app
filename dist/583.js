@@ -482,7 +482,7 @@ var User = {
   commands: {
     runFibonacci: {
       command: function command(model) {
-        function run(x) {
+        function fibonacci(x) {
           if (x === 0) {
             return 0;
           }
@@ -494,7 +494,7 @@ var User = {
           return fibonacci(x - 1) + fibonacci(x - 2);
         }
 
-        return run(model.fibonacci);
+        return fibonacci(model.fibonacci);
       },
       acl: ['read']
     }
