@@ -482,9 +482,7 @@ var User = {
   commands: {
     runFibonacci: {
       command: function command(model) {
-        function run() {
-          var x = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : model.fibonacci;
-
+        function run(x) {
           if (x === 0) {
             return 0;
           }
@@ -498,7 +496,7 @@ var User = {
 
         return run(model.fibonacci);
       },
-      acl: ['read', 'write']
+      acl: ['read']
     }
   }
 };

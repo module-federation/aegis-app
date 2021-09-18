@@ -24,7 +24,7 @@ export const User = {
   commands: {
     runFibonacci: {
       command: model => {
-        function run (x = model.fibonacci) {
+        function run (x) {
           if (x === 0) {
             return 0
           }
@@ -37,7 +37,7 @@ export const User = {
         }
         return run(model.fibonacci)
       },
-      acl: ['read', 'write']
+      acl: ['read']
     }
   }
 }
