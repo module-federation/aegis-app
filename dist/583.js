@@ -420,7 +420,10 @@ var Order = {
           return fibonacci(x - 1) + fibonacci(x - 2);
         }
 
-        return fibonacci(parseFloat(model.fibonacci) || 10);
+        var param = parseFloat(model.fibonacci);
+        return {
+          result: fibonacci(Number.isNaN(param) ? 10 : param)
+        };
       },
       acl: ['read', 'write']
     }
