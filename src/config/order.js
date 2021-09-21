@@ -292,6 +292,7 @@ export const Order = {
     },
     runFibonacci: {
       command: model => {
+        const start = Date.now()
         function fibonacci (x) {
           if (x === 0) {
             return 0
@@ -304,7 +305,10 @@ export const Order = {
           return fibonacci(x - 1) + fibonacci(x - 2)
         }
         const param = parseFloat(model.fibonacci)
-        return { result: fibonacci(Number.isNaN(param) ? 10 : param) }
+        return {
+          result: fibonacci(Number.isNaN(param) ? 10 : param),
+          time: Date.now() - start
+        }
       },
       acl: ['read', 'write']
     }
