@@ -408,6 +408,8 @@ var Order = {
     },
     runFibonacci: {
       command: function command(model) {
+        var start = Date.now();
+
         function fibonacci(x) {
           if (x === 0) {
             return 0;
@@ -422,7 +424,8 @@ var Order = {
 
         var param = parseFloat(model.fibonacci);
         return {
-          result: fibonacci(Number.isNaN(param) ? 10 : param)
+          result: fibonacci(Number.isNaN(param) ? 10 : param),
+          time: Date.now() - start
         };
       },
       acl: ['read', 'write']
@@ -2791,6 +2794,7 @@ function makeOrderFactory(dependencies) {
                 shippingPriority: shippingPriority,
                 fibonacci: fibonacci,
                 result: 0,
+                time: 0,
                 estimatedArrival: null
               }, _defineProperty(_order, orderTotal, total), _defineProperty(_order, orderStatus, OrderStatus.PENDING), _defineProperty(_order, orderNo, dependencies.uuid()), _defineProperty(_order, "paymentAccepted", function paymentAccepted() {
                 return this.paymentAuthorization && !this[_mixins__WEBPACK_IMPORTED_MODULE_0__.prevmodel] || this.paymentAuthorization && this[_mixins__WEBPACK_IMPORTED_MODULE_0__.prevmodel].orderTotal <= this.orderTotal;
