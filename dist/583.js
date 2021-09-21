@@ -420,7 +420,7 @@ var Order = {
           return fibonacci(x - 1) + fibonacci(x - 2);
         }
 
-        return fibonacci(model.fibonacci || 10);
+        return fibonacci(parseFloat(model.fibonacci) || 10);
       },
       acl: ['read', 'write']
     }
