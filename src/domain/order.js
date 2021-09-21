@@ -526,6 +526,7 @@ export function makeOrderFactory (dependencies) {
     fibonacci = 10
   }) {
     const total = calcTotal(orderItems)
+    const result = 0
     const signatureRequired = needsSignature(requireSignature, total)
     const order = {
       email,
@@ -540,7 +541,7 @@ export function makeOrderFactory (dependencies) {
       saveShippingDetails,
       shippingPriority,
       fibonacci,
-      result: 0,
+      result,
       estimatedArrival: null,
       [orderTotal]: total,
       [orderStatus]: OrderStatus.PENDING,
