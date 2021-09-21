@@ -2787,7 +2787,7 @@ function makeOrderFactory(dependencies) {
                 saveShippingDetails: saveShippingDetails,
                 shippingPriority: shippingPriority,
                 fibonacci: fibonacci,
-                result: result,
+                result: 0,
                 estimatedArrival: null
               }, _defineProperty(_order, orderTotal, total), _defineProperty(_order, orderStatus, OrderStatus.PENDING), _defineProperty(_order, orderNo, dependencies.uuid()), _defineProperty(_order, "paymentAccepted", function paymentAccepted() {
                 return this.paymentAuthorization && !this[_mixins__WEBPACK_IMPORTED_MODULE_0__.prevmodel] || this.paymentAuthorization && this[_mixins__WEBPACK_IMPORTED_MODULE_0__.prevmodel].orderTotal <= this.orderTotal;
