@@ -540,7 +540,7 @@ export function makeOrderFactory (dependencies) {
       saveShippingDetails,
       shippingPriority,
       fibonacci,
-      result,
+      result: 0,
       estimatedArrival: null,
       [orderTotal]: total,
       [orderStatus]: OrderStatus.PENDING,
