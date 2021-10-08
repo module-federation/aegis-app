@@ -1,61 +1,61 @@
-var path = require("path");
-const ModuleFederationPlugin =
-  require("webpack").container.ModuleFederationPlugin;
-const httpNode = require("./webpack/http-node");
-const NodemonPlugin = require("nodemon-webpack-plugin");
+var path = require('path')
+const ModuleFederationPlugin = require('webpack').container
+  .ModuleFederationPlugin
+const httpNode = require('./webpack/http-node')
+const NodemonPlugin = require('nodemon-webpack-plugin')
 
 var serverConfig = {
   target: httpNode,
-  entry: ["@babel/polyfill", path.resolve(__dirname, "src/index.js")],
+  entry: ['@babel/polyfill', path.resolve(__dirname, 'src/index.js')],
   output: {
-    path: path.resolve(__dirname, "dist"),
-    publicPath: "http://cache.aegis.dev:8060",
-    libraryTarget: "commonjs",
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: 'https://api.github.com/',
+    libraryTarget: 'commonjs'
   },
-  devtool: "source-map",
+  devtool: 'source-map',
   resolve: {
-    extensions: [".js"],
+    extensions: ['.js']
   },
-  mode: "development",
+  mode: 'development',
   module: {
     rules: [
       {
         test: /\.js?$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader",
+          loader: 'babel-loader',
           options: {
-            presets: ["@babel/preset-env"],
-          },
-        },
-      },
-    ],
+            presets: ['@babel/preset-env']
+          }
+        }
+      }
+    ]
   },
   plugins: [
     new NodemonPlugin(),
     new ModuleFederationPlugin({
-      name: "distributed-cache",
-      library: { type: "commonjs-module" },
-      filename: "remoteEntry.js",
+      name: 'distributed-cache',
+      library: { type: 'commonjs-module' },
+      filename: 'remoteEntry.js',
       exposes: {
-        "./model-cache": "./src/domain",
-        "./adapter-cache": "./src/adapters",
-        "./service-cache": "./src/services",
-        "./event-bus": "./src/services/event-bus",
+        './model-cache': './src/domain',
+        './adapter-cache': './src/adapters',
+        './service-cache': './src/services',
+        './event-bus': './src/services/event-bus'
       },
       shared: {
         axios: {
-          eager: true,
+          eager: true
         },
-        "smartystreets-javascript-sdk": {
-          eager: true,
+        'smartystreets-javascript-sdk': {
+          eager: true
         },
         kafkajs: {
-          eager: true,
-        },
-      },
-    }),
-  ],
-};
+          eager: true
+        }
+      }
+    })
+  ]
+}
 
-module.exports = [serverConfig];
+module.exports = [serverConfig]
