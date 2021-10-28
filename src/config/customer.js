@@ -1,21 +1,21 @@
-"use strict";
+'use strict'
 
 import {
   validateModel,
   freezeProperties,
   validateProperties,
-  requireProperties,
-} from "../domain/mixins";
-import { makeCustomerFactory, okToDelete } from "../domain/customer";
-import { DataSourceAdapterMongoDb } from "../adapters/datasources/datasource-mongodb";
-import { nanoid } from "nanoid";
+  requireProperties
+} from '../domain/mixins'
+import { makeCustomerFactory, okToDelete } from '../domain/customer'
+import { DataSourceAdapterMongoDb } from '../adapters/datasources/datasource-mongodb'
+import { nanoid } from 'nanoid'
 
 /**
  * @type {import('../domain/index').ModelSpecification}
  */
 export const Customer = {
-  modelName: "customer",
-  endpoint: "customers",
+  modelName: 'customer',
+  endpoint: 'customers',
   dependencies: { uuid: () => nanoid(8) },
   factory: makeCustomerFactory,
   validate: validateModel,
@@ -27,45 +27,45 @@ export const Customer = {
   //   baseClass: "DataSourceMongoDb",
   // },
   mixins: [
-    freezeProperties("customerId"),
+    freezeProperties('customerId'),
     requireProperties(
-      "firstName",
-      "lastName",
-      "email",
-      "shippingAddress",
-      "billingAddress",
-      "creditCardNumber"
+      'firstName',
+      'lastName',
+      'email',
+      'shippingAddress',
+      'billingAddress',
+      'creditCardNumber'
     ),
     validateProperties([
       {
-        propKey: "email",
+        propKey: 'email',
         // unique: { encrypted: true },
-        regex: "email",
+        regex: 'email'
       },
       {
-        propKey: "creditCardNumber",
-        regex: "creditCard",
-      },
-    ]),
+        propKey: 'creditCardNumber',
+        regex: 'creditCard'
+      }
+    ])
   ],
   relations: {
     orders: {
-      modelName: "order",
-      type: "oneToMany",
-      foreignKey: "customerId",
-    },
+      modelName: 'order',
+      type: 'oneToMany',
+      foreignKey: 'customerId'
+    }
   },
   commands: {
     decrypt: {
-      command: "decrypt",
-      acl: ["read", "decrypt"],
-    },
+      command: 'decrypt',
+      acl: ['read', 'decrypt']
+    }
   },
   accessControlList: {
     customer: {
-      allow: "read",
-      type: "relation",
-      desc: "Allow orders to see customers.",
-    },
-  },
-};
+      allow: 'read',
+      type: 'relation',
+      desc: 'Allow orders to see customers.'
+    }
+  }
+}
