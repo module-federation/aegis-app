@@ -49,7 +49,8 @@ export const Order = {
   //   //url: "mongodb://aegis.module-federation.org:27017",
   //   cacheSize: 4000,
   //   baseClass: 'DataSourceMongoDb'
-  // },
+  // }, 
+  //
   dependencies: { uuid: () => nanoid(8) },
   mixins: [
     requireProperties(
