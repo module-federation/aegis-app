@@ -46,13 +46,13 @@ var serverConfig = {
   },
   plugins: [
     new ModuleFederationPlugin({
-      name: 'microservices',
+      name: 'distributed-cache',
       library: { type: 'commonjs-module' },
       filename: 'remoteEntry.js',
       exposes: {
-        './models': './src/domain',
-        './adapters': './src/adapters',
-        './services': './src/services',
+        './model-cache': './src/domain',
+        './adapter-cache': './src/adapters',
+        './service-cache': './src/services',
         './event-bus': './src/services/event-bus'
       },
       shared: {
