@@ -158,8 +158,13 @@ const invalidStatusChanges = [
   invalidStatusChange(OrderStatus.PENDING, OrderStatus.COMPLETE),
   // Can't change final status
   invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.PENDING),
-  // Can't change final status
-  invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.SHIPPING)
+  invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.SHIPPING),
+  invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.APPROVED),
+  invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.CANCELED),
+  invalidStatusChange(OrderStatus.CANCELED, OrderStatus.APPROVED),
+  invalidStatusChange(OrderStatus.CANCELED, OrderStatus.PENDING),
+  invalidStatusChange(OrderStatus.CANCELED, OrderStatus.SHIPPING),
+  invalidStatusChange(OrderStatus.CANCELED, OrderStatus.COMPLETE)
 ]
 
 /**
