@@ -104,6 +104,58 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
 
 /***/ }),
 
+/***/ "./src/config/catalog.js":
+/*!*******************************!*\
+  !*** ./src/config/catalog.js ***!
+  \*******************************/
+/*! unknown exports (runtime-defined) */
+/*! runtime requirements:  */
+/***/ (() => {
+
+/**
+ * @type {import('../domain/index').ModelSpecification}
+ */
+var Catalog = {
+  modelName: 'catalog',
+  endpoint: 'catalogs',
+  factory: function factory(dependencies) {
+    return function () {
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      return Object.freeze({
+        args: args
+      });
+    };
+  },
+  ports: {
+    myPort: {
+      service: 'myService',
+      timeout: 0,
+      circuitBreaker: {
+        "default": {
+          callVolume: 100,
+          intervalMs: 6000,
+          errorRate: 25,
+          fallbackFn: function fallbackFn(data) {
+            console.log('do this', data);
+          }
+        },
+        conntimeout: {}
+      },
+      consumesEvent: 'executeMyPort',
+      producesEvent: 'myPortExecuted',
+      callback: function callback() {
+        return null;
+      },
+      type: 'outbound'
+    }
+  }
+};
+
+/***/ }),
+
 /***/ "./src/config/index.js":
 /*!*****************************!*\
   !*** ./src/config/index.js ***!
@@ -111,8 +163,9 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
 /*! namespace exports */
 /*! export Order [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/order.js .Order */
 /*! export User [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/user.js .User */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_exports__, __webpack_require__.d, __webpack_require__.r, __webpack_require__.* */
+/*! export default [not provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [maybe provided (runtime-defined)] [no usage info] -> ./src/config/catalog.js */
+/*! runtime requirements: __webpack_require__, __webpack_exports__, __webpack_require__.d, __webpack_require__.n, __webpack_require__.r, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -123,6 +176,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./order */ "./src/config/order.js");
 /* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./user */ "./src/config/user.js");
+/* harmony import */ var _catalog__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./catalog */ "./src/config/catalog.js");
+/* harmony import */ var _catalog__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_catalog__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony reexport (unknown) */ var __WEBPACK_REEXPORT_OBJECT__ = {};
+/* harmony reexport (unknown) */ for(const __WEBPACK_IMPORT_KEY__ in _catalog__WEBPACK_IMPORTED_MODULE_2__) if(["default","Order","User"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) __WEBPACK_REEXPORT_OBJECT__[__WEBPACK_IMPORT_KEY__] = () => _catalog__WEBPACK_IMPORTED_MODULE_2__[__WEBPACK_IMPORT_KEY__]
+/* harmony reexport (unknown) */ __webpack_require__.d(__webpack_exports__, __WEBPACK_REEXPORT_OBJECT__);
+
 
  // export * from "./customer";
 // export * from "./product";
@@ -175,13 +234,12 @@ var Order = {
   modelName: 'order',
   endpoint: 'orders',
   factory: _domain_order__WEBPACK_IMPORTED_MODULE_0__.makeOrderFactory,
-  datasource: {
-    factory: _adapters_datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_2__.DataSourceAdapterMongoDb,
-    //url: 'mongodb://localhost:27017',
-    url: 'mongodb://localhost:27017',
-    cacheSize: 4000,
-    baseClass: 'DataSourceMongoDb'
-  },
+  // datasource: {
+  //   factory: DataSourceAdapterMongoDb,
+  //   url: 'mongodb://localhost:27017',
+  //   cacheSize: 4000,
+  //   baseClass: 'DataSourceMongoDb'
+  // },
   dependencies: {
     uuid: function uuid() {
       return (0,nanoid__WEBPACK_IMPORTED_MODULE_3__.nanoid)(8);
