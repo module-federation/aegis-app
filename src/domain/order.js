@@ -206,7 +206,7 @@ export function readyToDelete (model) {
   if (
     ![OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(model.orderStatus)
   ) {
-    throw new Error('order must be canceled or completed')
+    throw new Error('order must be can celed or completed')
   }
   return model
 }
@@ -550,11 +550,7 @@ export function makeOrderFactory (dependencies) {
        * Has payment for the order been authorized?
        */
       paymentAccepted () {
-        return (
-          (this.paymentAuthorization && !this[prevmodel]) ||
-          (this.paymentAuthorization &&
-            this[prevmodel].orderTotal <= this.orderTotal)
-        )
+        return this.paymentAuthorization ? true : false
       },
       /**
        * Proceed to checkout automatically or wait for approval?
