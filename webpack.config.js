@@ -4,6 +4,7 @@ const httpNode = require('./webpack/http-node')
 
 var serverConfig = {
   target: httpNode,
+
   entry: ['@babel/polyfill', path.resolve(__dirname, 'src/index.js')],
   output: {
     path: path.resolve(__dirname, 'dist'),
