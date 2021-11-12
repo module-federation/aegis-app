@@ -2,7 +2,7 @@
 
 Getting Started
 
-Click ['Use this template'](#use-this-template). Fill out the form and clone that
+[Click here to use this project as a tempate](https://github.com/module-federation/microlib-examples/generate). Fill out the form. A new repo is created. Clone it and start coding!
 
 ```shell
 git clone https://github.com/module-federation/<your repo name>
