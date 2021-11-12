@@ -1,4 +1,4 @@
-# Developing an application using MicroLib
+# Developing an Aegis federated application
 
 Getting Started
 
