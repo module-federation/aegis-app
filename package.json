@@ -36,6 +36,7 @@
   "license": "MIT",
   "dependencies": {
     "@assemblyscript/loader": "^0.19.10",
+    "aegis": "^0.1.0",
     "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",

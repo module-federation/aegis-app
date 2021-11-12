@@ -1197,6 +1197,13 @@ acorn@^7.4.0:
   resolved "https://registry.npmjs.org/acorn/-/acorn-7.4.1.tgz"
   integrity sha512-nQyp0o1/mNdbTO1PO6kHkwSrmgZ0MT/jCCpNiwbUjGoRN4dlBhqJtoQuCnEOKzgTVwg0ZWiCoQy6SxMebQVh8A==
 
+aegis@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/aegis/-/aegis-0.1.0.tgz#9169e1c4ee409ab0c2f680c59c35ec1a2f8cec06"
+  integrity sha1-kWnhxO5AmrDC9oDFnDXsGi+M7AY=
+  dependencies:
+    boo "~1.2.0"
+
 agent-base@6:
   version "6.0.2"
   resolved "https://registry.npmjs.org/agent-base/-/agent-base-6.0.2.tgz"
@@ -1680,6 +1687,11 @@ body-parser@1.19.0:
     qs "6.7.0"
     raw-body "2.4.0"
     type-is "~1.6.17"
+
+boo@~1.2.0:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/boo/-/boo-1.2.4.tgz#b33331c36c4ae79d82f4fd0e4490604cb7c513b5"
+  integrity sha1-szMxw2xK552C9P0ORJBgTLfFE7U=
 
 boxen@^4.2.0:
   version "4.2.0"
