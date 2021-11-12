@@ -8,6 +8,7 @@ exports.modules = {
   \*****************************/
 /*! namespace exports */
 /*! export async [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export asyncPipe [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export compose [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export composeAsync [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export decrypt [provided] [no usage info] [missing usage info prevents renaming] */
@@ -25,6 +26,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "compose": () => /* binding */ compose,
 /* harmony export */   "composeAsync": () => /* binding */ composeAsync,
+/* harmony export */   "asyncPipe": () => /* binding */ asyncPipe,
 /* harmony export */   "encrypt": () => /* binding */ encrypt,
 /* harmony export */   "decrypt": () => /* binding */ decrypt,
 /* harmony export */   "hash": () => /* binding */ hash,
@@ -69,25 +71,46 @@ function composeAsync() {
     }, Promise.resolve(initVal));
   };
 }
+/**
+ * @callback pipeFn
+ * @param {object} obj - the object to compose
+ * @returns {object} - the composed object
+ */
+
+/**
+ * @param {pipeFn} func
+ */
+
+var asyncPipe = function asyncPipe() {
+  for (var _len3 = arguments.length, func = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+    func[_key3] = arguments[_key3];
+  }
+
+  return function (obj) {
+    return func.reduce(function (o, f) {
+      return o.then(f);
+    }, Promise.resolve(obj));
+  };
+};
 var passwd = process.env.ENCRYPTION_PWD;
-var algo = "aes-192-cbc";
-var key = crypto__WEBPACK_IMPORTED_MODULE_0___default().scryptSync(String(passwd), "salt", 24);
+var algo = 'aes-192-cbc';
+var key = crypto__WEBPACK_IMPORTED_MODULE_0___default().scryptSync(String(passwd), 'salt', 24);
 var iv = Buffer.alloc(16, 0);
 function encrypt(text) {
   var cipher = crypto__WEBPACK_IMPORTED_MODULE_0___default().createCipheriv(algo, key, iv);
-  var encrypted = cipher.update(text, "utf8", "hex");
-  encrypted += cipher["final"]("hex");
+  var encrypted = cipher.update(text, 'utf8', 'hex');
+  encrypted += cipher["final"]('hex');
   return encrypted;
 }
 function decrypt(cipherText) {
-  console.log("decrypt(%s)", cipherText);
+  console.log('decrypt(%s)', cipherText);
   var decipher = crypto__WEBPACK_IMPORTED_MODULE_0___default().createDecipheriv(algo, key, iv);
-  var decrypted = decipher.update(cipherText, "hex", "utf8");
-  decrypted += decipher["final"]("utf8");
+  var decrypted = decipher.update(cipherText, 'hex', 'utf8');
+  decrypted += decipher["final"]('utf8');
   return decrypted;
 }
 function hash(data) {
-  return crypto__WEBPACK_IMPORTED_MODULE_0___default().createHash("sha1").update(data).digest("hex");
+  return crypto__WEBPACK_IMPORTED_MODULE_0___default().createHash('sha1').update(data).digest('hex');
 }
 function uuid() {
   // return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>

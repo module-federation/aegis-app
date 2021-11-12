@@ -124,8 +124,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./order */ "./src/config/order.js");
 /* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./user */ "./src/config/user.js");
 
- //export * from './catalog'
-// export * from "./customer";
+ // export * from "./customer";
 // export * from "./product";
 
 /***/ }),
@@ -151,18 +150,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! nanoid */ "webpack/sharing/consume/default/nanoid/nanoid");
 /* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(nanoid__WEBPACK_IMPORTED_MODULE_3__);
 
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
@@ -259,9 +246,9 @@ var Order = {
       undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.returnInventory,
       circuitBreaker: {
         portTimeout_pickOrder_order: {
-          callVolume: 1,
+          callVolume: 2,
           errorRate: 1,
-          intervalMs: 1
+          intervalMs: 60000
         }
       }
     },
@@ -274,20 +261,20 @@ var Order = {
       undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.returnShipment,
       circuitBreaker: {
         portTimeout_shipOrder_order: {
-          callVolume: 1,
+          callVolume: 2,
           errorRate: 1,
-          intervalMs: 1
+          intervalMs: 60000
         },
         portRetryFailed_order: {
-          callVolume: 2,
+          callVolume: 3,
           errorRate: 2,
-          intervalMs: 2,
+          intervalMs: 60000,
           fallbackFn: _domain_order__WEBPACK_IMPORTED_MODULE_0__.cancel
         },
         "default": {
           callVolume: 3,
           errorRate: 3,
-          intervalMs: 3
+          intervalMs: 60000
         }
       }
     },
@@ -299,9 +286,9 @@ var Order = {
       producesEvent: 'orderDelivered',
       circuitBreaker: {
         portRetryFailed_order: {
-          callVolume: 1,
+          callVolume: 2,
           errorRate: 1,
-          intervalMs: 1
+          intervalMs: 60000
         }
       }
     },
@@ -328,56 +315,6 @@ var Order = {
     refundPayment: {
       service: 'Payment',
       type: 'outbound'
-    },
-    mlDeployModel: {
-      service: 'MLops',
-      type: 'outbound',
-      adapter: function adapter(service) {
-        return function (_ref) {
-          var model = _ref.model,
-              _ref$args = _slicedToArray(_ref.args, 2),
-              callback = _ref$args[0],
-              trainingDataLoc = _ref$args[1];
-
-          return service.getDeploymentService('MLops').startDeployment(callback, model, trainingDataLoc);
-        };
-      },
-      consumesEvent: 'mlDeploymentRequested',
-      producesEvent: 'mlDeploymentVerified',
-      internal: true // no 3rd party comms, handled by appmesh
-
-    },
-    mlTrainModel: {
-      service: 'MLops',
-      type: 'outbound',
-      consumesEvent: 'mlDeploymentVerified',
-      producesEvent: 'mlModelConverged',
-      adapter: function adapter(service) {
-        return function (_ref2) {
-          var _ref2$args = _slicedToArray(_ref2.args, 2),
-              callback = _ref2$args[0],
-              id = _ref2$args[1];
-
-          return service.startTraining(id, callback);
-        };
-      },
-      internal: true
-    },
-    mlReportLearning: {
-      service: 'MLops',
-      type: 'outbound',
-      consumesEvent: 'mlModelConverged',
-      producesEvent: 'mlReportLearning',
-      adapter: function adapter(service) {
-        return function (_ref3) {
-          var _ref3$args = _slicedToArray(_ref3.args, 2),
-              callback = _ref3$args[0],
-              id = _ref3$args[1];
-
-          return service.sendResults(id, callback);
-        };
-      },
-      internal: true
     }
   },
   relations: {
@@ -387,10 +324,12 @@ var Order = {
       type: 'manyToOne',
       desc: 'Many orders per customer, just one customer per order'
     },
-    product: {
-      modelName: 'product',
-      foreignKey: 'productId',
-      type: 'manyToOne'
+    inventory: {
+      modelName: 'inventory',
+      foreignKey: 'itemId',
+      key: 'orderItems',
+      type: 'containsMany',
+      desc: 'An order contains a list of inventory items to ship.'
     }
   },
   commands: {
@@ -1869,15 +1808,16 @@ var GlobalMixins = [encryptPersonalInfo];
 /*! export OrderStatus [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export addressValidated [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export approve [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export calcNumItems [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export calcTotal [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export cancel [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export cancelPayment [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export checkItem [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export checkItems [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export errorCallback [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export freezeOnApproval [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export freezeOnCompletion [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export handleOrderEvent [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export handleStatusChange [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export makeOrderFactory [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export orderPicked [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export orderShipped [provided] [no usage info] [missing usage info prevents renaming] */
@@ -1893,6 +1833,7 @@ var GlobalMixins = [encryptPersonalInfo];
 /*! export returnDelivery [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export returnInventory [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export returnShipment [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export runOrderWorkflow [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export statusChangeValid [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export submit [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export timeoutCallback [provided] [no usage info] [missing usage info prevents renaming] */
@@ -1905,8 +1846,10 @@ var GlobalMixins = [encryptPersonalInfo];
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "OrderStatus": () => /* binding */ OrderStatus,
+/* harmony export */   "checkItem": () => /* binding */ checkItem,
 /* harmony export */   "checkItems": () => /* binding */ checkItems,
 /* harmony export */   "calcTotal": () => /* binding */ calcTotal,
+/* harmony export */   "calcNumItems": () => /* binding */ calcNumItems,
 /* harmony export */   "freezeOnApproval": () => /* binding */ freezeOnApproval,
 /* harmony export */   "freezeOnCompletion": () => /* binding */ freezeOnCompletion,
 /* harmony export */   "requiredForGuest": () => /* binding */ requiredForGuest,
@@ -1923,7 +1866,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "addressValidated": () => /* binding */ addressValidated,
 /* harmony export */   "paymentAuthorized": () => /* binding */ paymentAuthorized,
 /* harmony export */   "refundPayment": () => /* binding */ refundPayment,
-/* harmony export */   "handleStatusChange": () => /* binding */ handleStatusChange,
+/* harmony export */   "runOrderWorkflow": () => /* binding */ runOrderWorkflow,
 /* harmony export */   "handleOrderEvent": () => /* binding */ handleOrderEvent,
 /* harmony export */   "makeOrderFactory": () => /* binding */ makeOrderFactory,
 /* harmony export */   "approve": () => /* binding */ approve,
@@ -1956,6 +1899,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
+/** @typedef { import('../domain/index.js').ModelSpecification} ModelSpecification */
+
 /** @typedef {string|RegExp} topic*/
 
 /** @typedef {function(string)} eventCallback*/
@@ -1975,6 +1920,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
  * @property {adapterFunction} verifyDelivery - verify the order was received by the customer
  * @property {adapterFunction} trackShipment
  * @property {adapterFunction} refundPayment
+ * @property {function()} inventory - inventory relation - fetch inventory items
  * @property {adapterFunction} undo - undo all transactions up to this point
  * @property {function():Promise<Order>} pickOrder - pick the items and get them ready for shipment
  * @property {adapterFunction} authorizePayment - verify payment info, credit avail
@@ -2009,6 +1955,9 @@ var OrderStatus = {
   COMPLETE: 'COMPLETE',
   CANCELED: 'CANCELED'
 };
+var checkItem = function checkItem(orderItem) {
+  return typeof orderItem.itemId === 'string' && typeof orderItem.price === 'number';
+};
 /**
  *
  * @param {*} items
@@ -2021,9 +1970,7 @@ var checkItems = function checkItems(orderItems) {
 
   var items = Array.isArray(orderItems) ? orderItems : [orderItems];
 
-  if (items.length > 0 && items.every(function (i) {
-    return i.itemId && typeof i.price === 'number';
-  })) {
+  if (items.length > 0 && items.every(checkItem)) {
     return items;
   }
 
@@ -2040,6 +1987,11 @@ var calcTotal = function calcTotal(orderItems) {
     var qty = item.qty || 1;
     return total += item.price * qty;
   }, 0);
+};
+var calcNumItems = function calcNumItems(orderItems) {
+  return orderItems.reduce(function (total, item) {
+    return total += item.qty || 1;
+  });
 };
 /**
  * No changes to `propKey` properties once the order is approved
@@ -2114,8 +2066,8 @@ invalidStatusChange(OrderStatus.SHIPPING, OrderStatus.PENDING), // Can't change 
 invalidStatusChange(OrderStatus.SHIPPING, OrderStatus.APPROVED), // Can't change directly to shipping from pending
 invalidStatusChange(OrderStatus.PENDING, OrderStatus.SHIPPING), // Can't change directly to complete from pending
 invalidStatusChange(OrderStatus.PENDING, OrderStatus.COMPLETE), // Can't change final status
-invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.PENDING), // Can't change final status
-invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.SHIPPING)];
+invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.PENDING), invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.SHIPPING), invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.APPROVED), invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.CANCELED), // Can't change final status
+invalidStatusChange(OrderStatus.CANCELED, OrderStatus.PENDING), invalidStatusChange(OrderStatus.CANCELED, OrderStatus.SHIPPING), invalidStatusChange(OrderStatus.CANCELED, OrderStatus.APPROVED), invalidStatusChange(OrderStatus.CANCELED, OrderStatus.COMPLETE)];
 /**
  * Check that status changes are valid
  */
@@ -2391,10 +2343,9 @@ function refundPayment(_x) {
   return _refundPayment.apply(this, arguments);
 }
 /**
- * Copy existing customer data into the order or create new customer.
  *
  * @param {Order} order
- * @throws {"InvalidCustomerId"}
+ * @returns {Promise<Order>}
  */
 
 function _refundPayment() {
@@ -2421,35 +2372,168 @@ function _refundPayment() {
   return _refundPayment.apply(this, arguments);
 }
 
-function getCustomerOrder(_x2) {
-  return _getCustomerOrder.apply(this, arguments);
+function verifyAddress(_x2) {
+  return _verifyAddress.apply(this, arguments);
 }
 /**
- * Starts the order service workflow.
+ *
+ * @param {Order} order
+ * @returns {Promise<Order>}
  */
 
 
-function _getCustomerOrder() {
-  _getCustomerOrder = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(order) {
-    var customer, custInfo, update, _custInfo, _customer;
-
+function _verifyAddress() {
+  _verifyAddress = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(order) {
     return regeneratorRuntime.wrap(function _callee13$(_context13) {
       while (1) {
         switch (_context13.prev = _context13.next) {
           case 0:
-            if (!order.customerId) {
-              _context13.next = 12;
+            return _context13.abrupt("return", order.validateAddress(addressValidated));
+
+          case 1:
+          case "end":
+            return _context13.stop();
+        }
+      }
+    }, _callee13);
+  }));
+  return _verifyAddress.apply(this, arguments);
+}
+
+function verifyPayment(_x3) {
+  return _verifyPayment.apply(this, arguments);
+}
+/**
+ *
+ * @param {Order} order
+ * @returns
+ */
+
+
+function _verifyPayment() {
+  _verifyPayment = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee14(order) {
+    var authorizedOrder;
+    return regeneratorRuntime.wrap(function _callee14$(_context14) {
+      while (1) {
+        switch (_context14.prev = _context14.next) {
+          case 0:
+            _context14.prev = 0;
+            _context14.next = 3;
+            return order.authorizePayment(paymentAuthorized);
+
+          case 3:
+            authorizedOrder = _context14.sent;
+
+            if (authorizedOrder) {
+              _context14.next = 6;
               break;
             }
 
-            _context13.next = 3;
+            throw new Error('payment auth problem');
+
+          case 6:
+            if (authorizedOrder.paymentAccepted()) {
+              _context14.next = 8;
+              break;
+            }
+
+            throw new Error('payment authorization declined');
+
+          case 8:
+            return _context14.abrupt("return", authorizedOrder);
+
+          case 11:
+            _context14.prev = 11;
+            _context14.t0 = _context14["catch"](0);
+            handleError(_context14.t0, order, verifyPayment.name);
+
+          case 14:
+            return _context14.abrupt("return", order);
+
+          case 15:
+          case "end":
+            return _context14.stop();
+        }
+      }
+    }, _callee14, null, [[0, 11]]);
+  }));
+  return _verifyPayment.apply(this, arguments);
+}
+
+function verifyInventory(_x4) {
+  return _verifyInventory.apply(this, arguments);
+}
+/**
+ * Copy existing customer data into the order
+ * or create new customer from order details.
+ *
+ * @param {Order} order
+ * @throws {'InvalidCustomerId'}
+ */
+
+
+function _verifyInventory() {
+  _verifyInventory = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee15(order) {
+    var inventory;
+    return regeneratorRuntime.wrap(function _callee15$(_context15) {
+      while (1) {
+        switch (_context15.prev = _context15.next) {
+          case 0:
+            inventory = order.inventory();
+
+            if (!((inventory === null || inventory === void 0 ? void 0 : inventory.length) !== order.totalItems())) {
+              _context15.next = 3;
+              break;
+            }
+
+            throw new Error('insufficient inventory available', order);
+
+          case 3:
+            return _context15.abrupt("return", order);
+
+          case 4:
+          case "end":
+            return _context15.stop();
+        }
+      }
+    }, _callee15);
+  }));
+  return _verifyInventory.apply(this, arguments);
+}
+
+function getCustomerOrder(_x5) {
+  return _getCustomerOrder.apply(this, arguments);
+}
+/**
+ * Handle a new order:
+ * - fetch or save customer info
+ * - check item availability
+ * - authorize payment
+ * - verify shipping address
+ */
+
+
+function _getCustomerOrder() {
+  _getCustomerOrder = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee16(order) {
+    var customer, custInfo, update, _custInfo, _customer;
+
+    return regeneratorRuntime.wrap(function _callee16$(_context16) {
+      while (1) {
+        switch (_context16.prev = _context16.next) {
+          case 0:
+            if (!order.customerId) {
+              _context16.next = 12;
+              break;
+            }
+
+            _context16.next = 3;
             return order.customer();
 
           case 3:
-            customer = _context13.sent;
+            customer = _context16.sent;
 
             if (customer) {
-              _context13.next = 6;
+              _context16.next = 6;
               break;
             }
 
@@ -2460,118 +2544,100 @@ function _getCustomerOrder() {
             custInfo = _objectSpread(_objectSpread({}, customer.decrypt()), {}, {
               firstName: customer.firstName
             });
-            _context13.next = 9;
+            _context16.next = 9;
             return order.update(custInfo);
 
           case 9:
-            update = _context13.sent;
+            update = _context16.sent;
             console.info('update order with data from existing customer', custInfo);
-            return _context13.abrupt("return", update);
+            return _context16.abrupt("return", update);
 
           case 12:
             if (!order.saveShippingDetails) {
-              _context13.next = 19;
+              _context16.next = 19;
               break;
             }
 
             _custInfo = _objectSpread(_objectSpread({}, order.decrypt()), {}, {
               firstName: order.firstName
             });
-            _context13.next = 16;
+            _context16.next = 16;
             return order.customer(_custInfo);
 
           case 16:
-            _customer = _context13.sent;
+            _customer = _context16.sent;
             console.info('create new customer with data from order', _customer);
-            return _context13.abrupt("return", order);
+            return _context16.abrupt("return", order);
 
           case 19:
-            return _context13.abrupt("return", order);
+            return _context16.abrupt("return", order);
 
           case 20:
           case "end":
-            return _context13.stop();
+            return _context16.stop();
         }
       }
-    }, _callee13);
+    }, _callee16);
   }));
   return _getCustomerOrder.apply(this, arguments);
 }
 
+var processPendingOrder = (0,_domain_utils__WEBPACK_IMPORTED_MODULE_2__.asyncPipe)(getCustomerOrder, verifyInventory, verifyPayment, verifyAddress);
+/**
+ * Implements the beginging of the order service workflow.
+ * The rest is implemented by the {@link ModelSpecification}.
+ * See the port configuration section of {@link Order}.
+ */
+
 var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStatus.PENDING, function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(order) {
-    var customerOrder, payment, address;
+    var processedOrder;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             _context.prev = 0;
             _context.next = 3;
-            return getCustomerOrder(order);
+            return processPendingOrder(order);
 
           case 3:
-            customerOrder = _context.sent;
-            _context.next = 6;
-            return (0,_domain_utils__WEBPACK_IMPORTED_MODULE_2__.async)(customerOrder.authorizePayment(paymentAuthorized));
+            processedOrder = _context.sent;
 
-          case 6:
-            payment = _context.sent;
-
-            if (payment.ok) {
-              _context.next = 9;
+            if (!processedOrder.autoCheckout()) {
+              _context.next = 10;
               break;
             }
 
-            throw new Error('payment auth problem', payment.error);
+            _context.t0 = runOrderWorkflow;
+            _context.next = 8;
+            return processedOrder.update({
+              orderStatus: OrderStatus.APPROVED
+            }, false);
 
-          case 9:
-            if (payment.object.paymentAccepted()) {
-              _context.next = 11;
-              break;
-            }
+          case 8:
+            _context.t1 = _context.sent;
+            return _context.abrupt("return", (0, _context.t0)(_context.t1));
 
-            throw new Error('payment authorization declined');
-
-          case 11:
-            _context.next = 13;
-            return (0,_domain_utils__WEBPACK_IMPORTED_MODULE_2__.async)(payment.object.validateAddress(addressValidated));
+          case 10:
+            return _context.abrupt("return", processedOrder);
 
           case 13:
-            address = _context.sent;
-
-            if (!customerOrder.autoCheckout()) {
-              _context.next = 20;
-              break;
-            }
-
-            _context.t0 = handleStatusChange;
-            _context.next = 18;
-            return customerOrder.update(_objectSpread(_objectSpread(_objectSpread({}, payment.object), address.ok ? address.object : {}), {}, {
-              orderStatus: OrderStatus.APPROVED
-            }), false);
-
-          case 18:
-            _context.t1 = _context.sent;
-            (0, _context.t0)(_context.t1);
-
-          case 20:
-            _context.next = 25;
-            break;
-
-          case 22:
-            _context.prev = 22;
+            _context.prev = 13;
             _context.t2 = _context["catch"](0);
             console.error(_context.t2);
 
-          case 25:
+          case 16:
+            return _context.abrupt("return", order);
+
+          case 17:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[0, 22]]);
+    }, _callee, null, [[0, 13]]);
   }));
 
-  return function (_x3) {
+  return function (_x6) {
     return _ref.apply(this, arguments);
   };
 }()), _defineProperty(_OrderActions, OrderStatus.APPROVED, function () {
@@ -2594,22 +2660,26 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
             return order.emit('PayAuthFail', 'Payment authorization problem');
 
           case 5:
-            return _context2.abrupt("return", order);
+            _context2.next = 10;
+            break;
 
-          case 8:
-            _context2.prev = 8;
+          case 7:
+            _context2.prev = 7;
             _context2.t0 = _context2["catch"](0);
             handleError(_context2.t0, order, OrderStatus.APPROVED);
+
+          case 10:
+            return _context2.abrupt("return", order);
 
           case 11:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[0, 8]]);
+    }, _callee2, null, [[0, 7]]);
   }));
 
-  return function (_x4) {
+  return function (_x7) {
     return _ref2.apply(this, arguments);
   };
 }()), _defineProperty(_OrderActions, OrderStatus.SHIPPING, function () {
@@ -2618,26 +2688,42 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
-            try {
-              // don't block the caller waiting for this
-              // order.trackShipment(trackingUpdate);
-              console.debug({
-                func: OrderStatus.SHIPPING,
-                order: order
-              });
-            } catch (error) {
-              handleError(error, order, OrderStatus.SHIPPING);
-            }
+            _context3.prev = 0;
+            // order.trackShipment(trackingUpdate);
+            console.debug({
+              func: OrderStatus.SHIPPING,
+              order: order
+            });
+            _context3.next = 4;
+            return order.update({
+              orderStatus: OrderStatus.SHIPPING
+            });
 
-          case 1:
+          case 4:
+            _context3.next = 6;
+            return _context3.sent.emit('orderPicked');
+
+          case 6:
+            _context3.next = 11;
+            break;
+
+          case 8:
+            _context3.prev = 8;
+            _context3.t0 = _context3["catch"](0);
+            handleError(_context3.t0, order, OrderStatus.SHIPPING);
+
+          case 11:
+            return _context3.abrupt("return", order);
+
+          case 12:
           case "end":
             return _context3.stop();
         }
       }
-    }, _callee3);
+    }, _callee3, null, [[0, 8]]);
   }));
 
-  return function (_x5) {
+  return function (_x8) {
     return _ref3.apply(this, arguments);
   };
 }()), _defineProperty(_OrderActions, OrderStatus.CANCELED, function () {
@@ -2649,7 +2735,7 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
             _context4.prev = 0;
             console.debug({
               func: OrderStatus.CANCELED,
-              desc: 'calling undo',
+              desc: 'order canceled, calling undo',
               orderNo: order.orderNo
             });
             return _context4.abrupt("return", order.undo());
@@ -2660,6 +2746,9 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
             handleError(_context4.t0, order, OrderStatus.CANCELED);
 
           case 8:
+            return _context4.abrupt("return", order);
+
+          case 9:
           case "end":
             return _context4.stop();
         }
@@ -2667,7 +2756,7 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
     }, _callee4, null, [[0, 5]]);
   }));
 
-  return function (_x6) {
+  return function (_x9) {
     return _ref4.apply(this, arguments);
   };
 }()), _defineProperty(_OrderActions, OrderStatus.COMPLETE, function () {
@@ -2676,8 +2765,9 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
       while (1) {
         switch (_context5.prev = _context5.next) {
           case 0:
-            console.log('do customer sentiment etc');
-            return _context5.abrupt("return");
+            // send route to questionnaire, perform analysis, schedule follow-up
+            console.log('customer sentiment analysis, customer care, sales analysis');
+            return _context5.abrupt("return", order);
 
           case 2:
           case "end":
@@ -2687,42 +2777,43 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
     }, _callee5);
   }));
 
-  return function (_x7) {
+  return function (_x10) {
     return _ref5.apply(this, arguments);
   };
 }()), _OrderActions);
 /**
  * Call order service workflow - controlled by status
  * @param {Order} order
+ * @returns {Promise<Readonly<Order>>}
  */
 
-function handleStatusChange(_x8) {
-  return _handleStatusChange.apply(this, arguments);
+function runOrderWorkflow(_x11) {
+  return _runOrderWorkflow.apply(this, arguments);
 }
 /**
  * Called on create, update, delete of model instance.
- * @param {{model:Order}}
+ * @param {{model:Promise<ReadOnly<Order>>}}
  */
 
-function _handleStatusChange() {
-  _handleStatusChange = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee14(order) {
-    return regeneratorRuntime.wrap(function _callee14$(_context14) {
+function _runOrderWorkflow() {
+  _runOrderWorkflow = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee17(order) {
+    return regeneratorRuntime.wrap(function _callee17$(_context17) {
       while (1) {
-        switch (_context14.prev = _context14.next) {
+        switch (_context17.prev = _context17.next) {
           case 0:
-            return _context14.abrupt("return", OrderActions[order.orderStatus](order));
+            return _context17.abrupt("return", OrderActions[order.orderStatus](order));
 
           case 1:
           case "end":
-            return _context14.stop();
+            return _context17.stop();
         }
       }
-    }, _callee14);
+    }, _callee17);
   }));
-  return _handleStatusChange.apply(this, arguments);
+  return _runOrderWorkflow.apply(this, arguments);
 }
 
-function handleOrderEvent(_x9) {
+function handleOrderEvent(_x12) {
   return _handleOrderEvent.apply(this, arguments);
 }
 /**
@@ -2732,27 +2823,27 @@ function handleOrderEvent(_x9) {
  */
 
 function _handleOrderEvent() {
-  _handleOrderEvent = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee15(_ref6) {
+  _handleOrderEvent = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee18(_ref6) {
     var order, eventType, changes;
-    return regeneratorRuntime.wrap(function _callee15$(_context15) {
+    return regeneratorRuntime.wrap(function _callee18$(_context18) {
       while (1) {
-        switch (_context15.prev = _context15.next) {
+        switch (_context18.prev = _context18.next) {
           case 0:
             order = _ref6.model, eventType = _ref6.eventType, changes = _ref6.changes;
 
             if (!((changes === null || changes === void 0 ? void 0 : changes.orderStatus) || eventType === 'CREATE')) {
-              _context15.next = 3;
+              _context18.next = 3;
               break;
             }
 
-            return _context15.abrupt("return", handleStatusChange(order));
+            return _context18.abrupt("return", runOrderWorkflow(order));
 
           case 3:
           case "end":
-            return _context15.stop();
+            return _context18.stop();
         }
       }
-    }, _callee15);
+    }, _callee18);
   }));
   return _handleOrderEvent.apply(this, arguments);
 }
@@ -2800,6 +2891,17 @@ function makeOrderFactory(dependencies) {
                 return this.paymentAuthorization ? true : false;
               }), _defineProperty(_order, "autoCheckout", function autoCheckout() {
                 return _autoCheckout;
+              }), _defineProperty(_order, "totalItems", function totalItems() {
+                return calcNumItems(this.orderItems);
+              }), _defineProperty(_order, "total", function total() {
+                return calcTotal(this.orderItems);
+              }), _defineProperty(_order, "addItem", function addItem(item) {
+                if (checkItem(item)) {
+                  this.orderItems.push(item);
+                  return true;
+                }
+
+                return false;
               }), _order);
               return _context6.abrupt("return", Object.freeze(order));
 
@@ -2811,7 +2913,7 @@ function makeOrderFactory(dependencies) {
       }, _callee6);
     }));
 
-    function createOrder(_x10) {
+    function createOrder(_x13) {
       return _createOrder.apply(this, arguments);
     }
 
@@ -2823,7 +2925,7 @@ function makeOrderFactory(dependencies) {
  * @param {*} order
  */
 
-function approve(_x11) {
+function approve(_x14) {
   return _approve.apply(this, arguments);
 }
 /**
@@ -2832,62 +2934,62 @@ function approve(_x11) {
  */
 
 function _approve() {
-  _approve = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee16(order) {
-    var updated;
-    return regeneratorRuntime.wrap(function _callee16$(_context16) {
+  _approve = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee19(order) {
+    var approvedOrder;
+    return regeneratorRuntime.wrap(function _callee19$(_context19) {
       while (1) {
-        switch (_context16.prev = _context16.next) {
+        switch (_context19.prev = _context19.next) {
           case 0:
-            _context16.next = 2;
+            _context19.next = 2;
             return order.update({
               orderStatus: OrderStatus.APPROVED
             });
 
           case 2:
-            updated = _context16.sent;
-            handleStatusChange(updated);
+            approvedOrder = _context19.sent;
+            return _context19.abrupt("return", runOrderWorkflow(approvedOrder));
 
           case 4:
           case "end":
-            return _context16.stop();
+            return _context19.stop();
         }
       }
-    }, _callee16);
+    }, _callee19);
   }));
   return _approve.apply(this, arguments);
 }
 
-function cancel(_x12) {
+function cancel(_x15) {
   return _cancel.apply(this, arguments);
 }
 
 function _cancel() {
-  _cancel = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee17(order) {
-    var updated;
-    return regeneratorRuntime.wrap(function _callee17$(_context17) {
+  _cancel = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee20(order) {
+    var canceledOrder;
+    return regeneratorRuntime.wrap(function _callee20$(_context20) {
       while (1) {
-        switch (_context17.prev = _context17.next) {
+        switch (_context20.prev = _context20.next) {
           case 0:
-            _context17.next = 2;
+            _context20.next = 2;
             return order.update({
               orderStatus: OrderStatus.CANCELED
             });
 
           case 2:
-            updated = _context17.sent;
-            return _context17.abrupt("return", handleStatusChange(updated));
+            canceledOrder = _context20.sent;
+            return _context20.abrupt("return", runOrderWorkflow(canceledOrder));
 
           case 4:
           case "end":
-            return _context17.stop();
+            return _context20.stop();
         }
       }
-    }, _callee17);
+    }, _callee20);
   }));
   return _cancel.apply(this, arguments);
 }
 
-function submit(_x13) {
+function submit(_x16) {
   return _submit.apply(this, arguments);
 }
 /**
@@ -2896,19 +2998,19 @@ function submit(_x13) {
  */
 
 function _submit() {
-  _submit = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee18(order) {
-    return regeneratorRuntime.wrap(function _callee18$(_context18) {
+  _submit = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee21(order) {
+    return regeneratorRuntime.wrap(function _callee21$(_context21) {
       while (1) {
-        switch (_context18.prev = _context18.next) {
+        switch (_context21.prev = _context21.next) {
           case 0:
-            return _context18.abrupt("return", approve(order));
+            return _context21.abrupt("return", approve(order));
 
           case 1:
           case "end":
-            return _context18.stop();
+            return _context21.stop();
         }
       }
-    }, _callee18);
+    }, _callee21);
   }));
   return _submit.apply(this, arguments);
 }
@@ -2919,7 +3021,6 @@ function errorCallback(_ref8) {
       error = _ref8.error;
   console.error('error...', port, error);
   return order.undo();
-  "";
 }
 /**
  *
@@ -2938,92 +3039,17 @@ function timeoutCallback(_ref9) {
  * @param {*} param0
  */
 
-function returnInventory(_x14) {
+function returnInventory(_x17) {
   return _returnInventory.apply(this, arguments);
 }
 
 function _returnInventory() {
-  _returnInventory = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee19(order) {
-    return regeneratorRuntime.wrap(function _callee19$(_context19) {
-      while (1) {
-        switch (_context19.prev = _context19.next) {
-          case 0:
-            console.log(returnInventory.name);
-            return _context19.abrupt("return", order.update({
-              orderStatus: OrderStatus.CANCELED
-            }));
-
-          case 2:
-          case "end":
-            return _context19.stop();
-        }
-      }
-    }, _callee19);
-  }));
-  return _returnInventory.apply(this, arguments);
-}
-
-function returnShipment(_x15) {
-  return _returnShipment.apply(this, arguments);
-}
-
-function _returnShipment() {
-  _returnShipment = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee20(order) {
-    return regeneratorRuntime.wrap(function _callee20$(_context20) {
-      while (1) {
-        switch (_context20.prev = _context20.next) {
-          case 0:
-            console.log(returnShipment.name);
-            return _context20.abrupt("return", order.update({
-              orderStatus: OrderStatus.CANCELED
-            }));
-
-          case 2:
-          case "end":
-            return _context20.stop();
-        }
-      }
-    }, _callee20);
-  }));
-  return _returnShipment.apply(this, arguments);
-}
-
-function returnDelivery(_x16) {
-  return _returnDelivery.apply(this, arguments);
-}
-
-function _returnDelivery() {
-  _returnDelivery = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee21(order) {
-    return regeneratorRuntime.wrap(function _callee21$(_context21) {
-      while (1) {
-        switch (_context21.prev = _context21.next) {
-          case 0:
-            console.log(returnDelivery.name);
-            return _context21.abrupt("return", order.update({
-              orderStatus: OrderStatus.CANCELED
-            }));
-
-          case 2:
-          case "end":
-            return _context21.stop();
-        }
-      }
-    }, _callee21);
-  }));
-  return _returnDelivery.apply(this, arguments);
-}
-
-function cancelPayment(_x17) {
-  return _cancelPayment.apply(this, arguments);
-}
-
-function _cancelPayment() {
-  _cancelPayment = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee22(order) {
+  _returnInventory = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee22(order) {
     return regeneratorRuntime.wrap(function _callee22$(_context22) {
       while (1) {
         switch (_context22.prev = _context22.next) {
           case 0:
-            console.log(cancelPayment.name);
+            console.log(returnInventory.name);
             return _context22.abrupt("return", order.update({
               orderStatus: OrderStatus.CANCELED
             }));
@@ -3034,6 +3060,81 @@ function _cancelPayment() {
         }
       }
     }, _callee22);
+  }));
+  return _returnInventory.apply(this, arguments);
+}
+
+function returnShipment(_x18) {
+  return _returnShipment.apply(this, arguments);
+}
+
+function _returnShipment() {
+  _returnShipment = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee23(order) {
+    return regeneratorRuntime.wrap(function _callee23$(_context23) {
+      while (1) {
+        switch (_context23.prev = _context23.next) {
+          case 0:
+            console.log(returnShipment.name);
+            return _context23.abrupt("return", order.update({
+              orderStatus: OrderStatus.CANCELED
+            }));
+
+          case 2:
+          case "end":
+            return _context23.stop();
+        }
+      }
+    }, _callee23);
+  }));
+  return _returnShipment.apply(this, arguments);
+}
+
+function returnDelivery(_x19) {
+  return _returnDelivery.apply(this, arguments);
+}
+
+function _returnDelivery() {
+  _returnDelivery = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee24(order) {
+    return regeneratorRuntime.wrap(function _callee24$(_context24) {
+      while (1) {
+        switch (_context24.prev = _context24.next) {
+          case 0:
+            console.log(returnDelivery.name);
+            return _context24.abrupt("return", order.update({
+              orderStatus: OrderStatus.CANCELED
+            }));
+
+          case 2:
+          case "end":
+            return _context24.stop();
+        }
+      }
+    }, _callee24);
+  }));
+  return _returnDelivery.apply(this, arguments);
+}
+
+function cancelPayment(_x20) {
+  return _cancelPayment.apply(this, arguments);
+}
+
+function _cancelPayment() {
+  _cancelPayment = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee25(order) {
+    return regeneratorRuntime.wrap(function _callee25$(_context25) {
+      while (1) {
+        switch (_context25.prev = _context25.next) {
+          case 0:
+            console.log(cancelPayment.name);
+            return _context25.abrupt("return", order.update({
+              orderStatus: OrderStatus.CANCELED
+            }));
+
+          case 2:
+          case "end":
+            return _context25.stop();
+        }
+      }
+    }, _callee25);
   }));
   return _cancelPayment.apply(this, arguments);
 }
@@ -3125,6 +3226,7 @@ var userMixins = [(0,_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)('us
   \*****************************/
 /*! namespace exports */
 /*! export async [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export asyncPipe [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export compose [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export composeAsync [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export decrypt [provided] [no usage info] [missing usage info prevents renaming] */
@@ -3142,6 +3244,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "compose": () => /* binding */ compose,
 /* harmony export */   "composeAsync": () => /* binding */ composeAsync,
+/* harmony export */   "asyncPipe": () => /* binding */ asyncPipe,
 /* harmony export */   "encrypt": () => /* binding */ encrypt,
 /* harmony export */   "decrypt": () => /* binding */ decrypt,
 /* harmony export */   "hash": () => /* binding */ hash,
@@ -3186,25 +3289,46 @@ function composeAsync() {
     }, Promise.resolve(initVal));
   };
 }
+/**
+ * @callback pipeFn
+ * @param {object} obj - the object to compose
+ * @returns {object} - the composed object
+ */
+
+/**
+ * @param {pipeFn} func
+ */
+
+var asyncPipe = function asyncPipe() {
+  for (var _len3 = arguments.length, func = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+    func[_key3] = arguments[_key3];
+  }
+
+  return function (obj) {
+    return func.reduce(function (o, f) {
+      return o.then(f);
+    }, Promise.resolve(obj));
+  };
+};
 var passwd = process.env.ENCRYPTION_PWD;
-var algo = "aes-192-cbc";
-var key = crypto__WEBPACK_IMPORTED_MODULE_0___default().scryptSync(String(passwd), "salt", 24);
+var algo = 'aes-192-cbc';
+var key = crypto__WEBPACK_IMPORTED_MODULE_0___default().scryptSync(String(passwd), 'salt', 24);
 var iv = Buffer.alloc(16, 0);
 function encrypt(text) {
   var cipher = crypto__WEBPACK_IMPORTED_MODULE_0___default().createCipheriv(algo, key, iv);
-  var encrypted = cipher.update(text, "utf8", "hex");
-  encrypted += cipher["final"]("hex");
+  var encrypted = cipher.update(text, 'utf8', 'hex');
+  encrypted += cipher["final"]('hex');
   return encrypted;
 }
 function decrypt(cipherText) {
-  console.log("decrypt(%s)", cipherText);
+  console.log('decrypt(%s)', cipherText);
   var decipher = crypto__WEBPACK_IMPORTED_MODULE_0___default().createDecipheriv(algo, key, iv);
-  var decrypted = decipher.update(cipherText, "hex", "utf8");
-  decrypted += decipher["final"]("utf8");
+  var decrypted = decipher.update(cipherText, 'hex', 'utf8');
+  decrypted += decipher["final"]('utf8');
   return decrypted;
 }
 function hash(data) {
-  return crypto__WEBPACK_IMPORTED_MODULE_0___default().createHash("sha1").update(data).digest("hex");
+  return crypto__WEBPACK_IMPORTED_MODULE_0___default().createHash('sha1').update(data).digest('hex');
 }
 function uuid() {
   // return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>

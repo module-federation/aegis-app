@@ -23,7 +23,7 @@ import {
   requiredForApproval,
   approve,
   cancel
-} from '../domain/order'
+} from '../domain/order' 
 
 import {
   requireProperties,
@@ -163,9 +163,9 @@ export const Order = {
       undo: returnInventory,
       circuitBreaker: {
         portTimeout_pickOrder_order: {
-          callVolume: 1,
+          callVolume: 2,
           errorRate: 1,
-          intervalMs: 1
+          intervalMs: 60000
         }
       }
     },
@@ -178,20 +178,20 @@ export const Order = {
       undo: returnShipment,
       circuitBreaker: {
         portTimeout_shipOrder_order: {
-          callVolume: 1,
+          callVolume: 2,
           errorRate: 1,
-          intervalMs: 1
+          intervalMs: 60000
         },
         portRetryFailed_order: {
-          callVolume: 2,
+          callVolume: 3,
           errorRate: 2,
-          intervalMs: 2,
+          intervalMs: 60000,
           fallbackFn: cancel
         },
         default: {
           callVolume: 3,
           errorRate: 3,
-          intervalMs: 3
+          intervalMs: 60000
         }
       }
     },
@@ -203,9 +203,9 @@ export const Order = {
       producesEvent: 'orderDelivered',
       circuitBreaker: {
         portRetryFailed_order: {
-          callVolume: 1,
+          callVolume: 2,
           errorRate: 1,
-          intervalMs: 1
+          intervalMs: 60000
         }
       }
     },
@@ -232,35 +232,6 @@ export const Order = {
     refundPayment: {
       service: 'Payment',
       type: 'outbound'
-    },
-    mlDeployModel: {
-      service: 'MLops',
-      type: 'outbound',
-      adapter: service => ({ model, args: [callback, trainingDataLoc] }) =>
-        service
-          .getDeploymentService('MLops')
-          .startDeployment(callback, model, trainingDataLoc),
-      consumesEvent: 'mlDeploymentRequested',
-      producesEvent: 'mlDeploymentVerified',
-      internal: true // no 3rd party comms, handled by appmesh
-    },
-    mlTrainModel: {
-      service: 'MLops',
-      type: 'outbound',
-      consumesEvent: 'mlDeploymentVerified',
-      producesEvent: 'mlModelConverged',
-      adapter: service => ({ args: [callback, id] }) =>
-        service.startTraining(id, callback),
-      internal: true
-    },
-    mlReportLearning: {
-      service: 'MLops',
-      type: 'outbound',
-      consumesEvent: 'mlModelConverged',
-      producesEvent: 'mlReportLearning',
-      adapter: service => ({ args: [callback, id] }) =>
-        service.sendResults(id, callback),
-      internal: true
     }
   },
   relations: {
@@ -270,10 +241,12 @@ export const Order = {
       type: 'manyToOne',
       desc: 'Many orders per customer, just one customer per order'
     },
-    product: {
-      modelName: 'product',
-      foreignKey: 'productId',
-      type: 'manyToOne'
+    inventory: {
+      modelName: 'inventory',
+      foreignKey: 'itemId',
+      key: 'orderItems',
+      type: 'containsMany',
+      desc: 'An order contains a list of inventory items to ship.'
     }
   },
   commands: {
@@ -296,11 +269,9 @@ export const Order = {
           if (x === 0) {
             return 0
           }
-
           if (x === 1) {
             return 1
           }
-
           return fibonacci(x - 1) + fibonacci(x - 2)
         }
         const param = parseFloat(model.fibonacci)

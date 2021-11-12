@@ -2,8 +2,9 @@
 
 import { prevmodel } from './mixins'
 import checkPayload from './check-payload'
-import { async, encrypt } from '../domain/utils'
+import { async, asyncPipe } from '../domain/utils'
 
+/** @typedef { import('../domain/index.js').ModelSpecification} ModelSpecification */
 /** @typedef {string|RegExp} topic*/
 /** @typedef {function(string)} eventCallback*/
 /** @typedef {import('../adapters/index').adapterFunction} adapterFunction*/
@@ -19,6 +20,7 @@ import { async, encrypt } from '../domain/utils'
  * @property {adapterFunction} verifyDelivery - verify the order was received by the customer
  * @property {adapterFunction} trackShipment
  * @property {adapterFunction} refundPayment
+ * @property {function()} inventory - inventory relation - fetch inventory items
  * @property {adapterFunction} undo - undo all transactions up to this point
  * @property {function():Promise<Order>} pickOrder - pick the items and get them ready for shipment
  * @property {adapterFunction} authorizePayment - verify payment info, credit avail
@@ -55,6 +57,11 @@ export const OrderStatus = {
   CANCELED: 'CANCELED'
 }
 
+export const checkItem = function (orderItem) {
+  return (
+    typeof orderItem.itemId === 'string' && typeof orderItem.price === 'number'
+  )
+}
 /**
  *
  * @param {*} items
@@ -65,10 +72,7 @@ export const checkItems = function (orderItems) {
   }
   const items = Array.isArray(orderItems) ? orderItems : [orderItems]
 
-  if (
-    items.length > 0 &&
-    items.every(i => i.itemId && typeof i.price === 'number')
-  ) {
+  if (items.length > 0 && items.every(checkItem)) {
     return items
   }
   throw new Error('order items invalid')
@@ -85,6 +89,10 @@ export const calcTotal = function (orderItems) {
     const qty = item.qty || 1
     return (total += item.price * qty)
   }, 0)
+}
+
+export const calcNumItems = function (orderItems) {
+  return orderItems.reduce((total, item) => (total += item.qty || 1))
 }
 
 /**
@@ -158,8 +166,14 @@ const invalidStatusChanges = [
   invalidStatusChange(OrderStatus.PENDING, OrderStatus.COMPLETE),
   // Can't change final status
   invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.PENDING),
+  invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.SHIPPING),
+  invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.APPROVED),
+  invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.CANCELED),
   // Can't change final status
-  invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.SHIPPING)
+  invalidStatusChange(OrderStatus.CANCELED, OrderStatus.PENDING),
+  invalidStatusChange(OrderStatus.CANCELED, OrderStatus.SHIPPING),
+  invalidStatusChange(OrderStatus.CANCELED, OrderStatus.APPROVED),
+  invalidStatusChange(OrderStatus.CANCELED, OrderStatus.COMPLETE)
 ]
 
 /**
@@ -328,10 +342,60 @@ export async function refundPayment (order) {
 }
 
 /**
- * Copy existing customer data into the order or create new customer.
  *
  * @param {Order} order
- * @throws {"InvalidCustomerId"}
+ * @returns {Promise<Order>}
+ */
+async function verifyAddress (order) {
+  return order.validateAddress(addressValidated)
+}
+
+/**
+ *
+ * @param {Order} order
+ * @returns {Promise<Order>}
+ */
+async function verifyPayment (order) {
+  try {
+    // Authorize payment for the current total.
+    const authorizedOrder = await order.authorizePayment(paymentAuthorized)
+
+    if (!authorizedOrder) {
+      throw new Error('payment auth problem')
+    }
+
+    if (!authorizedOrder.paymentAccepted()) {
+      throw new Error('payment authorization declined')
+    }
+
+    return authorizedOrder
+  } catch (e) {
+    handleError(e, order, verifyPayment.name)
+  }
+  return order
+}
+
+/**
+ *
+ * @param {Order} order
+ * @returns
+ */
+async function verifyInventory (order) {
+  const inventory = order.inventory()
+
+  if (inventory?.length !== order.totalItems()) {
+    throw new Error('insufficient inventory available', order)
+  }
+
+  return order
+}
+
+/**
+ * Copy existing customer data into the order
+ * or create new customer from order details.
+ *
+ * @param {Order} order
+ * @throws {'InvalidCustomerId'}
  */
 async function getCustomerOrder (order) {
   // If an id is given, try fetching the model
@@ -364,7 +428,23 @@ async function getCustomerOrder (order) {
 }
 
 /**
- * Starts the order service workflow.
+ * Handle a new order:
+ * - fetch or save customer info
+ * - check item availability
+ * - authorize payment
+ * - verify shipping address
+ */
+const processPendingOrder = asyncPipe(
+  getCustomerOrder,
+  verifyInventory,
+  verifyPayment,
+  verifyAddress
+)
+
+/**
+ * Implements the beginging of the order service workflow.
+ * The rest is implemented by the {@link ModelSpecification}.
+ * See the port configuration section of {@link Order}.
  */
 const OrderActions = {
   /**
@@ -373,126 +453,114 @@ const OrderActions = {
    * or when it is updated while still in pending status.
    *
    * @param {Order} order - the order
+   * @returns {Promise<Readonly<Order>>}
    */
   [OrderStatus.PENDING]: async order => {
     try {
-      // If requester is a customer, get shipping data from customer service.
-      const customerOrder = await getCustomerOrder(order)
+      const processedOrder = await processPendingOrder(order)
 
-      // const inventoryAvailable = await customerOrder.checkInventory();
-      // if (!inventoryAvailable) {
-      //   // Design the system so this is impossible.
-      //   customerOrder.emit(
-      //     customerOrder.checkInventory.name,
-      //     "item displayted to, and selected by, customer is not available!"
-      //   );
-      // }
-
-      // Authorize payment for the current total.
-      const payment = await async(
-        customerOrder.authorizePayment(paymentAuthorized)
-      )
-
-      if (!payment.ok) {
-        throw new Error('payment auth problem', payment.error)
-      }
-
-      if (!payment.object.paymentAccepted()) {
-        throw new Error('payment authorization declined')
-      }
-
-      // Now verify address
-      const address = await async(
-        payment.object.validateAddress(addressValidated)
-      )
-
-      if (customerOrder.autoCheckout()) {
-        handleStatusChange(
-          await customerOrder.update(
+      if (processedOrder.autoCheckout()) {
+        return runOrderWorkflow(
+          await processedOrder.update(
             {
-              ...payment.object,
-              ...(address.ok ? address.object : {}),
               orderStatus: OrderStatus.APPROVED
             },
             false
           )
         )
       }
+      return processedOrder
     } catch (e) {
       console.error(e)
     }
+    return order
   },
+
   /**
    * If payment is authorized, notify inventory.
    * This kicks off the rest of the workflow,
    * which is controlled through port config.
    * @param {Order} order
+   * @returns {Promise<Readonly<Order>>}
    */
   [OrderStatus.APPROVED]: async order => {
     try {
       if (order.paymentAccepted()) {
+        // Don't `await` the async result, which will block the API caller
+        // if we being executed that way. Return control back to caller now.
         return order.pickOrder(orderPicked)
       }
       await order.emit('PayAuthFail', 'Payment authorization problem')
-      return order
     } catch (error) {
       handleError(error, order, OrderStatus.APPROVED)
     }
+    return order
   },
+
   /**
    * Useful if we need to restart tracking.
    * @param {Order} order
+   * @returns {Promise<Readonly<Order>>}
    */
   [OrderStatus.SHIPPING]: async order => {
     try {
-      // don't block the caller waiting for this
       // order.trackShipment(trackingUpdate);
       console.debug({ func: OrderStatus.SHIPPING, order })
+      await (await order.update({ orderStatus: OrderStatus.SHIPPING })).emit(
+        'orderPicked'
+      )
     } catch (error) {
       handleError(error, order, OrderStatus.SHIPPING)
     }
+    return order
   },
+
   /**
    * Start cancellation process.
    * @param {Order} order
+   * @returns {Promise<Readonly<Order>>}
    */
   [OrderStatus.CANCELED]: async order => {
     try {
       console.debug({
         func: OrderStatus.CANCELED,
-        desc: 'calling undo',
+        desc: 'order canceled, calling undo',
         orderNo: order.orderNo
       })
       return order.undo()
     } catch (error) {
       handleError(error, order, OrderStatus.CANCELED)
     }
+    return order
   },
   /**
    *
    * @param {Order} order
+   * @returns {Promise<Readonly<Order>>}
    */
   [OrderStatus.COMPLETE]: async order => {
-    console.log('do customer sentiment etc')
-    return
+    // send route to questionnaire, perform analysis, schedule follow-up
+    console.log('customer sentiment analysis, customer care, sales analysis')
+    return order
   }
 }
 
 /**
  * Call order service workflow - controlled by status
  * @param {Order} order
+ * @returns {Promise<Readonly<Order>>}
  */
-export async function handleStatusChange (order) {
+export async function runOrderWorkflow (order) {
   return OrderActions[order.orderStatus](order)
 }
 
 /**
  * Called on create, update, delete of model instance.
- * @param {{model:Order}}
+ * @param {{model:Promise<ReadOnly<Order>>}}
  */
 export async function handleOrderEvent ({ model: order, eventType, changes }) {
   if (changes?.orderStatus || eventType === 'CREATE') {
-    return handleStatusChange(order)
+    return runOrderWorkflow(order)
   }
 }
 
@@ -557,6 +625,19 @@ export function makeOrderFactory (dependencies) {
        */
       autoCheckout () {
         return autoCheckout
+      },
+      totalItems () {
+        return calcNumItems(this.orderItems)
+      },
+      total () {
+        return calcTotal(this.orderItems)
+      },
+      addItem (item) {
+        if (checkItem(item)) {
+          this.orderItems.push(item)
+          return true
+        }
+        return false
       }
     }
 
@@ -569,8 +650,10 @@ export function makeOrderFactory (dependencies) {
  * @param {*} order
  */
 export async function approve (order) {
-  const updated = await order.update({ orderStatus: OrderStatus.APPROVED })
-  handleStatusChange(updated)
+  const approvedOrder = await order.update({
+    orderStatus: OrderStatus.APPROVED
+  })
+  return runOrderWorkflow(approvedOrder)
 }
 
 /**
@@ -578,8 +661,10 @@ export async function approve (order) {
  * @param {*} order
  */
 export async function cancel (order) {
-  const updated = await order.update({ orderStatus: OrderStatus.CANCELED })
-  return handleStatusChange(updated)
+  const canceledOrder = await order.update({
+    orderStatus: OrderStatus.CANCELED
+  })
+  return runOrderWorkflow(canceledOrder)
 }
 
 export async function submit (order) {
@@ -593,7 +678,6 @@ export async function submit (order) {
 export function errorCallback ({ port, model: order, error }) {
   console.error('error...', port, error)
   return order.undo()
-  ;``
 }
 
 /**
