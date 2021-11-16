@@ -9,7 +9,7 @@ var serverConfig = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     publicPath:
-      'https://api.github.com?owner=module-federation&repo=microlib-example&filedir=dist&branch=customer5',
+      'https://api.github.com?owner=module-federation&repo=microlib-example&filedir=dist&branch=master',
     // "http://aegis.module-federation.org:8060",
     libraryTarget: 'commonjs'
   },
