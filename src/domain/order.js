@@ -10,6 +10,7 @@ import { asyncPipe } from '../domain/utils'
 /** @typedef {import('../adapters/index').adapterFunction} adapterFunction*/
 /** @typedef {string} id */
 /** @typedef {import("./customer").Customer} Customer */
+/** @typedef {function(Order)} undoFunction */
 
 /**
  * @typedef {Object} Order The Order Service
@@ -358,6 +359,7 @@ async function verifyAddress (order) {
 async function verifyPayment (order) {
   try {
     // Authorize payment for the current total.
+    /**@type {Order} */
     const authorizedOrder = await order.authorizePayment(paymentAuthorized)
 
     if (!authorizedOrder) {
@@ -669,6 +671,11 @@ export async function cancel (order) {
   return runOrderWorkflow(canceledOrder)
 }
 
+/**
+ * Alias of `approve`
+ * @param {Order} order
+ * @returns
+ */
 export async function submit (order) {
   return approve(order)
 }
@@ -691,11 +698,10 @@ export function timeoutCallback ({ port, ports, adapterFn, model: order }) {
 }
 
 /**
+ * @type {undoFunction}
  * Start process to return canceled order items to inventory.
  * Do not call `runOrderWorkflow` - it is already running (in
  * reverse) if we get here.
- *
- * @param {Order} param0
  */
 export async function returnInventory (order) {
   console.log(returnInventory.name)
@@ -703,11 +709,10 @@ export async function returnInventory (order) {
 }
 
 /**
+ * @type {undoFunction}
  * Start process for the shipper to pick the items to return.
  * Do not call `runOrderWorkflow` - it is already running (in
  * reverse) if we get here.
- *
- * @param {Order} param0
  */
 export async function returnShipment (order) {
   console.log(returnShipment.name)
@@ -715,17 +720,19 @@ export async function returnShipment (order) {
 }
 
 /**
+ * @type {undoFunction}
  * Start process to return canceled order items to inventory.
  * Do not call `runOrderWorkflow` - it is already running (in
  * reverse) if we get here.
- *
- * @param {Order} param0
  */
 export async function returnDelivery (order) {
   console.log(returnDelivery.name)
   return order.update({ orderStatus: OrderStatus.CANCELED })
 }
 
+/**
+ * @type {undoFunction}
+ */
 export async function cancelPayment (order) {
   console.log(cancelPayment.name)
   return order.update({ orderStatus: OrderStatus.CANCELED })
