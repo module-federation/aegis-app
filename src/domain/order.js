@@ -2,7 +2,7 @@
 
 import { prevmodel } from './mixins'
 import checkPayload from './check-payload'
-import { async, asyncPipe } from '../domain/utils'
+import { asyncPipe } from '../domain/utils'
 
 /** @typedef { import('../domain/index.js').ModelSpecification} ModelSpecification */
 /** @typedef {string|RegExp} topic*/
@@ -378,7 +378,8 @@ async function verifyPayment (order) {
 /**
  *
  * @param {Order} order
- * @returns
+ * @returns {Promise<Order>}
+ * @throws {'InsufficientInventory'}
  */
 async function verifyInventory (order) {
   const inventory = order.inventory()
@@ -457,6 +458,7 @@ const OrderActions = {
    */
   [OrderStatus.PENDING]: async order => {
     try {
+      /**@type {Order} */
       const processedOrder = await processPendingOrder(order)
 
       if (processedOrder.autoCheckout()) {
@@ -647,7 +649,7 @@ export function makeOrderFactory (dependencies) {
 
 /**
  * Called as command to approve/submit order.
- * @param {*} order
+ * @param {Order} order
  */
 export async function approve (order) {
   const approvedOrder = await order.update({
@@ -658,7 +660,7 @@ export async function approve (order) {
 
 /**
  * Called as command to cancel order.
- * @param {*} order
+ * @param {Order} order
  */
 export async function cancel (order) {
   const canceledOrder = await order.update({
@@ -690,18 +692,35 @@ export function timeoutCallback ({ port, ports, adapterFn, model: order }) {
 
 /**
  * Start process to return canceled order items to inventory.
- * @param {*} param0
+ * Do not call `runOrderWorkflow` - it is already running (in
+ * reverse) if we get here.
+ *
+ * @param {Order} param0
  */
 export async function returnInventory (order) {
   console.log(returnInventory.name)
   return order.update({ orderStatus: OrderStatus.CANCELED })
 }
 
+/**
+ * Start process for the shipper to pick the items to return.
+ * Do not call `runOrderWorkflow` - it is already running (in
+ * reverse) if we get here.
+ *
+ * @param {Order} param0
+ */
 export async function returnShipment (order) {
   console.log(returnShipment.name)
   return order.update({ orderStatus: OrderStatus.CANCELED })
 }
 
+/**
+ * Start process to return canceled order items to inventory.
+ * Do not call `runOrderWorkflow` - it is already running (in
+ * reverse) if we get here.
+ *
+ * @param {Order} param0
+ */
 export async function returnDelivery (order) {
   console.log(returnDelivery.name)
   return order.update({ orderStatus: OrderStatus.CANCELED })
