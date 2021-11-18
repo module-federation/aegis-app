@@ -226,8 +226,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _domain_inventory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../domain/inventory */ "./src/domain/inventory.js");
 /* harmony import */ var _domain_mixins__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/mixins */ "./src/domain/mixins.js");
-/* harmony import */ var _domain_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../domain/utils */ "./src/domain/utils.js");
-
 
 
 
@@ -239,11 +237,38 @@ __webpack_require__.r(__webpack_exports__);
 var Inventory = {
   modelName: 'inventory',
   endpoint: 'inventory',
-  dependencies: {
-    uuid: _domain_utils__WEBPACK_IMPORTED_MODULE_2__.uuid
-  },
+  dependencies: {},
   factory: _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.makeInventoryFactory,
-  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.requireProperties)('category', 'properties', 'price'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.freezeProperties)('*')]
+  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.requireProperties)('name', 'inStock', 'category', 'price', 'purchaseOrder'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.validateProperties)([{
+    propKey: 'inStock',
+    "typeof": 'number',
+    maxnum: 99999
+  }, {
+    propKey: 'category',
+    values: _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.categories
+  }, {
+    propKey: 'assetType',
+    values: _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.assetTypes
+  }, {
+    propKey: 'properties',
+    isValid: function isValid(_obj, prop) {
+      return prop.every(function (p) {
+        return _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.properties.includes(p);
+      });
+    }
+  }, {
+    propKey: 'price',
+    "typeof": 'number',
+    maxnum: 999.99
+  }]), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.freezeProperties)('*')],
+  relations: {
+    orders: {
+      modelName: 'order',
+      type: 'oneToMany',
+      foreignKey: 'itemId',
+      desc: 'many items per order'
+    }
+  }
 };
 
 /***/ }),
@@ -636,7 +661,10 @@ var models = Object.values(_config__WEBPACK_IMPORTED_MODULE_4__).map(function (s
   !*** ./src/domain/inventory.js ***!
   \*********************************/
 /*! namespace exports */
+/*! export assetTypes [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export categories [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export makeInventoryFactory [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export properties [provided] [no usage info] [missing usage info prevents renaming] */
 /*! other exports [not provided] [no usage info] */
 /*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
@@ -644,21 +672,40 @@ var models = Object.values(_config__WEBPACK_IMPORTED_MODULE_4__).map(function (s
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "assetTypes": () => /* binding */ assetTypes,
+/* harmony export */   "properties": () => /* binding */ properties,
+/* harmony export */   "categories": () => /* binding */ categories,
 /* harmony export */   "makeInventoryFactory": () => /* binding */ makeInventoryFactory
 /* harmony export */ });
 
 
+var assetTypes = ['rotating-asset', 'spare-part'];
+var properties = ['height', 'length', 'width', 'weight', 'color'];
+var categories = ['home', 'auto', 'business'];
 var makeInventoryFactory = function makeInventoryFactory(dependencies) {
   return function (_ref) {
     var category = _ref.category,
         properties = _ref.properties,
         price = _ref.price,
-        discount = _ref.discount;
+        discount = _ref.discount,
+        name = _ref.name,
+        desc = _ref.desc,
+        sku = _ref.sku,
+        purchaseOrder = _ref.purchaseOrder,
+        vendor = _ref.vendor,
+        inStock = _ref.inStock,
+        assetType = _ref.assetType;
     return Object.freeze({
       category: category,
       properties: properties,
-      price: price - discount || 0,
-      itemId: dependencies.uuid()
+      price: price - (discount || 0.0),
+      name: name,
+      desc: desc,
+      sku: sku,
+      purchaseOrder: purchaseOrder,
+      vendor: vendor,
+      inStock: inStock,
+      assetType: assetType
     });
   };
 };
