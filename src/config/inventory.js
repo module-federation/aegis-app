@@ -1,8 +1,17 @@
 'use strict'
 
-import { makeInventoryFactory } from '../domain/inventory'
-import { requireProperties, freezeProperties } from '../domain/mixins'
-import { uuid } from '../domain/utils'
+import {
+  makeInventoryFactory,
+  assetTypes,
+  properties,
+  categories
+} from '../domain/inventory'
+
+import {
+  requireProperties,
+  freezeProperties,
+  validateProperties
+} from '../domain/mixins'
 
 /**
  * @type {import("../domain/order").ModelSpecification}
@@ -10,10 +19,42 @@ import { uuid } from '../domain/utils'
 export const Inventory = {
   modelName: 'inventory',
   endpoint: 'inventory',
-  dependencies: { uuid },
+  dependencies: {},
   factory: makeInventoryFactory,
   mixins: [
-    requireProperties('category', 'properties', 'price'),
+    requireProperties('name', 'inStock', 'category', 'price', 'purchaseOrder'),
+    validateProperties([
+      {
+        propKey: 'inStock',
+        typeof: 'number',
+        maxnum: 99999
+      },
+      {
+        propKey: 'category',
+        values: categories
+      },
+      {
+        propKey: 'assetType',
+        values: assetTypes
+      },
+      {
+        propKey: 'properties',
+        isValid: (_obj, prop) => prop.every(p => properties.includes(p))
+      },
+      {
+        propKey: 'price',
+        typeof: 'number',
+        maxnum: 999.99
+      }
+    ]),
     freezeProperties('*')
-  ]
+  ],
+  relations: {
+    orders: {
+      modelName: 'order',
+      type: 'oneToMany',
+      foreignKey: 'itemId',
+      desc: 'many items per order'
+    }
+  }
 }
