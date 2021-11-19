@@ -1,6 +1,9 @@
 'use strict'
 
+import { dependencies } from 'webpack'
+
 export const MLOps = {
+  factory: dependencies => (...args) => Object.freeze({ args }),
   modelName: 'mlops',
   endpoint: 'ml-ops',
   ports: {
