@@ -111,8 +111,9 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
 /*! namespace exports */
 /*! export Order [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/order.js .Order */
 /*! export User [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/user.js .User */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_exports__, __webpack_require__.d, __webpack_require__.r, __webpack_require__.* */
+/*! export default [not provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [maybe provided (runtime-defined)] [no usage info] -> ./src/config/mlops.js */
+/*! runtime requirements: __webpack_require__, __webpack_exports__, __webpack_require__.d, __webpack_require__.n, __webpack_require__.r, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -123,9 +124,97 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./order */ "./src/config/order.js");
 /* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./user */ "./src/config/user.js");
+/* harmony import */ var _mlops__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./mlops */ "./src/config/mlops.js");
+/* harmony import */ var _mlops__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_mlops__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony reexport (unknown) */ var __WEBPACK_REEXPORT_OBJECT__ = {};
+/* harmony reexport (unknown) */ for(const __WEBPACK_IMPORT_KEY__ in _mlops__WEBPACK_IMPORTED_MODULE_2__) if(["default","Order","User"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) __WEBPACK_REEXPORT_OBJECT__[__WEBPACK_IMPORT_KEY__] = () => _mlops__WEBPACK_IMPORTED_MODULE_2__[__WEBPACK_IMPORT_KEY__]
+/* harmony reexport (unknown) */ __webpack_require__.d(__webpack_exports__, __WEBPACK_REEXPORT_OBJECT__);
+
 
  // export * from "./customer";
 // export * from "./inventory";
+
+/***/ }),
+
+/***/ "./src/config/mlops.js":
+/*!*****************************!*\
+  !*** ./src/config/mlops.js ***!
+  \*****************************/
+/*! unknown exports (runtime-defined) */
+/*! runtime requirements:  */
+/***/ (() => {
+
+"use strict";
+
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+var MLOps = {
+  modelName: 'mlops',
+  endpoint: 'ml-ops',
+  ports: {
+    mlDeployModel: {
+      service: 'MLops',
+      type: 'outbound',
+      adapter: function adapter(service) {
+        return function (_ref) {
+          var model = _ref.model,
+              _ref$args = _slicedToArray(_ref.args, 2),
+              callback = _ref$args[0],
+              trainingDataLoc = _ref$args[1];
+
+          return service.getDeploymentService('MLops').startDeployment(callback, model, trainingDataLoc);
+        };
+      },
+      consumesEvent: 'mlDeploymentRequested',
+      producesEvent: 'mlDeploymentVerified',
+      internal: true // no 3rd party comms, handled by appmesh
+
+    },
+    mlTrainModel: {
+      service: 'MLops',
+      type: 'outbound',
+      consumesEvent: 'mlDeploymentVerified',
+      producesEvent: 'mlModelConverged',
+      adapter: function adapter(service) {
+        return function (_ref2) {
+          var _ref2$args = _slicedToArray(_ref2.args, 2),
+              callback = _ref2$args[0],
+              id = _ref2$args[1];
+
+          return service.startTraining(id, callback);
+        };
+      },
+      internal: true
+    },
+    mlReportLearning: {
+      service: 'MLops',
+      type: 'outbound',
+      consumesEvent: 'mlModelConverged',
+      producesEvent: 'mlReportLearning',
+      adapter: function adapter(service) {
+        return function (_ref3) {
+          var _ref3$args = _slicedToArray(_ref3.args, 2),
+              callback = _ref3$args[0],
+              id = _ref3$args[1];
+
+          return service.sendResults(id, callback);
+        };
+      },
+      internal: true
+    }
+  }
+};
 
 /***/ }),
 
