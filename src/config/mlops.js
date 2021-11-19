@@ -1,6 +1,6 @@
 'use strict'
 
-const MLOps = {
+export const MLOps = {
   modelName: 'mlops',
   endpoint: 'ml-ops',
   ports: {
