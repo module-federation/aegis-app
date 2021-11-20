@@ -2484,18 +2484,13 @@ function _verifyInventory() {
         switch (_context15.prev = _context15.next) {
           case 0:
             inventory = order.inventory();
+            console.debug('inventory', inventory); // if (inventory?.length !== order.totalItems()) {
+            //   throw new Error('insufficient inventory available', order)
+            // }
 
-            if (!((inventory === null || inventory === void 0 ? void 0 : inventory.length) !== order.totalItems())) {
-              _context15.next = 3;
-              break;
-            }
-
-            throw new Error('insufficient inventory available', order);
-
-          case 3:
             return _context15.abrupt("return", order);
 
-          case 4:
+          case 3:
           case "end":
             return _context15.stop();
         }
