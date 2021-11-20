@@ -384,7 +384,7 @@ async function verifyPayment (order) {
  * @throws {'InsufficientInventory'}
  */
 async function verifyInventory (order) {
-  const inventory = order.inventory()
+  const inventory = await order.inventory()
   console.debug('inventory', inventory)
 
   // if (inventory?.length !== order.totalItems()) {
