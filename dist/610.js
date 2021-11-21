@@ -678,7 +678,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /**
  * @typedef {import('../domain/order').Order} Order
- * @typedef
  * @callback adapterFactory
  * @param {service} service
  * @returns {function({model:Order,parms:any[]})}
@@ -716,7 +715,7 @@ function authorizePayment(service) {
             case 0:
               order = options.model, _options$args = _slicedToArray(options.args, 1), callback = _options$args[0];
               _context.next = 3;
-              return service.authorizePayment(order.orderNo, 12.0, "src", "ibm", false);
+              return service.authorizePayment(order.orderNo, 12.0, 'src', 'ibm', false);
 
             case 3:
               paymentAuthorization = _context.sent;
