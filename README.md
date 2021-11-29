@@ -14,6 +14,6 @@ yarn build
 
 See the [article](https://trmidboe.medium.com/discounting-the-microservice-premium-a95311c61367) that describes these concepts in detail.
 
-This template repo provides the scaffolding to build a federated application on ÆGIS. It also contains an example of an Order, User, Customer and Inventory service streaming to and running in the same [ÆGIS](https://github.com/module-federation/MicroLib) host server process. (Other builds area available where the services run remotely.) The examples demonstrate integration with, and orchestration of, an Address, Payment, Inventory, Shipping, Event (Kafka), and Persistance service (MongoDB) using federated ports.
+This template repo provides the scaffolding to build a federated application on ÆGIS. It contains an example of an Order, User, Customer and Inventory service streaming to and running in the same [ÆGIS](https://github.com/module-federation/MicroLib) host server process. (Other builds area available where the services run remotely.) The repo also includes a test server for running the examples (and the required middleware). The examples demonstrate integration with, and orchestration of, an Address, Payment, Inventory, Shipping, Event (Kafka), and Persistance service (MongoDB) using federated ports.
 
 Feel free to delete the examples and start fresh.
