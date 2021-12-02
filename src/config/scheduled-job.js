@@ -5,7 +5,7 @@
  */
 export const ScheduledJob = {
   modelName: 'scheduledjob',
-  endpoints: 'scheduledjobs',
+  endpoint: 'scheduledjobs',
   factory: dependencies => ({
     startTime,
     startEvent,

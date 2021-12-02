@@ -427,7 +427,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ScheduledJob = {
   modelName: 'scheduledjob',
-  endpoints: 'scheduledjobs',
+  endpoint: 'scheduledjobs',
   factory: function factory(dependencies) {
     return function (_ref) {
       var startTime = _ref.startTime,
