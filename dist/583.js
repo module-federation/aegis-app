@@ -110,6 +110,7 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
   \*****************************/
 /*! namespace exports */
 /*! export Order [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/order.js .Order */
+/*! export ScheduledJob [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/scheduled-job.js .ScheduledJob */
 /*! export User [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/user.js .User */
 /*! other exports [not provided] [no usage info] */
 /*! runtime requirements: __webpack_require__, __webpack_exports__, __webpack_require__.d, __webpack_require__.r, __webpack_require__.* */
@@ -119,14 +120,18 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Order": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.Order,
-/* harmony export */   "User": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_1__.User
+/* harmony export */   "User": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_1__.User,
+/* harmony export */   "ScheduledJob": () => /* reexport safe */ _scheduled_job__WEBPACK_IMPORTED_MODULE_2__.ScheduledJob
 /* harmony export */ });
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./order */ "./src/config/order.js");
 /* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./user */ "./src/config/user.js");
+/* harmony import */ var _scheduled_job__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./scheduled-job */ "./src/config/scheduled-job.js");
 
  //export * from './project'
 // export * from "./customer";
 //export * from './inventory'
+
+
 
 /***/ }),
 
@@ -396,6 +401,49 @@ var Order = {
     },
     enabled: false
   }]
+};
+
+/***/ }),
+
+/***/ "./src/config/scheduled-job.js":
+/*!*************************************!*\
+  !*** ./src/config/scheduled-job.js ***!
+  \*************************************/
+/*! namespace exports */
+/*! export ScheduledJob [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ScheduledJob": () => /* binding */ ScheduledJob
+/* harmony export */ });
+
+/**
+ * @type {import('./index').ModelSpecification}
+ */
+
+var ScheduledJob = {
+  modelName: 'scheduledjob',
+  endpoints: 'scheduledjobs',
+  factory: function factory(dependencies) {
+    return function (_ref) {
+      var startTime = _ref.startTime,
+          startEvent = _ref.startEvent,
+          desc = _ref.desc,
+          expectedDur = _ref.expectedDur,
+          assingee = _ref.assingee;
+      return Object.freeze({
+        startEvent: startEvent,
+        startTime: startTime,
+        desc: desc,
+        expectedDur: expectedDur,
+        assingee: assingee
+      });
+    };
+  }
 };
 
 /***/ }),
