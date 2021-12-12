@@ -12,5 +12,16 @@ export const ScheduledJob = {
     desc,
     expectedDur,
     assingee
-  }) => Object.freeze({ startEvent, startTime, desc, expectedDur, assingee })
+  }) =>
+    Object.freeze({
+      startEvent,
+      startTime,
+      desc,
+      expectedDur,
+      assingee,
+      jobId: dependencies.uuid()
+    }),
+  ports: {
+    startJob: {}
+  }
 }
