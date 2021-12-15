@@ -109,8 +109,8 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
   !*** ./src/config/index.js ***!
   \*****************************/
 /*! namespace exports */
+/*! export Inventory [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/inventory.js .Inventory */
 /*! export Order [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/order.js .Order */
-/*! export ScheduledJob [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/scheduled-job.js .ScheduledJob */
 /*! export User [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/user.js .User */
 /*! other exports [not provided] [no usage info] */
 /*! runtime requirements: __webpack_require__, __webpack_exports__, __webpack_require__.d, __webpack_require__.r, __webpack_require__.* */
@@ -121,17 +121,80 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Order": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.Order,
 /* harmony export */   "User": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_1__.User,
-/* harmony export */   "ScheduledJob": () => /* reexport safe */ _scheduled_job__WEBPACK_IMPORTED_MODULE_2__.ScheduledJob
+/* harmony export */   "Inventory": () => /* reexport safe */ _inventory__WEBPACK_IMPORTED_MODULE_2__.Inventory
 /* harmony export */ });
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./order */ "./src/config/order.js");
 /* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./user */ "./src/config/user.js");
-/* harmony import */ var _scheduled_job__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./scheduled-job */ "./src/config/scheduled-job.js");
+/* harmony import */ var _inventory__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./inventory */ "./src/config/inventory.js");
 
- //export * from './project'
-// export * from "./customer";
-//export * from './inventory'
+ // export * from "./customer";
+// export * from "./product";
 
 
+
+/***/ }),
+
+/***/ "./src/config/inventory.js":
+/*!*********************************!*\
+  !*** ./src/config/inventory.js ***!
+  \*********************************/
+/*! namespace exports */
+/*! export Inventory [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Inventory": () => /* binding */ Inventory
+/* harmony export */ });
+/* harmony import */ var _domain_inventory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../domain/inventory */ "./src/domain/inventory.js");
+/* harmony import */ var _domain_mixins__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/mixins */ "./src/domain/mixins.js");
+
+
+
+
+/**
+ * @type {import("../domain/order").ModelSpecification}
+ */
+
+var Inventory = {
+  modelName: 'inventory',
+  endpoint: 'inventory',
+  dependencies: {},
+  factory: _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.makeInventoryFactory,
+  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.requireProperties)('name', 'inStock', 'category', 'price', 'purchaseOrder'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.validateProperties)([{
+    propKey: 'inStock',
+    "typeof": 'number',
+    maxnum: 99999
+  }, {
+    propKey: 'category',
+    values: _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.categories
+  }, {
+    propKey: 'assetType',
+    values: _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.assetTypes
+  }, {
+    propKey: 'properties',
+    isValid: function isValid(_obj, prop) {
+      return prop.every(function (p) {
+        return _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.properties.includes(p);
+      });
+    }
+  }, {
+    propKey: 'price',
+    "typeof": 'number',
+    maxnum: 999.99
+  }]), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.freezeProperties)('*')],
+  relations: {
+    orders: {
+      modelName: 'order',
+      type: 'oneToMany',
+      foreignKey: 'itemId',
+      desc: 'many items per order'
+    }
+  }
+};
 
 /***/ }),
 
@@ -405,49 +468,6 @@ var Order = {
 
 /***/ }),
 
-/***/ "./src/config/scheduled-job.js":
-/*!*************************************!*\
-  !*** ./src/config/scheduled-job.js ***!
-  \*************************************/
-/*! namespace exports */
-/*! export ScheduledJob [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "ScheduledJob": () => /* binding */ ScheduledJob
-/* harmony export */ });
-
-/**
- * @type {import('./index').ModelSpecification}
- */
-
-var ScheduledJob = {
-  modelName: 'scheduledjob',
-  endpoint: 'scheduledjobs',
-  factory: function factory(dependencies) {
-    return function (_ref) {
-      var startTime = _ref.startTime,
-          startEvent = _ref.startEvent,
-          desc = _ref.desc,
-          expectedDur = _ref.expectedDur,
-          assingee = _ref.assingee;
-      return Object.freeze({
-        startEvent: startEvent,
-        startTime: startTime,
-        desc: desc,
-        expectedDur: expectedDur,
-        assingee: assingee
-      });
-    };
-  }
-};
-
-/***/ }),
-
 /***/ "./src/config/user.js":
 /*!****************************!*\
   !*** ./src/config/user.js ***!
@@ -645,12 +665,12 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 /**
- * @typedef {Object} Model
- * @property {string} Symbol_id - immutable/private uuid
- * @property {string} Symbol_modelName - immutable/private name
- * @property {string} Symbol_createTime - immutable/private createTime
- * @property {onUpdate} Symbol_onUpdate - immutable/private update function
- * @property {onDelete} Symbol_onDelete
+ * @typedef  Model
+ * @property {string} _Symbol_id - immutable/private uuid
+ * @property {string} _Symbol_modelName - immutable/private name
+ * @property {string} _Symbol_createTime - immutable/private createTime
+ * @property {onUpdate} _Symbol_onUpdate - immutable/private update function
+ * @property {onDelete} _Symbol_onDelete
  * @property {function(Object)} update - use this function to update model
  * specify changes in an object
  * @property {function()} toJSON - de/serialization logic
@@ -797,23 +817,29 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 /**
- * @typedef {Object} ModelSpecification Specify domain model info and action
+ * @callback modelSpecFactoryFn
+ * @param {object} dependencies 
+ * @returns {function(...args):Readonly<object>}
+ */
+
+/**
+ * @typedef {object} ModelSpecification Specify domain model properties and functions
  * @property {string} modelName name of model (case-insenstive)
- * @property {string} endpoint URI reference (e.g. plural of `modelName`)
- * @property {function(...args): any} factory factory function that creates the model
- * @property {object} [dependencies] injected into the model for inverted control
- * @property {Array<import("./mixins").functionalMixin>} [mixins] - use mixins
- * to implement domain logic, like input validation.
+ * @property {string} endpoint URI reference (e.g. plural of `modelName` noun)
+ * @property {modelSpecFactoryFn} factory returns factory function that creates the model instance
+ * @property {object} [dependencies] injected into the model for inverted dependency/control
+ * @property {Array<import("./mixins").functionalMixin>} [mixins] - use functional mixins
+ * to compose the object from common domain logic, like input validation.
  * @property {onUpdate} [onUpdate] - Function called to handle update requests. Called
  * before save.
  * @property {onDelete} [onDelete] - Function called before deletion.
- * @property {validate} [validate] -
+ * @property {validate} [validate] - called to validate model updates
  * @property {ports} [ports] - input/output ports for the domain
  * @property {eventHandler[]} [eventHandlers] - callbacks invoked to handle application
  * events, e.g. CRUD events
  * @property {serializer[]} [serializers] - use for custom de/serialization of the model
  * when reading or writing to storage or network
- * @property {relations} [relations] - link related domain models
+ * @property {relations} [relations] - create related models or query in aggregate
  * @property {commands} [commands] - define functions to execute when specified in a
  * URL parameter or query of the auto-generated REST API
  * @property {accessControlList} [accessControlList] - configure authorization
@@ -865,6 +891,62 @@ function makeModel(spec) {
 var models = Object.values(_config__WEBPACK_IMPORTED_MODULE_4__).map(function (spec) {
   return makeModel(spec);
 });
+
+/***/ }),
+
+/***/ "./src/domain/inventory.js":
+/*!*********************************!*\
+  !*** ./src/domain/inventory.js ***!
+  \*********************************/
+/*! namespace exports */
+/*! export assetTypes [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export categories [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export makeInventoryFactory [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export properties [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "assetTypes": () => /* binding */ assetTypes,
+/* harmony export */   "properties": () => /* binding */ properties,
+/* harmony export */   "categories": () => /* binding */ categories,
+/* harmony export */   "makeInventoryFactory": () => /* binding */ makeInventoryFactory
+/* harmony export */ });
+
+
+var assetTypes = ['rotating-asset', 'spare-part'];
+var properties = ['height', 'length', 'width', 'weight', 'color'];
+var categories = ['home', 'auto', 'business'];
+var makeInventoryFactory = function makeInventoryFactory(dependencies) {
+  return function (_ref) {
+    var category = _ref.category,
+        properties = _ref.properties,
+        price = _ref.price,
+        discount = _ref.discount,
+        name = _ref.name,
+        desc = _ref.desc,
+        sku = _ref.sku,
+        purchaseOrder = _ref.purchaseOrder,
+        vendor = _ref.vendor,
+        inStock = _ref.inStock,
+        assetType = _ref.assetType;
+    return Object.freeze({
+      category: category,
+      properties: properties,
+      price: price - (discount || 0.0),
+      name: name,
+      desc: desc,
+      sku: sku,
+      purchaseOrder: purchaseOrder,
+      vendor: vendor,
+      inStock: inStock,
+      assetType: assetType
+    });
+  };
+};
 
 /***/ }),
 
@@ -1939,6 +2021,18 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -1994,6 +2088,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
  * @property {boolean} saveShippingDetails save customer shipping and payment details as a customer record
  * @property {{itemId:string,price:number,qty:number}[]} orderItems
  * @property {Symbol} customerId {@link Customer}
+ * @property {{event:string,time:number}[]} log
  */
 
 var orderStatus = 'orderStatus';
@@ -2902,8 +2997,22 @@ function _handleOrderEvent() {
 function needsSignature(input, orderTotal) {
   return typeof input === 'boolean' ? input : orderTotal > 999.99;
 }
+
+function logEntry(message) {
+  return {
+    event: message,
+    time: Date.now(),
+    toJSON: function toJSON() {
+      return {
+        event: this.event,
+        time: new Date(this.time).toUTCString()
+      };
+    }
+  };
+}
 /**
  * Returns factory function for the Order model.
+ * @type {import('../domain/index.js').modelSpecFactoryFn} 
  * @param {*} dependencies - inject dependencies
  */
 
@@ -2937,7 +3046,8 @@ function makeOrderFactory(dependencies) {
                 fibonacci: fibonacci,
                 result: 0,
                 time: 0,
-                estimatedArrival: null
+                estimatedArrival: null,
+                log: [logEntry('order created')]
               }, _defineProperty(_order, orderTotal, total), _defineProperty(_order, orderStatus, OrderStatus.PENDING), _defineProperty(_order, orderNo, dependencies.uuid()), _defineProperty(_order, "paymentAccepted", function paymentAccepted() {
                 return this.paymentAuthorization ? true : false;
               }), _defineProperty(_order, "autoCheckout", function autoCheckout() {
@@ -2953,6 +3063,10 @@ function makeOrderFactory(dependencies) {
                 }
 
                 return false;
+              }), _defineProperty(_order, "logMessage", function logMessage(message) {
+                this.log = [].concat(_toConsumableArray(this.log), [logEntry(message)]);
+              }), _defineProperty(_order, "latestLogEntry", function latestLogEntry() {
+                return this.log[this.log.length - 1];
               }), _order);
               return _context6.abrupt("return", Object.freeze(order));
 

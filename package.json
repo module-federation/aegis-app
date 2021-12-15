@@ -10,7 +10,7 @@
     "url": "https://github.com/tysonrm/microlib-orderservice"
   },
   "scripts": {
-    "build": "npm run clean && webpack --config webpack.config.js",
+    "build": "npm run clean && export NODE_OPTIONS=--openssl-legacy-provider && webpack --config webpack.config.js",
     "build-order": "cp test/config/index.order.js src/config/index.js && npm run build",
     "build-customer": "cp test/config/index.customer.js src/config/index.js && npm run build",
     "build-cache": "cp test/config/index.cache.js src/config/index.js && npm run clean && webpack --config webpack.cache.config.js",
