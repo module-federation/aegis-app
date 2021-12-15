@@ -44,6 +44,7 @@ import { asyncPipe } from '../domain/utils'
  * @property {boolean} saveShippingDetails save customer shipping and payment details as a customer record
  * @property {{itemId:string,price:number,qty:number}[]} orderItems
  * @property {Symbol} customerId {@link Customer}
+ * @property {{event:string,time:number}[]} log
  */
 
 const orderStatus = 'orderStatus'
@@ -217,7 +218,7 @@ export const updateSignature = (o, propVal) => ({
 /**
  * Don't delete orders before they're complete.
  */
-export function readyToDelete (model) {
+export function readyToDelete(model) {
   if (
     ![OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(model.orderStatus)
   ) {
@@ -231,7 +232,7 @@ export function readyToDelete (model) {
  * @param {*} error
  * @param {*} func
  */
-function handleError (error, order, func) {
+function handleError(error, order, func) {
   try {
     if (order) order.emit('orderError', { func, error })
   } catch (error) {
@@ -246,7 +247,7 @@ function handleError (error, order, func) {
  * Callback invoked by adapter when payment is complete
  * @param {{model:Order}} options
  */
-export async function paymentCompleted (options = {}, payload = {}) {
+export async function paymentCompleted(options = {}, payload = {}) {
   const { model: order } = options
   const changes = checkPayload(
     'confirmationCode',
@@ -262,7 +263,7 @@ export async function paymentCompleted (options = {}, payload = {}) {
  * @param {{model:Order}} options
  * @param {string} shipmentId
  */
-export async function orderShipped (options = {}, payload = {}) {
+export async function orderShipped(options = {}, payload = {}) {
   const { model: order } = options
   const shipmentPayload = checkPayload(
     'shipmentId',
@@ -280,7 +281,7 @@ export async function orderShipped (options = {}, payload = {}) {
  * Callback invoked when order is ready for pickup
  * @param {{ model:Order }} options
  */
-export async function orderPicked (options = {}, payload = {}) {
+export async function orderPicked(options = {}, payload = {}) {
   const { model: order } = options
   const changes = checkPayload(
     'pickupAddress',
@@ -296,7 +297,7 @@ export async function orderPicked (options = {}, payload = {}) {
  * @param {{ model:Order }} options
  * @param {string} shippingAddress
  */
-export async function addressValidated (options = {}, payload = {}) {
+export async function addressValidated(options = {}, payload = {}) {
   const { model: order } = options
   const addressPayload = checkPayload(
     'shippingAddress',
@@ -312,7 +313,7 @@ export async function addressValidated (options = {}, payload = {}) {
  * @param {{ model:Order }} options
  * @param {*} paymentAuthorization
  */
-export async function paymentAuthorized (options = {}, payload = {}) {
+export async function paymentAuthorized(options = {}, payload = {}) {
   const { model: order } = options
   const changes = checkPayload(
     'paymentAuthorization',
@@ -329,7 +330,7 @@ export async function paymentAuthorized (options = {}, payload = {}) {
  * @param {*} payload
  * @returns
  */
-export async function refundPayment (order) {
+export async function refundPayment(order) {
   // call port by same name.
   order.refundPayment((options, payload) => {
     const changes = checkPayload(
@@ -347,7 +348,7 @@ export async function refundPayment (order) {
  * @param {Order} order
  * @returns {Promise<Order>}
  */
-async function verifyAddress (order) {
+async function verifyAddress(order) {
   return order.validateAddress(addressValidated)
 }
 
@@ -356,7 +357,7 @@ async function verifyAddress (order) {
  * @param {Order} order
  * @returns {Promise<Order>}
  */
-async function verifyPayment (order) {
+async function verifyPayment(order) {
   try {
     // Authorize payment for the current total.
     /**@type {Order} */
@@ -383,7 +384,7 @@ async function verifyPayment (order) {
  * @returns {Promise<Order>}
  * @throws {'InsufficientInventory'}
  */
-async function verifyInventory (order) {
+async function verifyInventory(order) {
   const inventory = await order.inventory()
   console.debug('inventory', inventory)
 
@@ -401,7 +402,7 @@ async function verifyInventory (order) {
  * @param {Order} order
  * @throws {'InvalidCustomerId'}
  */
-async function getCustomerOrder (order) {
+async function getCustomerOrder(order) {
   // If an id is given, try fetching the model
   if (order.customerId) {
     // Use the relation defined in the spec
@@ -555,7 +556,7 @@ const OrderActions = {
  * @param {Order} order
  * @returns {Promise<Readonly<Order>>}
  */
-export async function runOrderWorkflow (order) {
+export async function runOrderWorkflow(order) {
   return OrderActions[order.orderStatus](order)
 }
 
@@ -563,7 +564,7 @@ export async function runOrderWorkflow (order) {
  * Called on create, update, delete of model instance.
  * @param {{model:Promise<ReadOnly<Order>>}}
  */
-export async function handleOrderEvent ({ model: order, eventType, changes }) {
+export async function handleOrderEvent({ model: order, eventType, changes }) {
   if (changes?.orderStatus || eventType === 'CREATE') {
     return runOrderWorkflow(order)
   }
@@ -574,16 +575,27 @@ export async function handleOrderEvent ({ model: order, eventType, changes }) {
  * @param {*} input
  * @param {*} orderTotal
  */
-function needsSignature (input, orderTotal) {
+function needsSignature(input, orderTotal) {
   return typeof input === 'boolean' ? input : orderTotal > 999.99
+}
+
+function logEntry(message) {
+  return {
+    event: message,
+    time: Date.now(),
+    toJSON() {
+      return { event: this.event, time: new Date(this.time).toUTCString() }
+    }
+  }
 }
 
 /**
  * Returns factory function for the Order model.
+ * @type {import('../domain/index.js').modelSpecFactoryFn} 
  * @param {*} dependencies - inject dependencies
  */
-export function makeOrderFactory (dependencies) {
-  return async function createOrder ({
+export function makeOrderFactory(dependencies) {
+  return async function createOrder({
     orderItems,
     email = null,
     lastName = null,
@@ -616,33 +628,40 @@ export function makeOrderFactory (dependencies) {
       result: 0,
       time: 0,
       estimatedArrival: null,
+      log: [logEntry('order created')],
       [orderTotal]: total,
       [orderStatus]: OrderStatus.PENDING,
       [orderNo]: dependencies.uuid(),
       /**
        * Has payment for the order been authorized?
        */
-      paymentAccepted () {
+      paymentAccepted() {
         return this.paymentAuthorization ? true : false
       },
       /**
        * Proceed to checkout automatically or wait for approval?
        */
-      autoCheckout () {
+      autoCheckout() {
         return autoCheckout
       },
-      totalItems () {
+      totalItems() {
         return calcNumItems(this.orderItems)
       },
-      total () {
+      total() {
         return calcTotal(this.orderItems)
       },
-      addItem (item) {
+      addItem(item) {
         if (checkItem(item)) {
           this.orderItems.push(item)
           return true
         }
         return false
+      },
+      logMessage(message) {
+        this.log = [...this.log, logEntry(message)]
+      },
+      latestLogEntry() {
+        return this.log[this.log.length - 1]
       }
     }
 
@@ -654,7 +673,7 @@ export function makeOrderFactory (dependencies) {
  * Called as command to approve/submit order.
  * @param {Order} order
  */
-export async function approve (order) {
+export async function approve(order) {
   const approvedOrder = await order.update({
     orderStatus: OrderStatus.APPROVED
   })
@@ -665,7 +684,7 @@ export async function approve (order) {
  * Called as command to cancel order.
  * @param {Order} order
  */
-export async function cancel (order) {
+export async function cancel(order) {
   const canceledOrder = await order.update({
     orderStatus: OrderStatus.CANCELED
   })
@@ -677,7 +696,7 @@ export async function cancel (order) {
  * @param {Order} order
  * @returns
  */
-export async function submit (order) {
+export async function submit(order) {
   return approve(order)
 }
 
@@ -685,7 +704,7 @@ export async function submit (order) {
  *
  * @param {{model:Order}} param0
  */
-export function errorCallback ({ port, model: order, error }) {
+export function errorCallback({ port, model: order, error }) {
   console.error('error...', port, error)
   return order.undo()
 }
@@ -694,7 +713,7 @@ export function errorCallback ({ port, model: order, error }) {
  *
  * @param {{model:Order}} param0
  */
-export function timeoutCallback ({ port, ports, adapterFn, model: order }) {
+export function timeoutCallback({ port, ports, adapterFn, model: order }) {
   console.error('timeout...', port)
 }
 
@@ -704,7 +723,7 @@ export function timeoutCallback ({ port, ports, adapterFn, model: order }) {
  * Do not call `runOrderWorkflow` - it is already running (in
  * reverse) if we get here.
  */
-export async function returnInventory (order) {
+export async function returnInventory(order) {
   console.log(returnInventory.name)
   return order.update({ orderStatus: OrderStatus.CANCELED })
 }
@@ -715,7 +734,7 @@ export async function returnInventory (order) {
  * Do not call `runOrderWorkflow` - it is already running (in
  * reverse) if we get here.
  */
-export async function returnShipment (order) {
+export async function returnShipment(order) {
   console.log(returnShipment.name)
   return order.update({ orderStatus: OrderStatus.CANCELED })
 }
@@ -726,7 +745,7 @@ export async function returnShipment (order) {
  * Do not call `runOrderWorkflow` - it is already running (in
  * reverse) if we get here.
  */
-export async function returnDelivery (order) {
+export async function returnDelivery(order) {
   console.log(returnDelivery.name)
   return order.update({ orderStatus: OrderStatus.CANCELED })
 }
@@ -734,7 +753,7 @@ export async function returnDelivery (order) {
 /**
  * @type {undoFunction}
  */
-export async function cancelPayment (order) {
+export async function cancelPayment(order) {
   console.log(cancelPayment.name)
   return order.update({ orderStatus: OrderStatus.CANCELED })
 }

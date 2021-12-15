@@ -5,12 +5,12 @@
  */
 
 /**
- * @typedef {Object} Model
- * @property {string} Symbol_id - immutable/private uuid
- * @property {string} Symbol_modelName - immutable/private name
- * @property {string} Symbol_createTime - immutable/private createTime
- * @property {onUpdate} Symbol_onUpdate - immutable/private update function
- * @property {onDelete} Symbol_onDelete
+ * @typedef  Model
+ * @property {string} _Symbol_id - immutable/private uuid
+ * @property {string} _Symbol_modelName - immutable/private name
+ * @property {string} _Symbol_createTime - immutable/private createTime
+ * @property {onUpdate} _Symbol_onUpdate - immutable/private update function
+ * @property {onDelete} _Symbol_onDelete
  * @property {function(Object)} update - use this function to update model
  * specify changes in an object
  * @property {function()} toJSON - de/serialization logic
@@ -155,23 +155,29 @@
  */
 
 /**
- * @typedef {Object} ModelSpecification Specify domain model info and action
+ * @callback modelSpecFactoryFn
+ * @param {object} dependencies 
+ * @returns {function(...args):Readonly<object>}
+ */
+
+/**
+ * @typedef {object} ModelSpecification Specify domain model properties and functions
  * @property {string} modelName name of model (case-insenstive)
- * @property {string} endpoint URI reference (e.g. plural of `modelName`)
- * @property {function(...args): any} factory factory function that creates the model
- * @property {object} [dependencies] injected into the model for inverted control
- * @property {Array<import("./mixins").functionalMixin>} [mixins] - use mixins
- * to implement domain logic, like input validation.
+ * @property {string} endpoint URI reference (e.g. plural of `modelName` noun)
+ * @property {modelSpecFactoryFn} factory returns factory function that creates the model instance
+ * @property {object} [dependencies] injected into the model for inverted dependency/control
+ * @property {Array<import("./mixins").functionalMixin>} [mixins] - use functional mixins
+ * to compose the object from common domain logic, like input validation.
  * @property {onUpdate} [onUpdate] - Function called to handle update requests. Called
  * before save.
  * @property {onDelete} [onDelete] - Function called before deletion.
- * @property {validate} [validate] -
+ * @property {validate} [validate] - called to validate model updates
  * @property {ports} [ports] - input/output ports for the domain
  * @property {eventHandler[]} [eventHandlers] - callbacks invoked to handle application
  * events, e.g. CRUD events
  * @property {serializer[]} [serializers] - use for custom de/serialization of the model
  * when reading or writing to storage or network
- * @property {relations} [relations] - link related domain models
+ * @property {relations} [relations] - create related models or query in aggregate
  * @property {commands} [commands] - define functions to execute when specified in a
  * URL parameter or query of the auto-generated REST API
  * @property {accessControlList} [accessControlList] - configure authorization
