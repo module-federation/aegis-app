@@ -104,11 +104,43 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
 
 /***/ }),
 
+/***/ "./src/config/asset.js":
+/*!*****************************!*\
+  !*** ./src/config/asset.js ***!
+  \*****************************/
+/*! namespace exports */
+/*! export Asset [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Asset": () => /* binding */ Asset
+/* harmony export */ });
+/* harmony import */ var _domain_asset__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../domain/asset */ "./src/domain/asset.js");
+
+
+
+/**
+ * @type {import('../domain/index').ModelSpecification}
+ */
+
+var Asset = {
+  modelName: 'asset',
+  endpoint: 'assets',
+  factory: _domain_asset__WEBPACK_IMPORTED_MODULE_0__.makeAssetFactory
+};
+
+/***/ }),
+
 /***/ "./src/config/index.js":
 /*!*****************************!*\
   !*** ./src/config/index.js ***!
   \*****************************/
 /*! namespace exports */
+/*! export Asset [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/asset.js .Asset */
 /*! export Inventory [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/inventory.js .Inventory */
 /*! export Order [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/order.js .Order */
 /*! export User [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/user.js .User */
@@ -121,14 +153,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Order": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.Order,
 /* harmony export */   "User": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_1__.User,
-/* harmony export */   "Inventory": () => /* reexport safe */ _inventory__WEBPACK_IMPORTED_MODULE_2__.Inventory
+/* harmony export */   "Inventory": () => /* reexport safe */ _inventory__WEBPACK_IMPORTED_MODULE_2__.Inventory,
+/* harmony export */   "Asset": () => /* reexport safe */ _asset__WEBPACK_IMPORTED_MODULE_3__.Asset
 /* harmony export */ });
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./order */ "./src/config/order.js");
 /* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./user */ "./src/config/user.js");
 /* harmony import */ var _inventory__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./inventory */ "./src/config/inventory.js");
+/* harmony import */ var _asset__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./asset */ "./src/config/asset.js");
 
  // export * from "./customer";
 // export * from "./product";
+
 
 
 
@@ -512,6 +547,63 @@ var User = {
     }
   }
 };
+
+/***/ }),
+
+/***/ "./src/domain/asset.js":
+/*!*****************************!*\
+  !*** ./src/domain/asset.js ***!
+  \*****************************/
+/*! namespace exports */
+/*! export makeAssetFactory [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "makeAssetFactory": () => /* binding */ makeAssetFactory
+/* harmony export */ });
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+function makeAssetFactory(dependencies) {
+  return /*#__PURE__*/function () {
+    var _createAsset = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(_ref) {
+      var filename, baseurl, type, size_bytes, md5_hash, asset;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              filename = _ref.filename, baseurl = _ref.baseurl, type = _ref.type, size_bytes = _ref.size_bytes, md5_hash = _ref.md5_hash;
+              asset = {
+                filename: filename,
+                baseurl: baseurl,
+                type: type,
+                size_bytes: size_bytes,
+                md5_hash: md5_hash
+              };
+              return _context.abrupt("return", Object.freeze(asset));
+
+            case 3:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    function createAsset(_x) {
+      return _createAsset.apply(this, arguments);
+    }
+
+    return createAsset;
+  }();
+}
 
 /***/ }),
 
