@@ -1,8 +1,9 @@
 'use strict'
 
 import { prevmodel } from './mixins'
-import checkPayload from './check-payload'
 import { asyncPipe } from '../domain/utils'
+import checkPayload from './check-payload'
+
 
 /** @typedef { import('../domain/index.js').ModelSpecification} ModelSpecification */
 /** @typedef {string|RegExp} topic*/
@@ -11,6 +12,34 @@ import { asyncPipe } from '../domain/utils'
 /** @typedef {string} id */
 /** @typedef {import("./customer").Customer} Customer */
 /** @typedef {function(Order)} undoFunction */
+/** 
+ * @callback logMessageFn 
+ * @param {object|string} message
+ * @param {logType} [type]
+ */
+
+/** @typedef {'first'|'last'|'lastStateChange'|'stateChange'|'error'|'undo'} logType */
+
+/** 
+ * @typedef readLogType
+ * @property {number} index
+ * @property  {logType} type
+ */
+
+/**
+ * @typedef {{
+ *  itemId: string,
+ *  price: number,
+ *  qty?: number
+ * }} orderItemType
+ */
+
+/**
+ * @callback relationFunction
+ * @property {...args} 
+ * @returns {Promise<Model>}
+ * } relationFunction 
+ */
 
 /**
  * @typedef {Object} Order The Order Service
@@ -21,18 +50,18 @@ import { asyncPipe } from '../domain/utils'
  * @property {adapterFunction} verifyDelivery - verify the order was received by the customer
  * @property {adapterFunction} trackShipment
  * @property {adapterFunction} refundPayment
- * @property {function()} inventory - inventory relation - fetch inventory items
+ * @property {relationFunction} inventory - reserve inventory items
  * @property {adapterFunction} undo - undo all transactions up to this point
- * @property {function():Promise<Order>} pickOrder - pick the items and get them ready for shipment
- * @property {adapterFunction} authorizePayment - verify payment info, credit avail
+ * @property {function():Promise<Order>} pickOrder - find the items and get them ready for shipment
+ * @property {adapterFunction} authorizePayment - verify payment, i.e. reserve the balance due
  * @property {import('../adapters/shipping-adapter').shipOrder} shipOrder -
- * calls shipping service to request delivery
+ * calls shipping service to print label and request delivery
  * @property {function(Order):Promise<void>} save - saves order
  * @property {function():Promise<Order>} find - finds order
  * @property {string} shippingAddress
  * @property {string} orderNo = the order number
  * @property {string} trackingId - id given by tracking status for this `orderNo`
- * @property {function():Order} decrypt - decrypts encypted properties
+ * @property {function():Order} decrypt - decrypts sensitive properties
  * @property {function({key1:any,keyN:any}, boolean):Promise<Order>} update - update the order,
  * set the second arg to false to turn off validation.
  * @property {'PENDING'|'APPROVED'|'SHIPPING'|'CANCELED'|'COMPLETED'} orderStatus
@@ -41,10 +70,14 @@ import { asyncPipe } from '../domain/utils'
  * @property {function(string,Order):Promise} emit - broadcast domain event
  * @property {function():boolean} paymentAccepted - payment approved and funds reserved
  * @property {function():boolean} autoCheckout - whether or not to immediately submit the order
- * @property {boolean} saveShippingDetails save customer shipping and payment details as a customer record
+ * @property {boolean} saveShippingDetails save shipping and payment details in a new customer record
  * @property {{itemId:string,price:number,qty:number}[]} orderItems
  * @property {Symbol} customerId {@link Customer}
- * @property {{event:string,time:number}[]} log
+ * @property {logMessageFn} logEvent
+ * @property {logMessageFn} logError
+ * @property {logMessageFn} logUndo
+ * @property {logMessageFn} logStateChange
+ * @property {readMessageFn} readLog
  */
 
 const orderStatus = 'orderStatus'
@@ -59,17 +92,22 @@ export const OrderStatus = {
   CANCELED: 'CANCELED'
 }
 
+/**
+ * 
+ * @param {orderItemType} orderItem 
+ * @returns {boolean} true if item is valid
+ */
 export const checkItem = function (orderItem) {
   return (
     typeof orderItem.itemId === 'string' && typeof orderItem.price === 'number'
   )
 }
+
 /**
- *
- * @param {*} items
+ * @param {orderItemType[]} orderItems
  */
 export const checkItems = function (orderItems) {
-  if (!orderItems) {
+  if (!orderItems || orderItems.length < 1) {
     throw new Error('order contains no items')
   }
   const items = Array.isArray(orderItems) ? orderItems : [orderItems]
@@ -82,7 +120,7 @@ export const checkItems = function (orderItems) {
 
 /**
  * Calculate order total
- * @param {*} items
+ * @param {orderItemType[]} orderItems
  */
 export const calcTotal = function (orderItems) {
   const items = checkItems(orderItems)
@@ -93,7 +131,11 @@ export const calcTotal = function (orderItems) {
   }, 0)
 }
 
-export const calcNumItems = function (orderItems) {
+/**
+ * @param {orderItemType[]} orderItems 
+ * @returns {number} number of items
+ */
+export const itemCount = function (orderItems) {
   return orderItems.reduce((total, item) => (total += item.qty || 1))
 }
 
@@ -103,9 +145,12 @@ export const calcNumItems = function (orderItems) {
  * @param {*} propKey
  * @returns {string | null} the key or `null`
  */
-export const freezeOnApproval = propKey => o => {
-  return o[prevmodel].orderStatus !== OrderStatus.PENDING ? propKey : null
-}
+export const freezeOnApproval = propKey => o =>
+  o.orderStatus && (o.orderStatus !== OrderStatus.PENDING) ? propKey : null
+
+
+const finalStatus = status =>
+  [OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(status)
 
 /**
  * No changes to `propKey` once order is complete or canceled
@@ -113,13 +158,7 @@ export const freezeOnApproval = propKey => o => {
  * @param {*} propKey
  * @returns {string | null} the key or `null`
  */
-export const freezeOnCompletion = propKey => o => {
-  return [OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(
-    o[prevmodel].orderStatus
-  )
-    ? propKey
-    : null
-}
+export const freezeOnCompletion = propKey => o => finalStatus() ? propKey : null
 
 /**
  * If not a registered customer, provide shipping & payment details.
@@ -127,33 +166,35 @@ export const freezeOnCompletion = propKey => o => {
  * @param {*} propKey
  * @returns {string | void} the key or `void`
  */
-export const requiredForGuest = propKey => o => {
-  return o.customerId ? null : propKey
-}
+export const requiredForGuest = propKey => o => o.customerId ? null : propKey
+
 
 /**
- * Value required to approve orde1r.
+ * Value required to approve order.
  * @param {*} propKey
  */
-export const requiredForApproval = propKey => o => {
-  if (!o.orderStatus) return
-  return o.orderStatus === OrderStatus.APPROVED ? propKey : void 0
-}
+export const requiredForApproval = propKey => o =>
+  o.orderStatus === OrderStatus.APPROVED ? propKey : null
+
 
 /**
  * Value required to complete order
- * @param {*} o
- * @param {*} propKey
+ * @param {object} o
+ * @param {string | string[]} propKey these props are required to comlete the order
  * @returns {string | void} the key or `void`
  */
-export const requiredForCompletion = propKey => o => {
-  if (!o.orderStatus) return
-  return o.orderStatus === OrderStatus.COMPLETE ? propKey : void 0
-}
+export const requiredForCompletion = propKey => o =>
+  o.orderStatus === OrderStatus.COMPLETE ? propKey : null
 
-const invalidStatusChange = (from, to) => (o, propVal) => {
-  return propVal === to && o[prevmodel].orderStatus === from
-}
+/**
+ * 
+ * @param {enum} from 
+ * @param {enum} to 
+ * @returns 
+ */
+const invalidStatusChange = (from, to) => (o, propVal) =>
+  propVal === to && o[prevmodel].orderStatus === from
+
 
 const invalidStatusChanges = [
   // Can't change back to pending once approved
@@ -182,7 +223,7 @@ const invalidStatusChanges = [
  * Check that status changes are valid
  */
 export const statusChangeValid = (o, propVal) => {
-  if (invalidStatusChanges.some(isc => isc(o, propVal))) {
+  if (invalidStatusChanges.some(i => i(o, propVal))) {
     throw new Error('invalid status change')
   }
   return true
@@ -193,9 +234,8 @@ export const statusChangeValid = (o, propVal) => {
  * @param {*} o
  * @param {*} propVal
  */
-export const orderTotalValid = (o, propVal) => {
-  return calcTotal(o.orderItems) === propVal
-}
+export const orderTotalValid = (o, propVal) => calcTotal(o.orderItems) === propVal
+
 
 /**
  * Recalculate order total
@@ -229,18 +269,18 @@ export function readyToDelete(model) {
 
 /**
  *
- * @param {*} error
+ * @param {Error} error
+ * @param {Order} order
  * @param {*} func
  */
 function handleError(error, order, func) {
-  try {
-    if (order) order.emit('orderError', { func, error })
-  } catch (error) {
-    console.error('order.emit', error)
-  }
-  console.error({ func, error })
-  2
-  throw new Error(error)
+  const errMsg = { func, orderNo: order.orderNo, error }
+
+  if (order) order.emit('orderError', errMsg)
+
+  order.logError(errMsg)
+
+  throw new Error(JSON.stringify(errMsg))
 }
 
 /**
@@ -321,6 +361,7 @@ export async function paymentAuthorized(options = {}, payload = {}) {
     payload,
     paymentAuthorized.name
   )
+  order.logError(paymentAuthorized.name)
   return order.update(changes)
 }
 
@@ -339,6 +380,7 @@ export async function refundPayment(order) {
       payload,
       refundPayment.name
     )
+    order.logEvent(refundPayment.name)
     return order.update({ ...changes, orderStatus: OrderStatus.CANCELED })
   })
 }
@@ -353,14 +395,20 @@ async function verifyAddress(order) {
 }
 
 /**
- *
+ * Request the bank or lender to place a hold on
+ * the customer account in the amount of the payment
+ * due, to be withdrawn once the shipment is safely
+ * in our customer's hands, or credited back if things
+ * don't work out.
+ * 
  * @param {Order} order
  * @returns {Promise<Order>}
  */
 async function verifyPayment(order) {
   try {
-    // Authorize payment for the current total.
-    /**@type {Order} */
+    /** 
+     * @type {Order}
+     * */
     const authorizedOrder = await order.authorizePayment(paymentAuthorized)
 
     if (!authorizedOrder) {
@@ -579,12 +627,22 @@ function needsSignature(input, orderTotal) {
   return typeof input === 'boolean' ? input : orderTotal > 999.99
 }
 
-function logEntry(message) {
+/** format and classify log entries */
+function logMessage(message, type) {
+  const msg = typeof message === 'string'
+    ? message
+    : JSON.stringify(message)
+
   return {
-    event: message,
+    desc: msg.substring(0, 100),
+    type,
     time: Date.now(),
     toJSON() {
-      return { event: this.event, time: new Date(this.time).toUTCString() }
+      return {
+        desc: this.desc,
+        type,
+        time: new Date(this.time).toUTCString()
+      }
     }
   }
 }
@@ -628,7 +686,7 @@ export function makeOrderFactory(dependencies) {
       result: 0,
       time: 0,
       estimatedArrival: null,
-      log: [logEntry('order created')],
+      log: [logMessage('order created')],
       [orderTotal]: total,
       [orderStatus]: OrderStatus.PENDING,
       [orderNo]: dependencies.uuid(),
@@ -645,23 +703,45 @@ export function makeOrderFactory(dependencies) {
         return autoCheckout
       },
       totalItems() {
-        return calcNumItems(this.orderItems)
+        return itemCount(this.orderItems)
       },
       total() {
         return calcTotal(this.orderItems)
       },
       addItem(item) {
         if (checkItem(item)) {
-          this.orderItems.push(item)
+          this.orderItems = [...this.orderItems, item]
           return true
         }
         return false
       },
-      logMessage(message) {
-        this.log = [...this.log, logEntry(message)]
+      logEvent(message, type = 'info') {
+        this.log = [...this.log, logMessage(message, type)]
       },
-      latestLogEntry() {
-        return this.log[this.log.length - 1]
+      logError(message) {
+        this.logEvent(message, 'error')
+      },
+      logUndo(message) {
+        this.logEvent(message, 'undo')
+      },
+      logStateChange(message) {
+        this.logEvent(message, 'stateChange')
+      },
+      /**
+       * 
+       * @param {viewLog} options 
+       * @returns {logMessageFn[]|logMessageFn}
+       */
+      readLog({ index = null, type = null }) {
+        const indx = parseInt(index)
+        if (indx < this.log.length && indx !== NaN) return this.log[indx]
+        if (type === 'first') return this.log[0]
+        if (type === 'last') return this.log[this.log.length - 1]
+        if (type === 'lastStateChange') return this.log[this.log.lastIndexOf({ type: 'stateChange' })]
+        if (type === 'stateChanges') return this.log.filter(l => l.type === 'stateChange')
+        if (type === 'error') return this.log.filter(l => l.type === 'error')
+        if (type === 'undo') return this.log.filter(l => l.type === 'undo')
+        return this.log
       }
     }
 
@@ -677,6 +757,7 @@ export async function approve(order) {
   const approvedOrder = await order.update({
     orderStatus: OrderStatus.APPROVED
   })
+  approvedOrder.logStateChange(OrderStatus.APPROVED)
   return runOrderWorkflow(approvedOrder)
 }
 
@@ -688,6 +769,7 @@ export async function cancel(order) {
   const canceledOrder = await order.update({
     orderStatus: OrderStatus.CANCELED
   })
+  canceledOrder.logStateChange(OrderStatus.CANCELED)
   return runOrderWorkflow(canceledOrder)
 }
 
@@ -696,7 +778,7 @@ export async function cancel(order) {
  * @param {Order} order
  * @returns
  */
-export async function submit(order) {
+export async function checkout(order) {
   return approve(order)
 }
 
@@ -705,7 +787,10 @@ export async function submit(order) {
  * @param {{model:Order}} param0
  */
 export function errorCallback({ port, model: order, error }) {
-  console.error('error...', port, error)
+  const errMsg = { error, port, error }
+  console.error(errorCallback.name, errMsg)
+  order.logEvent(errMsg)
+  order.emit(errorCallback.name, errMsg)
   return order.undo()
 }
 
@@ -715,6 +800,8 @@ export function errorCallback({ port, model: order, error }) {
  */
 export function timeoutCallback({ port, ports, adapterFn, model: order }) {
   console.error('timeout...', port)
+  order.logEvent(timeoutCallback.name, 'timeout')
+  order.emit(timeoutCallback.name, errMsg)
 }
 
 /**
@@ -725,6 +812,8 @@ export function timeoutCallback({ port, ports, adapterFn, model: order }) {
  */
 export async function returnInventory(order) {
   console.log(returnInventory.name)
+  order.logEvent(returnInventory.name, 'timeout')
+  order.emit(returnInventory.name, errMsg)
   return order.update({ orderStatus: OrderStatus.CANCELED })
 }
 
@@ -736,6 +825,7 @@ export async function returnInventory(order) {
  */
 export async function returnShipment(order) {
   console.log(returnShipment.name)
+  order.logUndo(returnShipment.name)
   return order.update({ orderStatus: OrderStatus.CANCELED })
 }
 

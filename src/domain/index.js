@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 
 /**
  * @typedef {string} eventName
@@ -144,11 +144,13 @@
  *  [x: string]: {
  *    endpointUri: string,
  *    port:ports[p],
+ *    method:'get'|'post'|'patch'|'delete'
  *    callback: ({
  *      body:string,
  *      headers:{},
- *      params:{}}) => Promise<{
- *        body,status,headers
+ *      params:{},
+ *      query:{}}) => Promise<{
+ *        body,status,headers,
  *      }>
  *    })
  * }} endpoints
@@ -156,7 +158,7 @@
 
 /**
  * @callback modelSpecFactoryFn
- * @param {object} dependencies 
+ * @param {object} dependencies
  * @returns {function(...args):Readonly<object>}
  */
 
@@ -187,18 +189,20 @@
  *
  */
 
-import GlobalMixins from "./mixins";
-import bindAdapters from "./bind-adapters";
+import GlobalMixins from './mixins'
+import bindAdapters from './bind-adapters'
 // Service dependencies
-import * as services from "../../test/mock";
-import * as adapters from "../adapters";
+import * as services from '../../test/mock'
+import * as adapters from '../adapters'
 // Model properties
-import * as modelSpecs from "../config";
+import * as modelSpecs from '../config'
 
-function validateSpec(spec) {
-  const missing = ["modelName", "endpoint", "factory"].filter(key => !spec[key]);
+function validateSpec (spec) {
+  const missing = ['modelName', 'endpoint', 'factory'].filter(key => !spec[key])
   if (missing?.length > 0) {
-    throw new Error(`missing properties: ${missing}, spec: ${Object.entries(spec)}`);
+    throw new Error(
+      `missing properties: ${missing}, spec: ${Object.entries(spec)}`
+    )
   }
 }
 
@@ -206,18 +210,18 @@ function validateSpec(spec) {
  * @param {ModelSpecification} spec
  * @param {*} dependencies - services injected
  */
-function makeModel(spec) {
-  validateSpec(spec);
-  const mixins = spec.mixins || [];
-  const dependencies = spec.dependencies || {};
+function makeModel (spec) {
+  validateSpec(spec)
+  const mixins = spec.mixins || []
+  const dependencies = spec.dependencies || {}
   return {
     ...spec,
     mixins: mixins.concat(GlobalMixins),
     dependencies: {
       ...dependencies,
-      ...bindAdapters(spec.ports, adapters, services),
-    },
-  };
+      ...bindAdapters(spec.ports, adapters, services)
+    }
+  }
 }
 
-export const models = Object.values(modelSpecs).map(spec => makeModel(spec));
+export const models = Object.values(modelSpecs).map(spec => makeModel(spec))

@@ -13,7 +13,7 @@ export const HostConfig = {
   factory: () => args =>
     Object.freeze({
       desc:
-        'hot-reloadable configurtion variables, see https://github.com/module-federatio/aegis',
+        'hot-reloadable configuration variables, see https://github.com/module-federatio/aegis',
       env: {
         desc: 'live-updateable environmental vars',
         distributedCache: {
