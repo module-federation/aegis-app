@@ -806,11 +806,13 @@ __webpack_require__.r(__webpack_exports__);
  *  [x: string]: {
  *    endpointUri: string,
  *    port:ports[p],
+ *    method:'get'|'post'|'patch'|'delete'
  *    callback: ({
  *      body:string,
  *      headers:{},
- *      params:{}}) => Promise<{
- *        body,status,headers
+ *      params:{},
+ *      query:{}}) => Promise<{
+ *        body,status,headers,
  *      }>
  *    })
  * }} endpoints
@@ -818,7 +820,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /**
  * @callback modelSpecFactoryFn
- * @param {object} dependencies 
+ * @param {object} dependencies
  * @returns {function(...args):Readonly<object>}
  */
 
@@ -864,7 +866,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 function validateSpec(spec) {
-  var missing = ["modelName", "endpoint", "factory"].filter(function (key) {
+  var missing = ['modelName', 'endpoint', 'factory'].filter(function (key) {
     return !spec[key];
   });
 
@@ -1176,7 +1178,7 @@ function containsUpdates(model, changes, event) {
  * @param {*} changes - object containing changes
  * @param {Number} event - Indicates what event is occuring:
  * 1st bit turned on means update, 2nd bit create, 3rd load,
- * see `eventMask`.
+ * see {@link eventMask}.
  */
 
 
@@ -1317,6 +1319,7 @@ function addValidation(_ref) {
   if (config.some(function (v) {
     return v.name === name;
   })) {
+    console.warn('duplicate validation name', name);
     return model;
   }
 
@@ -1393,7 +1396,7 @@ var encryptProperties = function encryptProperties() {
       name: encryptProperties.name,
       input: enableValidation.onUpdate,
       output: enableValidation.onCreate,
-      order: 99
+      order: 100
     })), {}, {
       decrypt: function decrypt() {
         var _this = this;
@@ -1421,12 +1424,12 @@ var freezeProperties = function freezeProperties() {
   return function (o) {
     var preventUpdates = function preventUpdates(obj) {
       var keys = parseKeys.apply(void 0, [obj].concat(propKeys));
-      var sideEffects = Object.keys(obj).filter(function (key) {
+      var mutations = Object.keys(obj).filter(function (key) {
         return keys.includes(key);
       });
 
-      if ((sideEffects === null || sideEffects === void 0 ? void 0 : sideEffects.length) > 0) {
-        throw new Error("cannot update readonly properties: ".concat(sideEffects));
+      if ((mutations === null || mutations === void 0 ? void 0 : mutations.length) > 0) {
+        throw new Error("cannot update readonly properties: ".concat(mutations));
       }
     };
 
@@ -1438,6 +1441,7 @@ var freezeProperties = function freezeProperties() {
       model: o,
       name: freezeProperties.name,
       input: enableValidation.onUpdate,
+      output: enableValidation.onUpdate,
       order: 20
     }));
   };
@@ -1475,7 +1479,7 @@ var requireProperties = function requireProperties() {
       model: o,
       name: requireProperties.name,
       output: enableValidation.onCreateAndUpdate,
-      order: 75
+      order: 90
     }));
   };
 };
@@ -1510,7 +1514,7 @@ var hashPasswords = function hashPasswords() {
       name: hashPasswords.name,
       input: enableValidation.onUpdate,
       output: enableValidation.onCreate,
-      order: 80
+      order: 100
     }));
   };
 };
@@ -1544,9 +1548,9 @@ var allowProperties = function allowProperties() {
       }
     }, addValidation({
       model: o,
-      name: "rejectUnknownProperties",
+      name: rejectUnknownProps.name,
       input: enableValidation.onUpdate,
-      order: 15
+      order: 10
     }));
   };
 };
@@ -1685,7 +1689,7 @@ var validateProperties = function validateProperties(validations) {
       name: validateProperties.name,
       input: enableValidation.onUpdate,
       output: enableValidation.onCreate,
-      order: 90
+      order: 50
     }));
   };
 };
@@ -1730,7 +1734,7 @@ var updateProperties = function updateProperties(updaters) {
       model: o,
       name: updateProperties.name,
       input: enableValidation.onUpdate,
-      order: 35
+      order: 30
     }));
   };
 };
@@ -1939,16 +1943,17 @@ var GlobalMixins = [encryptPersonalInfo];
 /*! export OrderStatus [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export addressValidated [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export approve [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export calcNumItems [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export calcTotal [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export cancel [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export cancelPayment [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export checkItem [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export checkItems [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export checkout [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export errorCallback [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export freezeOnApproval [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export freezeOnCompletion [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export handleOrderEvent [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export itemCount [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export makeOrderFactory [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export orderPicked [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export orderShipped [provided] [no usage info] [missing usage info prevents renaming] */
@@ -1966,7 +1971,6 @@ var GlobalMixins = [encryptPersonalInfo];
 /*! export returnShipment [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export runOrderWorkflow [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export statusChangeValid [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export submit [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export timeoutCallback [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export updateSignature [provided] [no usage info] [missing usage info prevents renaming] */
 /*! other exports [not provided] [no usage info] */
@@ -1980,7 +1984,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "checkItem": () => /* binding */ checkItem,
 /* harmony export */   "checkItems": () => /* binding */ checkItems,
 /* harmony export */   "calcTotal": () => /* binding */ calcTotal,
-/* harmony export */   "calcNumItems": () => /* binding */ calcNumItems,
+/* harmony export */   "itemCount": () => /* binding */ itemCount,
 /* harmony export */   "freezeOnApproval": () => /* binding */ freezeOnApproval,
 /* harmony export */   "freezeOnCompletion": () => /* binding */ freezeOnCompletion,
 /* harmony export */   "requiredForGuest": () => /* binding */ requiredForGuest,
@@ -2002,7 +2006,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "makeOrderFactory": () => /* binding */ makeOrderFactory,
 /* harmony export */   "approve": () => /* binding */ approve,
 /* harmony export */   "cancel": () => /* binding */ cancel,
-/* harmony export */   "submit": () => /* binding */ submit,
+/* harmony export */   "checkout": () => /* binding */ checkout,
 /* harmony export */   "errorCallback": () => /* binding */ errorCallback,
 /* harmony export */   "timeoutCallback": () => /* binding */ timeoutCallback,
 /* harmony export */   "returnInventory": () => /* binding */ returnInventory,
@@ -2011,8 +2015,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "cancelPayment": () => /* binding */ cancelPayment
 /* harmony export */ });
 /* harmony import */ var _mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mixins */ "./src/domain/mixins.js");
-/* harmony import */ var _check_payload__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./check-payload */ "./src/domain/check-payload.js");
-/* harmony import */ var _domain_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../domain/utils */ "./src/domain/utils.js");
+/* harmony import */ var _domain_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/utils */ "./src/domain/utils.js");
+/* harmony import */ var _check_payload__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./check-payload */ "./src/domain/check-payload.js");
 
 
 var _OrderActions;
@@ -2056,6 +2060,35 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 /** @typedef {function(Order)} undoFunction */
 
+/** 
+ * @callback logMessageFn 
+ * @param {object|string} message
+ * @param {logType} [type]
+ */
+
+/** @typedef {'first'|'last'|'lastStateChange'|'stateChange'|'error'|'undo'} logType */
+
+/** 
+ * @typedef readLogType
+ * @property {number} index
+ * @property  {logType} type
+ */
+
+/**
+ * @typedef {{
+ *  itemId: string,
+ *  price: number,
+ *  qty?: number
+ * }} orderItemType
+ */
+
+/**
+ * @callback relationFunction
+ * @property {...args} 
+ * @returns {Promise<Model>}
+ * } relationFunction 
+ */
+
 /**
  * @typedef {Object} Order The Order Service
  * @property {function(topic,eventCallback)} listen - listen for events
@@ -2065,18 +2098,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
  * @property {adapterFunction} verifyDelivery - verify the order was received by the customer
  * @property {adapterFunction} trackShipment
  * @property {adapterFunction} refundPayment
- * @property {function()} inventory - inventory relation - fetch inventory items
+ * @property {relationFunction} inventory - reserve inventory items
  * @property {adapterFunction} undo - undo all transactions up to this point
- * @property {function():Promise<Order>} pickOrder - pick the items and get them ready for shipment
- * @property {adapterFunction} authorizePayment - verify payment info, credit avail
+ * @property {function():Promise<Order>} pickOrder - find the items and get them ready for shipment
+ * @property {adapterFunction} authorizePayment - verify payment, i.e. reserve the balance due
  * @property {import('../adapters/shipping-adapter').shipOrder} shipOrder -
- * calls shipping service to request delivery
+ * calls shipping service to print label and request delivery
  * @property {function(Order):Promise<void>} save - saves order
  * @property {function():Promise<Order>} find - finds order
  * @property {string} shippingAddress
  * @property {string} orderNo = the order number
  * @property {string} trackingId - id given by tracking status for this `orderNo`
- * @property {function():Order} decrypt - decrypts encypted properties
+ * @property {function():Order} decrypt - decrypts sensitive properties
  * @property {function({key1:any,keyN:any}, boolean):Promise<Order>} update - update the order,
  * set the second arg to false to turn off validation.
  * @property {'PENDING'|'APPROVED'|'SHIPPING'|'CANCELED'|'COMPLETED'} orderStatus
@@ -2085,10 +2118,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
  * @property {function(string,Order):Promise} emit - broadcast domain event
  * @property {function():boolean} paymentAccepted - payment approved and funds reserved
  * @property {function():boolean} autoCheckout - whether or not to immediately submit the order
- * @property {boolean} saveShippingDetails save customer shipping and payment details as a customer record
+ * @property {boolean} saveShippingDetails save shipping and payment details in a new customer record
  * @property {{itemId:string,price:number,qty:number}[]} orderItems
  * @property {Symbol} customerId {@link Customer}
- * @property {{event:string,time:number}[]} log
+ * @property {logMessageFn} logEvent
+ * @property {logMessageFn} logError
+ * @property {logMessageFn} logUndo
+ * @property {logMessageFn} logStateChange
+ * @property {readMessageFn} readLog
  */
 
 var orderStatus = 'orderStatus';
@@ -2101,16 +2138,21 @@ var OrderStatus = {
   COMPLETE: 'COMPLETE',
   CANCELED: 'CANCELED'
 };
+/**
+ * 
+ * @param {orderItemType} orderItem 
+ * @returns {boolean} true if item is valid
+ */
+
 var checkItem = function checkItem(orderItem) {
   return typeof orderItem.itemId === 'string' && typeof orderItem.price === 'number';
 };
 /**
- *
- * @param {*} items
+ * @param {orderItemType[]} orderItems
  */
 
 var checkItems = function checkItems(orderItems) {
-  if (!orderItems) {
+  if (!orderItems || orderItems.length < 1) {
     throw new Error('order contains no items');
   }
 
@@ -2124,7 +2166,7 @@ var checkItems = function checkItems(orderItems) {
 };
 /**
  * Calculate order total
- * @param {*} items
+ * @param {orderItemType[]} orderItems
  */
 
 var calcTotal = function calcTotal(orderItems) {
@@ -2134,7 +2176,12 @@ var calcTotal = function calcTotal(orderItems) {
     return total += item.price * qty;
   }, 0);
 };
-var calcNumItems = function calcNumItems(orderItems) {
+/**
+ * @param {orderItemType[]} orderItems 
+ * @returns {number} number of items
+ */
+
+var itemCount = function itemCount(orderItems) {
   return orderItems.reduce(function (total, item) {
     return total += item.qty || 1;
   });
@@ -2148,8 +2195,12 @@ var calcNumItems = function calcNumItems(orderItems) {
 
 var freezeOnApproval = function freezeOnApproval(propKey) {
   return function (o) {
-    return o[_mixins__WEBPACK_IMPORTED_MODULE_0__.prevmodel].orderStatus !== OrderStatus.PENDING ? propKey : null;
+    return o.orderStatus && o.orderStatus !== OrderStatus.PENDING ? propKey : null;
   };
+};
+
+var finalStatus = function finalStatus(status) {
+  return [OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(status);
 };
 /**
  * No changes to `propKey` once order is complete or canceled
@@ -2158,9 +2209,10 @@ var freezeOnApproval = function freezeOnApproval(propKey) {
  * @returns {string | null} the key or `null`
  */
 
+
 var freezeOnCompletion = function freezeOnCompletion(propKey) {
   return function (o) {
-    return [OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(o[_mixins__WEBPACK_IMPORTED_MODULE_0__.prevmodel].orderStatus) ? propKey : null;
+    return finalStatus() ? propKey : null;
   };
 };
 /**
@@ -2176,29 +2228,33 @@ var requiredForGuest = function requiredForGuest(propKey) {
   };
 };
 /**
- * Value required to approve orde1r.
+ * Value required to approve order.
  * @param {*} propKey
  */
 
 var requiredForApproval = function requiredForApproval(propKey) {
   return function (o) {
-    if (!o.orderStatus) return;
-    return o.orderStatus === OrderStatus.APPROVED ? propKey : void 0;
+    return o.orderStatus === OrderStatus.APPROVED ? propKey : null;
   };
 };
 /**
  * Value required to complete order
- * @param {*} o
- * @param {*} propKey
+ * @param {object} o
+ * @param {string | string[]} propKey these props are required to comlete the order
  * @returns {string | void} the key or `void`
  */
 
 var requiredForCompletion = function requiredForCompletion(propKey) {
   return function (o) {
-    if (!o.orderStatus) return;
-    return o.orderStatus === OrderStatus.COMPLETE ? propKey : void 0;
+    return o.orderStatus === OrderStatus.COMPLETE ? propKey : null;
   };
 };
+/**
+ * 
+ * @param {enum} from 
+ * @param {enum} to 
+ * @returns 
+ */
 
 var invalidStatusChange = function invalidStatusChange(from, to) {
   return function (o, propVal) {
@@ -2219,8 +2275,8 @@ invalidStatusChange(OrderStatus.CANCELED, OrderStatus.PENDING), invalidStatusCha
  */
 
 var statusChangeValid = function statusChangeValid(o, propVal) {
-  if (invalidStatusChanges.some(function (isc) {
-    return isc(o, propVal);
+  if (invalidStatusChanges.some(function (i) {
+    return i(o, propVal);
   })) {
     throw new Error('invalid status change');
   }
@@ -2271,26 +2327,20 @@ function readyToDelete(model) {
 }
 /**
  *
- * @param {*} error
+ * @param {Error} error
+ * @param {Order} order
  * @param {*} func
  */
 
 function handleError(error, order, func) {
-  try {
-    if (order) order.emit('orderError', {
-      func: func,
-      error: error
-    });
-  } catch (error) {
-    console.error('order.emit', error);
-  }
-
-  console.error({
+  var errMsg = {
     func: func,
+    orderNo: order.orderNo,
     error: error
-  });
-  2;
-  throw new Error(error);
+  };
+  if (order) order.emit('orderError', errMsg);
+  order.logError(errMsg);
+  throw new Error(JSON.stringify(errMsg));
 }
 /**
  * Callback invoked by adapter when payment is complete
@@ -2321,7 +2371,7 @@ function _paymentCompleted() {
             options = _args7.length > 0 && _args7[0] !== undefined ? _args7[0] : {};
             payload = _args7.length > 1 && _args7[1] !== undefined ? _args7[1] : {};
             order = options.model;
-            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)('confirmationCode', options, payload, paymentCompleted.name);
+            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('confirmationCode', options, payload, paymentCompleted.name);
             return _context7.abrupt("return", order.update(_objectSpread(_objectSpread({}, changes), {}, {
               orderStatus: OrderStatus.COMPLETE
             })));
@@ -2358,7 +2408,7 @@ function _orderShipped() {
             options = _args8.length > 0 && _args8[0] !== undefined ? _args8[0] : {};
             payload = _args8.length > 1 && _args8[1] !== undefined ? _args8[1] : {};
             order = options.model;
-            shipmentPayload = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)('shipmentId', options, payload, orderShipped.name);
+            shipmentPayload = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('shipmentId', options, payload, orderShipped.name);
             return _context8.abrupt("return", order.update({
               shipmentId: shipmentPayload.shipmentId,
               orderStatus: OrderStatus.SHIPPING
@@ -2397,7 +2447,7 @@ function _orderPicked() {
             options = _args9.length > 0 && _args9[0] !== undefined ? _args9[0] : {};
             payload = _args9.length > 1 && _args9[1] !== undefined ? _args9[1] : {};
             order = options.model;
-            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)('pickupAddress', options, payload, addressValidated.name);
+            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('pickupAddress', options, payload, addressValidated.name);
             return _context9.abrupt("return", order.update(changes));
 
           case 5:
@@ -2433,7 +2483,7 @@ function _addressValidated() {
             options = _args10.length > 0 && _args10[0] !== undefined ? _args10[0] : {};
             payload = _args10.length > 1 && _args10[1] !== undefined ? _args10[1] : {};
             order = options.model;
-            addressPayload = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)('shippingAddress', options, payload, addressValidated.name);
+            addressPayload = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('shippingAddress', options, payload, addressValidated.name);
             return _context10.abrupt("return", order.update({
               shippingAddress: addressPayload.shippingAddress
             }));
@@ -2472,10 +2522,11 @@ function _paymentAuthorized() {
             options = _args11.length > 0 && _args11[0] !== undefined ? _args11[0] : {};
             payload = _args11.length > 1 && _args11[1] !== undefined ? _args11[1] : {};
             order = options.model;
-            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)('paymentAuthorization', options, payload, paymentAuthorized.name);
+            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('paymentAuthorization', options, payload, paymentAuthorized.name);
+            order.logError(paymentAuthorized.name);
             return _context11.abrupt("return", order.update(changes));
 
-          case 5:
+          case 6:
           case "end":
             return _context11.stop();
         }
@@ -2502,7 +2553,8 @@ function _refundPayment() {
           case 0:
             // call port by same name.
             order.refundPayment(function (options, payload) {
-              var changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_1__.default)('refundReceipt', options, payload, refundPayment.name);
+              var changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('refundReceipt', options, payload, refundPayment.name);
+              order.logEvent(refundPayment.name);
               return order.update(_objectSpread(_objectSpread({}, changes), {}, {
                 orderStatus: OrderStatus.CANCELED
               }));
@@ -2522,7 +2574,12 @@ function verifyAddress(_x2) {
   return _verifyAddress.apply(this, arguments);
 }
 /**
- *
+ * Request the bank or lender to place a hold on
+ * the customer account in the amount of the payment
+ * due, to be withdrawn once the shipment is safely
+ * in our customer's hands, or credited back if things
+ * don't work out.
+ * 
  * @param {Order} order
  * @returns {Promise<Order>}
  */
@@ -2728,7 +2785,7 @@ function _getCustomerOrder() {
   return _getCustomerOrder.apply(this, arguments);
 }
 
-var processPendingOrder = (0,_domain_utils__WEBPACK_IMPORTED_MODULE_2__.asyncPipe)(getCustomerOrder, verifyInventory, verifyPayment, verifyAddress);
+var processPendingOrder = (0,_domain_utils__WEBPACK_IMPORTED_MODULE_1__.asyncPipe)(getCustomerOrder, verifyInventory, verifyPayment, verifyAddress);
 /**
  * Implements the beginging of the order service workflow.
  * The rest is implemented by the {@link ModelSpecification}.
@@ -2997,14 +3054,19 @@ function _handleOrderEvent() {
 function needsSignature(input, orderTotal) {
   return typeof input === 'boolean' ? input : orderTotal > 999.99;
 }
+/** format and classify log entries */
 
-function logEntry(message) {
+
+function logMessage(message, type) {
+  var msg = typeof message === 'string' ? message : JSON.stringify(message);
   return {
-    event: message,
+    desc: msg.substring(0, 100),
+    type: type,
     time: Date.now(),
     toJSON: function toJSON() {
       return {
-        event: this.event,
+        desc: this.desc,
+        type: type,
         time: new Date(this.time).toUTCString()
       };
     }
@@ -3047,26 +3109,53 @@ function makeOrderFactory(dependencies) {
                 result: 0,
                 time: 0,
                 estimatedArrival: null,
-                log: [logEntry('order created')]
+                log: [logMessage('order created')]
               }, _defineProperty(_order, orderTotal, total), _defineProperty(_order, orderStatus, OrderStatus.PENDING), _defineProperty(_order, orderNo, dependencies.uuid()), _defineProperty(_order, "paymentAccepted", function paymentAccepted() {
                 return this.paymentAuthorization ? true : false;
               }), _defineProperty(_order, "autoCheckout", function autoCheckout() {
                 return _autoCheckout;
               }), _defineProperty(_order, "totalItems", function totalItems() {
-                return calcNumItems(this.orderItems);
+                return itemCount(this.orderItems);
               }), _defineProperty(_order, "total", function total() {
                 return calcTotal(this.orderItems);
               }), _defineProperty(_order, "addItem", function addItem(item) {
                 if (checkItem(item)) {
-                  this.orderItems.push(item);
+                  this.orderItems = [].concat(_toConsumableArray(this.orderItems), [item]);
                   return true;
                 }
 
                 return false;
-              }), _defineProperty(_order, "logMessage", function logMessage(message) {
-                this.log = [].concat(_toConsumableArray(this.log), [logEntry(message)]);
-              }), _defineProperty(_order, "latestLogEntry", function latestLogEntry() {
-                return this.log[this.log.length - 1];
+              }), _defineProperty(_order, "logEvent", function logEvent(message) {
+                var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'info';
+                this.log = [].concat(_toConsumableArray(this.log), [logMessage(message, type)]);
+              }), _defineProperty(_order, "logError", function logError(message) {
+                this.logEvent(message, 'error');
+              }), _defineProperty(_order, "logUndo", function logUndo(message) {
+                this.logEvent(message, 'undo');
+              }), _defineProperty(_order, "logStateChange", function logStateChange(message) {
+                this.logEvent(message, 'stateChange');
+              }), _defineProperty(_order, "readLog", function readLog(_ref8) {
+                var _ref8$index = _ref8.index,
+                    index = _ref8$index === void 0 ? null : _ref8$index,
+                    _ref8$type = _ref8.type,
+                    type = _ref8$type === void 0 ? null : _ref8$type;
+                var indx = parseInt(index);
+                if (indx < this.log.length && indx !== NaN) return this.log[indx];
+                if (type === 'first') return this.log[0];
+                if (type === 'last') return this.log[this.log.length - 1];
+                if (type === 'lastStateChange') return this.log[this.log.lastIndexOf({
+                  type: 'stateChange'
+                })];
+                if (type === 'stateChanges') return this.log.filter(function (l) {
+                  return l.type === 'stateChange';
+                });
+                if (type === 'error') return this.log.filter(function (l) {
+                  return l.type === 'error';
+                });
+                if (type === 'undo') return this.log.filter(function (l) {
+                  return l.type === 'undo';
+                });
+                return this.log;
               }), _order);
               return _context6.abrupt("return", Object.freeze(order));
 
@@ -3112,9 +3201,10 @@ function _approve() {
 
           case 2:
             approvedOrder = _context19.sent;
+            approvedOrder.logStateChange(OrderStatus.APPROVED);
             return _context19.abrupt("return", runOrderWorkflow(approvedOrder));
 
-          case 4:
+          case 5:
           case "end":
             return _context19.stop();
         }
@@ -3147,9 +3237,10 @@ function _cancel() {
 
           case 2:
             canceledOrder = _context20.sent;
+            canceledOrder.logStateChange(OrderStatus.CANCELED);
             return _context20.abrupt("return", runOrderWorkflow(canceledOrder));
 
-          case 4:
+          case 5:
           case "end":
             return _context20.stop();
         }
@@ -3159,16 +3250,16 @@ function _cancel() {
   return _cancel.apply(this, arguments);
 }
 
-function submit(_x16) {
-  return _submit.apply(this, arguments);
+function checkout(_x16) {
+  return _checkout.apply(this, arguments);
 }
 /**
  *
  * @param {{model:Order}} param0
  */
 
-function _submit() {
-  _submit = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee21(order) {
+function _checkout() {
+  _checkout = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee21(order) {
     return regeneratorRuntime.wrap(function _callee21$(_context21) {
       while (1) {
         switch (_context21.prev = _context21.next) {
@@ -3182,14 +3273,22 @@ function _submit() {
       }
     }, _callee21);
   }));
-  return _submit.apply(this, arguments);
+  return _checkout.apply(this, arguments);
 }
 
-function errorCallback(_ref8) {
-  var port = _ref8.port,
-      order = _ref8.model,
-      error = _ref8.error;
-  console.error('error...', port, error);
+function errorCallback(_ref9) {
+  var port = _ref9.port,
+      order = _ref9.model,
+      error = _ref9.error;
+
+  var errMsg = _defineProperty({
+    error: error,
+    port: port
+  }, "error", error);
+
+  console.error(errorCallback.name, errMsg);
+  order.logEvent(errMsg);
+  order.emit(errorCallback.name, errMsg);
   return order.undo();
 }
 /**
@@ -3197,12 +3296,14 @@ function errorCallback(_ref8) {
  * @param {{model:Order}} param0
  */
 
-function timeoutCallback(_ref9) {
-  var port = _ref9.port,
-      ports = _ref9.ports,
-      adapterFn = _ref9.adapterFn,
-      order = _ref9.model;
+function timeoutCallback(_ref10) {
+  var port = _ref10.port,
+      ports = _ref10.ports,
+      adapterFn = _ref10.adapterFn,
+      order = _ref10.model;
   console.error('timeout...', port);
+  order.logEvent(timeoutCallback.name, 'timeout');
+  order.emit(timeoutCallback.name, errMsg);
 }
 /**
  * @type {undoFunction}
@@ -3228,11 +3329,13 @@ function _returnInventory() {
         switch (_context22.prev = _context22.next) {
           case 0:
             console.log(returnInventory.name);
+            order.logEvent(returnInventory.name, 'timeout');
+            order.emit(returnInventory.name, errMsg);
             return _context22.abrupt("return", order.update({
               orderStatus: OrderStatus.CANCELED
             }));
 
-          case 2:
+          case 4:
           case "end":
             return _context22.stop();
         }
@@ -3259,11 +3362,12 @@ function _returnShipment() {
         switch (_context23.prev = _context23.next) {
           case 0:
             console.log(returnShipment.name);
+            order.logUndo(returnShipment.name);
             return _context23.abrupt("return", order.update({
               orderStatus: OrderStatus.CANCELED
             }));
 
-          case 2:
+          case 3:
           case "end":
             return _context23.stop();
         }
