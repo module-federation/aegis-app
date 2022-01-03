@@ -3060,7 +3060,7 @@ function needsSignature(input, orderTotal) {
 function logMessage(message, type) {
   var msg = typeof message === 'string' ? message : JSON.stringify(message);
   return {
-    desc: msg.substring(0, 100),
+    desc: msg.substring(0, 140),
     type: type,
     time: Date.now(),
     toJSON: function toJSON() {

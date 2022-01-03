@@ -634,7 +634,7 @@ function logMessage(message, type) {
     : JSON.stringify(message)
 
   return {
-    desc: msg.substring(0, 100),
+    desc: msg.substring(0, 140),
     type,
     time: Date.now(),
     toJSON() {
