@@ -3302,7 +3302,7 @@ function timeoutCallback(_ref10) {
       adapterFn = _ref10.adapterFn,
       order = _ref10.model;
   console.error('timeout...', port);
-  order.logEvent(timeoutCallback.name, 'timeout');
+  order.logError(timeoutCallback.name, 'timeout');
   order.emit(timeoutCallback.name, errMsg);
 }
 /**

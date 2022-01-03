@@ -800,7 +800,7 @@ export function errorCallback({ port, model: order, error }) {
  */
 export function timeoutCallback({ port, ports, adapterFn, model: order }) {
   console.error('timeout...', port)
-  order.logEvent(timeoutCallback.name, 'timeout')
+  order.logError(timeoutCallback.name, 'timeout')
   order.emit(timeoutCallback.name, errMsg)
 }
 
