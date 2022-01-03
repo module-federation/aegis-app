@@ -24,7 +24,7 @@
     "test": "mocha",
     "test-remote": "mocha",
     "demo": "open http://localhost:8060",
-    "hot-reload": "curl http://localhost:8070/microlib/reload",
+    "hot-reload": "curl http://localhost/microlib/reload",
     "kafka-start": "npm run kafka-stop && scripts/start-kafka.sh && sleep 5 && npm run kafka-topics-create",
     "kafka-stop": "scripts/stop-kafka.sh",
     "kafka-clear-events": "npm run kafka-topics-delete && npm run kafka-topics-create",
