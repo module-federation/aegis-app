@@ -716,7 +716,7 @@ export function makeOrderFactory(dependencies) {
         return false
       },
       logEvent(message, type = 'info') {
-        this.log = [...this.log, logMessage(message, type)]
+        this.log.push(logMessage(message, type))
       },
       logError(message) {
         this.logEvent(message, 'error')

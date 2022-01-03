@@ -3127,7 +3127,7 @@ function makeOrderFactory(dependencies) {
                 return false;
               }), _defineProperty(_order, "logEvent", function logEvent(message) {
                 var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'info';
-                this.log = [].concat(_toConsumableArray(this.log), [logMessage(message, type)]);
+                this.log.push(logMessage(message, type));
               }), _defineProperty(_order, "logError", function logError(message) {
                 this.logEvent(message, 'error');
               }), _defineProperty(_order, "logUndo", function logUndo(message) {
