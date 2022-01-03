@@ -2025,18 +2025,6 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -2060,15 +2048,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 /** @typedef {function(Order)} undoFunction */
 
-/** 
- * @callback logMessageFn 
+/**
+ * @callback logMessageFn
  * @param {object|string} message
  * @param {logType} [type]
  */
 
 /** @typedef {'first'|'last'|'lastStateChange'|'stateChange'|'error'|'undo'} logType */
 
-/** 
+/**
  * @typedef readLogType
  * @property {number} index
  * @property  {logType} type
@@ -2084,9 +2072,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 /**
  * @callback relationFunction
- * @property {...args} 
+ * @property {...args}
  * @returns {Promise<Model>}
- * } relationFunction 
+ * } relationFunction
  */
 
 /**
@@ -2139,8 +2127,8 @@ var OrderStatus = {
   CANCELED: 'CANCELED'
 };
 /**
- * 
- * @param {orderItemType} orderItem 
+ *
+ * @param {orderItemType} orderItem
  * @returns {boolean} true if item is valid
  */
 
@@ -2177,7 +2165,7 @@ var calcTotal = function calcTotal(orderItems) {
   }, 0);
 };
 /**
- * @param {orderItemType[]} orderItems 
+ * @param {orderItemType[]} orderItems
  * @returns {number} number of items
  */
 
@@ -2250,10 +2238,10 @@ var requiredForCompletion = function requiredForCompletion(propKey) {
   };
 };
 /**
- * 
- * @param {enum} from 
- * @param {enum} to 
- * @returns 
+ *
+ * @param {enum} from
+ * @param {enum} to
+ * @returns
  */
 
 var invalidStatusChange = function invalidStatusChange(from, to) {
@@ -2523,7 +2511,7 @@ function _paymentAuthorized() {
             payload = _args11.length > 1 && _args11[1] !== undefined ? _args11[1] : {};
             order = options.model;
             changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('paymentAuthorization', options, payload, paymentAuthorized.name);
-            order.logError(paymentAuthorized.name);
+            order.logStateChange(paymentAuthorized.name + ' accepted');
             return _context11.abrupt("return", order.update(changes));
 
           case 6:
@@ -2554,7 +2542,7 @@ function _refundPayment() {
             // call port by same name.
             order.refundPayment(function (options, payload) {
               var changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('refundReceipt', options, payload, refundPayment.name);
-              order.logEvent(refundPayment.name);
+              order.logStateChange("".concat(OrderStatus.CANCELED, " ").concat(refundPayment.name));
               return order.update(_objectSpread(_objectSpread({}, changes), {}, {
                 orderStatus: OrderStatus.CANCELED
               }));
@@ -2579,7 +2567,7 @@ function verifyAddress(_x2) {
  * due, to be withdrawn once the shipment is safely
  * in our customer's hands, or credited back if things
  * don't work out.
- * 
+ *
  * @param {Order} order
  * @returns {Promise<Order>}
  */
@@ -2852,34 +2840,37 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
             _context2.prev = 0;
 
             if (!order.paymentAccepted()) {
-              _context2.next = 3;
+              _context2.next = 4;
               break;
             }
 
+            // Don't `await` the async result, which will block the API caller
+            // if we being executed that way. Return control back to caller now.
+            order.logStateChange('');
             return _context2.abrupt("return", order.pickOrder(orderPicked));
 
-          case 3:
-            _context2.next = 5;
+          case 4:
+            _context2.next = 6;
             return order.emit('PayAuthFail', 'Payment authorization problem');
 
-          case 5:
-            _context2.next = 10;
+          case 6:
+            _context2.next = 11;
             break;
 
-          case 7:
-            _context2.prev = 7;
+          case 8:
+            _context2.prev = 8;
             _context2.t0 = _context2["catch"](0);
             handleError(_context2.t0, order, OrderStatus.APPROVED);
 
-          case 10:
+          case 11:
             return _context2.abrupt("return", order);
 
-          case 11:
+          case 12:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[0, 7]]);
+    }, _callee2, null, [[0, 8]]);
   }));
 
   return function (_x7) {
@@ -3074,7 +3065,7 @@ function logMessage(message, type) {
 }
 /**
  * Returns factory function for the Order model.
- * @type {import('../domain/index.js').modelSpecFactoryFn} 
+ * @type {import('../domain/index.js').modelSpecFactoryFn}
  * @param {*} dependencies - inject dependencies
  */
 
@@ -3110,7 +3101,7 @@ function makeOrderFactory(dependencies) {
                 time: 0,
                 estimatedArrival: null,
                 log: [logMessage('order created')]
-              }, _defineProperty(_order, orderTotal, total), _defineProperty(_order, orderStatus, OrderStatus.PENDING), _defineProperty(_order, orderNo, dependencies.uuid()), _defineProperty(_order, "paymentAccepted", function paymentAccepted() {
+              }, _defineProperty(_order, orderTotal, total), _defineProperty(_order, orderStatus, OrderStatus.PENDING), _defineProperty(_order, orderNo, dependencies.uuid()), _defineProperty(_order, "desc", 'new order'), _defineProperty(_order, "paymentAccepted", function paymentAccepted() {
                 return this.paymentAuthorization ? true : false;
               }), _defineProperty(_order, "autoCheckout", function autoCheckout() {
                 return _autoCheckout;
@@ -3120,11 +3111,11 @@ function makeOrderFactory(dependencies) {
                 return calcTotal(this.orderItems);
               }), _defineProperty(_order, "addItem", function addItem(item) {
                 if (checkItem(item)) {
-                  this.orderItems = [].concat(_toConsumableArray(this.orderItems), [item]);
+                  this.orderItems.push(item);
                   return true;
                 }
 
-                return false;
+                return falses;
               }), _defineProperty(_order, "logEvent", function logEvent(message) {
                 var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'info';
                 this.log.push(logMessage(message, type));
