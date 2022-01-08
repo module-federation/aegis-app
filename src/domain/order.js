@@ -486,7 +486,7 @@ async function getCustomerOrder (order) {
 const processPendingOrder = asyncPipe(
   getCustomerOrder,
   verifyInventory,
-  verifyPayment,
+  //verifyPayment,
   verifyAddress
 )
 
