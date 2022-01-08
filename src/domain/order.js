@@ -258,7 +258,7 @@ export function readyToDelete (model) {
   if (
     ![OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(model.orderStatus)
   ) {
-    throw new Error('order must be canceled or completed')
+    throw new Error('order must be can celed or completed')
   }
   return model
 }
@@ -486,7 +486,7 @@ async function getCustomerOrder (order) {
 const processPendingOrder = asyncPipe(
   getCustomerOrder,
   verifyInventory,
-  //verifyPayment,
+  verifyPayment,
   verifyAddress
 )
 

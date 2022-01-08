@@ -2308,7 +2308,7 @@ var updateSignature = function updateSignature(o, propVal) {
 
 function readyToDelete(model) {
   if (![OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(model.orderStatus)) {
-    throw new Error('order must be canceled or completed');
+    throw new Error('order must be can celed or completed');
   }
 
   return model;
@@ -2773,8 +2773,7 @@ function _getCustomerOrder() {
   return _getCustomerOrder.apply(this, arguments);
 }
 
-var processPendingOrder = (0,_domain_utils__WEBPACK_IMPORTED_MODULE_1__.asyncPipe)(getCustomerOrder, verifyInventory, //verifyPayment,
-verifyAddress);
+var processPendingOrder = (0,_domain_utils__WEBPACK_IMPORTED_MODULE_1__.asyncPipe)(getCustomerOrder, verifyInventory, verifyPayment, verifyAddress);
 /**
  * Implements the beginging of the order service workflow.
  * The rest is implemented by the {@link ModelSpecification}.
