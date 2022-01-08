@@ -2512,7 +2512,7 @@ function _paymentAuthorized() {
             order = options.model;
             changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('paymentAuthorization', options, payload, paymentAuthorized.name);
             order.logStateChange(paymentAuthorized.name + ' accepted');
-            return _context11.abrupt("return", order.update(changes));
+            return _context11.abrupt("return", order.update(changes, false));
 
           case 6:
           case "end":

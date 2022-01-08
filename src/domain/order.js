@@ -358,7 +358,7 @@ export async function paymentAuthorized (options = {}, payload = {}) {
     paymentAuthorized.name
   )
   order.logStateChange(paymentAuthorized.name + ' accepted')
-  return order.update(changes)
+  return order.update(changes, false)
 }
 
 /**
