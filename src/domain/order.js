@@ -685,7 +685,7 @@ export function makeOrderFactory (dependencies) {
       [orderTotal]: total,
       [orderStatus]: OrderStatus.PENDING,
       [orderNo]: dependencies.uuid(),
-      desc: 'new order 9',
+      desc: 'new order 10',
       /**
        * Has payment for the order been authorized?
        */
