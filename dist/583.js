@@ -109,7 +109,6 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
   !*** ./src/config/index.js ***!
   \*****************************/
 /*! namespace exports */
-/*! export Inventory [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/inventory.js .Inventory */
 /*! export Order [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/order.js .Order */
 /*! export User [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/user.js .User */
 /*! other exports [not provided] [no usage info] */
@@ -120,81 +119,14 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Order": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.Order,
-/* harmony export */   "User": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_1__.User,
-/* harmony export */   "Inventory": () => /* reexport safe */ _inventory__WEBPACK_IMPORTED_MODULE_2__.Inventory
+/* harmony export */   "User": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_1__.User
 /* harmony export */ });
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./order */ "./src/config/order.js");
 /* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./user */ "./src/config/user.js");
-/* harmony import */ var _inventory__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./inventory */ "./src/config/inventory.js");
 
  // export * from "./customer";
 // export * from "./product";
-
-
-
-/***/ }),
-
-/***/ "./src/config/inventory.js":
-/*!*********************************!*\
-  !*** ./src/config/inventory.js ***!
-  \*********************************/
-/*! namespace exports */
-/*! export Inventory [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Inventory": () => /* binding */ Inventory
-/* harmony export */ });
-/* harmony import */ var _domain_inventory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../domain/inventory */ "./src/domain/inventory.js");
-/* harmony import */ var _domain_mixins__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/mixins */ "./src/domain/mixins.js");
-
-
-
-
-/**
- * @type {import("../domain/order").ModelSpecification}
- */
-
-var Inventory = {
-  modelName: 'inventory',
-  endpoint: 'inventory',
-  dependencies: {},
-  factory: _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.makeInventoryFactory,
-  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.requireProperties)('name', 'inStock', 'category', 'price', 'purchaseOrder'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.validateProperties)([{
-    propKey: 'inStock',
-    "typeof": 'number',
-    maxnum: 99999
-  }, {
-    propKey: 'category',
-    values: _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.categories
-  }, {
-    propKey: 'assetType',
-    values: _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.assetTypes
-  }, {
-    propKey: 'properties',
-    isValid: function isValid(_obj, prop) {
-      return prop.every(function (p) {
-        return _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.properties.includes(p);
-      });
-    }
-  }, {
-    propKey: 'price',
-    "typeof": 'number',
-    maxnum: 999.99
-  }]), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.freezeProperties)('*')],
-  relations: {
-    orders: {
-      modelName: 'order',
-      type: 'oneToMany',
-      foreignKey: 'itemId',
-      desc: 'many items per order'
-    }
-  }
-};
+// export * from './inventory'
 
 /***/ }),
 
@@ -893,62 +825,6 @@ function makeModel(spec) {
 var models = Object.values(_config__WEBPACK_IMPORTED_MODULE_4__).map(function (spec) {
   return makeModel(spec);
 });
-
-/***/ }),
-
-/***/ "./src/domain/inventory.js":
-/*!*********************************!*\
-  !*** ./src/domain/inventory.js ***!
-  \*********************************/
-/*! namespace exports */
-/*! export assetTypes [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export categories [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export makeInventoryFactory [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export properties [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "assetTypes": () => /* binding */ assetTypes,
-/* harmony export */   "properties": () => /* binding */ properties,
-/* harmony export */   "categories": () => /* binding */ categories,
-/* harmony export */   "makeInventoryFactory": () => /* binding */ makeInventoryFactory
-/* harmony export */ });
-
-
-var assetTypes = ['rotating-asset', 'spare-part'];
-var properties = ['height', 'length', 'width', 'weight', 'color'];
-var categories = ['home', 'auto', 'business'];
-var makeInventoryFactory = function makeInventoryFactory(dependencies) {
-  return function (_ref) {
-    var category = _ref.category,
-        properties = _ref.properties,
-        price = _ref.price,
-        discount = _ref.discount,
-        name = _ref.name,
-        desc = _ref.desc,
-        sku = _ref.sku,
-        purchaseOrder = _ref.purchaseOrder,
-        vendor = _ref.vendor,
-        inStock = _ref.inStock,
-        assetType = _ref.assetType;
-    return Object.freeze({
-      category: category,
-      properties: properties,
-      price: price - (discount || 0.0),
-      name: name,
-      desc: desc,
-      sku: sku,
-      purchaseOrder: purchaseOrder,
-      vendor: vendor,
-      inStock: inStock,
-      assetType: assetType
-    });
-  };
-};
 
 /***/ }),
 
@@ -3101,7 +2977,7 @@ function makeOrderFactory(dependencies) {
                 time: 0,
                 estimatedArrival: null,
                 log: [logMessage('order created')]
-              }, _defineProperty(_order, orderTotal, total), _defineProperty(_order, orderStatus, OrderStatus.PENDING), _defineProperty(_order, orderNo, dependencies.uuid()), _defineProperty(_order, "desc", 'new order 10'), _defineProperty(_order, "paymentAccepted", function paymentAccepted() {
+              }, _defineProperty(_order, orderTotal, total), _defineProperty(_order, orderStatus, OrderStatus.PENDING), _defineProperty(_order, orderNo, dependencies.uuid()), _defineProperty(_order, "desc", 'new order 11'), _defineProperty(_order, "paymentAccepted", function paymentAccepted() {
                 return this.paymentAuthorization ? true : false;
               }), _defineProperty(_order, "autoCheckout", function autoCheckout() {
                 return _autoCheckout;
