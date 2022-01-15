@@ -2977,7 +2977,7 @@ function makeOrderFactory(dependencies) {
                 time: 0,
                 estimatedArrival: null,
                 log: [logMessage('order created')]
-              }, _defineProperty(_order, orderTotal, total), _defineProperty(_order, orderStatus, OrderStatus.PENDING), _defineProperty(_order, orderNo, dependencies.uuid()), _defineProperty(_order, "desc", 'new order 13'), _defineProperty(_order, "paymentAccepted", function paymentAccepted() {
+              }, _defineProperty(_order, orderTotal, total), _defineProperty(_order, orderStatus, OrderStatus.PENDING), _defineProperty(_order, orderNo, dependencies.uuid()), _defineProperty(_order, "desc", 'new order 16'), _defineProperty(_order, "paymentAccepted", function paymentAccepted() {
                 return this.paymentAuthorization ? true : false;
               }), _defineProperty(_order, "autoCheckout", function autoCheckout() {
                 return _autoCheckout;
