@@ -709,7 +709,7 @@ export function makeOrderFactory (dependencies) {
           this.orderItems.push(item)
           return true
         }
-        return falses
+        return false
       },
       logEvent (message, type = 'info') {
         this.log.push(logMessage(message, type))

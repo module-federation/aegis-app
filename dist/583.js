@@ -2991,7 +2991,7 @@ function makeOrderFactory(dependencies) {
                   return true;
                 }
 
-                return falses;
+                return false;
               }), _defineProperty(_order, "logEvent", function logEvent(message) {
                 var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'info';
                 this.log.push(logMessage(message, type));
