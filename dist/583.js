@@ -3516,6 +3516,12 @@ function _returnInventory() {
 function returnShipment(_x18) {
   return _returnShipment.apply(this, arguments);
 }
+/**
+ * @type {undoFunction}
+ * Start process to return canceled order items to inventory.
+ * Do not call `runOrderWorkflow` - it is already running (in
+ * reverse) if we get here.
+ */
 
 function _returnShipment() {
   _returnShipment = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee23(order) {
@@ -3538,14 +3544,6 @@ function _returnShipment() {
   }));
   return _returnShipment.apply(this, arguments);
 }
-
-sxs;
-/**
- * @type {undoFunction}
- * Start process to return canceled order items to inventory.
- * Do not call `runOrderWorkflow` - it is already running (in
- * reverse) if we get here.
- */
 
 function returnDelivery(_x19) {
   return _returnDelivery.apply(this, arguments);

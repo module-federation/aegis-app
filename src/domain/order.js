@@ -825,7 +825,7 @@ export async function returnShipment (order) {
   order.logUndo(returnShipment.name)
   return order.update({ orderStatus: OrderStatus.CANCELED })
 }
-sxs
+
 /**
  * @type {undoFunction}
  * Start process to return canceled order items to inventory.
