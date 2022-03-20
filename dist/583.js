@@ -3350,6 +3350,10 @@ function makeOrderFactory(dependencies) {
 function approve(_x14) {
   return _approve.apply(this, arguments);
 }
+/**
+ * Called as command to cancel order.
+ * @param {Order} order
+ */
 
 function _approve() {
   _approve = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee19(order) {
@@ -3377,12 +3381,6 @@ function _approve() {
   }));
   return _approve.apply(this, arguments);
 }
-
-s;
-/**
- * Called as command to cancel order.
- * @param {Order} order
- */
 
 function cancel(_x15) {
   return _cancel.apply(this, arguments);

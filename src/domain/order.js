@@ -757,7 +757,7 @@ export async function approve (order) {
   approvedOrder.logStateChange(OrderStatus.APPROVED)
   return runOrderWorkflow(approvedOrder)
 }
-s
+
 /**
  * Called as command to cancel order.
  * @param {Order} order
