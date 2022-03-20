@@ -104,11 +104,92 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
 
 /***/ }),
 
+/***/ "./src/config/customer.js":
+/*!********************************!*\
+  !*** ./src/config/customer.js ***!
+  \********************************/
+/*! namespace exports */
+/*! export Customer [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Customer": () => /* binding */ Customer
+/* harmony export */ });
+/* harmony import */ var _domain_mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../domain/mixins */ "./src/domain/mixins.js");
+/* harmony import */ var _domain_customer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/customer */ "./src/domain/customer.js");
+/* harmony import */ var _adapters_datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../adapters/datasources/datasource-mongodb */ "./src/adapters/datasources/datasource-mongodb.js");
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! nanoid */ "webpack/sharing/consume/default/nanoid/nanoid");
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(nanoid__WEBPACK_IMPORTED_MODULE_3__);
+
+
+
+
+
+
+/**
+ * @type {import('../domain/index').ModelSpecification}
+ */
+
+var Customer = {
+  modelName: "customer",
+  endpoint: "customers",
+  dependencies: {
+    uuid: function uuid() {
+      return (0,nanoid__WEBPACK_IMPORTED_MODULE_3__.nanoid)(8);
+    }
+  },
+  factory: _domain_customer__WEBPACK_IMPORTED_MODULE_1__.makeCustomerFactory,
+  validate: _domain_mixins__WEBPACK_IMPORTED_MODULE_0__.validateModel,
+  onDelete: _domain_customer__WEBPACK_IMPORTED_MODULE_1__.okToDelete,
+  // datasource: {
+  //   factory: DataSourceAdapterMongoDb,
+  //   url: "mongodb://localhost:27017",
+  //   cacheSize: 2000,
+  //   baseClass: "DataSourceMongoDb",
+  // },
+  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.freezeProperties)("customerId"), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)("firstName", "lastName", "email", "shippingAddress", "billingAddress", "creditCardNumber"), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.validateProperties)([{
+    propKey: "email",
+    // unique: { encrypted: true },
+    regex: "email"
+  }, {
+    propKey: "creditCardNumber",
+    regex: "creditCard"
+  }])],
+  relations: {
+    orders: {
+      modelName: "order",
+      type: "oneToMany",
+      foreignKey: "customerId"
+    }
+  },
+  commands: {
+    decrypt: {
+      command: "decrypt",
+      acl: ["read", "decrypt"]
+    }
+  },
+  accessControlList: {
+    customer: {
+      allow: "read",
+      type: "relation",
+      desc: "Allow orders to see customers."
+    }
+  }
+};
+
+/***/ }),
+
 /***/ "./src/config/index.js":
 /*!*****************************!*\
   !*** ./src/config/index.js ***!
   \*****************************/
 /*! namespace exports */
+/*! export Customer [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/customer.js .Customer */
+/*! export Inventory [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/inventory.js .Inventory */
 /*! export Order [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/order.js .Order */
 /*! export User [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/user.js .User */
 /*! other exports [not provided] [no usage info] */
@@ -119,13 +200,82 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Order": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.Order,
-/* harmony export */   "User": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_1__.User
+/* harmony export */   "User": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_1__.User,
+/* harmony export */   "Customer": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_2__.Customer,
+/* harmony export */   "Inventory": () => /* reexport safe */ _inventory__WEBPACK_IMPORTED_MODULE_3__.Inventory
 /* harmony export */ });
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./order */ "./src/config/order.js");
 /* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./user */ "./src/config/user.js");
+/* harmony import */ var _customer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./customer */ "./src/config/customer.js");
+/* harmony import */ var _inventory__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./inventory */ "./src/config/inventory.js");
 
- //export * from './customer'
-//export * from './inventory'
+
+
+
+
+/***/ }),
+
+/***/ "./src/config/inventory.js":
+/*!*********************************!*\
+  !*** ./src/config/inventory.js ***!
+  \*********************************/
+/*! namespace exports */
+/*! export Inventory [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Inventory": () => /* binding */ Inventory
+/* harmony export */ });
+/* harmony import */ var _domain_inventory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../domain/inventory */ "./src/domain/inventory.js");
+/* harmony import */ var _domain_mixins__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/mixins */ "./src/domain/mixins.js");
+
+
+
+
+/**
+ * @type {import("../domain/order").ModelSpecification}
+ */
+
+var Inventory = {
+  modelName: 'inventory',
+  endpoint: 'inventory',
+  dependencies: {},
+  factory: _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.makeInventoryFactory,
+  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.requireProperties)('name', 'inStock', 'category', 'price', 'purchaseOrder'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.validateProperties)([{
+    propKey: 'inStock',
+    "typeof": 'number',
+    maxnum: 99999
+  }, {
+    propKey: 'category',
+    values: _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.categories
+  }, {
+    propKey: 'assetType',
+    values: _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.assetTypes
+  }, {
+    propKey: 'properties',
+    isValid: function isValid(_obj, prop) {
+      return prop.every(function (p) {
+        return _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.properties.includes(p);
+      });
+    }
+  }, {
+    propKey: 'price',
+    "typeof": 'number',
+    maxnum: 999.99
+  }]), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.freezeProperties)('*')],
+  relations: {
+    orders: {
+      modelName: 'order',
+      type: 'oneToMany',
+      foreignKey: 'itemId',
+      desc: 'many items per order'
+    }
+  }
+};
 
 /***/ }),
 
@@ -570,6 +720,95 @@ function checkPayload(key) {
 
 /***/ }),
 
+/***/ "./src/domain/customer.js":
+/*!********************************!*\
+  !*** ./src/domain/customer.js ***!
+  \********************************/
+/*! namespace exports */
+/*! export makeCustomerFactory [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export okToDelete [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "makeCustomerFactory": () => /* binding */ makeCustomerFactory,
+/* harmony export */   "okToDelete": () => /* binding */ okToDelete
+/* harmony export */ });
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+function makeCustomerFactory(dependencies) {
+  return function createCustomer() {
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        firstName = _ref.firstName,
+        lastName = _ref.lastName,
+        shippingAddress = _ref.shippingAddress,
+        creditCardNumber = _ref.creditCardNumber,
+        _ref$billingAddress = _ref.billingAddress,
+        billingAddress = _ref$billingAddress === void 0 ? shippingAddress : _ref$billingAddress,
+        phone = _ref.phone,
+        email = _ref.email,
+        userId = _ref.userId;
+
+    return Object.freeze({
+      customerId: dependencies.uuid(),
+      firstName: firstName,
+      lastName: lastName,
+      creditCardNumber: creditCardNumber,
+      shippingAddress: shippingAddress,
+      billingAddress: billingAddress,
+      phone: phone,
+      email: email,
+      userId: userId
+    });
+  };
+}
+function okToDelete(_x) {
+  return _okToDelete.apply(this, arguments);
+}
+
+function _okToDelete() {
+  _okToDelete = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(customer) {
+    var orders;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.prev = 0;
+            _context.next = 3;
+            return customer.orders();
+
+          case 3:
+            orders = _context.sent;
+            return _context.abrupt("return", orders.length > 0);
+
+          case 7:
+            _context.prev = 7;
+            _context.t0 = _context["catch"](0);
+            console.error({
+              func: okToDelete.name,
+              error: _context.t0
+            });
+            return _context.abrupt("return", true);
+
+          case 11:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, null, [[0, 7]]);
+  }));
+  return _okToDelete.apply(this, arguments);
+}
+
+/***/ }),
+
 /***/ "./src/domain/index.js":
 /*!*****************************!*\
   !*** ./src/domain/index.js ***!
@@ -827,6 +1066,62 @@ var models = Object.values(_config__WEBPACK_IMPORTED_MODULE_4__).map(function (s
 
 /***/ }),
 
+/***/ "./src/domain/inventory.js":
+/*!*********************************!*\
+  !*** ./src/domain/inventory.js ***!
+  \*********************************/
+/*! namespace exports */
+/*! export assetTypes [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export categories [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export makeInventoryFactory [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export properties [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "assetTypes": () => /* binding */ assetTypes,
+/* harmony export */   "properties": () => /* binding */ properties,
+/* harmony export */   "categories": () => /* binding */ categories,
+/* harmony export */   "makeInventoryFactory": () => /* binding */ makeInventoryFactory
+/* harmony export */ });
+
+
+var assetTypes = ['rotating-asset', 'spare-part'];
+var properties = ['height', 'length', 'width', 'weight', 'color'];
+var categories = ['home', 'auto', 'business'];
+var makeInventoryFactory = function makeInventoryFactory(dependencies) {
+  return function (_ref) {
+    var category = _ref.category,
+        properties = _ref.properties,
+        price = _ref.price,
+        discount = _ref.discount,
+        name = _ref.name,
+        desc = _ref.desc,
+        sku = _ref.sku,
+        purchaseOrder = _ref.purchaseOrder,
+        vendor = _ref.vendor,
+        inStock = _ref.inStock,
+        assetType = _ref.assetType;
+    return Object.freeze({
+      category: category,
+      properties: properties,
+      price: price - (discount || 0.0),
+      name: name,
+      desc: desc,
+      sku: sku,
+      purchaseOrder: purchaseOrder,
+      vendor: vendor,
+      inStock: inStock,
+      assetType: assetType
+    });
+  };
+};
+
+/***/ }),
+
 /***/ "./src/domain/mixins.js":
 /*!******************************!*\
   !*** ./src/domain/mixins.js ***!
@@ -939,25 +1234,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * Private key to access previous version of the model
  */
 
-var prevmodel = Symbol("prevModel");
+var prevmodel = Symbol('prevModel');
 /**
  * private key to access validation config
  */
 
-var validations = Symbol("validations");
+var validations = Symbol('validations');
 /**
  * Process mixin pre or post update
  */
 
 var mixinType = {
-  pre: Symbol("pre"),
-  post: Symbol("post")
+  pre: Symbol('pre'),
+  post: Symbol('post')
 };
 /**
  * Stored mixins - use private symbol as key to prevent overwrite
  */
 
-var mixinSets = (_mixinSets = {}, _defineProperty(_mixinSets, mixinType.pre, Symbol("preUpdateMixins")), _defineProperty(_mixinSets, mixinType.post, Symbol("postUpdateMixins")), _mixinSets);
+var mixinSets = (_mixinSets = {}, _defineProperty(_mixinSets, mixinType.pre, Symbol('preUpdateMixins')), _defineProperty(_mixinSets, mixinType.post, Symbol('postUpdateMixins')), _mixinSets);
 /**
  * Set of pre mixins
  */
@@ -998,7 +1293,7 @@ function processUpdate(model, changes) {
 
 function updateMixins(type, o, name, cb) {
   if (!mixinSets[type]) {
-    throw new Error("invalid mixin type");
+    throw new Error('invalid mixin type');
   }
 
   var mixinSet = o[mixinSets[type]] || new Map();
@@ -1030,7 +1325,7 @@ function handleUpdateEvent(model, updates, event) {
 }
 
 function isObject(p) {
-  return p != null && _typeof(p) === "object";
+  return p != null && _typeof(p) === 'object';
 }
 
 function containsUpdates(model, changes, event) {
@@ -1227,11 +1522,11 @@ function parseKeys(o) {
   }
 
   var keys = propKeys.flat().map(function (k) {
-    if (typeof k === "function") return k(o);
+    if (typeof k === 'function') return k(o);
     if (k instanceof RegExp) return Object.keys(o).filter(function (key) {
       return k.test(key);
     });
-    if (k === "*") return Object.keys(o);
+    if (k === '*') return Object.keys(o);
     return k;
   });
   return keys.flat();
@@ -1316,7 +1611,6 @@ var freezeProperties = function freezeProperties() {
       model: o,
       name: freezeProperties.name,
       input: enableValidation.onUpdate,
-      output: enableValidation.onUpdate,
       order: 20
     }));
   };
@@ -1636,7 +1930,7 @@ var invokePort = function invokePort(fn, onCreate, onUpdate) {
               return _context.abrupt("return", _objectSpread(_objectSpread({}, o), {}, {
                 invokePort: function invokePort() {
                   console.log({
-                    func: "invokePort",
+                    func: 'invokePort',
                     fn: fn,
                     args: args
                   });
@@ -1646,7 +1940,7 @@ var invokePort = function invokePort(fn, onCreate, onUpdate) {
                 }
               }, addValidation({
                 model: o,
-                name: "invokePort",
+                name: 'invokePort',
                 output: enableValidation.onUpdate,
                 order: 85
               })));
@@ -1733,7 +2027,7 @@ var execMethod = function execMethod(fn, onCreate, onUpdate) {
                 }
               }, addValidation({
                 model: o,
-                name: "execMethod",
+                name: 'execMethod',
                 output: enableValidation.onUpdate,
                 order: 40
               })));
@@ -1953,7 +2247,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
  */
 
 /**
- * @typedef {Object} Order The Order Service
+ *  @typedef {Object} Order The Order Service
  * @property {function(topic,eventCallback)} listen - listen for events
  * @property {import('../adapters/event-adapter').notifyType} notify
  * @property {adapterFunction} validateAddress - returns valid address or throws exception
@@ -2588,57 +2882,64 @@ function _getCustomerOrder() {
         switch (_context16.prev = _context16.next) {
           case 0:
             if (!order.customerId) {
-              _context16.next = 12;
+              _context16.next = 13;
               break;
             }
 
-            _context16.next = 3;
+            if (!order.customer) {
+              console.log({
+                order: order
+              });
+            } // Use the relation defined in the spec
+
+
+            _context16.next = 4;
             return order.customer();
 
-          case 3:
+          case 4:
             customer = _context16.sent;
 
             if (customer) {
-              _context16.next = 6;
+              _context16.next = 7;
               break;
             }
 
             throw new Error('invalid customer id', order.customerId);
 
-          case 6:
+          case 7:
             // Add customer data to the order
             custInfo = _objectSpread(_objectSpread({}, customer.decrypt()), {}, {
               firstName: customer.firstName
             });
-            _context16.next = 9;
+            _context16.next = 10;
             return order.update(custInfo);
 
-          case 9:
+          case 10:
             update = _context16.sent;
             console.info('update order with data from existing customer', custInfo);
             return _context16.abrupt("return", update);
 
-          case 12:
+          case 13:
             if (!order.saveShippingDetails) {
-              _context16.next = 19;
+              _context16.next = 20;
               break;
             }
 
             _custInfo = _objectSpread(_objectSpread({}, order.decrypt()), {}, {
               firstName: order.firstName
             });
-            _context16.next = 16;
+            _context16.next = 17;
             return order.customer(_custInfo);
 
-          case 16:
+          case 17:
             _customer = _context16.sent;
             console.info('create new customer with data from order', _customer);
             return _context16.abrupt("return", order);
 
-          case 19:
+          case 20:
             return _context16.abrupt("return", order);
 
-          case 20:
+          case 21:
           case "end":
             return _context16.stop();
         }
@@ -2657,7 +2958,7 @@ var processPendingOrder = (0,_domain_utils__WEBPACK_IMPORTED_MODULE_1__.asyncPip
 
 var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStatus.PENDING, function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(order) {
-    var processedOrder;
+    var processedOrder, status;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -2670,37 +2971,38 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
             processedOrder = _context.sent;
 
             if (!processedOrder.autoCheckout()) {
-              _context.next = 10;
+              _context.next = 11;
               break;
             }
 
-            _context.t0 = runOrderWorkflow;
-            _context.next = 8;
-            return processedOrder.update({
+            status = {
               orderStatus: OrderStatus.APPROVED
-            }, false);
+            };
+            _context.t0 = runOrderWorkflow;
+            _context.next = 9;
+            return processedOrder.update(status, false);
 
-          case 8:
+          case 9:
             _context.t1 = _context.sent;
             return _context.abrupt("return", (0, _context.t0)(_context.t1));
 
-          case 10:
+          case 11:
             return _context.abrupt("return", processedOrder);
 
-          case 13:
-            _context.prev = 13;
+          case 14:
+            _context.prev = 14;
             _context.t2 = _context["catch"](0);
             console.error(_context.t2);
 
-          case 16:
+          case 17:
             return _context.abrupt("return", order);
 
-          case 17:
+          case 18:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[0, 13]]);
+    }, _callee, null, [[0, 14]]);
   }));
 
   return function (_x6) {
@@ -3048,10 +3350,6 @@ function makeOrderFactory(dependencies) {
 function approve(_x14) {
   return _approve.apply(this, arguments);
 }
-/**
- * Called as command to cancel order.
- * @param {Order} order
- */
 
 function _approve() {
   _approve = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee19(order) {
@@ -3079,6 +3377,12 @@ function _approve() {
   }));
   return _approve.apply(this, arguments);
 }
+
+s;
+/**
+ * Called as command to cancel order.
+ * @param {Order} order
+ */
 
 function cancel(_x15) {
   return _cancel.apply(this, arguments);
@@ -3214,12 +3518,6 @@ function _returnInventory() {
 function returnShipment(_x18) {
   return _returnShipment.apply(this, arguments);
 }
-/**
- * @type {undoFunction}
- * Start process to return canceled order items to inventory.
- * Do not call `runOrderWorkflow` - it is already running (in
- * reverse) if we get here.
- */
 
 function _returnShipment() {
   _returnShipment = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee23(order) {
@@ -3242,6 +3540,14 @@ function _returnShipment() {
   }));
   return _returnShipment.apply(this, arguments);
 }
+
+sxs;
+/**
+ * @type {undoFunction}
+ * Start process to return canceled order items to inventory.
+ * Do not call `runOrderWorkflow` - it is already running (in
+ * reverse) if we get here.
+ */
 
 function returnDelivery(_x19) {
   return _returnDelivery.apply(this, arguments);

@@ -41,7 +41,7 @@ import checkPayload from './check-payload'
  */
 
 /**
- * @typedef {Object} Order The Order Service
+ *  @typedef {Object} Order The Order Service
  * @property {function(topic,eventCallback)} listen - listen for events
  * @property {import('../adapters/event-adapter').notifyType} notify
  * @property {adapterFunction} validateAddress - returns valid address or throws exception
@@ -404,7 +404,8 @@ async function verifyPayment (order) {
   try {
     /**
      * @type {Order}
-     * */
+     */
+
     const authorizedOrder = await order.authorizePayment(paymentAuthorized)
 
     if (!authorizedOrder) {
@@ -449,6 +450,9 @@ async function verifyInventory (order) {
 async function getCustomerOrder (order) {
   // If an id is given, try fetching the model
   if (order.customerId) {
+    if (!order.customer) {
+      console.log({ order })
+    }
     // Use the relation defined in the spec
     const customer = await order.customer()
 
@@ -510,14 +514,9 @@ const OrderActions = {
       const processedOrder = await processPendingOrder(order)
 
       if (processedOrder.autoCheckout()) {
-        return runOrderWorkflow(
-          await processedOrder.update(
-            {
-              orderStatus: OrderStatus.APPROVED
-            },
-            false
-          )
-        )
+        const status = { orderStatus: OrderStatus.APPROVED }
+
+        return runOrderWorkflow(await processedOrder.update(status, false))
       }
       return processedOrder
     } catch (e) {
@@ -758,7 +757,7 @@ export async function approve (order) {
   approvedOrder.logStateChange(OrderStatus.APPROVED)
   return runOrderWorkflow(approvedOrder)
 }
-
+s
 /**
  * Called as command to cancel order.
  * @param {Order} order
@@ -826,7 +825,7 @@ export async function returnShipment (order) {
   order.logUndo(returnShipment.name)
   return order.update({ orderStatus: OrderStatus.CANCELED })
 }
-
+sxs
 /**
  * @type {undoFunction}
  * Start process to return canceled order items to inventory.
