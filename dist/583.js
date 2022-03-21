@@ -189,7 +189,7 @@ var Customer = {
   \*****************************/
 /*! namespace exports */
 /*! export Customer [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/customer.js .Customer */
-/*! export User [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/user.js .User */
+/*! export Project [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/project.js .Project */
 /*! other exports [not provided] [no usage info] */
 /*! runtime requirements: __webpack_require__, __webpack_exports__, __webpack_require__.d, __webpack_require__.r, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
@@ -198,10 +198,10 @@ var Customer = {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Customer": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_0__.Customer,
-/* harmony export */   "User": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_1__.User
+/* harmony export */   "Project": () => /* reexport safe */ _project__WEBPACK_IMPORTED_MODULE_1__.Project
 /* harmony export */ });
 /* harmony import */ var _customer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./customer */ "./src/config/customer.js");
-/* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./user */ "./src/config/user.js");
+/* harmony import */ var _project__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./project */ "./src/config/project.js");
 // export * from "./order";
 // export * from "./user";
 
@@ -209,48 +209,45 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/config/user.js":
-/*!****************************!*\
-  !*** ./src/config/user.js ***!
-  \****************************/
+/***/ "./src/config/project.js":
+/*!*******************************!*\
+  !*** ./src/config/project.js ***!
+  \*******************************/
 /*! namespace exports */
-/*! export User [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export Project [provided] [no usage info] [missing usage info prevents renaming] */
 /*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "User": () => /* binding */ User
+/* harmony export */   "Project": () => /* binding */ Project
 /* harmony export */ });
-/* harmony import */ var _domain_mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../domain/mixins */ "./src/domain/mixins.js");
-/* harmony import */ var _domain_user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/user */ "./src/domain/user.js");
-/* harmony import */ var _domain_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../domain/utils */ "./src/domain/utils.js");
-
-
-
-
 
 /**
- * @type {import('../domain').ModelSpecification}
+ * @type {import('../domain/index').ModelSpecification}
  */
 
-var User = {
-  modelName: 'user',
-  endpoint: 'users',
-  dependencies: {
-    uuid: _domain_utils__WEBPACK_IMPORTED_MODULE_2__.uuid
-  },
-  factory: _domain_user__WEBPACK_IMPORTED_MODULE_1__.userFactory,
-  mixins: _domain_user__WEBPACK_IMPORTED_MODULE_1__.userMixins,
-  validate: _domain_mixins__WEBPACK_IMPORTED_MODULE_0__.validateModel,
-  relations: {
-    customer: {
-      foreignKey: 'customerId',
-      type: 'oneToOne',
-      modelName: 'customer'
-    }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var Project = {
+  modelName: 'project',
+  endpoint: 'projects',
+  factory: function factory(dependencies) {
+    return function () {
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      return Object.freeze(_objectSpread(_objectSpread({}, dependencies), {}, {
+        args: args
+      }));
+    };
   }
 };
 
@@ -1617,85 +1614,6 @@ var encryptPersonalInfo = encryptProperties(/^last.*Name$|^surname$|^family.*Nam
 
 var GlobalMixins = [encryptPersonalInfo];
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (GlobalMixins);
-
-/***/ }),
-
-/***/ "./src/domain/user.js":
-/*!****************************!*\
-  !*** ./src/domain/user.js ***!
-  \****************************/
-/*! namespace exports */
-/*! export userFactory [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export userMixins [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "userFactory": () => /* binding */ userFactory,
-/* harmony export */   "userMixins": () => /* binding */ userMixins
-/* harmony export */ });
-/* harmony import */ var _mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mixins */ "./src/domain/mixins.js");
-
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
-
-function userFactory(_ref) {
-  var uuid = _ref.uuid;
-  return /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-    var _ref3,
-        userName,
-        password,
-        customerId,
-        firstName,
-        lastName,
-        phone,
-        email,
-        fibonacci,
-        _args = arguments;
-
-    return regeneratorRuntime.wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            _ref3 = _args.length > 0 && _args[0] !== undefined ? _args[0] : {}, userName = _ref3.userName, password = _ref3.password, customerId = _ref3.customerId, firstName = _ref3.firstName, lastName = _ref3.lastName, phone = _ref3.phone, email = _ref3.email, fibonacci = _ref3.fibonacci;
-            return _context.abrupt("return", Object.freeze({
-              userId: uuid(),
-              password: password,
-              userName: userName,
-              customerId: customerId,
-              firstName: firstName,
-              lastName: lastName,
-              phone: phone,
-              email: email,
-              fibonacci: fibonacci
-            }));
-
-          case 2:
-          case "end":
-            return _context.stop();
-        }
-      }
-    }, _callee);
-  }));
-}
-var userMixins = [(0,_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)('userName', 'password', 'firstName'), (0,_mixins__WEBPACK_IMPORTED_MODULE_0__.freezeProperties)('userId', 'userName'), (0,_mixins__WEBPACK_IMPORTED_MODULE_0__.hashPasswords)('password'), (0,_mixins__WEBPACK_IMPORTED_MODULE_0__.validateProperties)([{
-  propKey: 'email',
-  regex: 'email',
-  unique: {
-    encrypted: true
-  }
-}, {
-  propKey: 'userName',
-  unique: {
-    encrypted: false
-  }
-}])];
 
 /***/ }),
 
