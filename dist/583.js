@@ -234,7 +234,7 @@ var Order = {
   factory: _domain_order__WEBPACK_IMPORTED_MODULE_0__.makeOrderFactory,
   datasource: {
     factory: _adapters_datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_2__.DataSourceAdapterMongoDb,
-    url: 'mongodb://172.31.39.141:27017',
+    url: 'mongodb://172.31.30.141:27017',
     cacheSize: 4000,
     baseClass: 'DataSourceMongoDb'
   },
