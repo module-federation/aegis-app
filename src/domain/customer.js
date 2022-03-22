@@ -1,7 +1,7 @@
-"use strict";
+'use strict'
 
-export function makeCustomerFactory(dependencies) {
-  return function createCustomer({
+export function makeCustomerFactory (dependencies) {
+  return function createCustomer ({
     firstName,
     lastName,
     shippingAddress,
@@ -10,6 +10,7 @@ export function makeCustomerFactory(dependencies) {
     phone,
     email,
     userId,
+    NEWFIELD
   } = {}) {
     return Object.freeze({
       customerId: dependencies.uuid(),
@@ -21,16 +22,17 @@ export function makeCustomerFactory(dependencies) {
       phone,
       email,
       userId,
-    });
-  };
+      NEWFIELD
+    })
+  }
 }
 
-export async function okToDelete(customer) {
+export async function okToDelete (customer) {
   try {
-    const orders = await customer.orders();
-    return orders.length > 0;
+    const orders = await customer.orders()
+    return orders.length > 0
   } catch (error) {
-    console.error({ func: okToDelete.name, error });
-    return true;
+    console.error({ func: okToDelete.name, error })
+    return true
   }
 }

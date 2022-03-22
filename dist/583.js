@@ -135,8 +135,8 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 var Customer = {
-  modelName: "customer",
-  endpoint: "customers",
+  modelName: 'customer',
+  endpoint: 'customers',
   dependencies: {
     uuid: function uuid() {
       return (0,nanoid__WEBPACK_IMPORTED_MODULE_3__.nanoid)(8);
@@ -151,32 +151,32 @@ var Customer = {
   //   cacheSize: 2000,
   //   baseClass: "DataSourceMongoDb",
   // },
-  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.freezeProperties)("customerId"), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)("firstName", "lastName", "email", "shippingAddress", "billingAddress", "creditCardNumber"), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.validateProperties)([{
-    propKey: "email",
+  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.freezeProperties)('customerId'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)('firstName', 'lastName', 'email', 'shippingAddress', 'billingAddress', 'creditCardNumber', 'NEWFIELD'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.validateProperties)([{
+    propKey: 'email',
     // unique: { encrypted: true },
-    regex: "email"
+    regex: 'email'
   }, {
-    propKey: "creditCardNumber",
-    regex: "creditCard"
+    propKey: 'creditCardNumber',
+    regex: 'creditCard'
   }])],
   relations: {
     orders: {
-      modelName: "order",
-      type: "oneToMany",
-      foreignKey: "customerId"
+      modelName: 'order',
+      type: 'oneToMany',
+      foreignKey: 'customerId'
     }
   },
   commands: {
     decrypt: {
-      command: "decrypt",
-      acl: ["read", "decrypt"]
+      command: 'decrypt',
+      acl: ['read', 'decrypt']
     }
   },
   accessControlList: {
     customer: {
-      allow: "read",
-      type: "relation",
-      desc: "Allow orders to see customers."
+      allow: 'read',
+      type: 'relation',
+      desc: 'Allow orders to see customers.'
     }
   }
 };
@@ -332,7 +332,8 @@ function makeCustomerFactory(dependencies) {
         billingAddress = _ref$billingAddress === void 0 ? shippingAddress : _ref$billingAddress,
         phone = _ref.phone,
         email = _ref.email,
-        userId = _ref.userId;
+        userId = _ref.userId,
+        NEWFIELD = _ref.NEWFIELD;
 
     return Object.freeze({
       customerId: dependencies.uuid(),
@@ -343,7 +344,8 @@ function makeCustomerFactory(dependencies) {
       billingAddress: billingAddress,
       phone: phone,
       email: email,
-      userId: userId
+      userId: userId,
+      NEWFIELD: NEWFIELD
     });
   };
 }
