@@ -9,8 +9,7 @@ export function makeCustomerFactory (dependencies) {
     billingAddress = shippingAddress,
     phone,
     email,
-    userId,
-    NEWFIELD
+    userId
   } = {}) {
     return Object.freeze({
       customerId: dependencies.uuid(),
@@ -21,8 +20,7 @@ export function makeCustomerFactory (dependencies) {
       billingAddress,
       phone,
       email,
-      userId,
-      NEWFIELD
+      userId
     })
   }
 }
