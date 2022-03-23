@@ -151,7 +151,7 @@ var Customer = {
   //   cacheSize: 2000,
   //   baseClass: "DataSourceMongoDb",
   // },
-  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.freezeProperties)('customerId'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)('firstName', 'lastName', 'email', 'shippingAddress', 'billingAddress', 'creditCardNumber'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.validateProperties)([{
+  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.freezeProperties)('customerId'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)('firstName', 'lastName', 'email', 'shippingAddress', 'billingAddress', 'creditCardNumber', 'NEWFIELD'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.validateProperties)([{
     propKey: 'email',
     // unique: { encrypted: true },
     regex: 'email'
@@ -332,7 +332,8 @@ function makeCustomerFactory(dependencies) {
         billingAddress = _ref$billingAddress === void 0 ? shippingAddress : _ref$billingAddress,
         phone = _ref.phone,
         email = _ref.email,
-        userId = _ref.userId;
+        userId = _ref.userId,
+        NEWFIELD = _ref.NEWFIELD;
 
     return Object.freeze({
       customerId: dependencies.uuid(),
@@ -343,7 +344,8 @@ function makeCustomerFactory(dependencies) {
       billingAddress: billingAddress,
       phone: phone,
       email: email,
-      userId: userId
+      userId: userId,
+      NEWFIELD: NEWFIELD
     });
   };
 }

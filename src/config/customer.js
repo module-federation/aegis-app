@@ -34,7 +34,8 @@ export const Customer = {
       'email',
       'shippingAddress',
       'billingAddress',
-      'creditCardNumber'
+      'creditCardNumber',
+      'NEWFIELD'
     ),
     validateProperties([
       {
