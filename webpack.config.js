@@ -48,7 +48,7 @@ var serverConfig = {
   },
   plugins: [
     new ModuleFederationPlugin({
-      name: 'microservices',
+      name: 'customer',
       library: { type: 'commonjs-module' },
       filename: 'remoteEntry.js',
       exposes: {
