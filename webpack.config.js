@@ -9,7 +9,7 @@ var serverConfig = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     publicPath:
-      'https://api.github.com?owner=module-federation&repo=aegis-application&filedir=dist&branch=master',
+      'https://api.github.com?owner=module-federation&repo=aegis-application&filedir=dist&branch=order',
     // "http://aegis.module-federation.org:8060",
     libraryTarget: 'commonjs'
   },
