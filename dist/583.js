@@ -2202,8 +2202,8 @@ function handleError(error, order, func) {
     orderNo: order.orderNo,
     error: error
   };
-  if (order) order.emit('orderError', errMsg);
-  order.logError(errMsg);
+  if (order) order.emit('orderError', errMsg); //order.logError(errMsg)
+
   throw new Error(JSON.stringify(errMsg));
 }
 /**
@@ -3175,8 +3175,8 @@ function timeoutCallback(_ref10) {
       ports = _ref10.ports,
       adapterFn = _ref10.adapterFn,
       order = _ref10.model;
-  console.error('timeout...', port);
-  order.logError(timeoutCallback.name, 'timeout');
+  console.error('timeout...', port); //order.logError(timeoutCallback.name, 'timeout')
+
   order.emit(timeoutCallback.name, errMsg);
 }
 /**

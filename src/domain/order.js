@@ -274,7 +274,7 @@ function handleError (error, order, func) {
 
   if (order) order.emit('orderError', errMsg)
 
-  order.logError(errMsg)
+  //order.logError(errMsg)
 
   throw new Error(JSON.stringify(errMsg))
 }
@@ -797,7 +797,7 @@ export function errorCallback ({ port, model: order, error }) {
  */
 export function timeoutCallback ({ port, ports, adapterFn, model: order }) {
   console.error('timeout...', port)
-  order.logError(timeoutCallback.name, 'timeout')
+  //order.logError(timeoutCallback.name, 'timeout')
   order.emit(timeoutCallback.name, errMsg)
 }
 
