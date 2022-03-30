@@ -408,9 +408,9 @@ async function verifyPayment (order) {
 
     const authorizedOrder = await order.authorizePayment(paymentAuthorized)
 
-    if (!authorizedOrder.isPaymentAuthorized) {
-      throw new Error('payment auth problem')
-    }
+    // if (!authorizedOrder.isPaymentAuthorized) {
+    //   throw new Error('payment auth problem')
+    // }
 
     // if (!authorizedOrder.paymentAccepted) {
     //   throw new Error('payment authorization declined')
@@ -535,13 +535,13 @@ const OrderActions = {
   [OrderStatus.APPROVED]: async order => {
     console.log({ fn: '[OrderStatus.APPROVED]()', order })
     try {
-      if (order.isPaymentAuthorized) {
-        // Don't `await` the async result, which will block the API caller
-        // if we being executed that way. Return control back to caller now.
-        // order.logStateChange('')
-        return order.pickOrder(orderPicked)
-      }
-      await order.emit('PayAuthFail', 'Payment authorization problem')
+      // if (order.isPaymentAuthorized) {
+      // Don't `await` the async result, which will block the API caller
+      // if we being executed that way. Return control back to caller now.
+      // order.logStateChange('')
+      return order.pickOrder(orderPicked)
+      // }
+      // await order.emit('PayAuthFail', 'Payment authorization problem')
     } catch (error) {
       console.log({ error })
       handleError(error, order, OrderStatus.APPROVED)
