@@ -535,7 +535,7 @@ const OrderActions = {
   [OrderStatus.APPROVED]: async order => {
     console.log({ fn: '[OrderStatus.APPROVED]()', order })
     try {
-      if (order.paymentAuthorizedc) {
+      if (order.paymentAuthorized) {
         // Don't `await` the async result, which will block the API caller
         // if we being executed that way. Return control back to caller now.
         // order.logStateChange('')
