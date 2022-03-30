@@ -533,6 +533,7 @@ const OrderActions = {
    * @returns {Promise<Readonly<Order>>}
    */
   [OrderStatus.APPROVED]: async order => {
+    console.log({ fn: '[OrderStatus.APPROVED]()', order })
     try {
       if (order.paymentAccepted()) {
         // Don't `await` the async result, which will block the API caller
@@ -542,6 +543,7 @@ const OrderActions = {
       }
       await order.emit('PayAuthFail', 'Payment authorization problem')
     } catch (error) {
+      console.log({ error })
       handleError(error, order, OrderStatus.APPROVED)
     }
     return order

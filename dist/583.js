@@ -2721,37 +2721,44 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            _context2.prev = 0;
+            console.log({
+              fn: '[OrderStatus.APPROVED]()',
+              order: order
+            });
+            _context2.prev = 1;
 
             if (!order.paymentAccepted()) {
-              _context2.next = 3;
+              _context2.next = 4;
               break;
             }
 
             return _context2.abrupt("return", order.pickOrder(orderPicked));
 
-          case 3:
-            _context2.next = 5;
+          case 4:
+            _context2.next = 6;
             return order.emit('PayAuthFail', 'Payment authorization problem');
 
-          case 5:
-            _context2.next = 10;
+          case 6:
+            _context2.next = 12;
             break;
 
-          case 7:
-            _context2.prev = 7;
-            _context2.t0 = _context2["catch"](0);
+          case 8:
+            _context2.prev = 8;
+            _context2.t0 = _context2["catch"](1);
+            console.log({
+              error: _context2.t0
+            });
             handleError(_context2.t0, order, OrderStatus.APPROVED);
 
-          case 10:
+          case 12:
             return _context2.abrupt("return", order);
 
-          case 11:
+          case 13:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[0, 7]]);
+    }, _callee2, null, [[1, 8]]);
   }));
 
   return function (_x7) {
