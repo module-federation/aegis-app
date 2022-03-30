@@ -754,7 +754,7 @@ export async function approve (order) {
   const approvedOrder = await order.update({
     orderStatus: OrderStatus.APPROVED
   })
-  approvedOrder.logStateChange(OrderStatus.APPROVED)
+  // approvedOrder.logStateChange(OrderStatus.APPROVED)
   return runOrderWorkflow(approvedOrder)
 }
 

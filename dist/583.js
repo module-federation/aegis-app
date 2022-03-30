@@ -3076,10 +3076,9 @@ function _approve() {
 
           case 2:
             approvedOrder = _context19.sent;
-            approvedOrder.logStateChange(OrderStatus.APPROVED);
             return _context19.abrupt("return", runOrderWorkflow(approvedOrder));
 
-          case 5:
+          case 4:
           case "end":
             return _context19.stop();
         }
