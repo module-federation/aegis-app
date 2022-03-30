@@ -357,7 +357,7 @@ export async function paymentAuthorized (options = {}, payload = {}) {
     payload,
     paymentAuthorized.name
   )
-  order.logStateChange(paymentAuthorized.name + ' accepted')
+  //order.logStateChange(paymentAuthorized.name + ' accepted')
   return order.update({ ...changes, isPaymentAuthorized: true }, false)
 }
 
@@ -376,7 +376,7 @@ export async function refundPayment (order) {
       payload,
       refundPayment.name
     )
-    order.logStateChange(`${OrderStatus.CANCELED} ${refundPayment.name}`)
+    //order.logStateChange(`${OrderStatus.CANCELED} ${refundPayment.name}`)
     return order.update({ ...changes, orderStatus: OrderStatus.CANCELED })
   })
 }
@@ -408,13 +408,13 @@ async function verifyPayment (order) {
 
     const authorizedOrder = await order.authorizePayment(paymentAuthorized)
 
-    if (!authorizedOrder.paymentAuthorized) {
+    if (!authorizedOrder.isPaymentAuthorized) {
       throw new Error('payment auth problem')
     }
 
-    if (!authorizedOrder.paymentAccepted) {
-      throw new Error('payment authorization declined')
-    }
+    // if (!authorizedOrder.paymentAccepted) {
+    //   throw new Error('payment authorization declined')
+    // }
 
     return authorizedOrder
   } catch (e) {

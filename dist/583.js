@@ -2386,13 +2386,13 @@ function _paymentAuthorized() {
             options = _args11.length > 0 && _args11[0] !== undefined ? _args11[0] : {};
             payload = _args11.length > 1 && _args11[1] !== undefined ? _args11[1] : {};
             order = options.model;
-            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('paymentAuthorization', options, payload, paymentAuthorized.name);
-            order.logStateChange(paymentAuthorized.name + ' accepted');
+            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('paymentAuthorization', options, payload, paymentAuthorized.name); //order.logStateChange(paymentAuthorized.name + ' accepted')
+
             return _context11.abrupt("return", order.update(_objectSpread(_objectSpread({}, changes), {}, {
               isPaymentAuthorized: true
             }), false));
 
-          case 6:
+          case 5:
           case "end":
             return _context11.stop();
         }
@@ -2419,8 +2419,8 @@ function _refundPayment() {
           case 0:
             // call port by same name.
             order.refundPayment(function (options, payload) {
-              var changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('refundReceipt', options, payload, refundPayment.name);
-              order.logStateChange("".concat(OrderStatus.CANCELED, " ").concat(refundPayment.name));
+              var changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('refundReceipt', options, payload, refundPayment.name); //order.logStateChange(`${OrderStatus.CANCELED} ${refundPayment.name}`)
+
               return order.update(_objectSpread(_objectSpread({}, changes), {}, {
                 orderStatus: OrderStatus.CANCELED
               }));
@@ -2494,7 +2494,7 @@ function _verifyPayment() {
           case 3:
             authorizedOrder = _context14.sent;
 
-            if (authorizedOrder.paymentAuthorized) {
+            if (authorizedOrder.isPaymentAuthorized) {
               _context14.next = 6;
               break;
             }
@@ -2502,30 +2502,22 @@ function _verifyPayment() {
             throw new Error('payment auth problem');
 
           case 6:
-            if (authorizedOrder.paymentAccepted) {
-              _context14.next = 8;
-              break;
-            }
-
-            throw new Error('payment authorization declined');
-
-          case 8:
             return _context14.abrupt("return", authorizedOrder);
 
-          case 11:
-            _context14.prev = 11;
+          case 9:
+            _context14.prev = 9;
             _context14.t0 = _context14["catch"](0);
             handleError(_context14.t0, order, verifyPayment.name);
 
-          case 14:
+          case 12:
             return _context14.abrupt("return", order);
 
-          case 15:
+          case 13:
           case "end":
             return _context14.stop();
         }
       }
-    }, _callee14, null, [[0, 11]]);
+    }, _callee14, null, [[0, 9]]);
   }));
   return _verifyPayment.apply(this, arguments);
 }
