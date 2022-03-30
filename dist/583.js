@@ -2724,37 +2724,34 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
             _context2.prev = 0;
 
             if (!order.paymentAccepted()) {
-              _context2.next = 4;
+              _context2.next = 3;
               break;
             }
 
-            // Don't `await` the async result, which will block the API caller
-            // if we being executed that way. Return control back to caller now.
-            order.logStateChange('');
             return _context2.abrupt("return", order.pickOrder(orderPicked));
 
-          case 4:
-            _context2.next = 6;
+          case 3:
+            _context2.next = 5;
             return order.emit('PayAuthFail', 'Payment authorization problem');
 
-          case 6:
-            _context2.next = 11;
+          case 5:
+            _context2.next = 10;
             break;
 
-          case 8:
-            _context2.prev = 8;
+          case 7:
+            _context2.prev = 7;
             _context2.t0 = _context2["catch"](0);
             handleError(_context2.t0, order, OrderStatus.APPROVED);
 
-          case 11:
+          case 10:
             return _context2.abrupt("return", order);
 
-          case 12:
+          case 11:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[0, 8]]);
+    }, _callee2, null, [[0, 7]]);
   }));
 
   return function (_x7) {

@@ -537,7 +537,7 @@ const OrderActions = {
       if (order.paymentAccepted()) {
         // Don't `await` the async result, which will block the API caller
         // if we being executed that way. Return control back to caller now.
-        order.logStateChange('')
+        // order.logStateChange('')
         return order.pickOrder(orderPicked)
       }
       await order.emit('PayAuthFail', 'Payment authorization problem')
