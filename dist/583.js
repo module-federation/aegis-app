@@ -2388,7 +2388,9 @@ function _paymentAuthorized() {
             order = options.model;
             changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('paymentAuthorization', options, payload, paymentAuthorized.name);
             order.logStateChange(paymentAuthorized.name + ' accepted');
-            return _context11.abrupt("return", order.update(changes, false));
+            return _context11.abrupt("return", order.update(_objectSpread(_objectSpread({}, changes), {}, {
+              paymentAuthorized: true
+            }), false));
 
           case 6:
           case "end":
@@ -2492,7 +2494,7 @@ function _verifyPayment() {
           case 3:
             authorizedOrder = _context14.sent;
 
-            if (authorizedOrder) {
+            if (authorizedOrder.paymentAuthorized) {
               _context14.next = 6;
               break;
             }
@@ -2500,7 +2502,7 @@ function _verifyPayment() {
             throw new Error('payment auth problem');
 
           case 6:
-            if (authorizedOrder.paymentAccepted()) {
+            if (authorizedOrder.paymentAccepted) {
               _context14.next = 8;
               break;
             }
@@ -2727,7 +2729,7 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
             });
             _context2.prev = 1;
 
-            if (!order.paymentAccepted()) {
+            if (!order.paymentAuthorized) {
               _context2.next = 4;
               break;
             }
