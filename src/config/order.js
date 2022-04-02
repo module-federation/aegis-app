@@ -152,7 +152,8 @@ export const Order = {
       keys: 'paymentAuthorization',
       consumesEvent: 'startWorkflow',
       producesEvent: 'paymentAuthorized',
-      undo: cancelPayment
+      undo: cancelPayment,
+      disabled: true
     },
     pickOrder: {
       service: 'Inventory',
