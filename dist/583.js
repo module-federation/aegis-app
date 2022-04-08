@@ -1072,7 +1072,8 @@ function containsUpdates(model, changes, event) {
 
 
 function validateModel(model, changes, event) {
-  // if there are no changes, and the event is an update, return
+  if (!model || !changes || !event) return {}; // if there are no changes, and the event is an update, return
+
   if (!containsUpdates(model, changes, event)) {
     return model;
   } // keep a history of the last saved model
@@ -1240,7 +1241,7 @@ function parseKeys(o) {
     propKeys[_key - 1] = arguments[_key];
   }
 
-  if (!propKeys) return [];
+  if (!propKeys || !o) return null;
   var keys = propKeys.flat().map(function (k) {
     if (typeof k === 'function') return k(o);
     if (k instanceof RegExp) return Object.keys(o).filter(function (key) {

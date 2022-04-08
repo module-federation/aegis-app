@@ -157,6 +157,7 @@ function containsUpdates (model, changes, event) {
  * see {@link eventMask}.
  */
 export function validateModel (model, changes, event) {
+  if (!model || !changes || !event) return {}
   // if there are no changes, and the event is an update, return
   if (!containsUpdates(model, changes, event)) {
     return model
@@ -286,7 +287,7 @@ function addValidation ({ model, name, input = 0, output = 0, order = 50 }) {
  * @returns {string[]} list of (resolved) property keys
  */
 function parseKeys (o, ...propKeys) {
-  if (!propKeys) return []
+  if (!propKeys || !o) return null
   const keys = propKeys.flat().map(function (k) {
     if (typeof k === 'function') return k(o)
     if (k instanceof RegExp) return Object.keys(o).filter(key => k.test(key))
