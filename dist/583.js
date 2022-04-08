@@ -1038,7 +1038,7 @@ function isObject(p) {
 
 function containsUpdates(model, changes, event) {
   if (eventMask.update & event) {
-    var changeList = Object.keys(changes);
+    var changeList = Object.keys(changes || {});
     if (changeList.length < 1) return false;
 
     if (changeList.every(function (k) {

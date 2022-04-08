@@ -128,7 +128,7 @@ function isObject (p) {
 
 function containsUpdates (model, changes, event) {
   if (eventMask.update & event) {
-    const changeList = Object.keys(changes)
+    const changeList = Object.keys(changes || {})
     if (changeList.length < 1) return false
 
     if (
