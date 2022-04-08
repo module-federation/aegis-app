@@ -127,20 +127,23 @@ function isObject (p) {
 }
 
 function containsUpdates (model, changes, event) {
-  if (!changes) return false
-  if (eventMask.update & event) {
-    const changeList = Object.keys(changes)
-    if (changeList.length < 1) return false
+  try {
+    if (!changes) return false
+    if (eventMask.update & event) {
+      const changeList = Object.keys(changes)
+      if (changeList.length < 1) return false
 
-    if (
-      changeList.every(
-        k => model[k] && util.isDeepStrictEqual(changes[k], model[k])
-      )
-    ) {
-      return false
+      if (
+        changeList.every(
+          k => model[k] && util.isDeepStrictEqual(changes[k], model[k])
+        )
+      ) {
+        return false
+      }
     }
-  }
-  return true
+    return true
+  } catch (error) {}
+  return false
 }
 
 /**

@@ -1037,20 +1037,24 @@ function isObject(p) {
 }
 
 function containsUpdates(model, changes, event) {
-  if (!changes) return false;
+  try {
+    if (!changes) return false;
 
-  if (eventMask.update & event) {
-    var changeList = Object.keys(changes);
-    if (changeList.length < 1) return false;
+    if (eventMask.update & event) {
+      var changeList = Object.keys(changes);
+      if (changeList.length < 1) return false;
 
-    if (changeList.every(function (k) {
-      return model[k] && util__WEBPACK_IMPORTED_MODULE_1___default().isDeepStrictEqual(changes[k], model[k]);
-    })) {
-      return false;
+      if (changeList.every(function (k) {
+        return model[k] && util__WEBPACK_IMPORTED_MODULE_1___default().isDeepStrictEqual(changes[k], model[k]);
+      })) {
+        return false;
+      }
     }
-  }
 
-  return true;
+    return true;
+  } catch (error) {}
+
+  return false;
 }
 /**
  * Run validation functions enabled for a given event.
