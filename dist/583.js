@@ -1052,7 +1052,12 @@ function containsUpdates(model, changes, event) {
     }
 
     return true;
-  } catch (error) {}
+  } catch (error) {
+    console.error({
+      fn: containsUpdates.name,
+      error: error
+    });
+  }
 
   return false;
 }
@@ -1235,6 +1240,7 @@ function parseKeys(o) {
     propKeys[_key - 1] = arguments[_key];
   }
 
+  if (!propKeys) return [];
   var keys = propKeys.flat().map(function (k) {
     if (typeof k === 'function') return k(o);
     if (k instanceof RegExp) return Object.keys(o).filter(function (key) {

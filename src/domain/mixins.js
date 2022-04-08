@@ -142,7 +142,9 @@ function containsUpdates (model, changes, event) {
       }
     }
     return true
-  } catch (error) {}
+  } catch (error) {
+    console.error({ fn: containsUpdates.name, error })
+  }
   return false
 }
 
@@ -284,6 +286,7 @@ function addValidation ({ model, name, input = 0, output = 0, order = 50 }) {
  * @returns {string[]} list of (resolved) property keys
  */
 function parseKeys (o, ...propKeys) {
+  if (!propKeys) return []
   const keys = propKeys.flat().map(function (k) {
     if (typeof k === 'function') return k(o)
     if (k instanceof RegExp) return Object.keys(o).filter(key => k.test(key))
