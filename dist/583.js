@@ -1072,7 +1072,11 @@ function containsUpdates(model, changes, event) {
 
 
 function validateModel(model, changes, event) {
-  if (!model || !changes || !event) return {}; // if there are no changes, and the event is an update, return
+  if (!model || !changes || !event) return {};
+  console.log({
+    fn: validateModel.name,
+    model: model
+  }); // if there are no changes, and the event is an update, return
 
   if (!containsUpdates(model, changes, event)) {
     return model;

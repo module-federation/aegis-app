@@ -158,6 +158,7 @@ function containsUpdates (model, changes, event) {
  */
 export function validateModel (model, changes, event) {
   if (!model || !changes || !event) return {}
+  console.log({ fn: validateModel.name, model })
   // if there are no changes, and the event is an update, return
   if (!containsUpdates(model, changes, event)) {
     return model
