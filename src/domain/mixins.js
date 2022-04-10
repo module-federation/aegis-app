@@ -158,7 +158,6 @@ function containsUpdates (model, changes, event) {
  */
 export function validateModel (model, changes, event) {
   if (!model || !changes || !event) return {}
-  console.log({ fn: validateModel.name, model })
   // if there are no changes, and the event is an update, return
   if (!containsUpdates(model, changes, event)) {
     return model
@@ -185,44 +184,6 @@ export function validateModel (model, changes, event) {
 }
 
 /**
- * Specify when validations run.
- */
-const enableValidation = (() => {
-  const onUpdate = enableEvent(true, false, false)
-  const onCreate = enableEvent(false, true, false)
-  const onCreateAndUpdate = enableEvent(true, true, false)
-  const onLoad = enableEvent(false, false, true)
-  const onAll = enableEvent(true, true, true)
-  const never = enableEvent(false, false, false)
-  return {
-    /**
-     * Validation runs on update.
-     */
-    onUpdate,
-    /**
-     * Validation runs on create.
-     */
-    onCreate,
-    /**
-     * Validation runs on both create and update.
-     */
-    onCreateAndUpdate,
-    /**
-     * Validation runs on load.
-     */
-    onLoad,
-    /**
-     * Validation runs on all events.
-     */
-    onAll,
-    /**
-     * Validation runs on zero events (disabled).
-     */
-    never
-  }
-})()
-
-/**
  * Enable validation to run on specific events.
  * @param {boolean} onUpdate - whether or not to run the validation on update.
  * Defaults to `true`.
@@ -246,6 +207,38 @@ function enableEvent (onUpdate = true, onCreate = true, onLoad = false) {
   }
   return enabled
 }
+
+/**
+ * Specify when validations run.
+ */
+const enableValidation = (() => {
+  return {
+    /**
+     * Validation runs on update.
+     */
+    onUpdate: enableEvent(true, false, false),
+    /**
+     * Validation runs on create.
+     */
+    onCreate: enableEvent(false, true, false),
+    /**
+     * Validation runs on both create and update.
+     */
+    onCreateAndUpdate: enableEvent(true, true, false),
+    /**
+     * Validation runs on load.
+     */
+    onLoad: enableEvent(false, false, true),
+    /**
+     * Validation runs on all events.
+     */
+    onAll: enableEvent(true, true, true),
+    /**
+     * Validation runs on zero events (disabled).
+     */
+    never: enableEvent(false, false, false)
+  }
+})()
 
 /**
  * Add a validation function to be called for a given event.

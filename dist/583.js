@@ -1072,11 +1072,7 @@ function containsUpdates(model, changes, event) {
 
 
 function validateModel(model, changes, event) {
-  if (!model || !changes || !event) return {};
-  console.log({
-    fn: validateModel.name,
-    model: model
-  }); // if there are no changes, and the event is an update, return
+  if (!model || !changes || !event) return {}; // if there are no changes, and the event is an update, return
 
   if (!containsUpdates(model, changes, event)) {
     return model;
@@ -1110,49 +1106,6 @@ function validateModel(model, changes, event) {
   }, updated);
 }
 /**
- * Specify when validations run.
- */
-
-var enableValidation = function () {
-  var onUpdate = enableEvent(true, false, false);
-  var onCreate = enableEvent(false, true, false);
-  var onCreateAndUpdate = enableEvent(true, true, false);
-  var onLoad = enableEvent(false, false, true);
-  var onAll = enableEvent(true, true, true);
-  var never = enableEvent(false, false, false);
-  return {
-    /**
-     * Validation runs on update.
-     */
-    onUpdate: onUpdate,
-
-    /**
-     * Validation runs on create.
-     */
-    onCreate: onCreate,
-
-    /**
-     * Validation runs on both create and update.
-     */
-    onCreateAndUpdate: onCreateAndUpdate,
-
-    /**
-     * Validation runs on load.
-     */
-    onLoad: onLoad,
-
-    /**
-     * Validation runs on all events.
-     */
-    onAll: onAll,
-
-    /**
-     * Validation runs on zero events (disabled).
-     */
-    never: never
-  };
-}();
-/**
  * Enable validation to run on specific events.
  * @param {boolean} onUpdate - whether or not to run the validation on update.
  * Defaults to `true`.
@@ -1162,7 +1115,6 @@ var enableValidation = function () {
  * the object is being loaded into memory after being deserialized.
  * Defaults to `false`.
  */
-
 
 function enableEvent() {
   var onUpdate = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
@@ -1184,6 +1136,44 @@ function enableEvent() {
 
   return enabled;
 }
+/**
+ * Specify when validations run.
+ */
+
+
+var enableValidation = function () {
+  return {
+    /**
+     * Validation runs on update.
+     */
+    onUpdate: enableEvent(true, false, false),
+
+    /**
+     * Validation runs on create.
+     */
+    onCreate: enableEvent(false, true, false),
+
+    /**
+     * Validation runs on both create and update.
+     */
+    onCreateAndUpdate: enableEvent(true, true, false),
+
+    /**
+     * Validation runs on load.
+     */
+    onLoad: enableEvent(false, false, true),
+
+    /**
+     * Validation runs on all events.
+     */
+    onAll: enableEvent(true, true, true),
+
+    /**
+     * Validation runs on zero events (disabled).
+     */
+    never: enableEvent(false, false, false)
+  };
+}();
 /**
  * Add a validation function to be called for a given event.
  * @typedef {object} validationConfig
