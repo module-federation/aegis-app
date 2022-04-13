@@ -606,7 +606,7 @@ export async function runOrderWorkflow (order) {
   if (typeof OrderActions[order.orderStatus] === 'function')
     return OrderActions[order.orderStatus](order)
 
-  console.debug('no such function', `OrderActions[${order.orderStatus}]`)
+  console.debug('no such function', `OrderActions[${order.orderStatus}]`, order)
 }
 
 /**
