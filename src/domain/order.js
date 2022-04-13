@@ -760,7 +760,7 @@ export async function approve (order) {
     orderStatus: OrderStatus.APPROVED
   })
   // approvedOrder.logStateChange(OrderStatus.APPROVED)
-  return runOrderWorkflow(approvedOrder)
+  return runOrderWorkflow(order)
 }
 
 /**
