@@ -352,13 +352,13 @@ export async function addressValidated (options = {}, payload = {}) {
 export async function paymentAuthorized (options = {}, payload = {}) {
   const { model: order } = options
   const changes = checkPayload(
-    'paymentAuthorization',
+    'paymentStatus',
     options,
     payload,
     paymentAuthorized.name
   )
   //order.logStateChange(paymentAuthorized.name + ' accepted')
-  return order.update({ ...changes, isPaymentAuthorized: true }, false)
+  return order.update({ ...changes, paymentStatus: 'APPROVED' }, false)
 }
 
 /**
@@ -533,15 +533,14 @@ const OrderActions = {
    * @returns {Promise<Readonly<Order>>}
    */
   [OrderStatus.APPROVED]: async order => {
-    console.log({ fn: '[OrderStatus.APPROVED]()', order })
     try {
-      // if (order.isPaymentAuthorized) {
-      // Don't `await` the async result, which will block the API caller
-      // if we being executed that way. Return control back to caller now.
-      // order.logStateChange('')
-      return order.pickOrder(orderPicked)
-      // }
-      // await order.emit('PayAuthFail', 'Payment authorization problem')
+      if (/approved/i.test(order.paymentStatus)) {
+        // Don't `await` the async result, which will block the API caller
+        // if we being executed that way. Return control back to caller now.
+        // order.logStateChange('')
+        return order.pickOrder(orderPicked)
+      }
+      await order.emit('PayAuthFail', 'Payment authorization problem')
     } catch (error) {
       console.log({ error })
       handleError(error, order, OrderStatus.APPROVED)
@@ -760,7 +759,7 @@ export async function approve (order) {
     orderStatus: OrderStatus.APPROVED
   })
   // approvedOrder.logStateChange(OrderStatus.APPROVED)
-  return runOrderWorkflow(order)
+  return runOrderWorkflow(approvedOrder)
 }
 
 /**

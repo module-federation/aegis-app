@@ -2394,10 +2394,10 @@ function _paymentAuthorized() {
             options = _args11.length > 0 && _args11[0] !== undefined ? _args11[0] : {};
             payload = _args11.length > 1 && _args11[1] !== undefined ? _args11[1] : {};
             order = options.model;
-            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('paymentAuthorization', options, payload, paymentAuthorized.name); //order.logStateChange(paymentAuthorized.name + ' accepted')
+            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('paymentStatus', options, payload, paymentAuthorized.name); //order.logStateChange(paymentAuthorized.name + ' accepted')
 
             return _context11.abrupt("return", order.update(_objectSpread(_objectSpread({}, changes), {}, {
-              isPaymentAuthorized: true
+              paymentStatus: 'APPROVED'
             }), false));
 
           case 5:
@@ -2714,30 +2714,40 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            console.log({
-              fn: '[OrderStatus.APPROVED]()',
-              order: order
-            });
-            _context2.prev = 1;
+            _context2.prev = 0;
+
+            if (!/approved/i.test(order.paymentStatus)) {
+              _context2.next = 3;
+              break;
+            }
+
             return _context2.abrupt("return", order.pickOrder(orderPicked));
 
+          case 3:
+            _context2.next = 5;
+            return order.emit('PayAuthFail', 'Payment authorization problem');
+
           case 5:
-            _context2.prev = 5;
-            _context2.t0 = _context2["catch"](1);
+            _context2.next = 11;
+            break;
+
+          case 7:
+            _context2.prev = 7;
+            _context2.t0 = _context2["catch"](0);
             console.log({
               error: _context2.t0
             });
             handleError(_context2.t0, order, OrderStatus.APPROVED);
 
-          case 9:
+          case 11:
             return _context2.abrupt("return", order);
 
-          case 10:
+          case 12:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[1, 5]]);
+    }, _callee2, null, [[0, 7]]);
   }));
 
   return function (_x7) {
@@ -3067,7 +3077,7 @@ function _approve() {
 
           case 2:
             approvedOrder = _context19.sent;
-            return _context19.abrupt("return", runOrderWorkflow(order));
+            return _context19.abrupt("return", runOrderWorkflow(approvedOrder));
 
           case 4:
           case "end":
