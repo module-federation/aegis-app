@@ -2870,7 +2870,7 @@ function _runOrderWorkflow() {
             return _context17.abrupt("return", OrderActions[order.orderStatus](order));
 
           case 2:
-            console.debug('no such function', "OrderActions[".concat(order.orderStatus, "]"));
+            console.debug('no such function', "OrderActions[".concat(order.orderStatus, "]"), order);
 
           case 3:
           case "end":
@@ -3067,7 +3067,7 @@ function _approve() {
 
           case 2:
             approvedOrder = _context19.sent;
-            return _context19.abrupt("return", runOrderWorkflow(approvedOrder));
+            return _context19.abrupt("return", runOrderWorkflow(order));
 
           case 4:
           case "end":
