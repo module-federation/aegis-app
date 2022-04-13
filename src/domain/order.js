@@ -603,7 +603,10 @@ const OrderActions = {
  * @returns {Promise<Readonly<Order>>}
  */
 export async function runOrderWorkflow (order) {
-  return OrderActions[order.orderStatus](order)
+  if (typeof OrderActions[order.orderStatus] === 'function')
+    return OrderActions[order.orderStatus](order)
+
+  console.debug('no such function', `OrderActions[${order.orderStatus}]`)
 }
 
 /**
@@ -611,7 +614,7 @@ export async function runOrderWorkflow (order) {
  * @param {{model:Promise<ReadOnly<Order>>}}
  */
 export async function handleOrderEvent ({ model: order, eventType, changes }) {
-  if (changes?.orderStatus || eventType === 'CREATE') {
+  if (changes?.orderStatus || eventType === 'CREATE_') {
     return runOrderWorkflow(order)
   }
 }
@@ -691,7 +694,7 @@ export function makeOrderFactory (dependencies) {
        * Has payment for the order been authorized?
        */
       paymentAccepted () {
-        return this.paymentAuthorization ? true : false
+        return true
       },
       /**
        * Proceed to checkout automatically or wait for approval?

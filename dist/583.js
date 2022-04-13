@@ -2862,9 +2862,17 @@ function _runOrderWorkflow() {
       while (1) {
         switch (_context17.prev = _context17.next) {
           case 0:
+            if (!(typeof OrderActions[order.orderStatus] === 'function')) {
+              _context17.next = 2;
+              break;
+            }
+
             return _context17.abrupt("return", OrderActions[order.orderStatus](order));
 
-          case 1:
+          case 2:
+            console.debug('no such function', "OrderActions[".concat(order.orderStatus, "]"));
+
+          case 3:
           case "end":
             return _context17.stop();
         }
@@ -2892,7 +2900,7 @@ function _handleOrderEvent() {
           case 0:
             order = _ref6.model, eventType = _ref6.eventType, changes = _ref6.changes;
 
-            if (!((changes === null || changes === void 0 ? void 0 : changes.orderStatus) || eventType === 'CREATE')) {
+            if (!((changes === null || changes === void 0 ? void 0 : changes.orderStatus) || eventType === 'CREATE_')) {
               _context18.next = 3;
               break;
             }
@@ -2969,7 +2977,7 @@ function makeOrderFactory(dependencies) {
                 estimatedArrival: null,
                 log: [logMessage('order created')]
               }, _defineProperty(_order, orderTotal, total), _defineProperty(_order, orderStatus, OrderStatus.PENDING), _defineProperty(_order, orderNo, dependencies.uuid()), _defineProperty(_order, "desc", 'new order 25'), _defineProperty(_order, "paymentAccepted", function paymentAccepted() {
-                return this.paymentAuthorization ? true : false;
+                return true;
               }), _defineProperty(_order, "autoCheckout", function autoCheckout() {
                 return _autoCheckout;
               }), _defineProperty(_order, "totalItems", function totalItems() {
