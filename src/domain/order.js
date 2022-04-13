@@ -406,7 +406,7 @@ async function verifyPayment (order) {
      * @type {Order}
      */
 
-    const authorizedOrder = await order.authorizePayment(paymentAuthorized)
+    //const authorizedOrder = await order.authorizePayment(paymentAuthorized)
 
     // if (!authorizedOrder.isPaymentAuthorized) {
     //   throw new Error('payment auth problem')
@@ -416,7 +416,7 @@ async function verifyPayment (order) {
     //   throw new Error('payment authorization declined')
     // }
 
-    return authorizedOrder
+    return order //authorizedOrder
   } catch (e) {
     handleError(e, order, verifyPayment.name)
   }

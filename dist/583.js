@@ -2490,33 +2490,27 @@ function verifyPayment(_x3) {
 
 function _verifyPayment() {
   _verifyPayment = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee14(order) {
-    var authorizedOrder;
     return regeneratorRuntime.wrap(function _callee14$(_context14) {
       while (1) {
         switch (_context14.prev = _context14.next) {
           case 0:
             _context14.prev = 0;
-            _context14.next = 3;
-            return order.authorizePayment(paymentAuthorized);
+            return _context14.abrupt("return", order);
 
-          case 3:
-            authorizedOrder = _context14.sent;
-            return _context14.abrupt("return", authorizedOrder);
-
-          case 7:
-            _context14.prev = 7;
+          case 4:
+            _context14.prev = 4;
             _context14.t0 = _context14["catch"](0);
             handleError(_context14.t0, order, verifyPayment.name);
 
-          case 10:
+          case 7:
             return _context14.abrupt("return", order);
 
-          case 11:
+          case 8:
           case "end":
             return _context14.stop();
         }
       }
-    }, _callee14, null, [[0, 7]]);
+    }, _callee14, null, [[0, 4]]);
   }));
   return _verifyPayment.apply(this, arguments);
 }
