@@ -613,7 +613,7 @@ export async function runOrderWorkflow (order) {
  * @param {{model:Promise<ReadOnly<Order>>}}
  */
 export async function handleOrderEvent ({ model: order, eventType, changes }) {
-  if (changes?.orderStatus || eventType === 'CREATE_') {
+  if (changes?.orderStatus || eventType === 'CREATE') {
     return runOrderWorkflow(order)
   }
 }

@@ -68,6 +68,7 @@
     "mocha": "^8.2.0",
     "nodemon": "^2.0.6",
     "nodemon-webpack-plugin": "^4.3.2",
+    "py-loader": "^0.3.1",
     "snowpack": "^3.4.0",
     "webpack": "5.0.0-beta.28",
     "webpack-cli": "^3.3.12",

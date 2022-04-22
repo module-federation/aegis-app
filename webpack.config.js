@@ -21,6 +21,10 @@ var serverConfig = {
   module: {
     rules: [
       {
+        test: /\.py$/,
+        use: [{ loader: 'python-webpack-loader' }]
+      },
+      {
         test: /\.wasm$/,
         type: 'webassembly/async'
       }
@@ -34,6 +38,13 @@ var serverConfig = {
   },
   module: {
     rules: [
+      {
+        test: /\.py$/,
+        loader: 'py-loader',
+        options: {
+          compiler: 'transcrypt'
+        }
+      },
       {
         test: /\.js?$/,
         exclude: /node_modules/,
