@@ -2643,7 +2643,8 @@ function _getCustomerOrder() {
   return _getCustomerOrder.apply(this, arguments);
 }
 
-var processPendingOrder = (0,_domain_utils__WEBPACK_IMPORTED_MODULE_1__.asyncPipe)(getCustomerOrder, verifyInventory, verifyPayment, verifyAddress);
+var processPendingOrder = (0,_domain_utils__WEBPACK_IMPORTED_MODULE_1__.asyncPipe)(getCustomerOrder, // verifyInventory,
+verifyPayment, verifyAddress);
 /**
  * Implements the beginging of the order service workflow.
  * The rest is implemented by the {@link ModelSpecification}.
