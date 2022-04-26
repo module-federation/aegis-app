@@ -614,6 +614,7 @@ export async function runOrderWorkflow (order) {
  */
 export async function handleOrderEvent ({ model: order, eventType, changes }) {
   if (changes?.orderStatus || eventType === 'CREATE') {
+    console.debug({ fn: handleOrderEvent.name, order })
     return runOrderWorkflow(order)
   }
 }

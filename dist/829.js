@@ -2905,13 +2905,17 @@ function _handleOrderEvent() {
             order = _ref6.model, eventType = _ref6.eventType, changes = _ref6.changes;
 
             if (!((changes === null || changes === void 0 ? void 0 : changes.orderStatus) || eventType === 'CREATE')) {
-              _context18.next = 3;
+              _context18.next = 4;
               break;
             }
 
+            console.debug({
+              fn: handleOrderEvent.name,
+              order: order
+            });
             return _context18.abrupt("return", runOrderWorkflow(order));
 
-          case 3:
+          case 4:
           case "end":
             return _context18.stop();
         }
