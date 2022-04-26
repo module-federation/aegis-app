@@ -514,6 +514,7 @@ const OrderActions = {
       const processedOrder = await processPendingOrder(order)
 
       console.debug({ fn: processPendingOrder.name, order })
+
       if (processedOrder.autoCheckout()) {
         const status = { orderStatus: OrderStatus.APPROVED }
 
