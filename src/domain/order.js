@@ -489,7 +489,7 @@ async function getCustomerOrder (order) {
  */
 const processPendingOrder = asyncPipe(
   getCustomerOrder,
- // verifyInventory,
+  // verifyInventory,
   verifyPayment,
   verifyAddress
 )
@@ -513,6 +513,7 @@ const OrderActions = {
       /**@type {Order} */
       const processedOrder = await processPendingOrder(order)
 
+      console.debug({ fn: processPendingOrder.name, order })
       if (processedOrder.autoCheckout()) {
         const status = { orderStatus: OrderStatus.APPROVED }
 

@@ -2664,9 +2664,13 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
 
           case 3:
             processedOrder = _context.sent;
+            console.debug({
+              fn: processPendingOrder.name,
+              order: order
+            });
 
             if (!processedOrder.autoCheckout()) {
-              _context.next = 11;
+              _context.next = 12;
               break;
             }
 
@@ -2674,30 +2678,30 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
               orderStatus: OrderStatus.APPROVED
             };
             _context.t0 = runOrderWorkflow;
-            _context.next = 9;
+            _context.next = 10;
             return processedOrder.update(status, false);
 
-          case 9:
+          case 10:
             _context.t1 = _context.sent;
             return _context.abrupt("return", (0, _context.t0)(_context.t1));
 
-          case 11:
+          case 12:
             return _context.abrupt("return", processedOrder);
 
-          case 14:
-            _context.prev = 14;
+          case 15:
+            _context.prev = 15;
             _context.t2 = _context["catch"](0);
             console.error(_context.t2);
 
-          case 17:
+          case 18:
             return _context.abrupt("return", order);
 
-          case 18:
+          case 19:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[0, 14]]);
+    }, _callee, null, [[0, 15]]);
   }));
 
   return function (_x6) {
