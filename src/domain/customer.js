@@ -7,6 +7,7 @@ export function makeCustomerFactory (dependencies) {
     shippingAddress,
     creditCardNumber,
     billingAddress = shippingAddress,
+    twitter = null,
     phone,
     email,
     userId
@@ -15,6 +16,7 @@ export function makeCustomerFactory (dependencies) {
       customerId: dependencies.uuid(),
       firstName,
       lastName,
+      twitter,
       creditCardNumber,
       shippingAddress,
       billingAddress,

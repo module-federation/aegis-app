@@ -332,6 +332,8 @@ function makeCustomerFactory(dependencies) {
         creditCardNumber = _ref.creditCardNumber,
         _ref$billingAddress = _ref.billingAddress,
         billingAddress = _ref$billingAddress === void 0 ? shippingAddress : _ref$billingAddress,
+        _ref$twitter = _ref.twitter,
+        twitter = _ref$twitter === void 0 ? null : _ref$twitter,
         phone = _ref.phone,
         email = _ref.email,
         userId = _ref.userId;
@@ -340,6 +342,7 @@ function makeCustomerFactory(dependencies) {
       customerId: dependencies.uuid(),
       firstName: firstName,
       lastName: lastName,
+      twitter: twitter,
       creditCardNumber: creditCardNumber,
       shippingAddress: shippingAddress,
       billingAddress: billingAddress,
