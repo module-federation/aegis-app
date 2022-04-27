@@ -109,8 +109,9 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
   !*** ./src/config/index.js ***!
   \*****************************/
 /*! namespace exports */
+/*! export Inventory [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/inventory.js .Inventory */
 /*! export Order [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/order.js .Order */
-/*! export ScheduledJob [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/scheduled-job.js .ScheduledJob */
+/*! export User [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/user.js .User */
 /*! other exports [not provided] [no usage info] */
 /*! runtime requirements: __webpack_require__, __webpack_exports__, __webpack_require__.d, __webpack_require__.r, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
@@ -119,15 +120,81 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Order": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.Order,
-/* harmony export */   "ScheduledJob": () => /* reexport safe */ _scheduled_job__WEBPACK_IMPORTED_MODULE_1__.ScheduledJob
+/* harmony export */   "User": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_1__.User,
+/* harmony export */   "Inventory": () => /* reexport safe */ _inventory__WEBPACK_IMPORTED_MODULE_2__.Inventory
 /* harmony export */ });
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./order */ "./src/config/order.js");
-/* harmony import */ var _scheduled_job__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./scheduled-job */ "./src/config/scheduled-job.js");
- // export * from './user'
-// export * from './customer'
-// export * from './inventory'
+/* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./user */ "./src/config/user.js");
+/* harmony import */ var _inventory__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./inventory */ "./src/config/inventory.js");
+
+ // export * from "./customer";
+// export * from "./product";
 
 
+
+/***/ }),
+
+/***/ "./src/config/inventory.js":
+/*!*********************************!*\
+  !*** ./src/config/inventory.js ***!
+  \*********************************/
+/*! namespace exports */
+/*! export Inventory [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Inventory": () => /* binding */ Inventory
+/* harmony export */ });
+/* harmony import */ var _domain_inventory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../domain/inventory */ "./src/domain/inventory.js");
+/* harmony import */ var _domain_mixins__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/mixins */ "./src/domain/mixins.js");
+
+
+
+
+/**
+ * @type {import("../domain/order").ModelSpecification}
+ */
+
+var Inventory = {
+  modelName: 'inventory',
+  endpoint: 'inventory',
+  dependencies: {},
+  factory: _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.makeInventoryFactory,
+  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.requireProperties)('name', 'inStock', 'category', 'price', 'purchaseOrder'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.validateProperties)([{
+    propKey: 'inStock',
+    "typeof": 'number',
+    maxnum: 99999
+  }, {
+    propKey: 'category',
+    values: _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.categories
+  }, {
+    propKey: 'assetType',
+    values: _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.assetTypes
+  }, {
+    propKey: 'properties',
+    isValid: function isValid(_obj, prop) {
+      return prop.every(function (p) {
+        return _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.properties.includes(p);
+      });
+    }
+  }, {
+    propKey: 'price',
+    "typeof": 'number',
+    maxnum: 999.99
+  }]), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.freezeProperties)('*')],
+  relations: {
+    orders: {
+      modelName: 'order',
+      type: 'oneToMany',
+      foreignKey: 'itemId',
+      desc: 'many items per order'
+    }
+  }
+};
 
 /***/ }),
 
@@ -402,48 +469,48 @@ var Order = {
 
 /***/ }),
 
-/***/ "./src/config/scheduled-job.js":
-/*!*************************************!*\
-  !*** ./src/config/scheduled-job.js ***!
-  \*************************************/
+/***/ "./src/config/user.js":
+/*!****************************!*\
+  !*** ./src/config/user.js ***!
+  \****************************/
 /*! namespace exports */
-/*! export ScheduledJob [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export User [provided] [no usage info] [missing usage info prevents renaming] */
 /*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "ScheduledJob": () => /* binding */ ScheduledJob
+/* harmony export */   "User": () => /* binding */ User
 /* harmony export */ });
+/* harmony import */ var _domain_mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../domain/mixins */ "./src/domain/mixins.js");
+/* harmony import */ var _domain_user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/user */ "./src/domain/user.js");
+/* harmony import */ var _domain_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../domain/utils */ "./src/domain/utils.js");
+
+
+
+
 
 /**
- * @type {import('./index').ModelSpecification}
+ * @type {import('../domain').ModelSpecification}
  */
 
-var ScheduledJob = {
-  modelName: 'scheduledjob',
-  endpoint: 'scheduledjobs',
-  factory: function factory(dependencies) {
-    return function (_ref) {
-      var startTime = _ref.startTime,
-          startEvent = _ref.startEvent,
-          desc = _ref.desc,
-          expectedDur = _ref.expectedDur,
-          assingee = _ref.assingee;
-      return Object.freeze({
-        startEvent: startEvent,
-        startTime: startTime,
-        desc: desc,
-        expectedDur: expectedDur,
-        assingee: assingee,
-        jobId: dependencies.uuid()
-      });
-    };
+var User = {
+  modelName: 'user',
+  endpoint: 'users',
+  dependencies: {
+    uuid: _domain_utils__WEBPACK_IMPORTED_MODULE_2__.uuid
   },
-  ports: {
-    startJob: {}
+  factory: _domain_user__WEBPACK_IMPORTED_MODULE_1__.userFactory,
+  mixins: _domain_user__WEBPACK_IMPORTED_MODULE_1__.userMixins,
+  validate: _domain_mixins__WEBPACK_IMPORTED_MODULE_0__.validateModel,
+  relations: {
+    customer: {
+      foreignKey: 'customerId',
+      type: 'oneToOne',
+      modelName: 'customer'
+    }
   }
 };
 
@@ -827,6 +894,62 @@ function makeModel(spec) {
 var models = Object.values(_config__WEBPACK_IMPORTED_MODULE_4__).map(function (spec) {
   return makeModel(spec);
 });
+
+/***/ }),
+
+/***/ "./src/domain/inventory.js":
+/*!*********************************!*\
+  !*** ./src/domain/inventory.js ***!
+  \*********************************/
+/*! namespace exports */
+/*! export assetTypes [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export categories [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export makeInventoryFactory [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export properties [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "assetTypes": () => /* binding */ assetTypes,
+/* harmony export */   "properties": () => /* binding */ properties,
+/* harmony export */   "categories": () => /* binding */ categories,
+/* harmony export */   "makeInventoryFactory": () => /* binding */ makeInventoryFactory
+/* harmony export */ });
+
+
+var assetTypes = ['rotating-asset', 'spare-part'];
+var properties = ['height', 'length', 'width', 'weight', 'color'];
+var categories = ['home', 'auto', 'business'];
+var makeInventoryFactory = function makeInventoryFactory(dependencies) {
+  return function (_ref) {
+    var category = _ref.category,
+        properties = _ref.properties,
+        price = _ref.price,
+        discount = _ref.discount,
+        name = _ref.name,
+        desc = _ref.desc,
+        sku = _ref.sku,
+        purchaseOrder = _ref.purchaseOrder,
+        vendor = _ref.vendor,
+        inStock = _ref.inStock,
+        assetType = _ref.assetType;
+    return Object.freeze({
+      category: category,
+      properties: properties,
+      price: price - (discount || 0.0),
+      name: name,
+      desc: desc,
+      sku: sku,
+      purchaseOrder: purchaseOrder,
+      vendor: vendor,
+      inStock: inStock,
+      assetType: assetType
+    });
+  };
+};
 
 /***/ }),
 
@@ -2659,10 +2782,16 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
         switch (_context.prev = _context.next) {
           case 0:
             _context.prev = 0;
-            _context.next = 3;
+            console.log({
+              validateAddress: order.validateAddress,
+              order: order
+            });
+            /**@type {Order} */
+
+            _context.next = 4;
             return processPendingOrder(order);
 
-          case 3:
+          case 4:
             processedOrder = _context.sent;
             console.debug({
               fn: processPendingOrder.name,
@@ -2670,7 +2799,7 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
             });
 
             if (!processedOrder.autoCheckout()) {
-              _context.next = 12;
+              _context.next = 13;
               break;
             }
 
@@ -2678,30 +2807,30 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
               orderStatus: OrderStatus.APPROVED
             };
             _context.t0 = runOrderWorkflow;
-            _context.next = 10;
+            _context.next = 11;
             return processedOrder.update(status, false);
 
-          case 10:
+          case 11:
             _context.t1 = _context.sent;
             return _context.abrupt("return", (0, _context.t0)(_context.t1));
 
-          case 12:
+          case 13:
             return _context.abrupt("return", processedOrder);
 
-          case 15:
-            _context.prev = 15;
+          case 16:
+            _context.prev = 16;
             _context.t2 = _context["catch"](0);
             console.error(_context.t2);
 
-          case 18:
+          case 19:
             return _context.abrupt("return", order);
 
-          case 19:
+          case 20:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[0, 15]]);
+    }, _callee, null, [[0, 16]]);
   }));
 
   return function (_x6) {
@@ -3307,6 +3436,85 @@ function _cancelPayment() {
   }));
   return _cancelPayment.apply(this, arguments);
 }
+
+/***/ }),
+
+/***/ "./src/domain/user.js":
+/*!****************************!*\
+  !*** ./src/domain/user.js ***!
+  \****************************/
+/*! namespace exports */
+/*! export userFactory [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export userMixins [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "userFactory": () => /* binding */ userFactory,
+/* harmony export */   "userMixins": () => /* binding */ userMixins
+/* harmony export */ });
+/* harmony import */ var _mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mixins */ "./src/domain/mixins.js");
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
+function userFactory(_ref) {
+  var uuid = _ref.uuid;
+  return /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+    var _ref3,
+        userName,
+        password,
+        customerId,
+        firstName,
+        lastName,
+        phone,
+        email,
+        fibonacci,
+        _args = arguments;
+
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _ref3 = _args.length > 0 && _args[0] !== undefined ? _args[0] : {}, userName = _ref3.userName, password = _ref3.password, customerId = _ref3.customerId, firstName = _ref3.firstName, lastName = _ref3.lastName, phone = _ref3.phone, email = _ref3.email, fibonacci = _ref3.fibonacci;
+            return _context.abrupt("return", Object.freeze({
+              userId: uuid(),
+              password: password,
+              userName: userName,
+              customerId: customerId,
+              firstName: firstName,
+              lastName: lastName,
+              phone: phone,
+              email: email,
+              fibonacci: fibonacci
+            }));
+
+          case 2:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }));
+}
+var userMixins = [(0,_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)('userName', 'password', 'firstName'), (0,_mixins__WEBPACK_IMPORTED_MODULE_0__.freezeProperties)('userId', 'userName'), (0,_mixins__WEBPACK_IMPORTED_MODULE_0__.hashPasswords)('password'), (0,_mixins__WEBPACK_IMPORTED_MODULE_0__.validateProperties)([{
+  propKey: 'email',
+  regex: 'email',
+  unique: {
+    encrypted: true
+  }
+}, {
+  propKey: 'userName',
+  unique: {
+    encrypted: false
+  }
+}])];
 
 /***/ }),
 

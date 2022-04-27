@@ -510,6 +510,7 @@ const OrderActions = {
    */
   [OrderStatus.PENDING]: async order => {
     try {
+      console.log({ validateAddress: order.validateAddress, order })
       /**@type {Order} */
       const processedOrder = await processPendingOrder(order)
 
