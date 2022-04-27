@@ -387,6 +387,11 @@ export async function refundPayment (order) {
  * @returns {Promise<Order>}
  */
 async function verifyAddress (order) {
+  console.debug({
+    fn: verifyAddress.name,
+    validateAddress: order.validateAddress,
+    order
+  })
   return order.validateAddress(addressValidated)
 }
 

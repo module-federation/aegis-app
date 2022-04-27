@@ -2588,9 +2588,14 @@ function _verifyAddress() {
       while (1) {
         switch (_context13.prev = _context13.next) {
           case 0:
+            console.debug({
+              fn: verifyAddress.name,
+              validateAddress: order.validateAddress,
+              order: order
+            });
             return _context13.abrupt("return", order.validateAddress(addressValidated));
 
-          case 1:
+          case 2:
           case "end":
             return _context13.stop();
         }
