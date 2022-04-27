@@ -144,7 +144,7 @@ export const Order = {
       type: 'outbound',
       keys: 'shippingAddress',
       producesEvent: 'addressValidated',
-      disabled: true
+      disabled: false
     },
     authorizePayment: {
       service: 'Payment',
@@ -153,7 +153,7 @@ export const Order = {
       consumesEvent: 'startWorkflow',
       producesEvent: 'paymentAuthorized',
       undo: cancelPayment,
-      disabled: true
+      disabled: false
     },
     pickOrder: {
       service: 'Inventory',
