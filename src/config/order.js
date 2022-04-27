@@ -23,7 +23,7 @@ import {
   requiredForApproval,
   approve,
   cancel
-} from '../domain/order' 
+} from '../domain/order'
 
 import {
   requireProperties,
@@ -144,7 +144,7 @@ export const Order = {
       type: 'outbound',
       keys: 'shippingAddress',
       producesEvent: 'addressValidated',
-      disabled: true
+      disabled: false
     },
     authorizePayment: {
       service: 'Payment',
