@@ -518,7 +518,7 @@ const OrderActions = {
       /**@type {Order} */
       const processedOrder = await processPendingOrder(order)
 
-      console.debug({ fn: processPendingOrder.name, order })
+      //console.debug({ fn: processPendingOrder.name, order })
 
       //if (processedOrder.autoCheckout()) {
       //  const status = { orderStatus: OrderStatus.APPROVED }
@@ -621,7 +621,7 @@ export async function runOrderWorkflow (order) {
  */
 export async function handleOrderEvent ({ model: order, eventType, changes }) {
   if (changes?.orderStatus || eventType === 'CREATE') {
-    console.debug({ fn: handleOrderEvent.name, order })
+    // console.debug({ fn: handleOrderEvent.name, order })
     return runOrderWorkflow(order)
   }
 }
