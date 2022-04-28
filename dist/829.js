@@ -599,7 +599,7 @@ function checkPayload(key) {
 
   if (!model || Object.keys(payload) < 1 || !key) {
     throw new Error({
-      desc: "model, payload, or key is missing",
+      desc: 'model, payload, or key is missing',
       model: model,
       port: port,
       error: error,
@@ -628,13 +628,7 @@ function checkPayload(key) {
   return model.find().then(function (latest) {
     return _defineProperty({}, key, latest[key]);
   })["catch"](function (error) {
-    throw new Error({
-      desc: "property is missing" + key,
-      port: port,
-      error: error,
-      payload: payload,
-      model: model
-    });
+    throw new Error('property is missing' + key, port, error, payload, model);
   });
 }
 
