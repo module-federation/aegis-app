@@ -296,7 +296,7 @@ var Order = {
       type: 'outbound',
       keys: 'shippingAddress',
       producesEvent: 'addressValidated',
-      disabled: true
+      disabled: false
     },
     authorizePayment: {
       service: 'Payment',
@@ -305,7 +305,7 @@ var Order = {
       consumesEvent: 'startWorkflow',
       producesEvent: 'paymentAuthorized',
       undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.cancelPayment,
-      disabled: true
+      disabled: false
     },
     pickOrder: {
       service: 'Inventory',
