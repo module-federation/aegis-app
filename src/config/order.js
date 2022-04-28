@@ -130,12 +130,12 @@ export const Order = {
       timeout: 0
     },
     save: {
-      service: 'StorageService',
+      service: 'Persistence',
       type: 'outbound',
       timeout: 0
     },
     find: {
-      service: 'StorageService',
+      service: 'Persistence',
       type: 'outbound',
       timeout: 0
     },
