@@ -149,7 +149,7 @@ export const Order = {
     authorizePayment: {
       service: 'Payment',
       type: 'outbound',
-      keys: 'paymentAuthorization',
+      keys: 'paymentStatus',
       consumesEvent: 'startWorkflow',
       producesEvent: 'paymentAuthorized',
       undo: cancelPayment,
