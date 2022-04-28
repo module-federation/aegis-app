@@ -707,7 +707,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 function authorizePayment(service) {
   return /*#__PURE__*/function () {
     var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(options) {
-      var order, _options$args, callback, paymentAuthorization;
+      var order, _options$args, callback, paymentAuthorization, paymentStatus;
 
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
@@ -719,11 +719,12 @@ function authorizePayment(service) {
 
             case 3:
               paymentAuthorization = _context.sent;
+              paymentStatus = 'APPROVED';
               return _context.abrupt("return", callback(options, {
                 paymentStatus: paymentStatus
               }));
 
-            case 5:
+            case 6:
             case "end":
               return _context.stop();
           }

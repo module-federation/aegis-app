@@ -25,6 +25,7 @@ export function authorizePayment (service) {
       'ibm',
       false
     )
+    const paymentStatus = 'APPROVED'
     return callback(options, { paymentStatus })
   }
 }
