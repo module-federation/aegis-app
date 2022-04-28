@@ -720,7 +720,7 @@ function authorizePayment(service) {
             case 3:
               paymentAuthorization = _context.sent;
               return _context.abrupt("return", callback(options, {
-                paymentAuthorization: paymentAuthorization
+                paymentStatus: paymentStatus
               }));
 
             case 5:
