@@ -2590,8 +2590,7 @@ function _verifyAddress() {
           case 0:
             console.debug({
               fn: verifyAddress.name,
-              validateAddress: order.validateAddress,
-              order: order
+              validateAddress: order.validateAddress
             });
             return _context13.abrupt("return", order.validateAddress(addressValidated));
 
@@ -2787,7 +2786,7 @@ verifyPayment, verifyAddress);
 
 var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStatus.PENDING, function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(order) {
-    var processedOrder, status;
+    var processedOrder;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -2807,41 +2806,31 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
             console.debug({
               fn: processPendingOrder.name,
               order: order
-            });
+            }); //if (processedOrder.autoCheckout()) {
+            //  const status = { orderStatus: OrderStatus.APPROVED }
 
-            if (!processedOrder.autoCheckout()) {
-              _context.next = 13;
-              break;
-            }
-
-            status = {
-              orderStatus: OrderStatus.APPROVED
-            };
             _context.t0 = runOrderWorkflow;
-            _context.next = 11;
+            _context.next = 9;
             return processedOrder.update(status, false);
 
-          case 11:
+          case 9:
             _context.t1 = _context.sent;
             return _context.abrupt("return", (0, _context.t0)(_context.t1));
 
-          case 13:
-            return _context.abrupt("return", processedOrder);
-
-          case 16:
-            _context.prev = 16;
+          case 14:
+            _context.prev = 14;
             _context.t2 = _context["catch"](0);
             console.error(_context.t2);
 
-          case 19:
+          case 17:
             return _context.abrupt("return", order);
 
-          case 20:
+          case 18:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[0, 16]]);
+    }, _callee, null, [[0, 14]]);
   }));
 
   return function (_x6) {

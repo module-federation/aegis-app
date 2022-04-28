@@ -389,8 +389,7 @@ export async function refundPayment (order) {
 async function verifyAddress (order) {
   console.debug({
     fn: verifyAddress.name,
-    validateAddress: order.validateAddress,
-    order
+    validateAddress: order.validateAddress
   })
   return order.validateAddress(addressValidated)
 }
@@ -521,11 +520,11 @@ const OrderActions = {
 
       console.debug({ fn: processPendingOrder.name, order })
 
-      if (processedOrder.autoCheckout()) {
-        const status = { orderStatus: OrderStatus.APPROVED }
+      //if (processedOrder.autoCheckout()) {
+      //  const status = { orderStatus: OrderStatus.APPROVED }
 
-        return runOrderWorkflow(await processedOrder.update(status, false))
-      }
+      return runOrderWorkflow(await processedOrder.update(status, false))
+      //}
       return processedOrder
     } catch (e) {
       console.error(e)
