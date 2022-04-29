@@ -523,7 +523,9 @@ const OrderActions = {
       //if (processedOrder.autoCheckout()) {
       //  const status = { orderStatus: OrderStatus.APPROVED }
 
-      return runOrderWorkflow(await processedOrder.update(status, false))
+      return runOrderWorkflow(
+        await processedOrder.update({ orderStatus: 'APPROVED' }, false)
+      )
       //}
       return processedOrder
     } catch (e) {

@@ -296,7 +296,7 @@ var Order = {
       type: 'outbound',
       keys: 'shippingAddress',
       producesEvent: 'addressValidated',
-      disabled: false
+      disabled: true
     },
     authorizePayment: {
       service: 'Payment',
@@ -2799,7 +2799,9 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
             processedOrder = _context.sent;
             _context.t0 = runOrderWorkflow;
             _context.next = 8;
-            return processedOrder.update(status, false);
+            return processedOrder.update({
+              orderStatus: 'APPROVED'
+            }, false);
 
           case 8:
             _context.t1 = _context.sent;
