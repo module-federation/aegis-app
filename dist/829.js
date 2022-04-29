@@ -305,7 +305,7 @@ var Order = {
       consumesEvent: 'startWorkflow',
       producesEvent: 'paymentAuthorized',
       undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.cancelPayment,
-      disabled: false
+      disabled: true
     },
     pickOrder: {
       service: 'Inventory',
