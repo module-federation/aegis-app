@@ -2982,22 +2982,25 @@ function runOrderWorkflow(_x11) {
 
 function _runOrderWorkflow() {
   _runOrderWorkflow = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee17(order) {
+    var orderParsed;
     return regeneratorRuntime.wrap(function _callee17$(_context17) {
       while (1) {
         switch (_context17.prev = _context17.next) {
           case 0:
-            if (!(typeof OrderActions[order.orderStatus] === 'function')) {
-              _context17.next = 2;
+            orderParsed = typeof order === 'string' ? JSON.parse(order) : order;
+
+            if (!(typeof OrderActions[orderParsed.orderStatus] === 'function')) {
+              _context17.next = 3;
               break;
             }
 
-            return _context17.abrupt("return", OrderActions[order.orderStatus](order));
+            return _context17.abrupt("return", OrderActions[orderParsed.orderStatus](order));
 
-          case 2:
-            console.debug('no such function', "OrderActions[".concat(order.orderStatus, "]"), order);
-            return _context17.abrupt("return", order);
+          case 3:
+            console.debug('no such function', "OrderActions[".concat(orderParsed.orderStatus, "]"), order);
+            return _context17.abrupt("return", orderParsed);
 
-          case 4:
+          case 5:
           case "end":
             return _context17.stop();
         }

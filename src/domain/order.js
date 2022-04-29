@@ -609,11 +609,16 @@ const OrderActions = {
  * @returns {Promise<Readonly<Order>>}
  */
 export async function runOrderWorkflow (order) {
-  if (typeof OrderActions[order.orderStatus] === 'function')
-    return OrderActions[order.orderStatus](order)
+  const orderParsed = typeof order === 'string' ? JSON.parse(order) : order
+  if (typeof OrderActions[orderParsed.orderStatus] === 'function')
+    return OrderActions[orderParsed.orderStatus](order)
 
-  console.debug('no such function', `OrderActions[${order.orderStatus}]`, order)
-  return order
+  console.debug(
+    'no such function',
+    `OrderActions[${orderParsed.orderStatus}]`,
+    order
+  )
+  return orderParsed
 }
 
 /**
