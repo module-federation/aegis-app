@@ -2786,41 +2786,36 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
         switch (_context.prev = _context.next) {
           case 0:
             _context.prev = 0;
-            console.log({
-              validateAddress: order.validateAddress,
-              order: order
-            });
-            /**@type {Order} */
-
-            _context.next = 4;
+            _context.next = 3;
             return processPendingOrder(order);
 
-          case 4:
+          case 3:
             processedOrder = _context.sent;
-            _context.t0 = runOrderWorkflow;
-            _context.next = 8;
+            _context.t0 = unOrderWorkflow;
+            _context.next = 7;
             return processedOrder.update({
               orderStatus: 'APPROVED'
             }, false);
 
-          case 8:
+          case 7:
             _context.t1 = _context.sent;
-            return _context.abrupt("return", (0, _context.t0)(_context.t1));
+            (0, _context.t0)(_context.t1);
+            return _context.abrupt("return", processedOrder);
 
-          case 13:
-            _context.prev = 13;
+          case 12:
+            _context.prev = 12;
             _context.t2 = _context["catch"](0);
             console.error(_context.t2);
 
-          case 16:
+          case 15:
             return _context.abrupt("return", order);
 
-          case 17:
+          case 16:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[0, 13]]);
+    }, _callee, null, [[0, 12]]);
   }));
 
   return function (_x6) {

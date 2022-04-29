@@ -514,7 +514,6 @@ const OrderActions = {
    */
   [OrderStatus.PENDING]: async order => {
     try {
-      console.log({ validateAddress: order.validateAddress, order })
       /**@type {Order} */
       const processedOrder = await processPendingOrder(order)
 
@@ -523,7 +522,7 @@ const OrderActions = {
       //if (processedOrder.autoCheckout()) {
       //  const status = { orderStatus: OrderStatus.APPROVED }
 
-      return runOrderWorkflow(
+      unOrderWorkflow(
         await processedOrder.update({ orderStatus: 'APPROVED' }, false)
       )
       //}
