@@ -526,7 +526,6 @@ const OrderActions = {
         await processedOrder.update({ orderStatus: 'APPROVED' }, false)
       )
       //}
-      return processedOrder
     } catch (e) {
       console.error(e)
     }
@@ -614,6 +613,7 @@ export async function runOrderWorkflow (order) {
     return OrderActions[order.orderStatus](order)
 
   console.debug('no such function', `OrderActions[${order.orderStatus}]`, order)
+  return order
 }
 
 /**

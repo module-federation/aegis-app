@@ -2800,22 +2800,23 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
           case 7:
             _context.t1 = _context.sent;
             (0, _context.t0)(_context.t1);
-            return _context.abrupt("return", processedOrder);
+            _context.next = 14;
+            break;
 
-          case 12:
-            _context.prev = 12;
+          case 11:
+            _context.prev = 11;
             _context.t2 = _context["catch"](0);
             console.error(_context.t2);
 
-          case 15:
+          case 14:
             return _context.abrupt("return", order);
 
-          case 16:
+          case 15:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[0, 12]]);
+    }, _callee, null, [[0, 11]]);
   }));
 
   return function (_x6) {
@@ -2994,8 +2995,9 @@ function _runOrderWorkflow() {
 
           case 2:
             console.debug('no such function', "OrderActions[".concat(order.orderStatus, "]"), order);
+            return _context17.abrupt("return", order);
 
-          case 3:
+          case 4:
           case "end":
             return _context17.stop();
         }
