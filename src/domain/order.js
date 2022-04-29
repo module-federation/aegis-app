@@ -540,16 +540,17 @@ const OrderActions = {
    * @returns {Promise<Readonly<Order>>}
    */
   [OrderStatus.APPROVED]: async order => {
-    console.log('typeof order', typeof order//™)
+    console.log('typeof order', typeof order)
     const Order = typeof order === 'string' ? JSON.parse(order) : order
     try {
       if (/approved/i.test(order.paymentStatus)) {
         // Don't `await` the async result, which will block the API caller
         // if we being executed that way. Return control back to caller now.
         // order.logStateChange('')
-        return Order.pickOrder(orderPicked)
+        //return Order.pickOrder(orderPicked)
       }
-      await Order.emit('PayAuthFail', 'Payment authorization problem')
+      return Order
+      //await Order.emit('PayAuthFail', 'Payment authorization problem')
     } catch (error) {
       console.log({ error })
       handleError(error, order, OrderStatus.APPROVED)
