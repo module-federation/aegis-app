@@ -2022,6 +2022,8 @@ __webpack_require__.r(__webpack_exports__);
 
 var _OrderActions;
 
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -2824,44 +2826,46 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
   };
 }()), _defineProperty(_OrderActions, OrderStatus.APPROVED, function () {
   var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(order) {
+    var Order;
     return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            _context2.prev = 0;
+            Order = typeof order === 'string' ? JSON.parse(order) : order;
+            _context2.prev = 1;
 
             if (!/approved/i.test(order.paymentStatus)) {
-              _context2.next = 3;
+              _context2.next = 4;
               break;
             }
 
             return _context2.abrupt("return", order.pickOrder(orderPicked));
 
-          case 3:
-            _context2.next = 5;
+          case 4:
+            _context2.next = 6;
             return order.emit('PayAuthFail', 'Payment authorization problem');
 
-          case 5:
-            _context2.next = 11;
+          case 6:
+            _context2.next = 12;
             break;
 
-          case 7:
-            _context2.prev = 7;
-            _context2.t0 = _context2["catch"](0);
+          case 8:
+            _context2.prev = 8;
+            _context2.t0 = _context2["catch"](1);
             console.log({
               error: _context2.t0
             });
             handleError(_context2.t0, order, OrderStatus.APPROVED);
 
-          case 11:
+          case 12:
             return _context2.abrupt("return", order);
 
-          case 12:
+          case 13:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[0, 7]]);
+    }, _callee2, null, [[1, 8]]);
   }));
 
   return function (_x7) {
@@ -2987,20 +2991,21 @@ function _runOrderWorkflow() {
       while (1) {
         switch (_context17.prev = _context17.next) {
           case 0:
+            console.debug('order is', _typeof(order));
             orderParsed = typeof order === 'string' ? JSON.parse(order) : order;
 
             if (!(typeof OrderActions[orderParsed.orderStatus] === 'function')) {
-              _context17.next = 3;
+              _context17.next = 4;
               break;
             }
 
             return _context17.abrupt("return", OrderActions[orderParsed.orderStatus](order));
 
-          case 3:
+          case 4:
             console.debug('no such function', "OrderActions[".concat(orderParsed.orderStatus, "]"), order);
             return _context17.abrupt("return", orderParsed);
 
-          case 5:
+          case 6:
           case "end":
             return _context17.stop();
         }
