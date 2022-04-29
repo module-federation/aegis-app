@@ -2791,7 +2791,7 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
 
           case 3:
             processedOrder = _context.sent;
-            _context.t0 = unOrderWorkflow;
+            _context.t0 = runOrderWorkflow;
             _context.next = 7;
             return processedOrder.update({
               orderStatus: 'APPROVED'
