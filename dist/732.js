@@ -216,7 +216,7 @@ var Address = {
                 break;
               }
 
-              console.log("no address");
+              console.log('no address');
               return _context.abrupt("return");
 
             case 4:
@@ -225,58 +225,65 @@ var Address = {
                 break;
               }
 
-              console.log("address service disabled");
+              console.log('address service disabled');
               return _context.abrupt("return", address);
 
             case 7:
+              _context.prev = 7;
               lookup = new Lookup();
               lookup.inputId = uuid();
               lookup.street = address;
               lookup.maxCandidates = 1;
-              _context.prev = 11;
-              _context.next = 14;
+              _context.prev = 12;
+              _context.next = 15;
               return client.send(lookup);
 
-            case 14:
+            case 15:
               response = _context.sent;
-              _context.next = 20;
+              _context.next = 21;
               break;
 
-            case 17:
-              _context.prev = 17;
-              _context.t0 = _context["catch"](11);
+            case 18:
+              _context.prev = 18;
+              _context.t0 = _context["catch"](12);
               throw new Error(_context.t0);
 
-            case 20:
+            case 21:
               candidate = response.lookups[0].result[0];
 
               if (candidate) {
-                _context.next = 23;
+                _context.next = 24;
                 break;
               }
 
-              throw new Error("invalid address");
+              throw new Error('invalid address');
 
-            case 23:
-              validatedAddress = [candidate.deliveryLine1, candidate.deliveryLine2, candidate.lastLine].join(" ");
+            case 24:
+              validatedAddress = [candidate.deliveryLine1, candidate.deliveryLine2, candidate.lastLine].join(' ');
               console.log("address: ".concat(validatedAddress));
 
               if (validatedAddress) {
-                _context.next = 27;
+                _context.next = 28;
                 break;
               }
 
-              throw new Error("invalid address");
-
-            case 27:
-              return _context.abrupt("return", validatedAddress);
+              throw new Error('invalid address');
 
             case 28:
+              return _context.abrupt("return", validatedAddress);
+
+            case 31:
+              _context.prev = 31;
+              _context.t1 = _context["catch"](7);
+              console.error(_context.t1);
+              throw new Error('Address service error', _context.t1.message);
+
+            case 35:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[11, 17]]);
+      }, _callee, null, [[7, 31], [12, 18]]);
     }))();
   }
 };
