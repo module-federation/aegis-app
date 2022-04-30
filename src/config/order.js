@@ -144,7 +144,7 @@ export const Order = {
       type: 'outbound',
       keys: 'shippingAddress',
       producesEvent: 'addressValidated',
-      disabled: false
+      disabled: true
     },
     authorizePayment: {
       service: 'Payment',
