@@ -493,7 +493,7 @@ async function getCustomerOrder (order) {
  */
 const processPendingOrder = asyncPipe(
   getCustomerOrder,
-  // verifyInventory,
+  verifyInventory,
   verifyPayment,
   verifyAddress
 )
