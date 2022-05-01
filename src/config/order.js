@@ -153,7 +153,7 @@ export const Order = {
       consumesEvent: 'startWorkflow',
       producesEvent: 'paymentAuthorized',
       undo: cancelPayment,
-      disabled: false
+      disabled: true
     },
     pickOrder: {
       service: 'Inventory',
