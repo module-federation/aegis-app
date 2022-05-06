@@ -248,7 +248,7 @@ export const Order = {
       foreignKey: 'itemId',
       arrayKey: 'orderItems',
       desc: 'An order contains a list of inventory items to ship.'
-    }
+    }   
   },
   commands: {
     decrypt: {
