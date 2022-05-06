@@ -2671,7 +2671,8 @@ function _verifyInventory() {
           case 2:
             inventory = _context15.sent;
             console.debug({
-              inventory: inventory
+              inventory: inventory,
+              seeme: '#################################'
             });
             insufficient = order.orderItems.filter(function (item) {
               var inv = inventory.find(function (i) {
@@ -2680,18 +2681,10 @@ function _verifyInventory() {
               if (!inv) return true;
               if (inv.quantity < item.qty) return true;
               return false;
-            });
+            }); // if (insufficient.length > 0)
+            //   throw new Error(`low or out of stock: ${insufficient.map(i => i.itemId)}`)
 
-            if (!(insufficient.length > 0)) {
-              _context15.next = 7;
-              break;
-            }
-
-            throw new Error("low or out of stock: ".concat(insufficient.map(function (i) {
-              return i.itemId;
-            })));
-
-          case 7:
+          case 5:
           case "end":
             return _context15.stop();
         }
