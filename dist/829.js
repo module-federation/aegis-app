@@ -2670,6 +2670,9 @@ function _verifyInventory() {
 
           case 2:
             inventory = _context15.sent;
+            console.debug({
+              inventory: inventory
+            });
             insufficient = order.orderItems.filter(function (item) {
               var inv = inventory.find(function (i) {
                 return i.id === item.itemId;
@@ -2680,7 +2683,7 @@ function _verifyInventory() {
             });
 
             if (!(insufficient.length > 0)) {
-              _context15.next = 6;
+              _context15.next = 7;
               break;
             }
 
@@ -2688,7 +2691,7 @@ function _verifyInventory() {
               return i.itemId;
             })));
 
-          case 6:
+          case 7:
           case "end":
             return _context15.stop();
         }
