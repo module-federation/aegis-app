@@ -16,7 +16,7 @@ export const makeInventoryFactory = dependencies => ({
   vendor,
   inStock,
   assetType,
-  qty
+  quantity
 }) =>
   Object.freeze({
     category,
@@ -29,5 +29,5 @@ export const makeInventoryFactory = dependencies => ({
     vendor,
     inStock,
     assetType,
-    qty
+    quantity
   })
