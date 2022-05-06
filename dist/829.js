@@ -2663,7 +2663,11 @@ function _verifyInventory() {
       while (1) {
         switch (_context15.prev = _context15.next) {
           case 0:
-            inventory = order.inventory();
+            _context15.next = 2;
+            return order.inventory();
+
+          case 2:
+            inventory = _context15.sent;
             insufficient = order.orderItems.filter(function (item) {
               var inv = inventory.find(function (i) {
                 return i.id === item.itemId;
@@ -2674,13 +2678,13 @@ function _verifyInventory() {
             });
 
             if (!insufficient) {
-              _context15.next = 4;
+              _context15.next = 6;
               break;
             }
 
             throw new Error("low or out of stock: ".concat(insufficient));
 
-          case 4:
+          case 6:
           case "end":
             return _context15.stop();
         }
