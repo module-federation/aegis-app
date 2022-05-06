@@ -434,16 +434,17 @@ async function verifyPayment (order) {
  * @throws {'InsufficientInventory'}
  */
 async function verifyInventory (order) {
-  const inventory = await order.inventory()
-  console.debug('inventory', inventory)
+  const inventory = order.inventory()
 
-  // if (inventory?.length !== order.totalItems()) {
-  //   throw new Error('insufficient inventory available', order)
-  // }
+  const insufficient = order.orderItems.filter(item => {
+    const inv = inventory.find(i => i.id === item.itemId)
+    if (!inv) return true
+    if (inv.quantity < item.qty) return true
+    return false
+  })
 
-  return order
+  if (insufficient) throw new Error(`low or out of stock: ${insufficient}`)
 }
-
 /**
  * Copy existing customer data into the order
  * or create new customer from order details.
@@ -546,7 +547,7 @@ const OrderActions = {
         // Don't `await` the async result, which will block the API caller
         // if we being executed that way. Return control back to caller now.
         // order.logStateChange('')
-        
+
         return order.pickOrder(orderPicked)
       }
       return order

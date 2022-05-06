@@ -238,15 +238,15 @@ export const Order = {
   relations: {
     customer: {
       modelName: 'customer',
-      foreignKey: 'customerId',
       type: 'manyToOne',
+      foreignKey: 'customerId',
       desc: 'Many orders per customer, just one customer per order'
     },
     inventory: {
       modelName: 'inventory',
-      foreignKey: 'itemId',
-      key: 'orderItems',
       type: 'containsMany',
+      foreignKey: 'itemId',
+      arrayKey: 'orderItems',
       desc: 'An order contains a list of inventory items to ship.'
     }
   },

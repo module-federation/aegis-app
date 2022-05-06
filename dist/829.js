@@ -390,15 +390,15 @@ var Order = {
   relations: {
     customer: {
       modelName: 'customer',
-      foreignKey: 'customerId',
       type: 'manyToOne',
+      foreignKey: 'customerId',
       desc: 'Many orders per customer, just one customer per order'
     },
     inventory: {
       modelName: 'inventory',
-      foreignKey: 'itemId',
-      key: 'orderItems',
       type: 'containsMany',
+      foreignKey: 'itemId',
+      arrayKey: 'orderItems',
       desc: 'An order contains a list of inventory items to ship.'
     }
   },
@@ -2658,23 +2658,29 @@ function verifyInventory(_x4) {
 
 function _verifyInventory() {
   _verifyInventory = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee15(order) {
-    var inventory;
+    var inventory, insufficient;
     return regeneratorRuntime.wrap(function _callee15$(_context15) {
       while (1) {
         switch (_context15.prev = _context15.next) {
           case 0:
-            _context15.next = 2;
-            return order.inventory();
+            inventory = order.inventory();
+            insufficient = order.orderItems.filter(function (item) {
+              var inv = inventory.find(function (i) {
+                return i.id === item.itemId;
+              });
+              if (!inv) return true;
+              if (inv.quantity < item.qty) return true;
+              return false;
+            });
 
-          case 2:
-            inventory = _context15.sent;
-            console.debug('inventory', inventory); // if (inventory?.length !== order.totalItems()) {
-            //   throw new Error('insufficient inventory available', order)
-            // }
+            if (!insufficient) {
+              _context15.next = 4;
+              break;
+            }
 
-            return _context15.abrupt("return", order);
+            throw new Error("low or out of stock: ".concat(insufficient));
 
-          case 5:
+          case 4:
           case "end":
             return _context15.stop();
         }
