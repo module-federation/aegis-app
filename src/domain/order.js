@@ -443,7 +443,8 @@ async function verifyInventory (order) {
     return false
   })
 
-  if (insufficient) throw new Error(`low or out of stock: ${insufficient}`)
+  if (insufficient.length > 0)
+    throw new Error(`low or out of stock: ${insufficient.map(i => i.itemId)}`)
 }
 /**
  * Copy existing customer data into the order

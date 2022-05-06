@@ -2677,12 +2677,14 @@ function _verifyInventory() {
               return false;
             });
 
-            if (!insufficient) {
+            if (!(insufficient.length > 0)) {
               _context15.next = 6;
               break;
             }
 
-            throw new Error("low or out of stock: ".concat(insufficient));
+            throw new Error("low or out of stock: ".concat(insufficient.map(function (i) {
+              return i.itemId;
+            })));
 
           case 6:
           case "end":
