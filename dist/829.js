@@ -2672,7 +2672,7 @@ function _verifyInventory() {
             inventory = _context15.sent;
             console.debug({
               inventory: inventory,
-              seeme: '#################################'
+              seeme: '################################'
             });
             insufficient = order.orderItems.filter(function (item) {
               var inv = inventory.find(function (i) {
