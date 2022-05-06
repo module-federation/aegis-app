@@ -929,7 +929,8 @@ var makeInventoryFactory = function makeInventoryFactory(dependencies) {
         purchaseOrder = _ref.purchaseOrder,
         vendor = _ref.vendor,
         inStock = _ref.inStock,
-        assetType = _ref.assetType;
+        assetType = _ref.assetType,
+        qty = _ref.qty;
     return Object.freeze({
       category: category,
       properties: properties,
@@ -940,7 +941,8 @@ var makeInventoryFactory = function makeInventoryFactory(dependencies) {
       purchaseOrder: purchaseOrder,
       vendor: vendor,
       inStock: inStock,
-      assetType: assetType
+      assetType: assetType,
+      qty: qty
     });
   };
 };
