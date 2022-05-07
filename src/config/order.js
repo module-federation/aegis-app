@@ -44,7 +44,7 @@ export const Order = {
   endpoint: 'orders',
   factory: makeOrderFactory,
   datasource: {
-    adapterFactory: DataSourceAdapterMongoDb,
+    factory: DataSourceAdapterMongoDb,
     url: 'mongodb://172.31.30.141:27017',
     cacheSize: 4000,
     baseClass: 'DataSourceMongoDb'
