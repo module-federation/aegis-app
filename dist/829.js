@@ -2670,10 +2670,15 @@ function _verifyInventory() {
 
           case 2:
             inventory = _context15.sent;
-            console.debug({
-              inventory: inventory,
-              seeme: '################################'
-            });
+
+            if (!(inventory.length < 1)) {
+              _context15.next = 5;
+              break;
+            }
+
+            throw new Error('bad inventory ID');
+
+          case 5:
             insufficient = order.orderItems.filter(function (item) {
               var inv = inventory.find(function (i) {
                 return i.id === item.itemId;
@@ -2681,10 +2686,18 @@ function _verifyInventory() {
               if (!inv) return true;
               if (inv.quantity < item.qty) return true;
               return false;
-            }); // if (insufficient.length > 0)
-            //   throw new Error(`low or out of stock: ${insufficient.map(i => i.itemId)}`)
+            });
 
-          case 5:
+            if (!(insufficient.length > 0)) {
+              _context15.next = 8;
+              break;
+            }
+
+            throw new Error("low or out of stock: ".concat(insufficient.map(function (i) {
+              return i.itemId;
+            })));
+
+          case 8:
           case "end":
             return _context15.stop();
         }

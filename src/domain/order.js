@@ -435,7 +435,7 @@ async function verifyPayment (order) {
  */
 async function verifyInventory (order) {
   const inventory = await order.inventory()
-  console.debug({ inventory, seeme: '################################' })
+  if (inventory.length < 1) throw new Error('bad inventory ID')
   const insufficient = order.orderItems.filter(item => {
     const inv = inventory.find(i => i.id === item.itemId)
     if (!inv) return true
@@ -443,8 +443,8 @@ async function verifyInventory (order) {
     return false
   })
 
-  // if (insufficient.length > 0)
-  //   throw new Error(`low or out of stock: ${insufficient.map(i => i.itemId)}`)
+  if (insufficient.length > 0)
+    throw new Error(`low or out of stock: ${insufficient.map(i => i.itemId)}`)
 }
 /**
  * Copy existing customer data into the order
