@@ -43,12 +43,12 @@ export const Order = {
   modelName: 'order',
   endpoint: 'orders',
   factory: makeOrderFactory,
-  // datasource: {
-  //   factory: DataSourceAdapterMongoDb,
-  //   url: 'mongodb://172.31.30.141:27017',
-  //   cacheSize: 4000,
-  //   baseClass: 'DataSourceMongoDb'
-  // },
+  datasource: {
+    wfactory: DataSourceAdapterMongoDb,
+    url: 'mongodb://172.31.30.141:27017',
+    cacheSize: 4000,
+    baseClass: 'DataSourceMongoDb'
+  },
   dependencies: { uuid: () => nanoid(8) },
   mixins: [
     requireProperties(
@@ -248,7 +248,7 @@ export const Order = {
       foreignKey: 'itemId',
       arrayKey: 'orderItems',
       desc: 'An order contains a list of inventory items to ship.'
-    }   
+    }
   },
   commands: {
     decrypt: {
