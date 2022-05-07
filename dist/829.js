@@ -149,8 +149,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Inventory": () => /* binding */ Inventory
 /* harmony export */ });
-/* harmony import */ var _domain_inventory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../domain/inventory */ "./src/domain/inventory.js");
-/* harmony import */ var _domain_mixins__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/mixins */ "./src/domain/mixins.js");
+/* harmony import */ var _adapters_datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../adapters/datasources/datasource-mongodb */ "./src/adapters/datasources/datasource-mongodb.js");
+/* harmony import */ var _domain_inventory__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/inventory */ "./src/domain/inventory.js");
+/* harmony import */ var _domain_mixins__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../domain/mixins */ "./src/domain/mixins.js");
+
 
 
 
@@ -163,29 +165,35 @@ var Inventory = {
   modelName: 'inventory',
   endpoint: 'inventory',
   dependencies: {},
-  factory: _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.makeInventoryFactory,
-  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.requireProperties)('name', 'inStock', 'category', 'price', 'purchaseOrder'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.validateProperties)([{
+  factory: _domain_inventory__WEBPACK_IMPORTED_MODULE_1__.makeInventoryFactory,
+  datasource: {
+    factory: _adapters_datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_0__.DataSourceAdapterMongoDb,
+    url: 'mongodb://127.0.0.1:27017',
+    cacheSize: 4000,
+    baseClass: 'DataSourceMongoDb'
+  },
+  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_2__.requireProperties)('name', 'inStock', 'category', 'price', 'purchaseOrder'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_2__.validateProperties)([{
     propKey: 'inStock',
     "typeof": 'number',
     maxnum: 99999
   }, {
     propKey: 'category',
-    values: _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.categories
+    values: _domain_inventory__WEBPACK_IMPORTED_MODULE_1__.categories
   }, {
     propKey: 'assetType',
-    values: _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.assetTypes
+    values: _domain_inventory__WEBPACK_IMPORTED_MODULE_1__.assetTypes
   }, {
     propKey: 'properties',
     isValid: function isValid(_obj, prop) {
       return prop.every(function (p) {
-        return _domain_inventory__WEBPACK_IMPORTED_MODULE_0__.properties.includes(p);
+        return _domain_inventory__WEBPACK_IMPORTED_MODULE_1__.properties.includes(p);
       });
     }
   }, {
     propKey: 'price',
     "typeof": 'number',
     maxnum: 999.99
-  }]), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.freezeProperties)('*')],
+  }]), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_2__.freezeProperties)('*')],
   relations: {
     orders: {
       modelName: 'order',
@@ -2687,9 +2695,10 @@ function _verifyInventory() {
               if (inv.quantity < item.qty) return true;
               return false;
             });
+            order.emit('lowOrOutOfStock', insufficient);
 
             if (!(insufficient.length > 0)) {
-              _context15.next = 8;
+              _context15.next = 9;
               break;
             }
 
@@ -2697,7 +2706,7 @@ function _verifyInventory() {
               return i.itemId;
             })));
 
-          case 8:
+          case 9:
           case "end":
             return _context15.stop();
         }
