@@ -22,12 +22,12 @@ export const Inventory = {
   endpoint: 'inventory',
   dependencies: {},
   factory: makeInventoryFactory,
-  datasource: {
-    factory: DataSourceAdapterMongoDb,
-    url: 'mongodb://127.0.0.1:27017',
-    cacheSize: 4000,
-    baseClass: 'DataSourceMongoDb'
-  },
+  // datasource: {
+  //   factory: DataSourceAdapterMongoDb,
+  //   url: 'mongodb://127.0.0.1:27017',
+  //   cacheSize: 4000,
+  //   baseClass: 'DataSourceMongoDb'
+  // },
   mixins: [
     requireProperties('name', 'inStock', 'category', 'price', 'purchaseOrder'),
     validateProperties([
