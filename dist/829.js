@@ -166,12 +166,12 @@ var Inventory = {
   endpoint: 'inventory',
   dependencies: {},
   factory: _domain_inventory__WEBPACK_IMPORTED_MODULE_1__.makeInventoryFactory,
-  datasource: {
-    factory: _adapters_datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_0__.DataSourceAdapterMongoDb,
-    url: 'mongodb://127.0.0.1:27017',
-    cacheSize: 4000,
-    baseClass: 'DataSourceMongoDb'
-  },
+  // datasource: {
+  //   factory: DataSourceAdapterMongoDb,
+  //   url: 'mongodb://127.0.0.1:27017',
+  //   cacheSize: 4000,
+  //   baseClass: 'DataSourceMongoDb'
+  // },
   mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_2__.requireProperties)('name', 'inStock', 'category', 'price', 'purchaseOrder'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_2__.validateProperties)([{
     propKey: 'inStock',
     "typeof": 'number',
