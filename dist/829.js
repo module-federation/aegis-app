@@ -3237,11 +3237,11 @@ function _approve() {
           case 0:
             approvedOrder = order.updateSync({
               orderStatus: OrderStatus.APPROVED
-            });
-            approvedOrder.logStateChange(OrderStatus.APPROVED);
+            }); //approvedOrder.logStateChange(OrderStatus.APPROVED)
+
             return _context19.abrupt("return", runOrderWorkflow(approvedOrder));
 
-          case 3:
+          case 2:
           case "end":
             return _context19.stop();
         }
