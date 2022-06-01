@@ -19,13 +19,7 @@ export const Customer = {
   dependencies: { uuid: () => nanoid(8) },
   factory: makeCustomerFactory,
   validate: validateModel,
-  onDelete: okToDelete,
-  // datasource: {
-  //   factory: DataSourceAdapterMongoDb,
-  //   url: "mongodb://localhost:27017",
-  //   cacheSize: 2000,
-  //   baseClass: "DataSourceMongoDb",
-  // },
+  onDelete: okToDelete,`a `
   mixins: [
     freezeProperties("customerId"),
     requireProperties(
