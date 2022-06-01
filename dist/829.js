@@ -3235,16 +3235,13 @@ function _approve() {
       while (1) {
         switch (_context19.prev = _context19.next) {
           case 0:
-            _context19.next = 2;
-            return order.update({
+            approvedOrder = order.updateSync({
               orderStatus: OrderStatus.APPROVED
             });
-
-          case 2:
-            approvedOrder = _context19.sent;
+            approvedOrder.logStateChange(OrderStatus.APPROVED);
             return _context19.abrupt("return", runOrderWorkflow(approvedOrder));
 
-          case 4:
+          case 3:
           case "end":
             return _context19.stop();
         }
