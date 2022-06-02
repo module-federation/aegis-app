@@ -115,7 +115,7 @@ export const Order = {
         propKey: 'creditCardNumber',
         regex: 'creditCard'
       },
-      {
+      {                                                                                                                                                                                                                                                                                                                                                                                                                                                           
         propKey: 'phone',
         regex: 'phone'
       }

@@ -357,7 +357,6 @@ export async function paymentAuthorized (options = {}, payload = {}) {
     payload,
     paymentAuthorized.name
   )
-  //order.logStateChange(paymentAuthorized.name + ' accepted')
   return order.update({ ...changes, paymentStatus: 'APPROVED' }, false)
 }
 
@@ -376,7 +375,6 @@ export async function refundPayment (order) {
       payload,
       refundPayment.name
     )
-    //order.logStateChange(`${OrderStatus.CANCELED} ${refundPayment.name}`)
     return order.update({ ...changes, orderStatus: OrderStatus.CANCELED })
   })
 }
@@ -409,7 +407,6 @@ async function verifyPayment (order) {
     /**
      * @type {Order}
      */
-
     const authorizedOrder = await order.authorizePayment(paymentAuthorized)
 
     // if (!authorizedOrder.isPaymentAuthorized) {
@@ -548,14 +545,10 @@ const OrderActions = {
     console.log('typeof order', typeof order)
     try {
       if (/approved/i.test(order.paymentStatus)) {
-        // Don't `await` the async result, which will block the API caller
-        // if we being executed that way. Return control back to caller now.
-        // order.logStateChange('')
-
         return order.pickOrder(orderPicked)
       }
-      return order
       await order.emit('PayAuthFail', 'Payment authorization problem')
+      return order
     } catch (error) {
       console.log({ error })
       handleError(error, order, OrderStatus.APPROVED)

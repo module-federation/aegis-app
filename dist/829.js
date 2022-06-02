@@ -2633,8 +2633,7 @@ function _paymentAuthorized() {
             options = _args11.length > 0 && _args11[0] !== undefined ? _args11[0] : {};
             payload = _args11.length > 1 && _args11[1] !== undefined ? _args11[1] : {};
             order = options.model;
-            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('paymentStatus', options, payload, paymentAuthorized.name); //order.logStateChange(paymentAuthorized.name + ' accepted')
-
+            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('paymentStatus', options, payload, paymentAuthorized.name);
             return _context11.abrupt("return", order.update(_objectSpread(_objectSpread({}, changes), {}, {
               paymentStatus: 'APPROVED'
             }), false));
@@ -2666,8 +2665,7 @@ function _refundPayment() {
           case 0:
             // call port by same name.
             order.refundPayment(function (options, payload) {
-              var changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('refundReceipt', options, payload, refundPayment.name); //order.logStateChange(`${OrderStatus.CANCELED} ${refundPayment.name}`)
-
+              var changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('refundReceipt', options, payload, refundPayment.name);
               return order.update(_objectSpread(_objectSpread({}, changes), {}, {
                 orderStatus: OrderStatus.CANCELED
               }));
@@ -2982,11 +2980,11 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
             return _context2.abrupt("return", order.pickOrder(orderPicked));
 
           case 4:
-            return _context2.abrupt("return", order);
+            _context2.next = 6;
+            return order.emit('PayAuthFail', 'Payment authorization problem');
 
-          case 7:
-            _context2.next = 13;
-            break;
+          case 6:
+            return _context2.abrupt("return", order);
 
           case 9:
             _context2.prev = 9;
