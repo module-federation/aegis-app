@@ -51,7 +51,7 @@ import checkPayload from './check-payload'
  * @property {adapterFunction} refundPayment
  * @property {relationFunction} inventory - reserve inventory items
  * @property {adapterFunction} undo - undo all transactions up to this point
- * @property {function():Promise<Order>} pickOrder - find the items and get them ready for shipment
+ * @property {function():Promise<Order>} pickOrder - pick items from warehouse and prepare for shipment
  * @property {adapterFunction} authorizePayment - verify payment, i.e. reserve the balance due
  * @property {import('../adapters/shipping-adapter').shipOrder} shipOrder -
  * calls shipping service to print label and request delivery
@@ -538,9 +538,9 @@ const OrderActions = {
   },
 
   /**
-   * If payment is authorized, notify inventory.
+   * If payment is authorized, check inventory.
    * This kicks off the rest of the workflow,
-   * which is controlled through port config.
+   * which is controlled by port event flow.
    * @param {Order} order
    * @returns {Promise<Readonly<Order>>}
    */
@@ -555,7 +555,7 @@ const OrderActions = {
         return order.pickOrder(orderPicked)
       }
       return order
-      //await Order.emit('PayAuthFail', 'Payment authorization problem')
+      await order.emit('PayAuthFail', 'Payment authorization problem')
     } catch (error) {
       console.log({ error })
       handleError(error, order, OrderStatus.APPROVED)
@@ -570,7 +570,7 @@ const OrderActions = {
    */
   [OrderStatus.SHIPPING]: async order => {
     try {
-      // order.trackShipment(trackingUpdate);
+      order.trackShipment(trackingUpdate)
       console.debug({ func: OrderStatus.SHIPPING, order })
       await (await order.update({ orderStatus: OrderStatus.SHIPPING })).emit(
         'orderPicked'

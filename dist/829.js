@@ -2211,7 +2211,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
  * @property {adapterFunction} refundPayment
  * @property {relationFunction} inventory - reserve inventory items
  * @property {adapterFunction} undo - undo all transactions up to this point
- * @property {function():Promise<Order>} pickOrder - find the items and get them ready for shipment
+ * @property {function():Promise<Order>} pickOrder - pick items from warehouse and prepare for shipment
  * @property {adapterFunction} authorizePayment - verify payment, i.e. reserve the balance due
  * @property {import('../adapters/shipping-adapter').shipOrder} shipOrder -
  * calls shipping service to print label and request delivery
@@ -2985,22 +2985,26 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
             return _context2.abrupt("return", order);
 
           case 7:
-            _context2.prev = 7;
+            _context2.next = 13;
+            break;
+
+          case 9:
+            _context2.prev = 9;
             _context2.t0 = _context2["catch"](1);
             console.log({
               error: _context2.t0
             });
             handleError(_context2.t0, order, OrderStatus.APPROVED);
 
-          case 11:
+          case 13:
             return _context2.abrupt("return", order);
 
-          case 12:
+          case 14:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[1, 7]]);
+    }, _callee2, null, [[1, 9]]);
   }));
 
   return function (_x7) {
@@ -3013,38 +3017,38 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
         switch (_context3.prev = _context3.next) {
           case 0:
             _context3.prev = 0;
-            // order.trackShipment(trackingUpdate);
+            order.trackShipment(trackingUpdate);
             console.debug({
               func: OrderStatus.SHIPPING,
               order: order
             });
-            _context3.next = 4;
+            _context3.next = 5;
             return order.update({
               orderStatus: OrderStatus.SHIPPING
             });
 
-          case 4:
-            _context3.next = 6;
+          case 5:
+            _context3.next = 7;
             return _context3.sent.emit('orderPicked');
 
-          case 6:
-            _context3.next = 11;
+          case 7:
+            _context3.next = 12;
             break;
 
-          case 8:
-            _context3.prev = 8;
+          case 9:
+            _context3.prev = 9;
             _context3.t0 = _context3["catch"](0);
             handleError(_context3.t0, order, OrderStatus.SHIPPING);
 
-          case 11:
+          case 12:
             return _context3.abrupt("return", order);
 
-          case 12:
+          case 13:
           case "end":
             return _context3.stop();
         }
       }
-    }, _callee3, null, [[0, 8]]);
+    }, _callee3, null, [[0, 9]]);
   }));
 
   return function (_x8) {
