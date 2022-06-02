@@ -35,6 +35,7 @@ import {
 
 import { DataSourceAdapterMongoDb } from '../adapters/datasources/datasource-mongodb'
 import { nanoid } from 'nanoid'
+import { DataSourceFileAdapter } from '../adapters/datasources/datasource-file-adapter'
 
 /**
  * @type {import('../domain/index').ModelSpecification}
@@ -49,6 +50,11 @@ export const Order = {
   //   cacheSize: 4000,
   //   baseClass: 'DataSourceMongoDb'
   // },
+  datasource: {
+    factory: DataSourceFileAdapter,
+    cacheSize: 4000,
+    baseClass: 'DataSourceFile'
+  },
   dependencies: { uuid: () => nanoid(8) },
   mixins: [
     requireProperties(
