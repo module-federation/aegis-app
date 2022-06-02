@@ -3315,16 +3315,20 @@ function _approve() {
       while (1) {
         switch (_context19.prev = _context19.next) {
           case 0:
-            approvedOrder = order.update({
+            _context19.next = 2;
+            return order.update({
               orderStatus: OrderStatus.APPROVED
             });
+
+          case 2:
+            approvedOrder = _context19.sent;
             console.debug({
               approvedOrder: approvedOrder
             }); //approvedOrder.logStateChange(OrderStatus.APPROVED)
 
-            return _context19.abrupt("return", runOrderWorkflow(order));
+            return _context19.abrupt("return", runOrderWorkflow(approvedOrder));
 
-          case 3:
+          case 5:
           case "end":
             return _context19.stop();
         }

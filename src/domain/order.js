@@ -768,12 +768,12 @@ export function makeOrderFactory (dependencies) {
  * @param {Order} order
  */
 export async function approve (order) {
-  const approvedOrder = order.update({
+  const approvedOrder = await order.update({
     orderStatus: OrderStatus.APPROVED
   })
   console.debug({ approvedOrder })
   //approvedOrder.logStateChange(OrderStatus.APPROVED)
-  return runOrderWorkflow(order)
+  return runOrderWorkflow(approvedOrder)
 }
 
 /**
