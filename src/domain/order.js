@@ -271,10 +271,7 @@ export function readyToDelete (model) {
  */
 function handleError (error, order, func) {
   const errMsg = { func, orderNo: order.orderNo, error }
-
   if (order) order.emit('orderError', errMsg)
-
-  //order.logError(errMsg)
 
   throw new Error(JSON.stringify(errMsg))
 }
@@ -357,7 +354,7 @@ export async function paymentAuthorized (options = {}, payload = {}) {
     payload,
     paymentAuthorized.name
   )
-  return order.update({ ...changes, paymentStatus: 'APPROVED' }, false)
+  return order.update({ ...changes, paymentStatus }, false)
 }
 
 /**
@@ -407,17 +404,13 @@ async function verifyPayment (order) {
     /**
      * @type {Order}
      */
-    const authorizedOrder = await order.authorizePayment(paymentAuthorized)
+    const authorizeOrder = await order.authorizePayment(paymentAuthorized)
 
-    // if (!authorizedOrder.isPaymentAuthorized) {
-    //   throw new Error('payment auth problem')
-    // }
+    if (!authorizeOrder.paymentDeclined) {
+      throw new Error('payment declined')
+    }
 
-    // if (!authorizedOrder.paymentAccepted) {
-    //   throw new Error('payment authorization declined')
-    // }
-
-    return authorizedOrder
+    return authorizeOrder
   } catch (e) {
     handleError(e, order, verifyPayment.name)
   }
@@ -441,10 +434,10 @@ async function verifyInventory (order) {
     return false
   })
 
-  order.emit('lowOrOutOfStock', insufficient)
-
-  if (insufficient.length > 0)
+  if (insufficient.length > 0) {
+    order.emit('lowOrOutOfStock', insufficient)
     throw new Error(`low or out of stock: ${insufficient.map(i => i.itemId)}`)
+  }
 }
 /**
  * Copy existing customer data into the order
@@ -519,15 +512,11 @@ const OrderActions = {
       /**@type {Order} */
       const processedOrder = await processPendingOrder(order)
 
-      //console.debug({ fn: processPendingOrder.name, order })
-
-      //if (processedOrder.autoCheckout()) {
-      //  const status = { orderStatus: OrderStatus.APPROVED }
-
-      runOrderWorkflow(
-        await processedOrder.update({ orderStatus: 'APPROVED' }, false)
-      )
-      //}
+      if (processedOrder.autoCheckout()) {
+        runOrderWorkflow(
+          processedOrder.update({ OrderStatus: OrderStatus.APPROVED }, false)
+        )
+      }
     } catch (e) {
       console.error(e)
     }
