@@ -351,11 +351,11 @@ var Order = {
   //   cacheSize: 4000,
   //   baseClass: 'DataSourceMongoDb'
   // },
-  datasource: {
-    factory: _adapters_datasources_datasource_file_adapter__WEBPACK_IMPORTED_MODULE_4__.DataSourceFileAdapter,
-    cacheSize: 4000,
-    baseClass: 'DataSourceFile'
-  },
+  // datasource: {
+  //   factory: DataSourceFileAdapter,
+  //   cacheSize: 4000,
+  //   baseClass: 'DataSourceFile'
+  // },
   dependencies: {
     uuid: function uuid() {
       return (0,nanoid__WEBPACK_IMPORTED_MODULE_3__.nanoid)(8);
@@ -2449,8 +2449,7 @@ function handleError(error, order, func) {
     orderNo: order.orderNo,
     error: error
   };
-  if (order) order.emit('orderError', errMsg); //order.logError(errMsg)
-
+  if (order) order.emit('orderError', errMsg);
   throw new Error(JSON.stringify(errMsg));
 }
 /**
@@ -2635,7 +2634,7 @@ function _paymentAuthorized() {
             order = options.model;
             changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('paymentStatus', options, payload, paymentAuthorized.name);
             return _context11.abrupt("return", order.update(_objectSpread(_objectSpread({}, changes), {}, {
-              paymentStatus: 'APPROVED'
+              paymentStatus: paymentStatus
             }), false));
 
           case 5:
@@ -2731,7 +2730,7 @@ function verifyPayment(_x3) {
 
 function _verifyPayment() {
   _verifyPayment = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee14(order) {
-    var authorizedOrder;
+    var authorizeOrder;
     return regeneratorRuntime.wrap(function _callee14$(_context14) {
       while (1) {
         switch (_context14.prev = _context14.next) {
@@ -2741,23 +2740,32 @@ function _verifyPayment() {
             return order.authorizePayment(paymentAuthorized);
 
           case 3:
-            authorizedOrder = _context14.sent;
-            return _context14.abrupt("return", authorizedOrder);
+            authorizeOrder = _context14.sent;
 
-          case 7:
-            _context14.prev = 7;
+            if (authorizeOrder.paymentDeclined) {
+              _context14.next = 6;
+              break;
+            }
+
+            throw new Error('payment declined');
+
+          case 6:
+            return _context14.abrupt("return", authorizeOrder);
+
+          case 9:
+            _context14.prev = 9;
             _context14.t0 = _context14["catch"](0);
             handleError(_context14.t0, order, verifyPayment.name);
 
-          case 10:
+          case 12:
             return _context14.abrupt("return", order);
 
-          case 11:
+          case 13:
           case "end":
             return _context14.stop();
         }
       }
-    }, _callee14, null, [[0, 7]]);
+    }, _callee14, null, [[0, 9]]);
   }));
   return _verifyPayment.apply(this, arguments);
 }
@@ -2803,13 +2811,13 @@ function _verifyInventory() {
               if (inv.quantity < item.qty) return true;
               return false;
             });
-            order.emit('lowOrOutOfStock', insufficient);
 
             if (!(insufficient.length > 0)) {
               _context15.next = 9;
               break;
             }
 
+            order.emit('lowOrOutOfStock', insufficient);
             throw new Error("low or out of stock: ".concat(insufficient.map(function (i) {
               return i.itemId;
             })));
@@ -2932,32 +2940,30 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
 
           case 3:
             processedOrder = _context.sent;
-            _context.t0 = runOrderWorkflow;
-            _context.next = 7;
-            return processedOrder.update({
-              orderStatus: 'APPROVED'
-            }, false);
 
-          case 7:
-            _context.t1 = _context.sent;
-            (0, _context.t0)(_context.t1);
-            _context.next = 14;
+            if (processedOrder.autoCheckout()) {
+              runOrderWorkflow(processedOrder.update({
+                OrderStatus: OrderStatus.APPROVED
+              }, false));
+            }
+
+            _context.next = 10;
             break;
 
-          case 11:
-            _context.prev = 11;
-            _context.t2 = _context["catch"](0);
-            console.error(_context.t2);
+          case 7:
+            _context.prev = 7;
+            _context.t0 = _context["catch"](0);
+            console.error(_context.t0);
 
-          case 14:
+          case 10:
             return _context.abrupt("return", order);
 
-          case 15:
+          case 11:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[0, 11]]);
+    }, _callee, null, [[0, 7]]);
   }));
 
   return function (_x6) {

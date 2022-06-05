@@ -50,11 +50,11 @@ export const Order = {
   //   cacheSize: 4000,
   //   baseClass: 'DataSourceMongoDb'
   // },
-  datasource: {
-    factory: DataSourceFileAdapter,
-    cacheSize: 4000,
-    baseClass: 'DataSourceFile'
-  },
+  // datasource: {
+  //   factory: DataSourceFileAdapter,
+  //   cacheSize: 4000,
+  //   baseClass: 'DataSourceFile'
+  // },
   dependencies: { uuid: () => nanoid(8) },
   mixins: [
     requireProperties(
@@ -115,7 +115,7 @@ export const Order = {
         propKey: 'creditCardNumber',
         regex: 'creditCard'
       },
-      {                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+      {
         propKey: 'phone',
         regex: 'phone'
       }
