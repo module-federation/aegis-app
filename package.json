@@ -7,7 +7,7 @@
     "pnp": false
   },
   "repository": {
-    "url": "https://github.com/tysonrm/microlib-orderservice"
+    "url": "https://github.com/module-federation/aegis-app?branch=master"
   },
   "scripts": {
     "build": "npm run clean && webpack --config webpack.config.js",
