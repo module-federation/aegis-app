@@ -31793,16 +31793,19 @@ module.exports = (batch, sender, Result, keyTranslationFormat) => {
 "use strict";
 var moduleMap = {
 	"./models": () => {
-		return Promise.all([__webpack_require__.e(867), __webpack_require__.e(829)]).then(() => () => (__webpack_require__(/*! ./src/domain */ "./src/domain/index.js")));
+		return Promise.all([__webpack_require__.e(867), __webpack_require__.e(988), __webpack_require__.e(829)]).then(() => () => (__webpack_require__(/*! ./src/domain */ "./src/domain/index.js")));
 	},
 	"./adapters": () => {
 		return __webpack_require__.e(867).then(() => () => (__webpack_require__(/*! ./src/adapters */ "./src/adapters/index.js")));
 	},
 	"./services": () => {
-		return Promise.all([__webpack_require__.e(867), __webpack_require__.e(732)]).then(() => () => (__webpack_require__(/*! ./src/services */ "./src/services/index.js")));
+		return Promise.all([__webpack_require__.e(867), __webpack_require__.e(732), __webpack_require__.e(589)]).then(() => () => (__webpack_require__(/*! ./src/services */ "./src/services/index.js")));
 	},
 	"./event-bus": () => {
 		return Promise.all([__webpack_require__.e(867), __webpack_require__.e(857)]).then(() => () => (__webpack_require__(/*! ./src/services/event-bus */ "./src/services/event-bus.js")));
+	},
+	"./remoteRegistry": () => {
+		return Promise.all([__webpack_require__.e(867), __webpack_require__.e(988), __webpack_require__.e(732), __webpack_require__.e(59)]).then(() => () => (__webpack_require__(/*! ./registry/default/remote-entries */ "./registry/default/remote-entries/index.js")));
 	}
 };
 var get = (module) => {
@@ -32282,15 +32285,17 @@ module.exports = require("zlib");
 /******/ 		};
 /******/ 		// no consumes in initial chunks
 /******/ 		var chunkMapping = {
-/******/ 			"732": [
-/******/ 				"webpack/sharing/consume/default/nanoid/nanoid",
-/******/ 				"webpack/sharing/consume/default/smartystreets-javascript-sdk/smartystreets-javascript-sdk"
-/******/ 			],
-/******/ 			"829": [
+/******/ 			"589": [
 /******/ 				"webpack/sharing/consume/default/nanoid/nanoid"
+/******/ 			],
+/******/ 			"732": [
+/******/ 				"webpack/sharing/consume/default/smartystreets-javascript-sdk/smartystreets-javascript-sdk"
 /******/ 			],
 /******/ 			"867": [
 /******/ 				"webpack/sharing/consume/default/kafkajs/kafkajs"
+/******/ 			],
+/******/ 			"988": [
+/******/ 				"webpack/sharing/consume/default/nanoid/nanoid"
 /******/ 			]
 /******/ 		};
 /******/ 		__webpack_require__.f.consumes = (chunkId, promises) => {
