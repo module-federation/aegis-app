@@ -479,6 +479,20 @@ var Order = {
       acl: ['read', 'write']
     }
   },
+  routes: {
+    '/api/accounts/:id/issues': {
+      get: function get(req, res) {}
+    },
+    '/api/orders/:id/accounts/:accountid': {
+      put: _domain_order__WEBPACK_IMPORTED_MODULE_0__.accountOrder,
+      get: function get(req, res) {
+        res.send(JSON.stringify(req.model.account()));
+      },
+      "delete": function _delete(req, res) {
+        res.status(304).send('not permitted');
+      }
+    }
+  },
   serializers: [{
     on: 'deserialize',
     key: 'creditCardNumber',
@@ -789,19 +803,19 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 /**
+ * @callback controller
+ * @param {Request} req
+ * @param {Response} res
+ */
+
+/**
  * @typedef {{
- *  [x: string]: {
- *    endpointUri: string,
- *    port:ports[p],
- *    method:'get'|'post'|'patch'|'delete'
- *    callback: ({
- *      body:string,
- *      headers:{},
- *      params:{},
- *      query:{}}) => Promise<{
- *        body,status,headers,
- *      }>
- *    })
+ *  [path: string]: {
+ *    get?: controller,
+ *    post?: controller,
+ *    patch?: controller,
+ *    delete?:controller
+ *   }
  * }} endpoints
  */
 
@@ -832,7 +846,7 @@ __webpack_require__.r(__webpack_exports__);
  * @property {commands} [commands] - define functions to execute when specified in a
  * URL parameter or query of the auto-generated REST API
  * @property {accessControlList} [accessControlList] - configure authorization
- * @property {endpoints} [endpoints] - additional custom API endpoints - specify inbound port
+ * @property {endpoints} [routes] - additional custom API endpoints - specify inbound port
  * @property {{factory:import("../adapters/datasources/datasource-mongodb"),url:string,credentials?:string}} [datasource] - custom datasource
  * for this model. If not set, the default set by the server is used.
  *
@@ -1878,6 +1892,7 @@ var GlobalMixins = [encryptPersonalInfo];
   \*****************************/
 /*! namespace exports */
 /*! export OrderStatus [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export accountOrder [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export addressValidated [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export approve [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export calcTotal [provided] [no usage info] [missing usage info prevents renaming] */
@@ -1948,6 +1963,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "timeoutCallback": () => /* binding */ timeoutCallback,
 /* harmony export */   "returnInventory": () => /* binding */ returnInventory,
 /* harmony export */   "returnShipment": () => /* binding */ returnShipment,
+/* harmony export */   "accountOrder": () => /* binding */ accountOrder,
 /* harmony export */   "returnDelivery": () => /* binding */ returnDelivery,
 /* harmony export */   "cancelPayment": () => /* binding */ cancelPayment
 /* harmony export */ });
@@ -3296,12 +3312,6 @@ function _returnInventory() {
 function returnShipment(_x18) {
   return _returnShipment.apply(this, arguments);
 }
-/**
- * @type {undoFunction}
- * Start process to return canceled order items to inventory.
- * Do not call `runOrderWorkflow` - it is already running (in
- * reverse) if we get here.
- */
 
 function _returnShipment() {
   _returnShipment = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee23(order) {
@@ -3324,6 +3334,15 @@ function _returnShipment() {
   }));
   return _returnShipment.apply(this, arguments);
 }
+
+function accountOrder(req, res) {}
+1;
+/**
+ * @type {undoFunction}
+ * Start process to return canceled order items to inventory.
+ * Do not call `runOrderWorkflow` - it is already running (in
+ * reverse) if we get here.
+ */
 
 function returnDelivery(_x19) {
   return _returnDelivery.apply(this, arguments);

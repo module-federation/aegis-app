@@ -826,6 +826,8 @@ export async function returnShipment (order) {
   return order.update({ orderStatus: OrderStatus.CANCELED })
 }
 
+export function accountOrder (req, res) {}
+1
 /**
  * @type {undoFunction}
  * Start process to return canceled order items to inventory.
