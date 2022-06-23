@@ -177,6 +177,74 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
 
 /***/ }),
 
+/***/ "./src/config/accounts.js":
+/*!********************************!*\
+  !*** ./src/config/accounts.js ***!
+  \********************************/
+/*! namespace exports */
+/*! exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _domain_mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../domain/mixins */ "./src/domain/mixins.js");
+/* harmony import */ var _domain_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/utils */ "./src/domain/utils.js");
+
+
+
+
+/**
+ * @type {import('../domain/index').ModelSpecification}
+ */
+
+var Account = {
+  endpoint: 'accounts',
+  modelName: 'Account',
+  dependencies: {
+    uuid: _domain_utils__WEBPACK_IMPORTED_MODULE_1__.uuid
+  },
+  factory: function factory(dependencies) {
+    return function () {
+      var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          name = _ref.name,
+          _ref$recurly_code = _ref.recurly_code,
+          recurly_code = _ref$recurly_code === void 0 ? null : _ref$recurly_code,
+          billing_email = _ref.billing_email,
+          _ref$settings = _ref.settings,
+          settings = _ref$settings === void 0 ? null : _ref$settings,
+          _ref$slug = _ref.slug,
+          slug = _ref$slug === void 0 ? null : _ref$slug,
+          _ref$canonical_domain = _ref.canonical_domain_id,
+          canonical_domain_id = _ref$canonical_domain === void 0 ? null : _ref$canonical_domain,
+          _ref$account_favicons = _ref.account_favicons,
+          account_favicons = _ref$account_favicons === void 0 ? [] : _ref$account_favicons,
+          _ref$account_logos = _ref.account_logos,
+          account_logos = _ref$account_logos === void 0 ? [] : _ref$account_logos,
+          _ref$user_eloqua_id = _ref.user_eloqua_id,
+          user_eloqua_id = _ref$user_eloqua_id === void 0 ? null : _ref$user_eloqua_id;
+
+      return Object.freeze({
+        id: dependencies.uuid(),
+        name: name,
+        created_at: Date.now(),
+        updated_at: Date.now(),
+        recurly_code: recurly_code,
+        billing_email: billing_email,
+        settings: settings,
+        slug: slug,
+        canonical_domain_id: canonical_domain_id,
+        account_favicons: account_favicons,
+        account_logos: account_logos,
+        user_eloqua_ids: user_eloqua_ids
+      });
+    };
+  },
+  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)('name', 'billing_email'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.freezeProperties)('id', 'name', 'billing_email')]
+};
+
+/***/ }),
+
 /***/ "./src/config/index.js":
 /*!*****************************!*\
   !*** ./src/config/index.js ***!
@@ -194,14 +262,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Order": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.Order,
 /* harmony export */   "User": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_1__.User,
-/* harmony export */   "Inventory": () => /* reexport safe */ _inventory__WEBPACK_IMPORTED_MODULE_2__.Inventory
+/* harmony export */   "Inventory": () => /* reexport safe */ _inventory__WEBPACK_IMPORTED_MODULE_3__.Inventory
 /* harmony export */ });
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./order */ "./src/config/order.js");
 /* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./user */ "./src/config/user.js");
-/* harmony import */ var _inventory__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./inventory */ "./src/config/inventory.js");
+/* harmony import */ var _accounts__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./accounts */ "./src/config/accounts.js");
+/* harmony import */ var _inventory__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./inventory */ "./src/config/inventory.js");
 
- // export * from "./customer";
-// export * from "./product";
+
 
 
 
