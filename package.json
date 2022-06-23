@@ -7,7 +7,7 @@
     "pnp": false
   },
   "repository": {
-    "url": "https://github.com/module-federation/aegis-app?branch=master"
+    "url": "https://github.com/module-federation/aegis-app?branch=order"
   },
   "scripts": {
     "build": "npm run clean && webpack --config webpack.config.js",
