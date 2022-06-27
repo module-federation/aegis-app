@@ -10,7 +10,9 @@
     "url": "https://github.com/module-federation/aegis-app?branch=order"
   },
   "scripts": {
-    "build": "npm run clean && webpack --config webpack.config.js",
+    "serveHosts": "node server.js",
+    "remoteEntry": "open http://localhost:3000/remoteEntry.js",
+    "build": "npm run clean && webpack --config webpack.config.js --mode production",
     "build-order": "cp test/config/index.order.js src/config/index.js && npm run build",
     "build-customer": "cp test/config/index.customer.js src/config/index.js && npm run build",
     "build-cache": "cp test/config/index.cache.js src/config/index.js && npm run clean && webpack --config webpack.cache.config.js",
@@ -36,7 +38,6 @@
   "license": "MIT",
   "dependencies": {
     "@assemblyscript/loader": "^0.19.10",
-    "aegis": "^0.1.0",
     "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
@@ -45,6 +46,9 @@
     "nanoid": "^3.1.12",
     "smartystreets-javascript-sdk": "^1.6.0",
     "square": "^8.1.0",
+    "webpack": "^5.73.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-externals": "^0.0.1",
     "ws": "^7.5.2",
     "ws-heartbeat": "^1.2.0"
   },
@@ -67,11 +71,7 @@
     "is-core-module": "^2.2.0",
     "mocha": "^8.2.0",
     "nodemon": "^2.0.6",
-    "nodemon-webpack-plugin": "^4.3.2",
     "py-loader": "^0.3.1",
-    "snowpack": "^3.4.0",
-    "webpack": "5.0.0-beta.28",
-    "webpack-cli": "^3.3.12",
-    "webpack-node-externals": "^2.5.2"
+    "snowpack": "^3.4.0"
   }
 }

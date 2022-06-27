@@ -1,4 +1,5 @@
 export * from './order'
 export * from './user'
-export * from './accounts'
+// export * from "./customer";
+// export * from "./product";
 export * from './inventory'

@@ -1,16 +1,13 @@
 var path = require('path')
-const { ModuleFederationPlugin } = require('webpack').container
-const httpNode = require('./webpack/http-node')
+const StreamingRuntime = require('./node/streaming/')
+const NodeFederation = require('./node/streaming/NodeRuntime')
 
 var serverConfig = {
-  target: httpNode,
-
+  target: false,
   entry: ['@babel/polyfill', path.resolve(__dirname, 'src/index.js')],
   output: {
     path: path.resolve(__dirname, 'dist'),
-    publicPath:
-      'https://api.github.com?owner=module-federation&repo=aegis-application&filedir=dist&branch=order',
-    // "http://aegis.module-federation.org:8060",
+    publicPath: 'https://localhost',
     libraryTarget: 'commonjs'
   },
   devtool: 'source-map',
@@ -58,9 +55,32 @@ var serverConfig = {
     ]
   },
   plugins: [
-    new ModuleFederationPlugin({
-      name: 'order',
-      library: { type: 'commonjs-module' },
+    new StreamingRuntime({
+      name: 'apps',
+      filename: 'remoteEntry.js',
+      exposes: {
+        './models': './src/domain',
+        './adapters': './src/adapters',
+        './services': './src/services',
+        './event-bus': './src/services/event-bus'
+      },
+      shared: {
+        axios: {
+          eager: true
+        },
+        'smartystreets-javascript-sdk': {
+          eager: true
+        },
+        kafkajs: {
+          eager: true
+        },
+        nanoid: {
+          eager: true
+        }
+      }
+    }),
+    new NodeFederation({
+      name: 'apps',
       filename: 'remoteEntry.js',
       exposes: {
         './models': './src/domain',
