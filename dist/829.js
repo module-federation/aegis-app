@@ -224,9 +224,7 @@ var Account = {
           _ref$account_favicons = _ref.account_favicons,
           account_favicons = _ref$account_favicons === void 0 ? [] : _ref$account_favicons,
           _ref$account_logos = _ref.account_logos,
-          account_logos = _ref$account_logos === void 0 ? [] : _ref$account_logos,
-          _ref$user_eloqua_ids = _ref.user_eloqua_ids,
-          user_eloqua_ids = _ref$user_eloqua_ids === void 0 ? null : _ref$user_eloqua_ids;
+          account_logos = _ref$account_logos === void 0 ? [] : _ref$account_logos;
 
       return Object.freeze({
         id: dependencies.uuid(),
@@ -239,8 +237,7 @@ var Account = {
         slug: slug,
         canonical_domain_id: canonical_domain_id,
         account_favicons: account_favicons,
-        account_logos: account_logos,
-        user_eloqua_ids: user_eloqua_ids
+        account_logos: account_logos
       });
     };
   },

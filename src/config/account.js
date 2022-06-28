@@ -18,8 +18,7 @@ export const Account = {
     slug = null,
     canonical_domain_id = null,
     account_favicons = [],
-    account_logos = [],
-    user_eloqua_ids = null
+    account_logos = []
   } = {}) =>
     Object.freeze({
       id: dependencies.uuid(),
@@ -32,8 +31,7 @@ export const Account = {
       slug,
       canonical_domain_id,
       account_favicons,
-      account_logos,
-      user_eloqua_ids
+      account_logos
     }),
   mixins: [
     requireProperties('name', 'billing_email'),
