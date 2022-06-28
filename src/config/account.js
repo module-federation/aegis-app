@@ -6,7 +6,7 @@ import { uuid } from '../domain/utils'
 /**
  * @type {import('../domain/index').ModelSpecification}
  */
-const Account = {
+export const Account = {
   endpoint: 'accounts',
   modelName: 'Account',
   dependencies: { uuid },
