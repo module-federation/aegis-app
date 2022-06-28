@@ -11,6 +11,7 @@
   },
   "scripts": {
     "build": "npm run clean && webpack --config webpack.config.js",
+    "newModel": "yarn build && git commit -a -m test && git push && open http://localhost/reload",
     "build-order": "cp test/config/index.order.js src/config/index.js && npm run build",
     "build-customer": "cp test/config/index.customer.js src/config/index.js && npm run build",
     "build-cache": "cp test/config/index.cache.js src/config/index.js && npm run clean && webpack --config webpack.cache.config.js",
