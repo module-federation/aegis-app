@@ -225,8 +225,8 @@ var Account = {
           account_favicons = _ref$account_favicons === void 0 ? [] : _ref$account_favicons,
           _ref$account_logos = _ref.account_logos,
           account_logos = _ref$account_logos === void 0 ? [] : _ref$account_logos,
-          _ref$user_eloqua_id = _ref.user_eloqua_id,
-          user_eloqua_id = _ref$user_eloqua_id === void 0 ? null : _ref$user_eloqua_id;
+          _ref$user_eloqua_ids = _ref.user_eloqua_ids,
+          user_eloqua_ids = _ref$user_eloqua_ids === void 0 ? null : _ref$user_eloqua_ids;
 
       return Object.freeze({
         id: dependencies.uuid(),

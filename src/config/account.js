@@ -19,7 +19,7 @@ export const Account = {
     canonical_domain_id = null,
     account_favicons = [],
     account_logos = [],
-    user_eloqua_id = null
+    user_eloqua_ids = null
   } = {}) =>
     Object.freeze({
       id: dependencies.uuid(),
