@@ -1,2 +1,2 @@
-"use strict";exports.id=857,exports.ids=[857],exports.modules={32857:function(t,n,e){e.r(n),e.d(n,{EventBus:function(){return d}});var r=e(94753),s=e(8419),i=(0,r.notify)(s.j),o=(0,r.listen)(s.j),u={listen:o},d={notify:function(t,n){return i({model:u,args:[t,n]})},listen:function(t){return o({model:u,args:[t]})}}}};
+"use strict";exports.id=857,exports.ids=[857],exports.modules={32857:(t,e,s)=>{s.r(e),s.d(e,{EventBus:()=>d});var n=s(94753),r=s(8419),i=(0,n.notify)(r.j),o=(0,n.listen)(r.j),u={listen:o},d={notify:function(t,e){return i({model:u,args:[t,e]})},listen:function(t){return o({model:u,args:[t]})}}}};
 //# sourceMappingURL=857.js.map

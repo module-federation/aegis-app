@@ -11,7 +11,7 @@
   },
   "scripts": {
     "serveHosts": "node server.js",
-    "remoteEntry": "open http://localhost:3000/remoteEntry.js",
+    "remoteEntry": "open http://localhost:3001/remoteEntry.js",
     "build": "npm run clean && webpack --config webpack.config.js --mode production",
     "build-order": "cp test/config/index.order.js src/config/index.js && npm run build",
     "build-customer": "cp test/config/index.customer.js src/config/index.js && npm run build",

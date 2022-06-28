@@ -1,9 +1,10 @@
 var path = require('path')
 const StreamingRuntime = require('./node/streaming/')
 const NodeFederation = require('./node/streaming/NodeRuntime')
+const { ModuleFederationPlugin } = require('webpack').container
 
 var serverConfig = {
-  target: false,
+  target: 'async-node',
   entry: ['@babel/polyfill', path.resolve(__dirname, 'src/index.js')],
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -55,53 +56,65 @@ var serverConfig = {
     ]
   },
   plugins: [
+    // new ModuleFederationPlugin({
+    //   name: 'apps',
+    //   filename: 'remoteEntry.js',
+    //   library: { type: 'commonjs' },
+    //   exposes: {
+    //     './models': './src/domain'
+    //   }
+    // })
     new StreamingRuntime({
       name: 'apps',
       filename: 'remoteEntry.js',
+      library: { type: 'commonjs' },
       exposes: {
-        './models': './src/domain',
-        './adapters': './src/adapters',
-        './services': './src/services',
-        './event-bus': './src/services/event-bus'
-      },
-      shared: {
-        axios: {
-          eager: true
-        },
-        'smartystreets-javascript-sdk': {
-          eager: true
-        },
-        kafkajs: {
-          eager: true
-        },
-        nanoid: {
-          eager: true
-        }
+        models: './src/domain',
+        adapters: './src/adapters',
+        services: './src/services',
+        'event-bus': './src/services/event-bus'
       }
+      // ,
+      // shared: {
+      //   axios: {
+      //     // eager: true
+      //   },
+      //   'smartystreets-javascript-sdk': {
+      //     //eager: true
+      //   },
+      //   kafkajs: {
+      //     //eager: true
+      //   },
+      //   nanoid: {
+      //     //eager: true
+      //   }
+      // }
     }),
     new NodeFederation({
       name: 'apps',
       filename: 'remoteEntry.js',
+      library: { type: 'commonjs' },
       exposes: {
-        './models': './src/domain',
-        './adapters': './src/adapters',
-        './services': './src/services',
-        './event-bus': './src/services/event-bus'
-      },
-      shared: {
-        axios: {
-          eager: true
-        },
-        'smartystreets-javascript-sdk': {
-          eager: true
-        },
-        kafkajs: {
-          eager: true
-        },
-        nanoid: {
-          eager: true
-        }
+        models: './src/domain',
+        adapters: './src/adapters',
+        services: './src/services',
+        'event-bus': './src/services/event-bus'
       }
+      // ,
+      // shared: {
+      //   axios: {
+      //     //eager: true
+      //   },
+      //   'smartystreets-javascript-sdk': {
+      //     //eager: true
+      //   },
+      //   kafkajs: {
+      //     //eager: true
+      //   },
+      //   nanoid: {
+      //     //eager: true
+      //   }
+      // }
     })
   ]
 }
