@@ -51,7 +51,7 @@ import checkPayload from './check-payload'
  * @property {adapterFunction} refundPayment
  * @property {relationFunction} inventory - reserve inventory items
  * @property {adapterFunction} undo - undo all transactions up to this point
- * @property {function():Promise<Order>} pickOrder - find the items and get them ready for shipment
+ * @property {function():Promise<Order>} pickOrder - pick items from warehouse and prepare for shipment
  * @property {adapterFunction} authorizePayment - verify payment, i.e. reserve the balance due
  * @property {import('../adapters/shipping-adapter').shipOrder} shipOrder -
  * calls shipping service to print label and request delivery
@@ -271,10 +271,7 @@ export function readyToDelete (model) {
  */
 function handleError (error, order, func) {
   const errMsg = { func, orderNo: order.orderNo, error }
-
   if (order) order.emit('orderError', errMsg)
-
-  order.logError(errMsg)
 
   throw new Error(JSON.stringify(errMsg))
 }
@@ -352,13 +349,12 @@ export async function addressValidated (options = {}, payload = {}) {
 export async function paymentAuthorized (options = {}, payload = {}) {
   const { model: order } = options
   const changes = checkPayload(
-    'paymentAuthorization',
+    'paymentStatus',
     options,
     payload,
     paymentAuthorized.name
   )
-  order.logStateChange(paymentAuthorized.name + ' accepted')
-  return order.update(changes, false)
+  return order.update({ ...changes, paymentStatus }, false)
 }
 
 /**
@@ -376,7 +372,6 @@ export async function refundPayment (order) {
       payload,
       refundPayment.name
     )
-    order.logStateChange(`${OrderStatus.CANCELED} ${refundPayment.name}`)
     return order.update({ ...changes, orderStatus: OrderStatus.CANCELED })
   })
 }
@@ -387,6 +382,10 @@ export async function refundPayment (order) {
  * @returns {Promise<Order>}
  */
 async function verifyAddress (order) {
+  console.debug({
+    fn: verifyAddress.name,
+    validateAddress: order.validateAddress
+  })
   return order.validateAddress(addressValidated)
 }
 
@@ -405,18 +404,13 @@ async function verifyPayment (order) {
     /**
      * @type {Order}
      */
+    const authorizeOrder = await order.authorizePayment(paymentAuthorized)
 
-    const authorizedOrder = await order.authorizePayment(paymentAuthorized)
-
-    if (!authorizedOrder) {
-      throw new Error('payment auth problem')
+    if (!authorizeOrder.paymentDeclined) {
+      throw new Error('payment declined')
     }
 
-    if (!authorizedOrder.paymentAccepted()) {
-      throw new Error('payment authorization declined')
-    }
-
-    return authorizedOrder
+    return authorizeOrder
   } catch (e) {
     handleError(e, order, verifyPayment.name)
   }
@@ -431,15 +425,20 @@ async function verifyPayment (order) {
  */
 async function verifyInventory (order) {
   const inventory = await order.inventory()
-  console.debug('inventory', inventory)
+  if (inventory.length < 1) throw new Error('bad inventory ID')
 
-  // if (inventory?.length !== order.totalItems()) {
-  //   throw new Error('insufficient inventory available', order)
-  // }
+  const insufficient = order.orderItems.filter(item => {
+    const inv = inventory.find(i => i.id === item.itemId)
+    if (!inv) return true
+    if (inv.quantity < item.qty) return true
+    return false
+  })
 
-  return order
+  if (insufficient.length > 0) {
+    order.emit('lowOrOutOfStock', insufficient)
+    throw new Error(`low or out of stock: ${insufficient.map(i => i.itemId)}`)
+  }
 }
-
 /**
  * Copy existing customer data into the order
  * or create new customer from order details.
@@ -514,11 +513,10 @@ const OrderActions = {
       const processedOrder = await processPendingOrder(order)
 
       if (processedOrder.autoCheckout()) {
-        const status = { orderStatus: OrderStatus.APPROVED }
-
-        return runOrderWorkflow(await processedOrder.update(status, false))
+        runOrderWorkflow(
+          processedOrder.update({ OrderStatus: OrderStatus.APPROVED }, false)
+        )
       }
-      return processedOrder
     } catch (e) {
       console.error(e)
     }
@@ -526,22 +524,22 @@ const OrderActions = {
   },
 
   /**
-   * If payment is authorized, notify inventory.
+   * If payment is authorized, check inventory.
    * This kicks off the rest of the workflow,
-   * which is controlled through port config.
+   * which is controlled by port event flow.
    * @param {Order} order
    * @returns {Promise<Readonly<Order>>}
    */
   [OrderStatus.APPROVED]: async order => {
+    console.log('typeof order', typeof order)
     try {
-      if (order.paymentAccepted()) {
-        // Don't `await` the async result, which will block the API caller
-        // if we being executed that way. Return control back to caller now.
-        order.logStateChange('')
+      if (/approved/i.test(order.paymentStatus)) {
         return order.pickOrder(orderPicked)
       }
       await order.emit('PayAuthFail', 'Payment authorization problem')
+      return order
     } catch (error) {
+      console.log({ error })
       handleError(error, order, OrderStatus.APPROVED)
     }
     return order
@@ -554,7 +552,7 @@ const OrderActions = {
    */
   [OrderStatus.SHIPPING]: async order => {
     try {
-      // order.trackShipment(trackingUpdate);
+      order.trackShipment(trackingUpdate)
       console.debug({ func: OrderStatus.SHIPPING, order })
       await (await order.update({ orderStatus: OrderStatus.SHIPPING })).emit(
         'orderPicked'
@@ -610,6 +608,7 @@ export async function runOrderWorkflow (order) {
  */
 export async function handleOrderEvent ({ model: order, eventType, changes }) {
   if (changes?.orderStatus || eventType === 'CREATE') {
+    // console.debug({ fn: handleOrderEvent.name, order })
     return runOrderWorkflow(order)
   }
 }
@@ -689,7 +688,7 @@ export function makeOrderFactory (dependencies) {
        * Has payment for the order been authorized?
        */
       paymentAccepted () {
-        return this.paymentAuthorization ? true : false
+        return true
       },
       /**
        * Proceed to checkout automatically or wait for approval?
@@ -754,7 +753,8 @@ export async function approve (order) {
   const approvedOrder = await order.update({
     orderStatus: OrderStatus.APPROVED
   })
-  approvedOrder.logStateChange(OrderStatus.APPROVED)
+  console.debug({ approvedOrder })
+  //approvedOrder.logStateChange(OrderStatus.APPROVED)
   return runOrderWorkflow(approvedOrder)
 }
 
@@ -797,7 +797,7 @@ export function errorCallback ({ port, model: order, error }) {
  */
 export function timeoutCallback ({ port, ports, adapterFn, model: order }) {
   console.error('timeout...', port)
-  order.logError(timeoutCallback.name, 'timeout')
+  //order.logError(timeoutCallback.name, 'timeout')
   order.emit(timeoutCallback.name, errMsg)
 }
 
@@ -826,6 +826,8 @@ export async function returnShipment (order) {
   return order.update({ orderStatus: OrderStatus.CANCELED })
 }
 
+export function accountOrder (req, res) {}
+1
 /**
  * @type {undoFunction}
  * Start process to return canceled order items to inventory.

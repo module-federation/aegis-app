@@ -7,13 +7,13 @@
     "pnp": false
   },
   "repository": {
-    "url": "https://github.com/tysonrm/microlib-orderservice"
+    "url": "https://github.com/module-federation/aegis-app?branch=order"
   },
   "scripts": {
     "build": "npm run clean && webpack --config webpack.config.js",
-    "build-order": "cp test/config/index.order.js src/config/index.js && npm run build",
-    "build-customer": "cp test/config/index.customer.js src/config/index.js && npm run build",
-    "build-cache": "cp test/config/index.cache.js src/config/index.js && npm run clean && webpack --config webpack.cache.config.js",
+    "newModel": "yarn build && git commit -a -m test && git push && gp preview https://${PORT}-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}/hot-reload.html",
+    "updateModel": "yarn build && git commit -a -m test && git push",
+    "newBranch": "yarn build && cd ../aegis-host yarn build",
     "build-wasm": "asc src/assemblyscript/exports.ts -b src/assemblyscript/exports.wasm -t src/assemblyscript/exports.wat",
     "start": "node -r dotenv/config dist/main.js",
     "start-all": "npm run kafka-start && node -r dotenv/config dist/main.js",
@@ -68,6 +68,7 @@
     "mocha": "^8.2.0",
     "nodemon": "^2.0.6",
     "nodemon-webpack-plugin": "^4.3.2",
+    "py-loader": "^0.3.1",
     "snowpack": "^3.4.0",
     "webpack": "5.0.0-beta.28",
     "webpack-cli": "^3.3.12",

@@ -22,7 +22,8 @@ import {
   requiredForGuest,
   requiredForApproval,
   approve,
-  cancel
+  cancel,
+  accountOrder
 } from '../domain/order'
 
 import {
@@ -35,6 +36,7 @@ import {
 
 import { DataSourceAdapterMongoDb } from '../adapters/datasources/datasource-mongodb'
 import { nanoid } from 'nanoid'
+import { DataSourceFileAdapter } from '../adapters/datasources/datasource-file-adapter'
 
 /**
  * @type {import('../domain/index').ModelSpecification}
@@ -43,12 +45,17 @@ export const Order = {
   modelName: 'order',
   endpoint: 'orders',
   factory: makeOrderFactory,
-  datasource: {
-    factory: DataSourceAdapterMongoDb,
-    url: 'mongodb://172.31.30.141:27017',
-    cacheSize: 4000,
-    baseClass: 'DataSourceMongoDb'
-  },
+  // datasource: {
+  //   factory: DataSourceAdapterMongoDb,
+  //   url: 'mongodb://127.0.0.1:27017',
+  //   cacheSize: 4000,
+  //   baseClass: 'DataSourceMongoDb'
+  // },
+  // datasource: {
+  //   factory: DataSourceFileAdapter,
+  //   cacheSize: 4000,
+  //   baseClass: 'DataSourceFile'
+  // },
   dependencies: { uuid: () => nanoid(8) },
   mixins: [
     requireProperties(
@@ -149,10 +156,11 @@ export const Order = {
     authorizePayment: {
       service: 'Payment',
       type: 'outbound',
-      keys: 'paymentAuthorization',
+      keys: 'paymentStatus',
       consumesEvent: 'startWorkflow',
       producesEvent: 'paymentAuthorized',
-      undo: cancelPayment
+      undo: cancelPayment,
+      disabled: true
     },
     pickOrder: {
       service: 'Inventory',
@@ -237,15 +245,15 @@ export const Order = {
   relations: {
     customer: {
       modelName: 'customer',
-      foreignKey: 'customerId',
       type: 'manyToOne',
+      foreignKey: 'customerId',
       desc: 'Many orders per customer, just one customer per order'
     },
     inventory: {
       modelName: 'inventory',
-      foreignKey: 'itemId',
-      key: 'orderItems',
       type: 'containsMany',
+      foreignKey: 'itemId',
+      arrayKey: 'orderItems',
       desc: 'An order contains a list of inventory items to ship.'
     }
   },
@@ -281,6 +289,20 @@ export const Order = {
         }
       },
       acl: ['read', 'write']
+    }
+  },
+  routes: {
+    '/api/accounts/:id/issues': {
+      get (req, res) {}
+    },
+    '/api/orders/:id/accounts/:accountid': {
+      put: accountOrder,
+      get (req, res) {
+        res.send(JSON.stringify(req.model.account()))
+      },
+      delete (req, res) {
+        res.status(304).send('not permitted')
+      }
     }
   },
   serializers: [

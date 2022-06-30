@@ -9,7 +9,7 @@ var serverConfig = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     publicPath:
-      'https://api.github.com?owner=module-federation&repo=aegis-application&filedir=dist&branch=master',
+      'https://api.github.com?owner=module-federation&repo=aegis-application&filedir=dist&branch=order',
     // "http://aegis.module-federation.org:8060",
     libraryTarget: 'commonjs'
   },
@@ -20,6 +20,10 @@ var serverConfig = {
   mode: 'development',
   module: {
     rules: [
+      {
+        test: /\.py$/,
+        use: [{ loader: 'python-webpack-loader' }]
+      },
       {
         test: /\.wasm$/,
         type: 'webassembly/async'
@@ -34,6 +38,13 @@ var serverConfig = {
   },
   module: {
     rules: [
+      {
+        test: /\.py$/,
+        loader: 'py-loader',
+        options: {
+          compiler: 'transcrypt'
+        }
+      },
       {
         test: /\.js?$/,
         exclude: /node_modules/,

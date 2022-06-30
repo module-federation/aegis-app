@@ -1,0 +1,4876 @@
+exports.id = 829;
+exports.ids = [829];
+exports.modules = {
+
+/***/ "./src/adapters/datasources/datasource-file-adapter.js":
+/*!*************************************************************!*\
+  !*** ./src/adapters/datasources/datasource-file-adapter.js ***!
+  \*************************************************************/
+/*! namespace exports */
+/*! export DataSourceFileAdapter [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "DataSourceFileAdapter": () => /* binding */ DataSourceFileAdapter
+/* harmony export */ });
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var DataSourceFileAdapter = function DataSourceFileAdapter(url, cacheSize, DataSourceFile) {
+  /**
+   * Datasource adapter for AWS Dynamo DB
+   */
+  var DataSourceFileOrder = /*#__PURE__*/function (_DataSourceFile) {
+    _inherits(DataSourceFileOrder, _DataSourceFile);
+
+    var _super = _createSuper(DataSourceFileOrder);
+
+    function DataSourceFileOrder() {
+      _classCallCheck(this, DataSourceFileOrder);
+
+      return _super.apply(this, arguments);
+    }
+
+    _createClass(DataSourceFileOrder, [{
+      key: "save",
+      value: function save(id, data) {
+        _get(_getPrototypeOf(DataSourceFileOrder.prototype), "save", this).call(this, id, data);
+
+        console.log("DataSourceFileOrder datasource", id, data);
+      }
+    }]);
+
+    return DataSourceFileOrder;
+  }(DataSourceFile);
+
+  return DataSourceFileOrder;
+};
+
+/***/ }),
+
+/***/ "./src/adapters/datasources/datasource-mongodb.js":
+/*!********************************************************!*\
+  !*** ./src/adapters/datasources/datasource-mongodb.js ***!
+  \********************************************************/
+/*! namespace exports */
+/*! export DataSourceAdapterMongoDb [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "DataSourceAdapterMongoDb": () => /* binding */ DataSourceAdapterMongoDb
+/* harmony export */ });
+
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function getSecret() {
+  return process.env.MONGODB_CREDS || {
+    user: null,
+    pass: null,
+    token: null
+  };
+}
+
+function archive(id) {
+  console.debug("mock archive", id);
+}
+/**
+ * Datasource adapter factory.
+ * @param {string} url database url
+ * @param {number} [cacheSize] number of models to keep in cache
+ * @param {*} DataSource base class that enables caching
+ * @returns {import("./datasource").default}
+ */
+
+
+var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize, DataSourceMongoDb) {
+  /**
+   * MongoDB adapter extends in-memory datasource to support caching.
+   * The cache is always updated first, which allows the system to run
+   * even when the database is offline.
+   */
+  var DataSourceMongoDbArchive = /*#__PURE__*/function (_DataSourceMongoDb) {
+    _inherits(DataSourceMongoDbArchive, _DataSourceMongoDb);
+
+    var _super = _createSuper(DataSourceMongoDbArchive);
+
+    function DataSourceMongoDbArchive(datasource, factory, name) {
+      var _this;
+
+      _classCallCheck(this, DataSourceMongoDbArchive);
+
+      _this = _super.call(this, datasource, factory, name);
+      _this.url = url;
+      _this.cacheSize = cacheSize;
+      _this.creds = getSecret();
+      return _this;
+    }
+    /**
+     * @override
+     */
+
+
+    _createClass(DataSourceMongoDbArchive, [{
+      key: "delete",
+      value: function _delete(id) {
+        console.debug("archive", id);
+        archive(id);
+      }
+    }]);
+
+    return DataSourceMongoDbArchive;
+  }(DataSourceMongoDb);
+
+  return DataSourceMongoDbArchive;
+};
+
+/***/ }),
+
+/***/ "./src/config/account.js":
+/*!*******************************!*\
+  !*** ./src/config/account.js ***!
+  \*******************************/
+/*! namespace exports */
+/*! export Account [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Account": () => /* binding */ Account
+/* harmony export */ });
+/* harmony import */ var _domain_mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../domain/mixins */ "./src/domain/mixins.js");
+/* harmony import */ var _domain_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/utils */ "./src/domain/utils.js");
+
+
+
+
+/**
+ * @type {import('../domain/index').ModelSpecification}
+ */
+
+var Account = {
+  endpoint: 'accounts',
+  modelName: 'Account',
+  dependencies: {
+    uuid: _domain_utils__WEBPACK_IMPORTED_MODULE_1__.uuid
+  },
+  factory: function factory(dependencies) {
+    return function () {
+      var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          name = _ref.name,
+          _ref$recurly_code = _ref.recurly_code,
+          recurly_code = _ref$recurly_code === void 0 ? null : _ref$recurly_code,
+          billing_email = _ref.billing_email,
+          _ref$settings = _ref.settings,
+          settings = _ref$settings === void 0 ? null : _ref$settings,
+          _ref$slug = _ref.slug,
+          slug = _ref$slug === void 0 ? null : _ref$slug,
+          _ref$canonical_domain = _ref.canonical_domain_id,
+          canonical_domain_id = _ref$canonical_domain === void 0 ? null : _ref$canonical_domain,
+          _ref$account_favicons = _ref.account_favicons,
+          account_favicons = _ref$account_favicons === void 0 ? [] : _ref$account_favicons,
+          _ref$account_logos = _ref.account_logos,
+          account_logos = _ref$account_logos === void 0 ? [] : _ref$account_logos;
+
+      return Object.freeze({
+        id: dependencies.uuid(),
+        name: name,
+        created_at: Date.now(),
+        updated_at: Date.now(),
+        recurly_code: recurly_code,
+        billing_email: billing_email,
+        settings: settings,
+        slug: slug,
+        canonical_domain_id: canonical_domain_id,
+        account_favicons: account_favicons,
+        account_logos: account_logos
+      });
+    };
+  },
+  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)('name', 'billing_email'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.freezeProperties)('id', 'name', 'billing_email')]
+};
+
+/***/ }),
+
+/***/ "./src/config/index.js":
+/*!*****************************!*\
+  !*** ./src/config/index.js ***!
+  \*****************************/
+/*! namespace exports */
+/*! export Account [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/account.js .Account */
+/*! export Inventory [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/inventory.js .Inventory */
+/*! export Order [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/order.js .Order */
+/*! export User [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/user.js .User */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_exports__, __webpack_require__.d, __webpack_require__.r, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Order": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.Order,
+/* harmony export */   "User": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_1__.User,
+/* harmony export */   "Account": () => /* reexport safe */ _account__WEBPACK_IMPORTED_MODULE_2__.Account,
+/* harmony export */   "Inventory": () => /* reexport safe */ _inventory__WEBPACK_IMPORTED_MODULE_3__.Inventory
+/* harmony export */ });
+/* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./order */ "./src/config/order.js");
+/* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./user */ "./src/config/user.js");
+/* harmony import */ var _account__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./account */ "./src/config/account.js");
+/* harmony import */ var _inventory__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./inventory */ "./src/config/inventory.js");
+
+
+
+
+
+/***/ }),
+
+/***/ "./src/config/inventory.js":
+/*!*********************************!*\
+  !*** ./src/config/inventory.js ***!
+  \*********************************/
+/*! namespace exports */
+/*! export Inventory [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Inventory": () => /* binding */ Inventory
+/* harmony export */ });
+/* harmony import */ var _adapters_datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../adapters/datasources/datasource-mongodb */ "./src/adapters/datasources/datasource-mongodb.js");
+/* harmony import */ var _domain_inventory__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/inventory */ "./src/domain/inventory.js");
+/* harmony import */ var _domain_mixins__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../domain/mixins */ "./src/domain/mixins.js");
+
+
+
+
+
+/**
+ * @type {import("../domain/order").ModelSpecification}
+ */
+
+var Inventory = {
+  modelName: 'inventory',
+  endpoint: 'inventory',
+  dependencies: {},
+  factory: _domain_inventory__WEBPACK_IMPORTED_MODULE_1__.makeInventoryFactory,
+  // datasource: {
+  //   factory: DataSourceAdapterMongoDb,
+  //   url: 'mongodb://127.0.0.1:27017',
+  //   cacheSize: 4000,
+  //   baseClass: 'DataSourceMongoDb'
+  // },
+  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_2__.requireProperties)('name', 'inStock', 'category', 'price', 'purchaseOrder'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_2__.validateProperties)([{
+    propKey: 'inStock',
+    "typeof": 'number',
+    maxnum: 99999
+  }, {
+    propKey: 'category',
+    values: _domain_inventory__WEBPACK_IMPORTED_MODULE_1__.categories
+  }, {
+    propKey: 'assetType',
+    values: _domain_inventory__WEBPACK_IMPORTED_MODULE_1__.assetTypes
+  }, {
+    propKey: 'properties',
+    isValid: function isValid(_obj, prop) {
+      return prop.every(function (p) {
+        return _domain_inventory__WEBPACK_IMPORTED_MODULE_1__.properties.includes(p);
+      });
+    }
+  }, {
+    propKey: 'price',
+    "typeof": 'number',
+    maxnum: 999.99
+  }]), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_2__.freezeProperties)('*')],
+  relations: {
+    orders: {
+      modelName: 'order',
+      type: 'oneToMany',
+      foreignKey: 'itemId',
+      desc: 'many items per order'
+    }
+  }
+};
+
+/***/ }),
+
+/***/ "./src/config/order.js":
+/*!*****************************!*\
+  !*** ./src/config/order.js ***!
+  \*****************************/
+/*! namespace exports */
+/*! export Order [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Order": () => /* binding */ Order
+/* harmony export */ });
+/* harmony import */ var _domain_order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../domain/order */ "./src/domain/order.js");
+/* harmony import */ var _domain_mixins__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/mixins */ "./src/domain/mixins.js");
+/* harmony import */ var _adapters_datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../adapters/datasources/datasource-mongodb */ "./src/adapters/datasources/datasource-mongodb.js");
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! nanoid */ "webpack/sharing/consume/default/nanoid/nanoid");
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(nanoid__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _adapters_datasources_datasource_file_adapter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../adapters/datasources/datasource-file-adapter */ "./src/adapters/datasources/datasource-file-adapter.js");
+
+
+
+
+
+
+
+/**
+ * @type {import('../domain/index').ModelSpecification}
+ */
+
+var Order = {
+  modelName: 'order',
+  endpoint: 'orders',
+  factory: _domain_order__WEBPACK_IMPORTED_MODULE_0__.makeOrderFactory,
+  // datasource: {
+  //   factory: DataSourceAdapterMongoDb,
+  //   url: 'mongodb://127.0.0.1:27017',
+  //   cacheSize: 4000,
+  //   baseClass: 'DataSourceMongoDb'
+  // },
+  // datasource: {
+  //   factory: DataSourceFileAdapter,
+  //   cacheSize: 4000,
+  //   baseClass: 'DataSourceFile'
+  // },
+  dependencies: {
+    uuid: function uuid() {
+      return (0,nanoid__WEBPACK_IMPORTED_MODULE_3__.nanoid)(8);
+    }
+  },
+  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.requireProperties)('orderItems', (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForGuest)(['lastName', 'firstName', 'billingAddress', 'shippingAddress', 'creditCardNumber', 'email']), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForApproval)('paymentAuthorization'), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForCompletion)('proofOfDelivery')), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.freezeProperties)('orderNo', 'customerId', (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.freezeOnApproval)(['email', 'lastName', 'firstName', 'orderItems', 'orderTotal', 'billingAddress', 'shippingAddress', 'creditCardNumber', 'paymentAuthorization']), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.freezeOnCompletion)('*')), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.updateProperties)([{
+    propKey: 'orderItems',
+    update: _domain_order__WEBPACK_IMPORTED_MODULE_0__.recalcTotal
+  }, {
+    propKey: 'orderItems',
+    update: _domain_order__WEBPACK_IMPORTED_MODULE_0__.updateSignature
+  }]), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.validateProperties)([{
+    propKey: 'orderStatus',
+    values: Object.values(_domain_order__WEBPACK_IMPORTED_MODULE_0__.OrderStatus),
+    isValid: _domain_order__WEBPACK_IMPORTED_MODULE_0__.statusChangeValid
+  }, {
+    propKey: 'orderTotal',
+    maxnum: 99999.99,
+    isValid: _domain_order__WEBPACK_IMPORTED_MODULE_0__.orderTotalValid
+  }, {
+    propKey: 'email',
+    regex: 'email'
+  }, {
+    propKey: 'creditCardNumber',
+    regex: 'creditCard'
+  }, {
+    propKey: 'phone',
+    regex: 'phone'
+  }])],
+  validate: _domain_mixins__WEBPACK_IMPORTED_MODULE_1__.validateModel,
+  onDelete: _domain_order__WEBPACK_IMPORTED_MODULE_0__.readyToDelete,
+  eventHandlers: [_domain_order__WEBPACK_IMPORTED_MODULE_0__.handleOrderEvent],
+  ports: {
+    listen: {
+      service: 'Event',
+      type: 'outbound',
+      timeout: 0
+    },
+    notify: {
+      service: 'Event',
+      type: 'outbound',
+      timeout: 0
+    },
+    save: {
+      service: 'Persistence',
+      type: 'outbound',
+      timeout: 0
+    },
+    find: {
+      service: 'Persistence',
+      type: 'outbound',
+      timeout: 0
+    },
+    validateAddress: {
+      service: 'Address',
+      type: 'outbound',
+      keys: 'shippingAddress',
+      producesEvent: 'addressValidated',
+      disabled: true
+    },
+    authorizePayment: {
+      service: 'Payment',
+      type: 'outbound',
+      keys: 'paymentStatus',
+      consumesEvent: 'startWorkflow',
+      producesEvent: 'paymentAuthorized',
+      undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.cancelPayment,
+      disabled: true
+    },
+    pickOrder: {
+      service: 'Inventory',
+      type: 'outbound',
+      keys: 'pickupAddress',
+      consumesEvent: 'itemsAvailable',
+      producesEvent: 'orderPicked',
+      undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.returnInventory,
+      circuitBreaker: {
+        portTimeout_pickOrder_order: {
+          callVolume: 2,
+          errorRate: 1,
+          intervalMs: 60000
+        }
+      }
+    },
+    shipOrder: {
+      service: 'Shipping',
+      type: 'outbound',
+      callback: _domain_order__WEBPACK_IMPORTED_MODULE_0__.orderShipped,
+      consumesEvent: 'orderPicked',
+      producesEvent: 'orderShipped',
+      undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.returnShipment,
+      circuitBreaker: {
+        portTimeout_shipOrder_order: {
+          callVolume: 2,
+          errorRate: 1,
+          intervalMs: 60000
+        },
+        portRetryFailed_order: {
+          callVolume: 3,
+          errorRate: 2,
+          intervalMs: 60000,
+          fallbackFn: _domain_order__WEBPACK_IMPORTED_MODULE_0__.cancel
+        },
+        "default": {
+          callVolume: 3,
+          errorRate: 3,
+          intervalMs: 60000
+        }
+      }
+    },
+    trackShipment: {
+      service: 'Shipping',
+      type: 'outbound',
+      keys: ['trackingStatus', 'trackingId'],
+      consumesEvent: 'orderShipped',
+      producesEvent: 'orderDelivered',
+      circuitBreaker: {
+        portRetryFailed_order: {
+          callVolume: 2,
+          errorRate: 1,
+          intervalMs: 60000
+        }
+      }
+    },
+    verifyDelivery: {
+      service: 'Shipping',
+      type: 'outbound',
+      keys: 'proofOfDelivery',
+      consumesEvent: 'orderDelivered',
+      producesEvent: 'deliveryVerified',
+      undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.returnDelivery
+    },
+    completePayment: {
+      service: 'Payment',
+      type: 'outbound',
+      callback: _domain_order__WEBPACK_IMPORTED_MODULE_0__.paymentCompleted,
+      consumesEvent: 'deliveryVerified',
+      producesEvent: 'orderComplete',
+      undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.refundPayment
+    },
+    cancelShipment: {
+      service: 'Shipping',
+      type: 'outbound'
+    },
+    refundPayment: {
+      service: 'Payment',
+      type: 'outbound'
+    }
+  },
+  relations: {
+    customer: {
+      modelName: 'customer',
+      type: 'manyToOne',
+      foreignKey: 'customerId',
+      desc: 'Many orders per customer, just one customer per order'
+    },
+    inventory: {
+      modelName: 'inventory',
+      type: 'containsMany',
+      foreignKey: 'itemId',
+      arrayKey: 'orderItems',
+      desc: 'An order contains a list of inventory items to ship.'
+    }
+  },
+  commands: {
+    decrypt: {
+      command: 'decrypt',
+      acl: ['read', 'decrypt']
+    },
+    approve: {
+      command: _domain_order__WEBPACK_IMPORTED_MODULE_0__.approve,
+      acl: ['write', 'approve']
+    },
+    cancel: {
+      command: _domain_order__WEBPACK_IMPORTED_MODULE_0__.cancel,
+      acl: ['write', 'cancel']
+    },
+    runFibonacci: {
+      command: function command(model) {
+        var start = Date.now();
+
+        function fibonacci(x) {
+          if (x === 0) {
+            return 0;
+          }
+
+          if (x === 1) {
+            return 1;
+          }
+
+          return fibonacci(x - 1) + fibonacci(x - 2);
+        }
+
+        var param = parseFloat(model.fibonacci);
+        return {
+          result: fibonacci(Number.isNaN(param) ? 10 : param),
+          time: Date.now() - start
+        };
+      },
+      acl: ['read', 'write']
+    }
+  },
+  routes: {
+    '/api/accounts/:id/issues': {
+      get: function get(req, res) {}
+    },
+    '/api/orders/:id/accounts/:accountid': {
+      put: _domain_order__WEBPACK_IMPORTED_MODULE_0__.accountOrder,
+      get: function get(req, res) {
+        res.send(JSON.stringify(req.model.account()));
+      },
+      "delete": function _delete(req, res) {
+        res.status(304).send('not permitted');
+      }
+    }
+  },
+  serializers: [{
+    on: 'deserialize',
+    key: 'creditCardNumber',
+    type: 'string',
+    value: function value(key, _value) {
+      return decrypt(_value);
+    },
+    enabled: false
+  }, {
+    on: 'deserialize',
+    key: 'shippingAddress',
+    type: 'string',
+    value: function value(key, _value2) {
+      return decrypt(_value2);
+    },
+    enabled: false
+  }, {
+    on: 'deserialize',
+    key: 'billingAddress',
+    type: 'string',
+    value: function value(key, _value3) {
+      return decrypt(_value3);
+    },
+    enabled: false
+  }]
+};
+
+/***/ }),
+
+/***/ "./src/config/user.js":
+/*!****************************!*\
+  !*** ./src/config/user.js ***!
+  \****************************/
+/*! namespace exports */
+/*! export User [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "User": () => /* binding */ User
+/* harmony export */ });
+/* harmony import */ var _domain_mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../domain/mixins */ "./src/domain/mixins.js");
+/* harmony import */ var _domain_user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/user */ "./src/domain/user.js");
+/* harmony import */ var _domain_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../domain/utils */ "./src/domain/utils.js");
+
+
+
+
+
+/**
+ * @type {import('../domain').ModelSpecification}
+ */
+
+var User = {
+  modelName: 'user',
+  endpoint: 'users',
+  dependencies: {
+    uuid: _domain_utils__WEBPACK_IMPORTED_MODULE_2__.uuid
+  },
+  factory: _domain_user__WEBPACK_IMPORTED_MODULE_1__.userFactory,
+  mixins: _domain_user__WEBPACK_IMPORTED_MODULE_1__.userMixins,
+  validate: _domain_mixins__WEBPACK_IMPORTED_MODULE_0__.validateModel,
+  relations: {
+    customer: {
+      foreignKey: 'customerId',
+      type: 'oneToOne',
+      modelName: 'customer'
+    }
+  }
+};
+
+/***/ }),
+
+/***/ "./src/domain/bind-adapters.js":
+/*!*************************************!*\
+  !*** ./src/domain/bind-adapters.js ***!
+  \*************************************/
+/*! namespace exports */
+/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => /* binding */ makeAdapters
+/* harmony export */ });
+
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function makeAdapters(ports, adapters, services) {
+  if (!ports || !adapters) {
+    return;
+  }
+
+  return Object.keys(ports).map(function (port) {
+    if (!adapters[port]) {
+      return;
+    }
+
+    try {
+      return _defineProperty({}, port, adapters[port](services[ports[port].service]));
+    } catch (e) {
+      console.warn(e.message);
+    }
+  }).reduce(function (p, c) {
+    return _objectSpread(_objectSpread({}, p), c);
+  });
+}
+
+/***/ }),
+
+/***/ "./src/domain/check-payload.js":
+/*!*************************************!*\
+  !*** ./src/domain/check-payload.js ***!
+  \*************************************/
+/*! namespace exports */
+/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => /* binding */ checkPayload
+/* harmony export */ });
+
+/**
+ * Check the payload for expected properties.
+ * @param {string|string[]} key name of property or properties
+ * @param {*} options
+ * @param {*} payload
+ * @param {*} port
+ */
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function checkPayload(key) {
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var payload = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  var port = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : checkPayload.name;
+  var model = options.model;
+
+  if (!model || Object.keys(payload) < 1 || !key) {
+    throw new Error({
+      desc: 'model, payload, or key is missing',
+      model: model,
+      port: port,
+      error: error,
+      payload: payload,
+      key: key
+    });
+  }
+
+  if (Array.isArray(key)) {
+    var keys = key.map(function (k) {
+      return checkPayload(k, options, payload, port);
+    });
+    return keys.reduce(function (p, c) {
+      return _objectSpread(_objectSpread({}, p), c);
+    });
+  }
+
+  if (payload[key]) {
+    return _defineProperty({}, key, payload[key]);
+  }
+
+  if (model[key]) {
+    return _defineProperty({}, key, model[key]);
+  }
+
+  return model.find().then(function (latest) {
+    return _defineProperty({}, key, latest[key]);
+  })["catch"](function (error) {
+    throw new Error('property is missing' + key, port, error, payload, model);
+  });
+}
+
+/***/ }),
+
+/***/ "./src/domain/index.js":
+/*!*****************************!*\
+  !*** ./src/domain/index.js ***!
+  \*****************************/
+/*! namespace exports */
+/*! export models [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "models": () => /* binding */ models
+/* harmony export */ });
+/* harmony import */ var _mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mixins */ "./src/domain/mixins.js");
+/* harmony import */ var _bind_adapters__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bind-adapters */ "./src/domain/bind-adapters.js");
+/* harmony import */ var _test_mock__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../test/mock */ "./test/mock/index.js");
+/* harmony import */ var _adapters__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../adapters */ "./src/adapters/index.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../config */ "./src/config/index.js");
+
+/**
+ * @typedef {string} eventName
+ */
+
+/**
+ * @typedef  Model
+ * @property {string} _Symbol_id - immutable/private uuid
+ * @property {string} _Symbol_modelName - immutable/private name
+ * @property {string} _Symbol_createTime - immutable/private createTime
+ * @property {onUpdate} _Symbol_onUpdate - immutable/private update function
+ * @property {onDelete} _Symbol_onDelete
+ * @property {function(Object)} update - use this function to update model
+ * specify changes in an object
+ * @property {function()} toJSON - de/serialization logic
+ * @property {function(eventName,function(eventName,Model):void)} addListener listen for domain events
+ * @property {function(eventName,Model):Promise<void>} emit emit domain event
+ * @property {function(function():Promise<Model>):Promise<Model>} [port] - when a
+ * port is configured, the framework generates a function to invoke it. When data
+ * arrives on the port, depending on the implementation, the port's adapter invokes
+ * the callback specified in the port configuration, or as an argument to the port
+ * function. The callback returns an updated Model, and control is returned to the
+ * caller. Optionally, an event is fired to trigger the next port function to run
+ * @property {function():Promise<any>} [relation] - when you configure a relation,
+ * the framework generates a function that your code can call to run the query
+ * @property {function(*):*} [command] - the framework will call any model method
+ * you specify when passed as a parameter or query in an API call.
+ */
+
+/**
+ * @callback onUpdate called to handle model updates
+ * @param {Model} model
+ * @param {Object} changes
+ * @returns {Model | Error} updated model or throw
+ */
+
+/**
+ * @callback onDelete
+ * @param {Model} model
+ * @returns {Model | Error} updated model or throw
+ */
+
+/**
+ * @callback validate called to handle model updates
+ * @param {Model} model
+ * @param {Object} changes
+ * @returns {Model | Error} updated model or throw
+ */
+
+/**
+ * @callback onLoad
+ * @param {Model} savedModel rehydrated model
+ * @returns {Model | Error} updated model or throw
+ */
+
+/**
+ * @typedef {string} service - name of the service object to inject in adapter
+ * @typedef {number} timeout - call to adapter will timeout after `timeout` milliseconds
+ *
+ * @typedef {{
+ *  [x: string]: {
+ *    service: service,
+ *    timeout?: timeout,
+ *    callback?: function({model: Model})
+ *    errorCallback?: function({model: Model, port: string, error:Error}),
+ *    timeoutCallback?: function({model: Model, port: string}),
+ *    consumesEvent?:string,
+ *    producesEvent?:string,
+ *    type?:'inbound'|'outbound',
+ *    disabled?: boolean,
+ *    adapter?: string,
+ *    circuitBreaker?: thresholds
+ *  }
+ * }} ports - input/output ports for the domain
+ */
+
+/**
+ * @typedef {{
+ *  [x:string]: {
+ *    errorRate:number
+ *    callVolume:number,
+ *    intervalMs:number,
+ *    fallbackFn:function()
+ *  },
+ * }} thresholds - thresholds for different errors
+ */
+
+/**
+ * @typedef {{
+ *  [x: string]: {
+ *    modelName:string,
+ *    type:"oneToMany"|"oneToOne"|"manyToOne",
+ *    foreignKey:any,
+ *  }
+ * }} relations - define related domain entities
+ *
+ * @typedef {Array<function({
+ *  eventName:string,
+ *  eventType:string,
+ *  eventTime:string,
+ *  modelName:string,
+ *  model:Model
+ * }):Promise<void>>} eventHandler - callbacks invoked to handle domain and
+ * application events
+ */
+
+/**
+ *
+ * @typedef {string} key
+ * @typedef {*} value
+ */
+
+/**
+ * @typedef {{
+ *  on: "serialize" | "deserialize",
+ *  key: string | RegExp | "*" | (function(key,value):boolean)
+ *  type: "string" | "object" | "number" | "function" | "any" | (function(key,value):boolean)
+ *  value(key, value):value
+ * }} serializer
+ */
+
+/**
+ * @typedef {{
+ *  [x:string]: {
+ *    allow:string|function(*):boolean|Array<string|function(*):boolean>
+ *    deny:string|function(*):boolean|Array<string|function(*):boolean>
+ *    type:"role"|"relation"|"command"
+ *    desc?:string
+ *  }
+ * }} accessControlList
+ */
+
+/**
+ * @typedef {{
+ *  [x: string]: {
+ *    command:string|function(Model):Promise<any>,
+ *    acl:accessControlList[]
+ *  }
+ * }} commands - configure functions to execute when specified in a
+ * URL parameter or query of the auto-generate REST API
+ */
+
+/**
+ * @callback controller
+ * @param {Request} req
+ * @param {Response} res
+ */
+
+/**
+ * @typedef {{
+ *  [path: string]: {
+ *    get?: controller,
+ *    post?: controller,
+ *    patch?: controller,
+ *    delete?:controller
+ *   }
+ * }} endpoints
+ */
+
+/**
+ * @callback modelSpecFactoryFn
+ * @param {object} dependencies
+ * @returns {function(...args):Readonly<object>}
+ */
+
+/**
+ * @typedef {object} ModelSpecification Specify domain model properties and functions
+ * @property {string} modelName name of model (case-insenstive)
+ * @property {string} endpoint URI reference (e.g. plural of `modelName` noun)
+ * @property {modelSpecFactoryFn} factory returns factory function that creates the model instance
+ * @property {object} [dependencies] injected into the model for inverted dependency/control
+ * @property {Array<import("./mixins").functionalMixin>} [mixins] - use functional mixins
+ * to compose the object from common domain logic, like input validation.
+ * @property {onUpdate} [onUpdate] - Function called to handle update requests. Called
+ * before save.
+ * @property {onDelete} [onDelete] - Function called before deletion.
+ * @property {validate} [validate] - called to validate model updates
+ * @property {ports} [ports] - input/output ports for the domain
+ * @property {eventHandler[]} [eventHandlers] - callbacks invoked to handle application
+ * events, e.g. CRUD events
+ * @property {serializer[]} [serializers] - use for custom de/serialization of the model
+ * when reading or writing to storage or network
+ * @property {relations} [relations] - create related models or query in aggregate
+ * @property {commands} [commands] - define functions to execute when specified in a
+ * URL parameter or query of the auto-generated REST API
+ * @property {accessControlList} [accessControlList] - configure authorization
+ * @property {endpoints} [routes] - additional custom API endpoints - specify inbound port
+ * @property {{factory:import("../adapters/datasources/datasource-mongodb"),url:string,credentials?:string}} [datasource] - custom datasource
+ * for this model. If not set, the default set by the server is used.
+ *
+ */
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+ // Service dependencies
+
+
+ // Model properties
+
+
+
+function validateSpec(spec) {
+  var missing = ['modelName', 'endpoint', 'factory'].filter(function (key) {
+    return !spec[key];
+  });
+
+  if ((missing === null || missing === void 0 ? void 0 : missing.length) > 0) {
+    throw new Error("missing properties: ".concat(missing, ", spec: ").concat(Object.entries(spec)));
+  }
+}
+/**
+ * @param {ModelSpecification} spec
+ * @param {*} dependencies - services injected
+ */
+
+
+function makeModel(spec) {
+  validateSpec(spec);
+  var mixins = spec.mixins || [];
+  var dependencies = spec.dependencies || {};
+  return _objectSpread(_objectSpread({}, spec), {}, {
+    mixins: mixins.concat(_mixins__WEBPACK_IMPORTED_MODULE_0__.default),
+    dependencies: _objectSpread(_objectSpread({}, dependencies), (0,_bind_adapters__WEBPACK_IMPORTED_MODULE_1__.default)(spec.ports, _adapters__WEBPACK_IMPORTED_MODULE_3__, _test_mock__WEBPACK_IMPORTED_MODULE_2__))
+  });
+}
+
+var models = Object.values(_config__WEBPACK_IMPORTED_MODULE_4__).map(function (spec) {
+  return makeModel(spec);
+});
+
+/***/ }),
+
+/***/ "./src/domain/inventory.js":
+/*!*********************************!*\
+  !*** ./src/domain/inventory.js ***!
+  \*********************************/
+/*! namespace exports */
+/*! export assetTypes [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export categories [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export makeInventoryFactory [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export properties [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "assetTypes": () => /* binding */ assetTypes,
+/* harmony export */   "properties": () => /* binding */ properties,
+/* harmony export */   "categories": () => /* binding */ categories,
+/* harmony export */   "makeInventoryFactory": () => /* binding */ makeInventoryFactory
+/* harmony export */ });
+
+
+var assetTypes = ['rotating-asset', 'spare-part'];
+var properties = ['height', 'length', 'width', 'weight', 'color'];
+var categories = ['home', 'auto', 'business'];
+var makeInventoryFactory = function makeInventoryFactory(dependencies) {
+  return function (_ref) {
+    var category = _ref.category,
+        properties = _ref.properties,
+        price = _ref.price,
+        discount = _ref.discount,
+        name = _ref.name,
+        desc = _ref.desc,
+        sku = _ref.sku,
+        purchaseOrder = _ref.purchaseOrder,
+        vendor = _ref.vendor,
+        inStock = _ref.inStock,
+        assetType = _ref.assetType,
+        quantity = _ref.quantity;
+    return Object.freeze({
+      category: category,
+      properties: properties,
+      price: price - (discount || 0.0),
+      name: name,
+      desc: desc,
+      sku: sku,
+      purchaseOrder: purchaseOrder,
+      vendor: vendor,
+      inStock: inStock,
+      assetType: assetType,
+      quantity: quantity
+    });
+  };
+};
+
+/***/ }),
+
+/***/ "./src/domain/mixins.js":
+/*!******************************!*\
+  !*** ./src/domain/mixins.js ***!
+  \******************************/
+/*! namespace exports */
+/*! export RegEx [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export allowProperties [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export checkFormat [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export createMethod [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export encryptPersonalInfo [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export encryptProperties [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export execMethod [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export freezeProperties [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export hashPasswords [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export invokePort [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export mixinSets [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export mixinType [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export prevmodel [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export processUpdate [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export requireProperties [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export updateMixins [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export updateProperties [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export validateModel [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export validateProperties [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export validations [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export withValidFormat [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_exports__, __webpack_require__.r, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "prevmodel": () => /* binding */ prevmodel,
+/* harmony export */   "validations": () => /* binding */ validations,
+/* harmony export */   "mixinType": () => /* binding */ mixinType,
+/* harmony export */   "mixinSets": () => /* binding */ mixinSets,
+/* harmony export */   "processUpdate": () => /* binding */ processUpdate,
+/* harmony export */   "updateMixins": () => /* binding */ updateMixins,
+/* harmony export */   "validateModel": () => /* binding */ validateModel,
+/* harmony export */   "encryptProperties": () => /* binding */ encryptProperties,
+/* harmony export */   "freezeProperties": () => /* binding */ freezeProperties,
+/* harmony export */   "requireProperties": () => /* binding */ requireProperties,
+/* harmony export */   "hashPasswords": () => /* binding */ hashPasswords,
+/* harmony export */   "allowProperties": () => /* binding */ allowProperties,
+/* harmony export */   "RegEx": () => /* binding */ RegEx,
+/* harmony export */   "validateProperties": () => /* binding */ validateProperties,
+/* harmony export */   "updateProperties": () => /* binding */ updateProperties,
+/* harmony export */   "invokePort": () => /* binding */ invokePort,
+/* harmony export */   "execMethod": () => /* binding */ execMethod,
+/* harmony export */   "createMethod": () => /* binding */ createMethod,
+/* harmony export */   "withValidFormat": () => /* binding */ withValidFormat,
+/* harmony export */   "checkFormat": () => /* binding */ checkFormat,
+/* harmony export */   "encryptPersonalInfo": () => /* binding */ encryptPersonalInfo,
+/* harmony export */   "default": () => __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */ });
+/* harmony import */ var _domain_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../domain/utils */ "./src/domain/utils.js");
+/* harmony import */ var util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! util */ "util");
+/* harmony import */ var util__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(util__WEBPACK_IMPORTED_MODULE_1__);
+
+
+var _mixinSets;
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+/**
+ * Functional mixin created by `functionalMixinFactory`
+ * @callback functionalMixin
+ * @param {Object} o Object to compose
+ * @returns {Object} Composed object
+ */
+
+/**
+ * Functional mixin factory - partial application - returns mixin function
+ * @callback functionalMixinFactory
+ * @param {*} mixinParams params for mixin function
+ * @returns {functionalMixin}
+ */
+
+/**
+ * @typedef {import("../domain/index").Model} Model
+ */
+
+/**
+ * Private key to access previous version of the model
+ */
+
+var prevmodel = Symbol('prevModel');
+/**
+ * private key to access validation config
+ */
+
+var validations = Symbol('validations');
+/**
+ * Process mixin pre or post update
+ */
+
+var mixinType = {
+  pre: Symbol('pre'),
+  post: Symbol('post')
+};
+/**
+ * Stored mixins - use private symbol as key to prevent overwrite
+ */
+
+var mixinSets = (_mixinSets = {}, _defineProperty(_mixinSets, mixinType.pre, Symbol('preUpdateMixins')), _defineProperty(_mixinSets, mixinType.post, Symbol('postUpdateMixins')), _mixinSets);
+/**
+ * Set of pre mixins
+ */
+
+var premixins = mixinSets[mixinType.pre];
+/**
+ * Set of post mixins
+ */
+
+var postmixins = mixinSets[mixinType.post];
+/**
+ * Apply any pre and post mixins and return the result.
+ * @deprecated
+ * @param {*} model - current model
+ * @param {*} changes - object containing changes
+ * @returns {import('.').Model} updated model
+ */
+
+function processUpdate(model, changes) {
+  changes[prevmodel] = JSON.parse(JSON.stringify(model)); // keep history
+
+  var updates = model[premixins] ? _domain_utils__WEBPACK_IMPORTED_MODULE_0__.compose.apply(void 0, _toConsumableArray(model[premixins].values()))(changes) : changes;
+
+  var updated = _objectSpread(_objectSpread({}, model), updates);
+
+  return model[postmixins] ? _domain_utils__WEBPACK_IMPORTED_MODULE_0__.compose.apply(void 0, _toConsumableArray(model[postmixins].values()))(updated) : updated;
+}
+/**
+ * @deprecated
+ * Store mixins for execution on update
+ * @param {mixinType} type
+ * run before changes are applied or afterward
+ * @param {*} o  Object containing changes to apply (pre)
+ * or new object after changes have been applied (post)
+ * @param {string} name `Function.name`
+ * @param {functionalMixin} cb mixin function
+ */
+
+function updateMixins(type, o, name, cb) {
+  if (!mixinSets[type]) {
+    throw new Error('invalid mixin type');
+  }
+
+  var mixinSet = o[mixinSets[type]] || new Map();
+
+  if (!mixinSet.has(name)) {
+    mixinSet.set(name, cb());
+    return _objectSpread(_objectSpread({}, o), {}, _defineProperty({}, mixinSets[type], mixinSet));
+  }
+
+  return o;
+}
+/**
+ * bitmask for identifying events
+ */
+
+var eventMask = {
+  update: 1,
+  //  0001 Update
+  create: 1 << 1,
+  //  0010 Create
+  onload: 1 << 2 //  0100 Load
+
+};
+
+function handleUpdateEvent(model, updates, event) {
+  var isUpdate = eventMask.update & event;
+  var decrypted = isUpdate ? model.decrypt() : {};
+  return _objectSpread(_objectSpread(_objectSpread({}, model), updates), decrypted);
+}
+
+function isObject(p) {
+  return p != null && _typeof(p) === 'object';
+}
+
+function containsUpdates(model, changes, event) {
+  try {
+    if (!changes) return false;
+
+    if (eventMask.update & event) {
+      var changeList = Object.keys(changes);
+      if (changeList.length < 1) return false;
+
+      if (changeList.every(function (k) {
+        return model[k] && util__WEBPACK_IMPORTED_MODULE_1___default().isDeepStrictEqual(changes[k], model[k]);
+      })) {
+        return false;
+      }
+    }
+
+    return true;
+  } catch (error) {
+    console.error({
+      fn: containsUpdates.name,
+      error: error
+    });
+  }
+
+  return false;
+}
+/**
+ * Run validation functions enabled for a given event.
+ * @param {Model} model - the composed object
+ * @param {*} changes - object containing changes
+ * @param {Number} event - Indicates what event is occuring:
+ * 1st bit turned on means update, 2nd bit create, 3rd load,
+ * see {@link eventMask}.
+ */
+
+
+function validateModel(model, changes, event) {
+  if (!model || !changes || !event) return {}; // if there are no changes, and the event is an update, return
+
+  if (!containsUpdates(model, changes, event)) {
+    return model;
+  } // keep a history of the last saved model
+
+
+  var input = _objectSpread(_objectSpread({}, changes), {}, _defineProperty({}, prevmodel, JSON.parse(JSON.stringify(model)))); // Validate just the input data
+
+
+  var updates = model[validations].filter(function (v) {
+    return v.input & event;
+  }).sort(function (a, b) {
+    return a.order - b.order;
+  }).map(function (v) {
+    return model[v.name].apply(input);
+  }).reduce(function (p, c) {
+    return _objectSpread(_objectSpread({}, p), c);
+  }, input);
+
+  var updated = _objectSpread(_objectSpread({}, model), updates); // Validate the updated model
+
+
+  return updated[validations].filter(function (v) {
+    return v.output & event;
+  }).sort(function (a, b) {
+    return a.order - b.order;
+  }).map(function (v) {
+    return updated[v.name]();
+  }).reduce(function (p, c) {
+    return _objectSpread(_objectSpread({}, p), c);
+  }, updated);
+}
+/**
+ * Enable validation to run on specific events.
+ * @param {boolean} onUpdate - whether or not to run the validation on update.
+ * Defaults to `true`.
+ * @param {boolean} onCreate - whether or not to run the validation on create.
+ * Defaults to `true`.
+ * @param {boolean} onLoad - whether or not to run the validation when
+ * the object is being loaded into memory after being deserialized.
+ * Defaults to `false`.
+ */
+
+function enableEvent() {
+  var onUpdate = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+  var onCreate = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+  var onLoad = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  var enabled = 0;
+
+  if (onUpdate) {
+    enabled |= eventMask.update;
+  }
+
+  if (onCreate) {
+    enabled |= eventMask.create;
+  }
+
+  if (onLoad) {
+    enabled |= eventMask.onload;
+  }
+
+  return enabled;
+}
+/**
+ * Specify when validations run.
+ */
+
+
+var enableValidation = function () {
+  return {
+    /**
+     * Validation runs on update.
+     */
+    onUpdate: enableEvent(true, false, false),
+
+    /**
+     * Validation runs on create.
+     */
+    onCreate: enableEvent(false, true, false),
+
+    /**
+     * Validation runs on both create and update.
+     */
+    onCreateAndUpdate: enableEvent(true, true, false),
+
+    /**
+     * Validation runs on load.
+     */
+    onLoad: enableEvent(false, false, true),
+
+    /**
+     * Validation runs on all events.
+     */
+    onAll: enableEvent(true, true, true),
+
+    /**
+     * Validation runs on zero events (disabled).
+     */
+    never: enableEvent(false, false, false)
+  };
+}();
+/**
+ * Add a validation function to be called for a given event.
+ * @typedef {object} validationConfig
+ * @property {*} o - the composed object
+ * @property {string} name - name of function to run
+ * @property {number} input - "input" validations run against
+ * the data passed by the caller in the request. Use `enableValidation`
+ * to provide a value for this param.
+ * @property {number} output - "output" functions run against the
+ * model after the changes have been applied.
+ * @property {number} order - order in which validation runs
+ * @param {validationConfig} param0
+ */
+
+
+function addValidation(_ref) {
+  var model = _ref.model,
+      name = _ref.name,
+      _ref$input = _ref.input,
+      input = _ref$input === void 0 ? 0 : _ref$input,
+      _ref$output = _ref.output,
+      output = _ref$output === void 0 ? 0 : _ref$output,
+      _ref$order = _ref.order,
+      order = _ref$order === void 0 ? 50 : _ref$order;
+  var config = model[validations] || [];
+
+  if (config.some(function (v) {
+    return v.name === name;
+  })) {
+    console.warn('duplicate validation name', name);
+    return model;
+  }
+
+  return _objectSpread(_objectSpread({}, model), {}, _defineProperty({
+    validateModel: validateModel
+  }, validations, [].concat(_toConsumableArray(config), [{
+    name: name,
+    input: input,
+    output: output,
+    order: order
+  }])));
+}
+/**
+ * Resolve keys:
+ * If the value includes an array, flatten it, then for each element:
+ * If the value is "*", return all keys of the object.
+ * If the value is a function, execute it to get a dynamic key or key list.
+ * If the value is a RegExp, test it to get dynamic key list.
+ * If any of the above produce an array of keys, flatten it.
+ * @param {*} o - Object to compose
+ * @param  {Array<string | function(*):string>} propKeys -
+ * Names (or functions that return names) of properties
+ * @returns {string[]} list of (resolved) property keys
+ */
+
+
+function parseKeys(o) {
+  for (var _len = arguments.length, propKeys = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    propKeys[_key - 1] = arguments[_key];
+  }
+
+  if (!propKeys || !o) return null;
+  var keys = propKeys.flat().map(function (k) {
+    if (typeof k === 'function') return k(o);
+    if (k instanceof RegExp) return Object.keys(o).filter(function (key) {
+      return k.test(key);
+    });
+    if (k === '*') return Object.keys(o);
+    return k;
+  });
+  return keys.flat();
+}
+/**
+ * Encrypt properties. Properties remain encrypted indefinitely, and
+ * must be explicitly decrypted as needed, e.g. reading values in memory,
+ * from storage, serializing and sending to an external system.
+ * @param  {Array<string | function(*):string>} propKeys -
+ * Names (or functions that return names) of properties to encrypt
+ * @returns {functionalMixin} mixin function
+ */
+
+
+var encryptProperties = function encryptProperties() {
+  for (var _len2 = arguments.length, propKeys = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+    propKeys[_key2] = arguments[_key2];
+  }
+
+  return function (o) {
+    var keys = parseKeys.apply(void 0, [o].concat(propKeys));
+
+    var encryptProps = function encryptProps(obj) {
+      return keys.map(function (key) {
+        return obj[key] ? _defineProperty({}, key, (0,_domain_utils__WEBPACK_IMPORTED_MODULE_0__.encrypt)(obj[key])) : {};
+      }).reduce(function (p, c) {
+        return _objectSpread(_objectSpread({}, p), c);
+      });
+    };
+
+    return _objectSpread(_objectSpread({
+      encryptProperties: function encryptProperties() {
+        return encryptProps(this);
+      }
+    }, addValidation({
+      model: o,
+      name: encryptProperties.name,
+      input: enableValidation.onUpdate,
+      output: enableValidation.onCreate,
+      order: 100
+    })), {}, {
+      decrypt: function decrypt() {
+        var _this = this;
+
+        return keys.map(function (key) {
+          return _this[key] ? _defineProperty({}, key, (0,_domain_utils__WEBPACK_IMPORTED_MODULE_0__.decrypt)(_this[key])) : {};
+        }).reduce(function (p, c) {
+          return _objectSpread(_objectSpread({}, p), c);
+        });
+      }
+    });
+  };
+};
+/**
+ * Prevent properties from being modified.
+ * Accepts a property name or a function that returns a property name.
+ * @param  {Array<string | function(*):string | RegExp>} propKeys - names of properties to freeze
+ */
+
+var freezeProperties = function freezeProperties() {
+  for (var _len3 = arguments.length, propKeys = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+    propKeys[_key3] = arguments[_key3];
+  }
+
+  return function (o) {
+    var preventUpdates = function preventUpdates(obj) {
+      var keys = parseKeys.apply(void 0, [obj].concat(propKeys));
+      var mutations = Object.keys(obj).filter(function (key) {
+        return keys.includes(key);
+      });
+
+      if ((mutations === null || mutations === void 0 ? void 0 : mutations.length) > 0) {
+        throw new Error("cannot update readonly properties: ".concat(mutations));
+      }
+    };
+
+    return _objectSpread({
+      freezeProperties: function freezeProperties() {
+        preventUpdates(this);
+      }
+    }, addValidation({
+      model: o,
+      name: freezeProperties.name,
+      input: enableValidation.onUpdate,
+      order: 20
+    }));
+  };
+};
+/**
+ * Enforce required fields.
+ * @param {Array<string | function(*):string | RegExp>} propKeys -
+ * required property key names - can be a function or regex
+ * that returns the property key names
+ */
+
+var requireProperties = function requireProperties() {
+  for (var _len4 = arguments.length, propKeys = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+    propKeys[_key4] = arguments[_key4];
+  }
+
+  return function (o) {
+    var keys = parseKeys.apply(void 0, [o].concat(propKeys));
+
+    function requireProps(obj) {
+      var missing = keys.filter(function (key) {
+        return key && !obj[key];
+      });
+
+      if ((missing === null || missing === void 0 ? void 0 : missing.length) > 0) {
+        throw new Error("missing required properties: ".concat(missing));
+      }
+    }
+
+    return _objectSpread({
+      requireProperties: function requireProperties() {
+        requireProps(this);
+      }
+    }, addValidation({
+      model: o,
+      name: requireProperties.name,
+      output: enableValidation.onCreateAndUpdate,
+      order: 90
+    }));
+  };
+};
+/**
+ * Hash passwords.
+ * @param {*} hash hash algorithm
+ * @param  {Array<string | function(*):string | RegExp>} propKeys name of password props
+ */
+
+var hashPasswords = function hashPasswords() {
+  for (var _len5 = arguments.length, propKeys = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+    propKeys[_key5] = arguments[_key5];
+  }
+
+  return function (o) {
+    var keys = parseKeys.apply(void 0, [o].concat(propKeys));
+
+    function hashPwds(obj) {
+      return keys.map(function (key) {
+        return obj[key] ? _defineProperty({}, key, (0,_domain_utils__WEBPACK_IMPORTED_MODULE_0__.hash)(obj[key])) : {};
+      }).reduce(function (p, c) {
+        return _objectSpread(_objectSpread({}, p), c);
+      });
+    }
+
+    return _objectSpread({
+      hashPasswords: function hashPasswords() {
+        return hashPwds(this);
+      }
+    }, addValidation({
+      model: o,
+      name: hashPasswords.name,
+      input: enableValidation.onUpdate,
+      output: enableValidation.onCreate,
+      order: 100
+    }));
+  };
+};
+var internalPropList = [];
+/**
+ * Reject unknown properties in user input. Allow only approved keys.
+ * @param  {...any} propKeys
+ */
+
+var allowProperties = function allowProperties() {
+  for (var _len6 = arguments.length, propKeys = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+    propKeys[_key6] = arguments[_key6];
+  }
+
+  return function (o) {
+    function rejectUnknownProps() {
+      var keys = parseKeys.apply(void 0, [o].concat(propKeys));
+      var allowList = keys.concat(internalPropList);
+      var unknownProps = Object.keys(o).filter(function (key) {
+        return !allowList.includes(key);
+      });
+
+      if ((unknownProps === null || unknownProps === void 0 ? void 0 : unknownProps.length) > 0) {
+        throw new Error("invalid properties: ".concat(unknownProps));
+      }
+    }
+
+    return _objectSpread({
+      rejectUnknownProperties: function rejectUnknownProperties() {
+        return rejectUnknownProps(this);
+      }
+    }, addValidation({
+      model: o,
+      name: rejectUnknownProps.name,
+      input: enableValidation.onUpdate,
+      order: 10
+    }));
+  };
+};
+/**
+ * Test regular expressions
+ */
+
+var RegEx = {
+  email: /^(.+)@(.+){2,}\.(.+){2,}$/,
+  ipv4Address: /^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])$/,
+  ipv6Address: /^((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*::((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*|((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4})){7}$/,
+  phone: /^[1-9]\d{2}-\d{3}-\d{4}/,
+  creditCard: /^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/,
+  ssn: /^(?!666|000|9\\d{2})\\d{3}-(?!00)\\d{2}-(?!0{4})\\d{4}$/,
+
+  /**
+   * Allow caller to pass a keyword that refers to one of the regex above
+   * @param {regexType} expr
+   * @param {*} val
+   */
+  test: function test(expr, val) {
+    var _expr = Object.keys(this).includes(expr) && this[expr] instanceof RegExp ? this[expr] : expr;
+
+    return _expr.test(val);
+  }
+};
+/**
+ * @callback isValid
+ * @param {Object} o - the property owner
+ * @param {*} propVal - the property value
+ * @returns {boolean} - true if valid
+ *
+ * @typedef {'email'|'phone'|'ipv4Address'|'ipv6Address'|'creditCard'|'ssn'|RegExp} regexType
+ *
+ * @typedef {{
+ *  propKey:string,
+ *  isValid?:isValid,
+ *  values?:any[],
+ *  regex?:regexType,
+ *  maxlen?:number
+ *  maxnum?:number
+ *  typeof?:string
+ *  unique?:{ encrypted:boolean }
+ * }} validation
+ */
+
+function evaluateUniqueness(v, o, propVal) {
+  var compareVal = v.unique.encrypted ? (0,_domain_utils__WEBPACK_IMPORTED_MODULE_0__.encrypt)(propVal) : propVal;
+  return o.listSync(_defineProperty({}, v.propKey, compareVal)).length < 1;
+}
+/**
+ * Run validation tests
+ */
+
+
+var Validator = {
+  tests: {
+    isValid: function isValid(v, o, propVal) {
+      return v.isValid(o, propVal);
+    },
+    values: function values(v, o, propVal) {
+      return v.values.includes(propVal);
+    },
+    regex: function regex(v, o, propVal) {
+      return RegEx.test(v.regex, propVal);
+    },
+    "typeof": function _typeof(v, o, propVal) {
+      return v["typeof"] === _typeof(propVal);
+    },
+    maxnum: function maxnum(v, o, propVal) {
+      return v.maxnum + 1 > propVal;
+    },
+    maxlen: function maxlen(v, o, propVal) {
+      return v.maxlen + 1 > propVal.length;
+    },
+    unique: function unique(v, o, propVal) {
+      return evaluateUniqueness(v, o, propVal);
+    }
+  },
+
+  /**
+   * Returns true if tests pass.
+   * @param {validation} v validation config
+   * @param {Object} o object to compose
+   * @param {*} propVal value of property to validate
+   * @returns {boolean} true if tests pass
+   */
+  isValid: function isValid(v, o, propVal) {
+    var _this2 = this;
+
+    return Object.keys(this.tests).every(function (key) {
+      if (v[key]) {
+        // the test `key` is specified, run it
+        return _this2.tests[key](v, o, propVal);
+      }
+
+      return true;
+    });
+  }
+};
+/**
+ * Verify a property value is a member of a list,
+ * is unique within a set of model instances,
+ * is of a certain length, size or type,
+ * matches a regular expression,
+ * or satisfies a custom validation function.
+ * @param {validation[]} validations
+ */
+
+var validateProperties = function validateProperties(validations) {
+  return function (o) {
+    function validate(obj) {
+      var invalid = validations.filter(function (v) {
+        var propVal = obj[v.propKey];
+
+        if (!propVal) {
+          return false;
+        }
+
+        return !Validator.isValid(v, obj, propVal);
+      });
+
+      if ((invalid === null || invalid === void 0 ? void 0 : invalid.length) > 0) {
+        throw new Error("invalid value for ".concat(_toConsumableArray(invalid.map(function (v) {
+          return v.propKey;
+        }))));
+      }
+    }
+
+    return _objectSpread({
+      validateProperties: function validateProperties() {
+        validate(this);
+      }
+    }, addValidation({
+      model: o,
+      name: validateProperties.name,
+      input: enableValidation.onUpdate,
+      output: enableValidation.onCreate,
+      order: 50
+    }));
+  };
+};
+/**
+ * @callback updaterFn
+ * @param {Object} o
+ * @param  {*} propVal
+ * @returns {Object} object with updated properties
+ *
+ * @typedef {{
+ * propKey: string,
+ * update: updaterFn
+ * }} updater
+ */
+
+/**
+ * Respond to property updates by updating addtional (dependent) properties as needed.
+ * @param {updater[]} updaters
+ */
+
+var updateProperties = function updateProperties(updaters) {
+  return function (o) {
+    function updateProps(obj) {
+      var updates = updaters.filter(function (u) {
+        return obj[u.propKey];
+      });
+
+      if ((updates === null || updates === void 0 ? void 0 : updates.length) > 0) {
+        return updates.map(function (u) {
+          return u.update(o, obj[u.propKey]);
+        }).reduce(function (p, c) {
+          return _objectSpread(_objectSpread({}, p), c);
+        });
+      }
+    }
+
+    return _objectSpread({
+      updateProperties: function updateProperties() {
+        return updateProps(this);
+      }
+    }, addValidation({
+      model: o,
+      name: updateProperties.name,
+      input: enableValidation.onUpdate,
+      order: 30
+    }));
+  };
+};
+/**
+ * Set a validation that invokes a port. The port must be configured
+ * in the `ModelSpecification`.
+ * @param {string} fn - name of port (as it appears in the ModelSpec)
+ * @param {boolean} onCreate - invoke on create
+ * @param {boolean} onUpdate - invoke on update
+ * @param  {...any} args - pass arguments
+ */
+
+var invokePort = function invokePort(fn, onCreate, onUpdate) {
+  for (var _len7 = arguments.length, args = new Array(_len7 > 3 ? _len7 - 3 : 0), _key7 = 3; _key7 < _len7; _key7++) {
+    args[_key7 - 3] = arguments[_key7];
+  }
+
+  return /*#__PURE__*/function () {
+    var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(o) {
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              return _context.abrupt("return", _objectSpread(_objectSpread({}, o), {}, {
+                invokePort: function invokePort() {
+                  console.log({
+                    func: 'invokePort',
+                    fn: fn,
+                    args: args
+                  });
+                  return this[fn].apply(this, args).then(function (o) {
+                    return o;
+                  });
+                }
+              }, addValidation({
+                model: o,
+                name: 'invokePort',
+                output: enableValidation.onUpdate,
+                order: 85
+              })));
+
+            case 1:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    return function (_x) {
+      return _ref5.apply(this, arguments);
+    };
+  }();
+};
+/**
+ * Set a validation that calls a model method or provided function.
+ * @param {string|function(Model, ...any):Promise<any>} fn - callback function
+ * or name of method to executee
+ * @param {boolean} onCreate - invoke on create
+ * @param {boolean} onUpdate - invoke on update
+ * @param  {...any} args - pass arguments to the method/function
+ * @return {Model}
+ */
+
+var execMethod = function execMethod(fn, onCreate, onUpdate) {
+  for (var _len8 = arguments.length, args = new Array(_len8 > 3 ? _len8 - 3 : 0), _key8 = 3; _key8 < _len8; _key8++) {
+    args[_key8 - 3] = arguments[_key8];
+  }
+
+  return /*#__PURE__*/function () {
+    var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(o) {
+      var functionType;
+      return regeneratorRuntime.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              functionType = {
+                "function": function _function(fn, obj) {
+                  for (var _len9 = arguments.length, args = new Array(_len9 > 2 ? _len9 - 2 : 0), _key9 = 2; _key9 < _len9; _key9++) {
+                    args[_key9 - 2] = arguments[_key9];
+                  }
+
+                  return fn.apply(void 0, [obj].concat(args)).then(function (o) {
+                    return o;
+                  });
+                },
+                string: function string(fn, obj) {
+                  for (var _len10 = arguments.length, args = new Array(_len10 > 2 ? _len10 - 2 : 0), _key10 = 2; _key10 < _len10; _key10++) {
+                    args[_key10 - 2] = arguments[_key10];
+                  }
+
+                  return obj[fn].apply(obj, args).then(function (o) {
+                    return o;
+                  });
+                }
+              };
+              return _context3.abrupt("return", _objectSpread(_objectSpread({}, o), {}, {
+                execMethod: function execMethod() {
+                  var _this3 = this;
+
+                  return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+                    var model;
+                    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+                      while (1) {
+                        switch (_context2.prev = _context2.next) {
+                          case 0:
+                            _context2.next = 2;
+                            return functionType[_typeof(fn)].apply(functionType, [fn, _this3].concat(args));
+
+                          case 2:
+                            model = _context2.sent;
+                            return _context2.abrupt("return", model);
+
+                          case 4:
+                          case "end":
+                            return _context2.stop();
+                        }
+                      }
+                    }, _callee2);
+                  }))();
+                }
+              }, addValidation({
+                model: o,
+                name: 'execMethod',
+                output: enableValidation.onUpdate,
+                order: 40
+              })));
+
+            case 2:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3);
+    }));
+
+    return function (_x2) {
+      return _ref6.apply(this, arguments);
+    };
+  }();
+};
+/**
+ * Create a method on a model.
+ * @param {*} fn
+ * @param  {...any} args
+ */
+
+var createMethod = function createMethod(fn) {
+  for (var _len11 = arguments.length, args = new Array(_len11 > 1 ? _len11 - 1 : 0), _key11 = 1; _key11 < _len11; _key11++) {
+    args[_key11 - 1] = arguments[_key11];
+  }
+
+  return function (o) {
+    return _objectSpread(_objectSpread({}, o), {}, _defineProperty({}, fn.name, function () {
+      return fn.apply(void 0, args);
+    }));
+  };
+};
+/**
+ * Check the value of the property before returning its key.
+ * @param {*} propKey
+ * @param {regexType} expr
+ * @returns {function(any):any} dynamic property func
+ */
+
+var withValidFormat = function withValidFormat(propKey, expr) {
+  return function (o) {
+    if (o[propKey] && !RegEx.test(expr, o[propKey])) {
+      throw new Error("invalid ".concat(propKey));
+    }
+
+    return propKey;
+  };
+};
+/**
+ *
+ * @param {string} value
+ * @param {regexType} expr
+ */
+
+var checkFormat = function checkFormat(value, expr) {
+  if (value && !RegEx.test(expr, value)) {
+    var x = expr instanceof RegExp ? value : expr;
+    throw new Error("".concat(x, " invalid"));
+  }
+};
+/**
+ * Implement GDPR encryption requirement across models
+ */
+
+var encryptPersonalInfo = encryptProperties(/^last.*Name$|^surname$|^family.*Name$/i, /^shipping.*Address$/i, /^billing.*Address$/i, /^home.*Address$/i, /email|e-mail/i, /^phone$|^home.*phone$/i, /^mobile$|^mobile.*number$|^cell.*number$/i, /^credit.*Card/i, /^cvv$/i, /^ssn$|^socialSecurity/i, /^encrypted/i);
+/**
+ * Global mixins
+ */
+
+var GlobalMixins = [encryptPersonalInfo];
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (GlobalMixins);
+
+/***/ }),
+
+/***/ "./src/domain/order.js":
+/*!*****************************!*\
+  !*** ./src/domain/order.js ***!
+  \*****************************/
+/*! namespace exports */
+/*! export OrderStatus [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export accountOrder [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export addressValidated [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export approve [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export calcTotal [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export cancel [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export cancelPayment [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export checkItem [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export checkItems [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export checkout [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export errorCallback [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export freezeOnApproval [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export freezeOnCompletion [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export handleOrderEvent [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export itemCount [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export makeOrderFactory [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export orderPicked [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export orderShipped [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export orderTotalValid [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export paymentAuthorized [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export paymentCompleted [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export readyToDelete [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export recalcTotal [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export refundPayment [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export requiredForApproval [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export requiredForCompletion [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export requiredForGuest [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export returnDelivery [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export returnInventory [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export returnShipment [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export runOrderWorkflow [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export statusChangeValid [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export timeoutCallback [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export updateSignature [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "OrderStatus": () => /* binding */ OrderStatus,
+/* harmony export */   "checkItem": () => /* binding */ checkItem,
+/* harmony export */   "checkItems": () => /* binding */ checkItems,
+/* harmony export */   "calcTotal": () => /* binding */ calcTotal,
+/* harmony export */   "itemCount": () => /* binding */ itemCount,
+/* harmony export */   "freezeOnApproval": () => /* binding */ freezeOnApproval,
+/* harmony export */   "freezeOnCompletion": () => /* binding */ freezeOnCompletion,
+/* harmony export */   "requiredForGuest": () => /* binding */ requiredForGuest,
+/* harmony export */   "requiredForApproval": () => /* binding */ requiredForApproval,
+/* harmony export */   "requiredForCompletion": () => /* binding */ requiredForCompletion,
+/* harmony export */   "statusChangeValid": () => /* binding */ statusChangeValid,
+/* harmony export */   "orderTotalValid": () => /* binding */ orderTotalValid,
+/* harmony export */   "recalcTotal": () => /* binding */ recalcTotal,
+/* harmony export */   "updateSignature": () => /* binding */ updateSignature,
+/* harmony export */   "readyToDelete": () => /* binding */ readyToDelete,
+/* harmony export */   "paymentCompleted": () => /* binding */ paymentCompleted,
+/* harmony export */   "orderShipped": () => /* binding */ orderShipped,
+/* harmony export */   "orderPicked": () => /* binding */ orderPicked,
+/* harmony export */   "addressValidated": () => /* binding */ addressValidated,
+/* harmony export */   "paymentAuthorized": () => /* binding */ paymentAuthorized,
+/* harmony export */   "refundPayment": () => /* binding */ refundPayment,
+/* harmony export */   "runOrderWorkflow": () => /* binding */ runOrderWorkflow,
+/* harmony export */   "handleOrderEvent": () => /* binding */ handleOrderEvent,
+/* harmony export */   "makeOrderFactory": () => /* binding */ makeOrderFactory,
+/* harmony export */   "approve": () => /* binding */ approve,
+/* harmony export */   "cancel": () => /* binding */ cancel,
+/* harmony export */   "checkout": () => /* binding */ checkout,
+/* harmony export */   "errorCallback": () => /* binding */ errorCallback,
+/* harmony export */   "timeoutCallback": () => /* binding */ timeoutCallback,
+/* harmony export */   "returnInventory": () => /* binding */ returnInventory,
+/* harmony export */   "returnShipment": () => /* binding */ returnShipment,
+/* harmony export */   "accountOrder": () => /* binding */ accountOrder,
+/* harmony export */   "returnDelivery": () => /* binding */ returnDelivery,
+/* harmony export */   "cancelPayment": () => /* binding */ cancelPayment
+/* harmony export */ });
+/* harmony import */ var _mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mixins */ "./src/domain/mixins.js");
+/* harmony import */ var _domain_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/utils */ "./src/domain/utils.js");
+/* harmony import */ var _check_payload__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./check-payload */ "./src/domain/check-payload.js");
+
+
+var _OrderActions;
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
+
+
+/** @typedef { import('../domain/index.js').ModelSpecification} ModelSpecification */
+
+/** @typedef {string|RegExp} topic*/
+
+/** @typedef {function(string)} eventCallback*/
+
+/** @typedef {import('../adapters/index').adapterFunction} adapterFunction*/
+
+/** @typedef {string} id */
+
+/** @typedef {import("./customer").Customer} Customer */
+
+/** @typedef {function(Order)} undoFunction */
+
+/**
+ * @callback logMessageFn
+ * @param {object|string} message
+ * @param {logType} [type]
+ */
+
+/** @typedef {'first'|'last'|'lastStateChange'|'stateChange'|'error'|'undo'} logType */
+
+/**
+ * @typedef readLogType
+ * @property {number} index
+ * @property  {logType} type
+ */
+
+/**
+ * @typedef {{
+ *  itemId: string,
+ *  price: number,
+ *  qty?: number
+ * }} orderItemType
+ */
+
+/**
+ * @callback relationFunction
+ * @property {...args}
+ * @returns {Promise<Model>}
+ * } relationFunction
+ */
+
+/**
+ *  @typedef {Object} Order The Order Service
+ * @property {function(topic,eventCallback)} listen - listen for events
+ * @property {import('../adapters/event-adapter').notifyType} notify
+ * @property {adapterFunction} validateAddress - returns valid address or throws exception
+ * @property {adapterFunction} completePayment - completes payment for an authorized charge
+ * @property {adapterFunction} verifyDelivery - verify the order was received by the customer
+ * @property {adapterFunction} trackShipment
+ * @property {adapterFunction} refundPayment
+ * @property {relationFunction} inventory - reserve inventory items
+ * @property {adapterFunction} undo - undo all transactions up to this point
+ * @property {function():Promise<Order>} pickOrder - pick items from warehouse and prepare for shipment
+ * @property {adapterFunction} authorizePayment - verify payment, i.e. reserve the balance due
+ * @property {import('../adapters/shipping-adapter').shipOrder} shipOrder -
+ * calls shipping service to print label and request delivery
+ * @property {function(Order):Promise<void>} save - saves order
+ * @property {function():Promise<Order>} find - finds order
+ * @property {string} shippingAddress
+ * @property {string} orderNo = the order number
+ * @property {string} trackingId - id given by tracking status for this `orderNo`
+ * @property {function():Order} decrypt - decrypts sensitive properties
+ * @property {function({key1:any,keyN:any}, boolean):Promise<Order>} update - update the order,
+ * set the second arg to false to turn off validation.
+ * @property {'PENDING'|'APPROVED'|'SHIPPING'|'CANCELED'|'COMPLETED'} orderStatus
+ * @property {function(...args):Promise<import("../domain/index").Model>} customer - retrieves related customer object,
+ * or if args are provided, creates a new customer object, using the provided args as the input.
+ * @property {function(string,Order):Promise} emit - broadcast domain event
+ * @property {function():boolean} paymentAccepted - payment approved and funds reserved
+ * @property {function():boolean} autoCheckout - whether or not to immediately submit the order
+ * @property {boolean} saveShippingDetails save shipping and payment details in a new customer record
+ * @property {{itemId:string,price:number,qty:number}[]} orderItems
+ * @property {Symbol} customerId {@link Customer}
+ * @property {logMessageFn} logEvent
+ * @property {logMessageFn} logError
+ * @property {logMessageFn} logUndo
+ * @property {logMessageFn} logStateChange
+ * @property {readMessageFn} readLog
+ */
+
+var orderStatus = 'orderStatus';
+var orderTotal = 'orderTotal';
+var orderNo = 'orderNo';
+var OrderStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  SHIPPING: 'SHIPPING',
+  COMPLETE: 'COMPLETE',
+  CANCELED: 'CANCELED'
+};
+/**
+ *
+ * @param {orderItemType} orderItem
+ * @returns {boolean} true if item is valid
+ */
+
+var checkItem = function checkItem(orderItem) {
+  return typeof orderItem.itemId === 'string' && typeof orderItem.price === 'number';
+};
+/**
+ * @param {orderItemType[]} orderItems
+ */
+
+var checkItems = function checkItems(orderItems) {
+  if (!orderItems || orderItems.length < 1) {
+    throw new Error('order contains no items');
+  }
+
+  var items = Array.isArray(orderItems) ? orderItems : [orderItems];
+
+  if (items.length > 0 && items.every(checkItem)) {
+    return items;
+  }
+
+  throw new Error('order items invalid');
+};
+/**
+ * Calculate order total
+ * @param {orderItemType[]} orderItems
+ */
+
+var calcTotal = function calcTotal(orderItems) {
+  var items = checkItems(orderItems);
+  return items.reduce(function (total, item) {
+    var qty = item.qty || 1;
+    return total += item.price * qty;
+  }, 0);
+};
+/**
+ * @param {orderItemType[]} orderItems
+ * @returns {number} number of items
+ */
+
+var itemCount = function itemCount(orderItems) {
+  return orderItems.reduce(function (total, item) {
+    return total += item.qty || 1;
+  });
+};
+/**
+ * No changes to `propKey` properties once the order is approved
+ * @param {*} o - the order
+ * @param {*} propKey
+ * @returns {string | null} the key or `null`
+ */
+
+var freezeOnApproval = function freezeOnApproval(propKey) {
+  return function (o) {
+    return o.orderStatus && o.orderStatus !== OrderStatus.PENDING ? propKey : null;
+  };
+};
+
+var finalStatus = function finalStatus(status) {
+  return [OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(status);
+};
+/**
+ * No changes to `propKey` once order is complete or canceled
+ * @param {*} o - the order
+ * @param {*} propKey
+ * @returns {string | null} the key or `null`
+ */
+
+
+var freezeOnCompletion = function freezeOnCompletion(propKey) {
+  return function (o) {
+    return finalStatus() ? propKey : null;
+  };
+};
+/**
+ * If not a registered customer, provide shipping & payment details.
+ * @param {*} o
+ * @param {*} propKey
+ * @returns {string | void} the key or `void`
+ */
+
+var requiredForGuest = function requiredForGuest(propKey) {
+  return function (o) {
+    return o.customerId ? null : propKey;
+  };
+};
+/**
+ * Value required to approve order.
+ * @param {*} propKey
+ */
+
+var requiredForApproval = function requiredForApproval(propKey) {
+  return function (o) {
+    return o.orderStatus === OrderStatus.APPROVED ? propKey : null;
+  };
+};
+/**
+ * Value required to complete order
+ * @param {object} o
+ * @param {string | string[]} propKey these props are required to comlete the order
+ * @returns {string | void} the key or `void`
+ */
+
+var requiredForCompletion = function requiredForCompletion(propKey) {
+  return function (o) {
+    return o.orderStatus === OrderStatus.COMPLETE ? propKey : null;
+  };
+};
+/**
+ *
+ * @param {enum} from
+ * @param {enum} to
+ * @returns
+ */
+
+var invalidStatusChange = function invalidStatusChange(from, to) {
+  return function (o, propVal) {
+    return propVal === to && o[_mixins__WEBPACK_IMPORTED_MODULE_0__.prevmodel].orderStatus === from;
+  };
+};
+
+var invalidStatusChanges = [// Can't change back to pending once approved
+invalidStatusChange(OrderStatus.APPROVED, OrderStatus.PENDING), // Can't change back to pending once shipped
+invalidStatusChange(OrderStatus.SHIPPING, OrderStatus.PENDING), // Can't change back to approved once shipped
+invalidStatusChange(OrderStatus.SHIPPING, OrderStatus.APPROVED), // Can't change directly to shipping from pending
+invalidStatusChange(OrderStatus.PENDING, OrderStatus.SHIPPING), // Can't change directly to complete from pending
+invalidStatusChange(OrderStatus.PENDING, OrderStatus.COMPLETE), // Can't change final status
+invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.PENDING), invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.SHIPPING), invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.APPROVED), invalidStatusChange(OrderStatus.COMPLETE, OrderStatus.CANCELED), // Can't change final status
+invalidStatusChange(OrderStatus.CANCELED, OrderStatus.PENDING), invalidStatusChange(OrderStatus.CANCELED, OrderStatus.SHIPPING), invalidStatusChange(OrderStatus.CANCELED, OrderStatus.APPROVED), invalidStatusChange(OrderStatus.CANCELED, OrderStatus.COMPLETE)];
+/**
+ * Check that status changes are valid
+ */
+
+var statusChangeValid = function statusChangeValid(o, propVal) {
+  if (invalidStatusChanges.some(function (i) {
+    return i(o, propVal);
+  })) {
+    throw new Error('invalid status change');
+  }
+
+  return true;
+};
+/**
+ *
+ * @param {*} o
+ * @param {*} propVal
+ */
+
+var orderTotalValid = function orderTotalValid(o, propVal) {
+  return calcTotal(o.orderItems) === propVal;
+};
+/**
+ * Recalculate order total
+ * @param {object} o - the object (order)
+ * @param {number} propVal - the property value
+ */
+
+var recalcTotal = function recalcTotal(o, propVal) {
+  return {
+    orderTotal: calcTotal(propVal)
+  };
+};
+/**
+ * Updated signature requirement if `orderTotal` above certain value
+ * @param {object} o - the object (order)
+ * @param {number} propVal - the property value
+ */
+
+var updateSignature = function updateSignature(o, propVal) {
+  return {
+    signatureRequired: calcTotal(propVal) > 999.99 || o.signatureRequired
+  };
+};
+/**
+ * Don't delete orders before they're complete.
+ */
+
+function readyToDelete(model) {
+  if (![OrderStatus.COMPLETE, OrderStatus.CANCELED].includes(model.orderStatus)) {
+    throw new Error('order must be canceled or completed');
+  }
+
+  return model;
+}
+/**
+ *
+ * @param {Error} error
+ * @param {Order} order
+ * @param {*} func
+ */
+
+function handleError(error, order, func) {
+  var errMsg = {
+    func: func,
+    orderNo: order.orderNo,
+    error: error
+  };
+  if (order) order.emit('orderError', errMsg);
+  throw new Error(JSON.stringify(errMsg));
+}
+/**
+ * Callback invoked by adapter when payment is complete
+ * @param {{model:Order}} options
+ */
+
+
+function paymentCompleted() {
+  return _paymentCompleted.apply(this, arguments);
+}
+/**
+ * Callback invoked by shipping adapter when order is picked up.
+ * @param {{model:Order}} options
+ * @param {string} shipmentId
+ */
+
+function _paymentCompleted() {
+  _paymentCompleted = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
+    var options,
+        payload,
+        order,
+        changes,
+        _args7 = arguments;
+    return regeneratorRuntime.wrap(function _callee7$(_context7) {
+      while (1) {
+        switch (_context7.prev = _context7.next) {
+          case 0:
+            options = _args7.length > 0 && _args7[0] !== undefined ? _args7[0] : {};
+            payload = _args7.length > 1 && _args7[1] !== undefined ? _args7[1] : {};
+            order = options.model;
+            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('confirmationCode', options, payload, paymentCompleted.name);
+            return _context7.abrupt("return", order.update(_objectSpread(_objectSpread({}, changes), {}, {
+              orderStatus: OrderStatus.COMPLETE
+            })));
+
+          case 5:
+          case "end":
+            return _context7.stop();
+        }
+      }
+    }, _callee7);
+  }));
+  return _paymentCompleted.apply(this, arguments);
+}
+
+function orderShipped() {
+  return _orderShipped.apply(this, arguments);
+}
+/**
+ * Callback invoked when order is ready for pickup
+ * @param {{ model:Order }} options
+ */
+
+function _orderShipped() {
+  _orderShipped = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
+    var options,
+        payload,
+        order,
+        shipmentPayload,
+        _args8 = arguments;
+    return regeneratorRuntime.wrap(function _callee8$(_context8) {
+      while (1) {
+        switch (_context8.prev = _context8.next) {
+          case 0:
+            options = _args8.length > 0 && _args8[0] !== undefined ? _args8[0] : {};
+            payload = _args8.length > 1 && _args8[1] !== undefined ? _args8[1] : {};
+            order = options.model;
+            shipmentPayload = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('shipmentId', options, payload, orderShipped.name);
+            return _context8.abrupt("return", order.update({
+              shipmentId: shipmentPayload.shipmentId,
+              orderStatus: OrderStatus.SHIPPING
+            }));
+
+          case 5:
+          case "end":
+            return _context8.stop();
+        }
+      }
+    }, _callee8);
+  }));
+  return _orderShipped.apply(this, arguments);
+}
+
+function orderPicked() {
+  return _orderPicked.apply(this, arguments);
+}
+/**
+ * Callback invoked when shippingAddress is verified (and possibly corrected)
+ * @param {{ model:Order }} options
+ * @param {string} shippingAddress
+ */
+
+function _orderPicked() {
+  _orderPicked = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9() {
+    var options,
+        payload,
+        order,
+        changes,
+        _args9 = arguments;
+    return regeneratorRuntime.wrap(function _callee9$(_context9) {
+      while (1) {
+        switch (_context9.prev = _context9.next) {
+          case 0:
+            options = _args9.length > 0 && _args9[0] !== undefined ? _args9[0] : {};
+            payload = _args9.length > 1 && _args9[1] !== undefined ? _args9[1] : {};
+            order = options.model;
+            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('pickupAddress', options, payload, addressValidated.name);
+            return _context9.abrupt("return", order.update(changes));
+
+          case 5:
+          case "end":
+            return _context9.stop();
+        }
+      }
+    }, _callee9);
+  }));
+  return _orderPicked.apply(this, arguments);
+}
+
+function addressValidated() {
+  return _addressValidated.apply(this, arguments);
+}
+/**
+ * Called by adapter when port recevies response from payment service.
+ * @param {{ model:Order }} options
+ * @param {*} paymentAuthorization
+ */
+
+function _addressValidated() {
+  _addressValidated = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10() {
+    var options,
+        payload,
+        order,
+        addressPayload,
+        _args10 = arguments;
+    return regeneratorRuntime.wrap(function _callee10$(_context10) {
+      while (1) {
+        switch (_context10.prev = _context10.next) {
+          case 0:
+            options = _args10.length > 0 && _args10[0] !== undefined ? _args10[0] : {};
+            payload = _args10.length > 1 && _args10[1] !== undefined ? _args10[1] : {};
+            order = options.model;
+            addressPayload = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('shippingAddress', options, payload, addressValidated.name);
+            return _context10.abrupt("return", order.update({
+              shippingAddress: addressPayload.shippingAddress
+            }));
+
+          case 5:
+          case "end":
+            return _context10.stop();
+        }
+      }
+    }, _callee10);
+  }));
+  return _addressValidated.apply(this, arguments);
+}
+
+function paymentAuthorized() {
+  return _paymentAuthorized.apply(this, arguments);
+}
+/**
+ * Called to refund payment when order is canceled.
+ * @param {*} options
+ * @param {*} payload
+ * @returns
+ */
+
+function _paymentAuthorized() {
+  _paymentAuthorized = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11() {
+    var options,
+        payload,
+        order,
+        changes,
+        _args11 = arguments;
+    return regeneratorRuntime.wrap(function _callee11$(_context11) {
+      while (1) {
+        switch (_context11.prev = _context11.next) {
+          case 0:
+            options = _args11.length > 0 && _args11[0] !== undefined ? _args11[0] : {};
+            payload = _args11.length > 1 && _args11[1] !== undefined ? _args11[1] : {};
+            order = options.model;
+            changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('paymentStatus', options, payload, paymentAuthorized.name);
+            return _context11.abrupt("return", order.update(_objectSpread(_objectSpread({}, changes), {}, {
+              paymentStatus: paymentStatus
+            }), false));
+
+          case 5:
+          case "end":
+            return _context11.stop();
+        }
+      }
+    }, _callee11);
+  }));
+  return _paymentAuthorized.apply(this, arguments);
+}
+
+function refundPayment(_x) {
+  return _refundPayment.apply(this, arguments);
+}
+/**
+ *
+ * @param {Order} order
+ * @returns {Promise<Order>}
+ */
+
+function _refundPayment() {
+  _refundPayment = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12(order) {
+    return regeneratorRuntime.wrap(function _callee12$(_context12) {
+      while (1) {
+        switch (_context12.prev = _context12.next) {
+          case 0:
+            // call port by same name.
+            order.refundPayment(function (options, payload) {
+              var changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('refundReceipt', options, payload, refundPayment.name);
+              return order.update(_objectSpread(_objectSpread({}, changes), {}, {
+                orderStatus: OrderStatus.CANCELED
+              }));
+            });
+
+          case 1:
+          case "end":
+            return _context12.stop();
+        }
+      }
+    }, _callee12);
+  }));
+  return _refundPayment.apply(this, arguments);
+}
+
+function verifyAddress(_x2) {
+  return _verifyAddress.apply(this, arguments);
+}
+/**
+ * Request the bank or lender to place a hold on
+ * the customer account in the amount of the payment
+ * due, to be withdrawn once the shipment is safely
+ * in our customer's hands, or credited back if things
+ * don't work out.
+ *
+ * @param {Order} order
+ * @returns {Promise<Order>}
+ */
+
+
+function _verifyAddress() {
+  _verifyAddress = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(order) {
+    return regeneratorRuntime.wrap(function _callee13$(_context13) {
+      while (1) {
+        switch (_context13.prev = _context13.next) {
+          case 0:
+            console.debug({
+              fn: verifyAddress.name,
+              validateAddress: order.validateAddress
+            });
+            return _context13.abrupt("return", order.validateAddress(addressValidated));
+
+          case 2:
+          case "end":
+            return _context13.stop();
+        }
+      }
+    }, _callee13);
+  }));
+  return _verifyAddress.apply(this, arguments);
+}
+
+function verifyPayment(_x3) {
+  return _verifyPayment.apply(this, arguments);
+}
+/**
+ *
+ * @param {Order} order
+ * @returns {Promise<Order>}
+ * @throws {'InsufficientInventory'}
+ */
+
+
+function _verifyPayment() {
+  _verifyPayment = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee14(order) {
+    var authorizeOrder;
+    return regeneratorRuntime.wrap(function _callee14$(_context14) {
+      while (1) {
+        switch (_context14.prev = _context14.next) {
+          case 0:
+            _context14.prev = 0;
+            _context14.next = 3;
+            return order.authorizePayment(paymentAuthorized);
+
+          case 3:
+            authorizeOrder = _context14.sent;
+
+            if (authorizeOrder.paymentDeclined) {
+              _context14.next = 6;
+              break;
+            }
+
+            throw new Error('payment declined');
+
+          case 6:
+            return _context14.abrupt("return", authorizeOrder);
+
+          case 9:
+            _context14.prev = 9;
+            _context14.t0 = _context14["catch"](0);
+            handleError(_context14.t0, order, verifyPayment.name);
+
+          case 12:
+            return _context14.abrupt("return", order);
+
+          case 13:
+          case "end":
+            return _context14.stop();
+        }
+      }
+    }, _callee14, null, [[0, 9]]);
+  }));
+  return _verifyPayment.apply(this, arguments);
+}
+
+function verifyInventory(_x4) {
+  return _verifyInventory.apply(this, arguments);
+}
+/**
+ * Copy existing customer data into the order
+ * or create new customer from order details.
+ *
+ * @param {Order} order
+ * @throws {'InvalidCustomerId'}
+ */
+
+
+function _verifyInventory() {
+  _verifyInventory = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee15(order) {
+    var inventory, insufficient;
+    return regeneratorRuntime.wrap(function _callee15$(_context15) {
+      while (1) {
+        switch (_context15.prev = _context15.next) {
+          case 0:
+            _context15.next = 2;
+            return order.inventory();
+
+          case 2:
+            inventory = _context15.sent;
+
+            if (!(inventory.length < 1)) {
+              _context15.next = 5;
+              break;
+            }
+
+            throw new Error('bad inventory ID');
+
+          case 5:
+            insufficient = order.orderItems.filter(function (item) {
+              var inv = inventory.find(function (i) {
+                return i.id === item.itemId;
+              });
+              if (!inv) return true;
+              if (inv.quantity < item.qty) return true;
+              return false;
+            });
+
+            if (!(insufficient.length > 0)) {
+              _context15.next = 9;
+              break;
+            }
+
+            order.emit('lowOrOutOfStock', insufficient);
+            throw new Error("low or out of stock: ".concat(insufficient.map(function (i) {
+              return i.itemId;
+            })));
+
+          case 9:
+          case "end":
+            return _context15.stop();
+        }
+      }
+    }, _callee15);
+  }));
+  return _verifyInventory.apply(this, arguments);
+}
+
+function getCustomerOrder(_x5) {
+  return _getCustomerOrder.apply(this, arguments);
+}
+/**
+ * Handle a new order:
+ * - fetch or save customer info
+ * - check item availability
+ * - authorize payment
+ * - verify shipping address
+ */
+
+
+function _getCustomerOrder() {
+  _getCustomerOrder = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee16(order) {
+    var customer, custInfo, update, _custInfo, _customer;
+
+    return regeneratorRuntime.wrap(function _callee16$(_context16) {
+      while (1) {
+        switch (_context16.prev = _context16.next) {
+          case 0:
+            if (!order.customerId) {
+              _context16.next = 13;
+              break;
+            }
+
+            if (!order.customer) {
+              console.log({
+                order: order
+              });
+            } // Use the relation defined in the spec
+
+
+            _context16.next = 4;
+            return order.customer();
+
+          case 4:
+            customer = _context16.sent;
+
+            if (customer) {
+              _context16.next = 7;
+              break;
+            }
+
+            throw new Error('invalid customer id', order.customerId);
+
+          case 7:
+            // Add customer data to the order
+            custInfo = _objectSpread(_objectSpread({}, customer.decrypt()), {}, {
+              firstName: customer.firstName
+            });
+            _context16.next = 10;
+            return order.update(custInfo);
+
+          case 10:
+            update = _context16.sent;
+            console.info('update order with data from existing customer', custInfo);
+            return _context16.abrupt("return", update);
+
+          case 13:
+            if (!order.saveShippingDetails) {
+              _context16.next = 20;
+              break;
+            }
+
+            _custInfo = _objectSpread(_objectSpread({}, order.decrypt()), {}, {
+              firstName: order.firstName
+            });
+            _context16.next = 17;
+            return order.customer(_custInfo);
+
+          case 17:
+            _customer = _context16.sent;
+            console.info('create new customer with data from order', _customer);
+            return _context16.abrupt("return", order);
+
+          case 20:
+            return _context16.abrupt("return", order);
+
+          case 21:
+          case "end":
+            return _context16.stop();
+        }
+      }
+    }, _callee16);
+  }));
+  return _getCustomerOrder.apply(this, arguments);
+}
+
+var processPendingOrder = (0,_domain_utils__WEBPACK_IMPORTED_MODULE_1__.asyncPipe)(getCustomerOrder, verifyInventory, verifyPayment, verifyAddress);
+/**
+ * Implements the beginging of the order service workflow.
+ * The rest is implemented by the {@link ModelSpecification}.
+ * See the port configuration section of {@link Order}.
+ */
+
+var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStatus.PENDING, function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(order) {
+    var processedOrder;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.prev = 0;
+            _context.next = 3;
+            return processPendingOrder(order);
+
+          case 3:
+            processedOrder = _context.sent;
+
+            if (processedOrder.autoCheckout()) {
+              runOrderWorkflow(processedOrder.update({
+                OrderStatus: OrderStatus.APPROVED
+              }, false));
+            }
+
+            _context.next = 10;
+            break;
+
+          case 7:
+            _context.prev = 7;
+            _context.t0 = _context["catch"](0);
+            console.error(_context.t0);
+
+          case 10:
+            return _context.abrupt("return", order);
+
+          case 11:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, null, [[0, 7]]);
+  }));
+
+  return function (_x6) {
+    return _ref.apply(this, arguments);
+  };
+}()), _defineProperty(_OrderActions, OrderStatus.APPROVED, function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(order) {
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            console.log('typeof order', _typeof(order));
+            _context2.prev = 1;
+
+            if (!/approved/i.test(order.paymentStatus)) {
+              _context2.next = 4;
+              break;
+            }
+
+            return _context2.abrupt("return", order.pickOrder(orderPicked));
+
+          case 4:
+            _context2.next = 6;
+            return order.emit('PayAuthFail', 'Payment authorization problem');
+
+          case 6:
+            return _context2.abrupt("return", order);
+
+          case 9:
+            _context2.prev = 9;
+            _context2.t0 = _context2["catch"](1);
+            console.log({
+              error: _context2.t0
+            });
+            handleError(_context2.t0, order, OrderStatus.APPROVED);
+
+          case 13:
+            return _context2.abrupt("return", order);
+
+          case 14:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2, null, [[1, 9]]);
+  }));
+
+  return function (_x7) {
+    return _ref2.apply(this, arguments);
+  };
+}()), _defineProperty(_OrderActions, OrderStatus.SHIPPING, function () {
+  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(order) {
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            _context3.prev = 0;
+            order.trackShipment(trackingUpdate);
+            console.debug({
+              func: OrderStatus.SHIPPING,
+              order: order
+            });
+            _context3.next = 5;
+            return order.update({
+              orderStatus: OrderStatus.SHIPPING
+            });
+
+          case 5:
+            _context3.next = 7;
+            return _context3.sent.emit('orderPicked');
+
+          case 7:
+            _context3.next = 12;
+            break;
+
+          case 9:
+            _context3.prev = 9;
+            _context3.t0 = _context3["catch"](0);
+            handleError(_context3.t0, order, OrderStatus.SHIPPING);
+
+          case 12:
+            return _context3.abrupt("return", order);
+
+          case 13:
+          case "end":
+            return _context3.stop();
+        }
+      }
+    }, _callee3, null, [[0, 9]]);
+  }));
+
+  return function (_x8) {
+    return _ref3.apply(this, arguments);
+  };
+}()), _defineProperty(_OrderActions, OrderStatus.CANCELED, function () {
+  var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(order) {
+    return regeneratorRuntime.wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            _context4.prev = 0;
+            console.debug({
+              func: OrderStatus.CANCELED,
+              desc: 'order canceled, calling undo',
+              orderNo: order.orderNo
+            });
+            return _context4.abrupt("return", order.undo());
+
+          case 5:
+            _context4.prev = 5;
+            _context4.t0 = _context4["catch"](0);
+            handleError(_context4.t0, order, OrderStatus.CANCELED);
+
+          case 8:
+            return _context4.abrupt("return", order);
+
+          case 9:
+          case "end":
+            return _context4.stop();
+        }
+      }
+    }, _callee4, null, [[0, 5]]);
+  }));
+
+  return function (_x9) {
+    return _ref4.apply(this, arguments);
+  };
+}()), _defineProperty(_OrderActions, OrderStatus.COMPLETE, function () {
+  var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(order) {
+    return regeneratorRuntime.wrap(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            // send route to questionnaire, perform analysis, schedule follow-up
+            console.log('customer sentiment analysis, customer care, sales analysis');
+            return _context5.abrupt("return", order);
+
+          case 2:
+          case "end":
+            return _context5.stop();
+        }
+      }
+    }, _callee5);
+  }));
+
+  return function (_x10) {
+    return _ref5.apply(this, arguments);
+  };
+}()), _OrderActions);
+/**
+ * Call order service workflow - controlled by status
+ * @param {Order} order
+ * @returns {Promise<Readonly<Order>>}
+ */
+
+function runOrderWorkflow(_x11) {
+  return _runOrderWorkflow.apply(this, arguments);
+}
+/**
+ * Called on create, update, delete of model instance.
+ * @param {{model:Promise<ReadOnly<Order>>}}
+ */
+
+function _runOrderWorkflow() {
+  _runOrderWorkflow = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee17(order) {
+    return regeneratorRuntime.wrap(function _callee17$(_context17) {
+      while (1) {
+        switch (_context17.prev = _context17.next) {
+          case 0:
+            return _context17.abrupt("return", OrderActions[order.orderStatus](order));
+
+          case 1:
+          case "end":
+            return _context17.stop();
+        }
+      }
+    }, _callee17);
+  }));
+  return _runOrderWorkflow.apply(this, arguments);
+}
+
+function handleOrderEvent(_x12) {
+  return _handleOrderEvent.apply(this, arguments);
+}
+/**
+ * Require a signature for orders $1000 and up
+ * @param {*} input
+ * @param {*} orderTotal
+ */
+
+function _handleOrderEvent() {
+  _handleOrderEvent = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee18(_ref6) {
+    var order, eventType, changes;
+    return regeneratorRuntime.wrap(function _callee18$(_context18) {
+      while (1) {
+        switch (_context18.prev = _context18.next) {
+          case 0:
+            order = _ref6.model, eventType = _ref6.eventType, changes = _ref6.changes;
+
+            if (!((changes === null || changes === void 0 ? void 0 : changes.orderStatus) || eventType === 'CREATE')) {
+              _context18.next = 3;
+              break;
+            }
+
+            return _context18.abrupt("return", runOrderWorkflow(order));
+
+          case 3:
+          case "end":
+            return _context18.stop();
+        }
+      }
+    }, _callee18);
+  }));
+  return _handleOrderEvent.apply(this, arguments);
+}
+
+function needsSignature(input, orderTotal) {
+  return typeof input === 'boolean' ? input : orderTotal > 999.99;
+}
+/** format and classify log entries */
+
+
+function logMessage(message, type) {
+  var msg = typeof message === 'string' ? message : JSON.stringify(message);
+  return {
+    desc: msg.substring(0, 140),
+    type: type,
+    time: Date.now(),
+    toJSON: function toJSON() {
+      return {
+        desc: this.desc,
+        type: type,
+        time: new Date(this.time).toUTCString()
+      };
+    }
+  };
+}
+/**
+ * Returns factory function for the Order model.
+ * @type {import('../domain/index.js').modelSpecFactoryFn}
+ * @param {*} dependencies - inject dependencies
+ */
+
+
+function makeOrderFactory(dependencies) {
+  return /*#__PURE__*/function () {
+    var _createOrder = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(_ref7) {
+      var _order;
+
+      var orderItems, _ref7$email, email, _ref7$lastName, lastName, _ref7$firstName, firstName, _ref7$customerId, customerId, _ref7$billingAddress, billingAddress, _ref7$shippingAddress, shippingAddress, _ref7$creditCardNumbe, creditCardNumber, _ref7$shippingPriorit, shippingPriority, _ref7$autoCheckout, _autoCheckout, _ref7$saveShippingDet, saveShippingDetails, requireSignature, _ref7$fibonacci, fibonacci, total, signatureRequired, order;
+
+      return regeneratorRuntime.wrap(function _callee6$(_context6) {
+        while (1) {
+          switch (_context6.prev = _context6.next) {
+            case 0:
+              orderItems = _ref7.orderItems, _ref7$email = _ref7.email, email = _ref7$email === void 0 ? null : _ref7$email, _ref7$lastName = _ref7.lastName, lastName = _ref7$lastName === void 0 ? null : _ref7$lastName, _ref7$firstName = _ref7.firstName, firstName = _ref7$firstName === void 0 ? null : _ref7$firstName, _ref7$customerId = _ref7.customerId, customerId = _ref7$customerId === void 0 ? null : _ref7$customerId, _ref7$billingAddress = _ref7.billingAddress, billingAddress = _ref7$billingAddress === void 0 ? null : _ref7$billingAddress, _ref7$shippingAddress = _ref7.shippingAddress, shippingAddress = _ref7$shippingAddress === void 0 ? null : _ref7$shippingAddress, _ref7$creditCardNumbe = _ref7.creditCardNumber, creditCardNumber = _ref7$creditCardNumbe === void 0 ? null : _ref7$creditCardNumbe, _ref7$shippingPriorit = _ref7.shippingPriority, shippingPriority = _ref7$shippingPriorit === void 0 ? null : _ref7$shippingPriorit, _ref7$autoCheckout = _ref7.autoCheckout, _autoCheckout = _ref7$autoCheckout === void 0 ? false : _ref7$autoCheckout, _ref7$saveShippingDet = _ref7.saveShippingDetails, saveShippingDetails = _ref7$saveShippingDet === void 0 ? false : _ref7$saveShippingDet, requireSignature = _ref7.requireSignature, _ref7$fibonacci = _ref7.fibonacci, fibonacci = _ref7$fibonacci === void 0 ? 10 : _ref7$fibonacci;
+              total = calcTotal(orderItems);
+              signatureRequired = needsSignature(requireSignature, total);
+              order = (_order = {
+                email: email,
+                lastName: lastName,
+                firstName: firstName,
+                customerId: customerId,
+                orderItems: orderItems,
+                creditCardNumber: creditCardNumber,
+                billingAddress: billingAddress,
+                shippingAddress: shippingAddress,
+                signatureRequired: signatureRequired,
+                saveShippingDetails: saveShippingDetails,
+                shippingPriority: shippingPriority,
+                fibonacci: fibonacci,
+                result: 0,
+                time: 0,
+                estimatedArrival: null,
+                log: [logMessage('order created')]
+              }, _defineProperty(_order, orderTotal, total), _defineProperty(_order, orderStatus, OrderStatus.PENDING), _defineProperty(_order, orderNo, dependencies.uuid()), _defineProperty(_order, "desc", 'new order 25'), _defineProperty(_order, "paymentAccepted", function paymentAccepted() {
+                return true;
+              }), _defineProperty(_order, "autoCheckout", function autoCheckout() {
+                return _autoCheckout;
+              }), _defineProperty(_order, "totalItems", function totalItems() {
+                return itemCount(this.orderItems);
+              }), _defineProperty(_order, "total", function total() {
+                return calcTotal(this.orderItems);
+              }), _defineProperty(_order, "addItem", function addItem(item) {
+                if (checkItem(item)) {
+                  this.orderItems.push(item);
+                  return true;
+                }
+
+                return false;
+              }), _defineProperty(_order, "logEvent", function logEvent(message) {
+                var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'info';
+                this.log.push(logMessage(message, type));
+              }), _defineProperty(_order, "logError", function logError(message) {
+                this.logEvent(message, 'error');
+              }), _defineProperty(_order, "logUndo", function logUndo(message) {
+                this.logEvent(message, 'undo');
+              }), _defineProperty(_order, "logStateChange", function logStateChange(message) {
+                this.logEvent(message, 'stateChange');
+              }), _defineProperty(_order, "readLog", function readLog(_ref8) {
+                var _ref8$index = _ref8.index,
+                    index = _ref8$index === void 0 ? null : _ref8$index,
+                    _ref8$type = _ref8.type,
+                    type = _ref8$type === void 0 ? null : _ref8$type;
+                var indx = parseInt(index);
+                if (indx < this.log.length && indx !== NaN) return this.log[indx];
+                if (type === 'first') return this.log[0];
+                if (type === 'last') return this.log[this.log.length - 1];
+                if (type === 'lastStateChange') return this.log[this.log.lastIndexOf({
+                  type: 'stateChange'
+                })];
+                if (type === 'stateChanges') return this.log.filter(function (l) {
+                  return l.type === 'stateChange';
+                });
+                if (type === 'error') return this.log.filter(function (l) {
+                  return l.type === 'error';
+                });
+                if (type === 'undo') return this.log.filter(function (l) {
+                  return l.type === 'undo';
+                });
+                return this.log;
+              }), _order);
+              return _context6.abrupt("return", Object.freeze(order));
+
+            case 5:
+            case "end":
+              return _context6.stop();
+          }
+        }
+      }, _callee6);
+    }));
+
+    function createOrder(_x13) {
+      return _createOrder.apply(this, arguments);
+    }
+
+    return createOrder;
+  }();
+}
+/**
+ * Called as command to approve/submit order.
+ * @param {Order} order
+ */
+
+function approve(_x14) {
+  return _approve.apply(this, arguments);
+}
+/**
+ * Called as command to cancel order.
+ * @param {Order} order
+ */
+
+function _approve() {
+  _approve = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee19(order) {
+    var approvedOrder;
+    return regeneratorRuntime.wrap(function _callee19$(_context19) {
+      while (1) {
+        switch (_context19.prev = _context19.next) {
+          case 0:
+            _context19.next = 2;
+            return order.update({
+              orderStatus: OrderStatus.APPROVED
+            });
+
+          case 2:
+            approvedOrder = _context19.sent;
+            console.debug({
+              approvedOrder: approvedOrder
+            }); //approvedOrder.logStateChange(OrderStatus.APPROVED)
+
+            return _context19.abrupt("return", runOrderWorkflow(approvedOrder));
+
+          case 5:
+          case "end":
+            return _context19.stop();
+        }
+      }
+    }, _callee19);
+  }));
+  return _approve.apply(this, arguments);
+}
+
+function cancel(_x15) {
+  return _cancel.apply(this, arguments);
+}
+/**
+ * Alias of `approve`
+ * @param {Order} order
+ * @returns
+ */
+
+function _cancel() {
+  _cancel = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee20(order) {
+    var canceledOrder;
+    return regeneratorRuntime.wrap(function _callee20$(_context20) {
+      while (1) {
+        switch (_context20.prev = _context20.next) {
+          case 0:
+            _context20.next = 2;
+            return order.update({
+              orderStatus: OrderStatus.CANCELED
+            });
+
+          case 2:
+            canceledOrder = _context20.sent;
+            canceledOrder.logStateChange(OrderStatus.CANCELED);
+            return _context20.abrupt("return", runOrderWorkflow(canceledOrder));
+
+          case 5:
+          case "end":
+            return _context20.stop();
+        }
+      }
+    }, _callee20);
+  }));
+  return _cancel.apply(this, arguments);
+}
+
+function checkout(_x16) {
+  return _checkout.apply(this, arguments);
+}
+/**
+ *
+ * @param {{model:Order}} param0
+ */
+
+function _checkout() {
+  _checkout = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee21(order) {
+    return regeneratorRuntime.wrap(function _callee21$(_context21) {
+      while (1) {
+        switch (_context21.prev = _context21.next) {
+          case 0:
+            return _context21.abrupt("return", approve(order));
+
+          case 1:
+          case "end":
+            return _context21.stop();
+        }
+      }
+    }, _callee21);
+  }));
+  return _checkout.apply(this, arguments);
+}
+
+function errorCallback(_ref9) {
+  var port = _ref9.port,
+      order = _ref9.model,
+      error = _ref9.error;
+
+  var errMsg = _defineProperty({
+    error: error,
+    port: port
+  }, "error", error);
+
+  console.error(errorCallback.name, errMsg);
+  order.logEvent(errMsg);
+  order.emit(errorCallback.name, errMsg);
+  return order.undo();
+}
+/**
+ *
+ * @param {{model:Order}} param0
+ */
+
+function timeoutCallback(_ref10) {
+  var port = _ref10.port,
+      ports = _ref10.ports,
+      adapterFn = _ref10.adapterFn,
+      order = _ref10.model;
+  console.error('timeout...', port); //order.logError(timeoutCallback.name, 'timeout')
+
+  order.emit(timeoutCallback.name, errMsg);
+}
+/**
+ * @type {undoFunction}
+ * Start process to return canceled order items to inventory.
+ * Do not call `runOrderWorkflow` - it is already running (in
+ * reverse) if we get here.
+ */
+
+function returnInventory(_x17) {
+  return _returnInventory.apply(this, arguments);
+}
+/**
+ * @type {undoFunction}
+ * Start process for the shipper to pick the items to return.
+ * Do not call `runOrderWorkflow` - it is already running (in
+ * reverse) if we get here.
+ */
+
+function _returnInventory() {
+  _returnInventory = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee22(order) {
+    return regeneratorRuntime.wrap(function _callee22$(_context22) {
+      while (1) {
+        switch (_context22.prev = _context22.next) {
+          case 0:
+            console.log(returnInventory.name);
+            order.logEvent(returnInventory.name, 'timeout');
+            order.emit(returnInventory.name, errMsg);
+            return _context22.abrupt("return", order.update({
+              orderStatus: OrderStatus.CANCELED
+            }));
+
+          case 4:
+          case "end":
+            return _context22.stop();
+        }
+      }
+    }, _callee22);
+  }));
+  return _returnInventory.apply(this, arguments);
+}
+
+function returnShipment(_x18) {
+  return _returnShipment.apply(this, arguments);
+}
+
+function _returnShipment() {
+  _returnShipment = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee23(order) {
+    return regeneratorRuntime.wrap(function _callee23$(_context23) {
+      while (1) {
+        switch (_context23.prev = _context23.next) {
+          case 0:
+            console.log(returnShipment.name);
+            order.logUndo(returnShipment.name);
+            return _context23.abrupt("return", order.update({
+              orderStatus: OrderStatus.CANCELED
+            }));
+
+          case 3:
+          case "end":
+            return _context23.stop();
+        }
+      }
+    }, _callee23);
+  }));
+  return _returnShipment.apply(this, arguments);
+}
+
+function accountOrder(req, res) {}
+1;
+/**
+ * @type {undoFunction}
+ * Start process to return canceled order items to inventory.
+ * Do not call `runOrderWorkflow` - it is already running (in
+ * reverse) if we get here.
+ */
+
+function returnDelivery(_x19) {
+  return _returnDelivery.apply(this, arguments);
+}
+/**
+ * @type {undoFunction}
+ */
+
+function _returnDelivery() {
+  _returnDelivery = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee24(order) {
+    return regeneratorRuntime.wrap(function _callee24$(_context24) {
+      while (1) {
+        switch (_context24.prev = _context24.next) {
+          case 0:
+            console.log(returnDelivery.name);
+            return _context24.abrupt("return", order.update({
+              orderStatus: OrderStatus.CANCELED
+            }));
+
+          case 2:
+          case "end":
+            return _context24.stop();
+        }
+      }
+    }, _callee24);
+  }));
+  return _returnDelivery.apply(this, arguments);
+}
+
+function cancelPayment(_x20) {
+  return _cancelPayment.apply(this, arguments);
+}
+
+function _cancelPayment() {
+  _cancelPayment = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee25(order) {
+    return regeneratorRuntime.wrap(function _callee25$(_context25) {
+      while (1) {
+        switch (_context25.prev = _context25.next) {
+          case 0:
+            console.log(cancelPayment.name);
+            return _context25.abrupt("return", order.update({
+              orderStatus: OrderStatus.CANCELED
+            }));
+
+          case 2:
+          case "end":
+            return _context25.stop();
+        }
+      }
+    }, _callee25);
+  }));
+  return _cancelPayment.apply(this, arguments);
+}
+
+/***/ }),
+
+/***/ "./src/domain/user.js":
+/*!****************************!*\
+  !*** ./src/domain/user.js ***!
+  \****************************/
+/*! namespace exports */
+/*! export userFactory [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export userMixins [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "userFactory": () => /* binding */ userFactory,
+/* harmony export */   "userMixins": () => /* binding */ userMixins
+/* harmony export */ });
+/* harmony import */ var _mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mixins */ "./src/domain/mixins.js");
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
+function userFactory(_ref) {
+  var uuid = _ref.uuid;
+  return /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+    var _ref3,
+        userName,
+        password,
+        customerId,
+        firstName,
+        lastName,
+        phone,
+        email,
+        fibonacci,
+        _args = arguments;
+
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _ref3 = _args.length > 0 && _args[0] !== undefined ? _args[0] : {}, userName = _ref3.userName, password = _ref3.password, customerId = _ref3.customerId, firstName = _ref3.firstName, lastName = _ref3.lastName, phone = _ref3.phone, email = _ref3.email, fibonacci = _ref3.fibonacci;
+            return _context.abrupt("return", Object.freeze({
+              userId: uuid(),
+              password: password,
+              userName: userName,
+              customerId: customerId,
+              firstName: firstName,
+              lastName: lastName,
+              phone: phone,
+              email: email,
+              fibonacci: fibonacci
+            }));
+
+          case 2:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }));
+}
+var userMixins = [(0,_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)('userName', 'password', 'firstName'), (0,_mixins__WEBPACK_IMPORTED_MODULE_0__.freezeProperties)('userId', 'userName'), (0,_mixins__WEBPACK_IMPORTED_MODULE_0__.hashPasswords)('password'), (0,_mixins__WEBPACK_IMPORTED_MODULE_0__.validateProperties)([{
+  propKey: 'email',
+  regex: 'email',
+  unique: {
+    encrypted: true
+  }
+}, {
+  propKey: 'userName',
+  unique: {
+    encrypted: false
+  }
+}])];
+
+/***/ }),
+
+/***/ "./src/domain/utils.js":
+/*!*****************************!*\
+  !*** ./src/domain/utils.js ***!
+  \*****************************/
+/*! namespace exports */
+/*! export async [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export asyncPipe [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export compose [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export composeAsync [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export decrypt [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export encrypt [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export hash [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export makeArray [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export makeObject [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export uuid [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "compose": () => /* binding */ compose,
+/* harmony export */   "composeAsync": () => /* binding */ composeAsync,
+/* harmony export */   "asyncPipe": () => /* binding */ asyncPipe,
+/* harmony export */   "encrypt": () => /* binding */ encrypt,
+/* harmony export */   "decrypt": () => /* binding */ decrypt,
+/* harmony export */   "hash": () => /* binding */ hash,
+/* harmony export */   "uuid": () => /* binding */ uuid,
+/* harmony export */   "makeArray": () => /* binding */ makeArray,
+/* harmony export */   "makeObject": () => /* binding */ makeObject,
+/* harmony export */   "async": () => /* binding */ async
+/* harmony export */ });
+/* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! crypto */ "crypto");
+/* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(crypto__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! nanoid */ "webpack/sharing/consume/default/nanoid/nanoid");
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(nanoid__WEBPACK_IMPORTED_MODULE_1__);
+
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+function compose() {
+  for (var _len = arguments.length, funcs = new Array(_len), _key = 0; _key < _len; _key++) {
+    funcs[_key] = arguments[_key];
+  }
+
+  return function (initVal) {
+    return funcs.reduceRight(function (val, func) {
+      return func(val);
+    }, initVal);
+  };
+}
+function composeAsync() {
+  for (var _len2 = arguments.length, funcs = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+    funcs[_key2] = arguments[_key2];
+  }
+
+  return function (initVal) {
+    return funcs.reduceRight(function (val, func) {
+      return val.then(func);
+    }, Promise.resolve(initVal));
+  };
+}
+/**
+ * @callback pipeFn
+ * @param {object} obj - the object to compose
+ * @returns {object} - the composed object
+ */
+
+/**
+ * @param {pipeFn} func
+ */
+
+var asyncPipe = function asyncPipe() {
+  for (var _len3 = arguments.length, func = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+    func[_key3] = arguments[_key3];
+  }
+
+  return function (obj) {
+    return func.reduce(function (o, f) {
+      return o.then(f);
+    }, Promise.resolve(obj));
+  };
+};
+var passwd = process.env.ENCRYPTION_PWD;
+var algo = 'aes-192-cbc';
+var key = crypto__WEBPACK_IMPORTED_MODULE_0___default().scryptSync(String(passwd), 'salt', 24);
+var iv = Buffer.alloc(16, 0);
+function encrypt(text) {
+  var cipher = crypto__WEBPACK_IMPORTED_MODULE_0___default().createCipheriv(algo, key, iv);
+  var encrypted = cipher.update(text, 'utf8', 'hex');
+  encrypted += cipher["final"]('hex');
+  return encrypted;
+}
+function decrypt(cipherText) {
+  console.log('decrypt(%s)', cipherText);
+  var decipher = crypto__WEBPACK_IMPORTED_MODULE_0___default().createDecipheriv(algo, key, iv);
+  var decrypted = decipher.update(cipherText, 'hex', 'utf8');
+  decrypted += decipher["final"]('utf8');
+  return decrypted;
+}
+function hash(data) {
+  return crypto__WEBPACK_IMPORTED_MODULE_0___default().createHash('sha1').update(data).digest('hex');
+}
+function uuid() {
+  // return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+  //   (c ^ (crypto.randomBytes(16)[0] & (15 >> (c / 4)))).toString(16)
+  // );
+  return (0,nanoid__WEBPACK_IMPORTED_MODULE_1__.nanoid)();
+}
+function makeArray(v) {
+  return Array.isArray(v) ? v : [v];
+}
+function makeObject(prop) {
+  if (Array.isArray(prop)) {
+    return prop.reduce(function (p, c) {
+      return _objectSpread(_objectSpread({}, p), c);
+    });
+  }
+
+  return prop;
+}
+/**
+ *
+ * @param {Promise<{
+ * ok:()=>any,
+ *
+ * }} promise
+ * @returns
+ */
+
+function async(promise) {
+  return promise.then(function (result) {
+    return {
+      ok: true,
+      object: result,
+      asObject: function asObject() {
+        return makeObject(result);
+      },
+      asArray: function asArray() {
+        return makeArray(result);
+      }
+    };
+  })["catch"](function (error) {
+    console.error(error);
+    return Promise.resolve({
+      ok: false,
+      error: error
+    });
+  });
+}
+
+/***/ }),
+
+/***/ "./src/event-dispatcher.js":
+/*!*********************************!*\
+  !*** ./src/event-dispatcher.js ***!
+  \*********************************/
+/*! namespace exports */
+/*! export EventDispatcher [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "EventDispatcher": () => /* binding */ EventDispatcher
+/* harmony export */ });
+/* harmony import */ var _services_event_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./services/event-service */ "./src/services/event-service.js");
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+var EventDispatcher = /*#__PURE__*/function () {
+  function EventDispatcher() {
+    var adapter = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _services_event_service__WEBPACK_IMPORTED_MODULE_0__.Event;
+
+    _classCallCheck(this, EventDispatcher);
+
+    this.adapter = adapter;
+    this.subscriptions = new Map();
+  }
+
+  _createClass(EventDispatcher, [{
+    key: "registerCallback",
+    value: function registerCallback(topic, callback) {
+      if (this.subscriptions.has(topic)) {
+        this.subscriptions.get(topic).push(callback);
+        return;
+      }
+
+      this.subscriptions.set(topic, [callback]);
+    }
+  }, {
+    key: "emitEvent",
+    value: function () {
+      var _emitEvent = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(topic, message) {
+        var method,
+            _args = arguments;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                method = _args.length > 2 && _args[2] !== undefined ? _args[2] : "notify";
+                _context.next = 3;
+                return this.adapter[method](topic, message);
+
+              case 3:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function emitEvent(_x, _x2) {
+        return _emitEvent.apply(this, arguments);
+      }
+
+      return emitEvent;
+    }()
+  }, {
+    key: "init",
+    value: function () {
+      var _init = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+        var method,
+            emitEvent,
+            _args2 = arguments;
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                emitEvent = function _emitEvent2(topic, message) {
+                  this.emitEvent(topic, message);
+                };
+
+                method = _args2.length > 0 && _args2[0] !== undefined ? _args2[0] : "listen";
+                _context2.next = 4;
+                return this.adapter[method](/Channel/, function (_ref) {
+                  var _this = this;
+
+                  var topic = _ref.topic,
+                      message = _ref.message;
+
+                  if (this.subscriptions.has(topic)) {
+                    this.subscriptions.get(topic).forEach(function (callback) {
+                      return callback({
+                        message: message,
+                        emitEvent: emitEvent.bind(_this)
+                      });
+                    });
+                  }
+                }.bind(this));
+
+              case 4:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function init() {
+        return _init.apply(this, arguments);
+      }
+
+      return init;
+    }()
+  }]);
+
+  return EventDispatcher;
+}();
+
+/***/ }),
+
+/***/ "./src/service-registry.js":
+/*!*********************************!*\
+  !*** ./src/service-registry.js ***!
+  \*********************************/
+/*! namespace exports */
+/*! export Registry [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_exports__, __webpack_require__.r, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Registry": () => /* binding */ Registry,
+/* harmony export */   "default": () => __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */ });
+/* harmony import */ var _event_dispatcher__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./event-dispatcher */ "./src/event-dispatcher.js");
+/* harmony import */ var _domain_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./domain/utils */ "./src/domain/utils.js");
+
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
+
+var Registry = {
+  eventNames: {
+    shipOrder: "orderShipped",
+    trackShipment: "outForDelivery",
+    verifyDelivery: "deliveryVerified"
+  },
+  sendEvent: function sendEvent(_ref) {
+    var emitEvent = _ref.emitEvent,
+        topic = _ref.topic,
+        eventData = _ref.eventData,
+        eventSource = _ref.eventSource,
+        eventName = _ref.eventName;
+    console.log("Sending event...");
+    console.log({
+      emitEvent: emitEvent,
+      topic: topic,
+      eventData: eventData,
+      eventSource: eventSource,
+      eventName: eventName
+    });
+    setTimeout( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.next = 2;
+              return emitEvent(topic, JSON.stringify({
+                eventData: eventData,
+                eventName: eventName,
+                eventTime: new Date().toUTCString(),
+                eventType: "commandResponse",
+                eventSource: eventSource
+              }));
+
+            case 2:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    })), 5000);
+  },
+  generateShippingEventData: function generateShippingEventData(event, externalId) {
+    var trackingId = (0,_domain_utils__WEBPACK_IMPORTED_MODULE_1__.uuid)();
+    var shipmentId = trackingId;
+    var proofOfDelivery = "http://shipping.service.com?proof=".concat(trackingId);
+    var eventData = {
+      externalId: externalId
+    };
+
+    if (event.eventName === "shipOrder") {
+      return _objectSpread(_objectSpread({}, eventData), {}, {
+        shipmentId: shipmentId
+      });
+    }
+
+    if (event.eventName === "trackShipment") {
+      return _objectSpread(_objectSpread({}, eventData), {}, {
+        trackingId: trackingId,
+        trackingStatus: "outForDelivery"
+      });
+    }
+
+    if (event.eventName === "verifyDelivery") {
+      return _objectSpread(_objectSpread({}, eventData), {}, {
+        proofOfDelivery: proofOfDelivery
+      });
+    }
+  },
+  generateShippingMessage: function generateShippingMessage(emitEvent, event, externalId) {
+    return {
+      emitEvent: emitEvent,
+      topic: event.eventData.commandResp,
+      eventData: this.generateShippingEventData(event, externalId),
+      eventName: this.eventNames[event.eventName],
+      eventSource: "shippingService"
+    };
+  },
+  inventoryCallbackFactory: function inventoryCallbackFactory() {
+    function inventoryCallback(_ref3) {
+      var message = _ref3.message,
+          emitEvent = _ref3.emitEvent;
+      var event = JSON.parse(message);
+      var warehouseAddress =
+      /*null;*/
+      "1234 warehouse dr, dock 2";
+      var externalId = event.eventData.commandArgs.externalId;
+      var eventName =
+      /*'outOfStock';*/
+      "orderPicked";
+      this.sendEvent({
+        emitEvent: emitEvent,
+        topic: event.eventData.replyChannel,
+        eventName: eventName,
+        eventData: {
+          warehouse_addr: warehouseAddress,
+          externalId: externalId
+        },
+        eventSource: "inventoryService"
+      });
+    }
+
+    return inventoryCallback.bind(this);
+  },
+  shippingCallbackFactory: function shippingCallbackFactory() {
+    function shippingCallback(_ref4) {
+      var _this = this;
+
+      var message = _ref4.message,
+          emitEvent = _ref4.emitEvent;
+      var event = JSON.parse(message);
+      var externalId = event.eventData.commandArgs.externalId;
+
+      var _message = this.generateShippingMessage(emitEvent, event, externalId);
+
+      this.sendEvent(_message);
+
+      if (event.eventName === "trackShipment") {
+        var eventData = _objectSpread(_objectSpread({}, _message.eventData), {}, {
+          trackingStatus: "orderDelivered"
+        });
+
+        setTimeout(function () {
+          return _this.sendEvent(_objectSpread(_objectSpread({}, _message), {}, {
+            eventData: eventData,
+            eventName: "orderDelivered"
+          }));
+        }, 7000);
+      }
+    }
+
+    return shippingCallback.bind(this);
+  }
+};
+var dispatcher = new _event_dispatcher__WEBPACK_IMPORTED_MODULE_0__.EventDispatcher();
+dispatcher.registerCallback("inventoryChannel", Registry.inventoryCallbackFactory());
+dispatcher.registerCallback("shippingChannel", Registry.shippingCallbackFactory());
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (dispatcher);
+
+/***/ }),
+
+/***/ "./test/mock/address-service.js":
+/*!**************************************!*\
+  !*** ./test/mock/address-service.js ***!
+  \**************************************/
+/*! namespace exports */
+/*! export Address [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Address": () => /* binding */ Address
+/* harmony export */ });
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+var Address = {
+  /**
+   *
+   * @param {string} address US street address
+   */
+  validateAddress: function validateAddress(address) {
+    return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              console.log("test validating address...");
+
+              if (address) {
+                _context.next = 3;
+                break;
+              }
+
+              throw new Error("no address provided");
+
+            case 3:
+              return _context.abrupt("return", address);
+
+            case 4:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }))();
+  }
+};
+
+/***/ }),
+
+/***/ "./test/mock/event-service.js":
+/*!************************************!*\
+  !*** ./test/mock/event-service.js ***!
+  \************************************/
+/*! namespace exports */
+/*! export handleEvents [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "handleEvents": () => /* binding */ handleEvents
+/* harmony export */ });
+/* harmony import */ var _src_event_dispatcher__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../src/event-dispatcher */ "./src/event-dispatcher.js");
+/* harmony import */ var _src_service_registry__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../src/service-registry */ "./src/service-registry.js");
+
+
+var _topics;
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
+var shippingChannel = "shippingChannel";
+var inventoryChannel = "inventoryChannel";
+var callbacks = [];
+var responses = [];
+var topics = (_topics = {}, _defineProperty(_topics, shippingChannel, /shipping/), _defineProperty(_topics, inventoryChannel, /inventory/), _topics);
+function handleEvents(req, res) {
+  var message = JSON.stringify(req.body);
+  var topicName = Object.keys(topics).find(function (k) {
+    return topics[k].test(message);
+  });
+
+  if (topicName) {
+    console.log({
+      func: handleEvents.name,
+      msg: "found topic",
+      topicName: topicName,
+      message: message,
+      cb: callbacks
+    });
+    callbacks.forEach(function (callback) {
+      console.log({
+        name: callback.name,
+        code: callback.toString()
+      });
+      callback({
+        topicName: topicName,
+        message: message
+      });
+    });
+    console.log(responses);
+    responses.reduceRight(function (response) {
+      return res.send(response);
+    }, "response");
+  }
+}
+var Event = {
+  topics: /Channel/,
+  listening: false,
+  listen: function listen(topic, callback) {
+    callbacks.push(callback);
+  },
+  notify: function notify(topic, message) {
+    responses.push(message);
+  }
+};
+var dispatcher = new _src_event_dispatcher__WEBPACK_IMPORTED_MODULE_0__.EventDispatcher(Event);
+dispatcher.registerCallback(inventoryChannel, _src_service_registry__WEBPACK_IMPORTED_MODULE_1__.Registry.inventoryCallbackFactory());
+dispatcher.registerCallback(shippingChannel, _src_service_registry__WEBPACK_IMPORTED_MODULE_1__.Registry.shippingCallbackFactory());
+dispatcher.init();
+
+/***/ }),
+
+/***/ "./test/mock/index.js":
+/*!****************************!*\
+  !*** ./test/mock/index.js ***!
+  \****************************/
+/*! namespace exports */
+/*! export Address [provided] [no usage info] [missing usage info prevents renaming] -> ./test/mock/address-service.js .Address */
+/*! export Inventory [provided] [no usage info] [missing usage info prevents renaming] -> ./test/mock/inventory-service.js .Inventory */
+/*! export Payment [provided] [no usage info] [missing usage info prevents renaming] -> ./test/mock/payment-service.js .Payment */
+/*! export Shipping [provided] [no usage info] [missing usage info prevents renaming] -> ./test/mock/shipping-service.js .Shipping */
+/*! export handleEvents [provided] [no usage info] [missing usage info prevents renaming] -> ./test/mock/event-service.js .handleEvents */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_exports__, __webpack_require__.d, __webpack_require__.r, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Address": () => /* reexport safe */ _address_service__WEBPACK_IMPORTED_MODULE_0__.Address,
+/* harmony export */   "Payment": () => /* reexport safe */ _payment_service__WEBPACK_IMPORTED_MODULE_1__.Payment,
+/* harmony export */   "Shipping": () => /* reexport safe */ _shipping_service__WEBPACK_IMPORTED_MODULE_2__.Shipping,
+/* harmony export */   "handleEvents": () => /* reexport safe */ _event_service__WEBPACK_IMPORTED_MODULE_3__.handleEvents,
+/* harmony export */   "Inventory": () => /* reexport safe */ _inventory_service__WEBPACK_IMPORTED_MODULE_4__.Inventory
+/* harmony export */ });
+/* harmony import */ var _address_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./address-service */ "./test/mock/address-service.js");
+/* harmony import */ var _payment_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./payment-service */ "./test/mock/payment-service.js");
+/* harmony import */ var _shipping_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./shipping-service */ "./test/mock/shipping-service.js");
+/* harmony import */ var _event_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./event-service */ "./test/mock/event-service.js");
+/* harmony import */ var _inventory_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./inventory-service */ "./test/mock/inventory-service.js");
+
+
+
+
+
+
+/***/ }),
+
+/***/ "./test/mock/inventory-service.js":
+/*!****************************************!*\
+  !*** ./test/mock/inventory-service.js ***!
+  \****************************************/
+/*! namespace exports */
+/*! export Inventory [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Inventory": () => /* binding */ Inventory
+/* harmony export */ });
+/* harmony import */ var _src_services_event_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../src/services/event-service */ "./src/services/event-service.js");
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+
+
+function sendEvent(_ref) {
+  var eventData = _ref.eventData,
+      eventName = _ref.eventName;
+  setTimeout( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.next = 2;
+            return _src_services_event_service__WEBPACK_IMPORTED_MODULE_0__.Event.notify("orderChannel", JSON.stringify({
+              eventData: eventData,
+              eventName: eventName,
+              eventType: "CommandResponse",
+              eventTime: new Date().toUTCString(),
+              eventSource: "Inventory"
+            }));
+
+          case 2:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  })), 5000);
+}
+
+var Inventory = {
+  pickOrder: function pickOrder(_ref3) {
+    return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+      var externalId, lineItems, pickupAddress;
+      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              externalId = _ref3.externalId, lineItems = _ref3.lineItems;
+              console.log("inventory items");
+              console.log(lineItems);
+              pickupAddress = "1234 warehouse dr, dock2";
+              sendEvent({
+                eventName: "orderPicked",
+                eventData: {
+                  pickupAddress: pickupAddress,
+                  externalId: externalId
+                }
+              });
+
+            case 5:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2);
+    }))();
+  }
+};
+
+/***/ }),
+
+/***/ "./test/mock/payment-service.js":
+/*!**************************************!*\
+  !*** ./test/mock/payment-service.js ***!
+  \**************************************/
+/*! namespace exports */
+/*! export Payment [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Payment": () => /* binding */ Payment
+/* harmony export */ });
+
+/**
+ * @callback authorizePaymentType
+ * @param {string} id
+ * @param {number} amount
+ * @param {string} source_id
+ * @param {string} customer_id
+ * @param {boolean} [autocomplete]
+ * @returns {Promise<string>}
+ */
+
+/**
+ * @typedef PaymentService
+ * @property {authorizePaymentType} authorizePayment
+ * @property {function()} completePayment
+ * @property {function()} refundPayment
+ */
+// import { Client, Environment, ApiError } from "square";
+// const client = new Client({
+//   environment: Environment.Sandbox,
+//   accessToken: process.env.SQUARE_ACCESS_TOKEN,
+// });
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+var Payment = {
+  /**
+   * @type {authorizePaymentType}
+   * @param {*} id
+   * @param {*} amount
+   * @param {*} source_id
+   * @param {*} customer_id
+   * @param {*} autocomplete
+   * @param {*} currency
+   */
+  authorizePayment: function authorizePayment(id, amount, source_id, customer_id) {
+    var _arguments = arguments;
+    return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+      var autocomplete, currency, payload;
+      return regeneratorRuntime.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              autocomplete = _arguments.length > 4 && _arguments[4] !== undefined ? _arguments[4] : false;
+              currency = _arguments.length > 5 && _arguments[5] !== undefined ? _arguments[5] : "USD";
+              console.log("mock payment service called");
+              payload = {
+                idempotency_key: id,
+                amount_money: {
+                  amount: amount,
+                  currency: currency
+                },
+                source_id: source_id,
+                autocomplete: autocomplete,
+                customer_id: customer_id,
+                location_id: "XK3DBG77NJBFX",
+                reference_id: "123456",
+                note: "Brief description",
+                app_fee_money: {
+                  amount: 10,
+                  currency: "USD"
+                }
+              };
+              /*
+              const bodyAmountMoney = {};
+              bodyAmountMoney.amount = 200;
+              bodyAmountMoney.currency = "USD";
+               const bodyTipMoney = {};
+              bodyTipMoney.amount = 198;
+              bodyTipMoney.currency = "CHF";
+               const bodyAppFeeMoney = {};
+              bodyAppFeeMoney.amount = 10;
+              bodyAppFeeMoney.currency = "USD";
+               const body = {
+                sourceId: "ccof:uIbfJXhXETSP197M3GB",
+                idempotencyKey: "4935a656-a929-4792-b97c-8848be85c27c",
+                amountMoney: bodyAmountMoney,
+              };
+               body.tipMoney = bodyTipMoney;
+              body.appFeeMoney = bodyAppFeeMoney;
+              body.delayDuration = "delay_duration6";
+              body.autocomplete = true;
+              body.orderId = "order_id0";
+              body.customerId = "VDKXEEKPJN48QDG3BGGFAK05P8";
+              body.locationId = "XK3DBG77NJBFX";
+              body.referenceId = "123456";
+              body.note = "Brief description";
+               // try {
+              //   const {
+              //     result,
+              //     ...httpResponse
+              //   } = await client.paymentsApi.createPayment(body);
+              //   // Get more response info...
+              //   // const { statusCode, headers } = httpResponse;
+              // } catch (error) {
+              //   if (error instanceof ApiError) {
+              //     const errors = error.result;
+              //     // const { statusCode, headers } = error;
+              //   }
+              // }
+              */
+
+              return _context.abrupt("return", "1234");
+
+            case 5:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }))();
+  },
+
+  /*
+  const response ={
+  "payment": {
+    "id": "GQTFp1ZlXdpoW4o6eGiZhbjosiDFf",
+    "created_at": "2019-07-10T13:23:49.154Z",
+    "updated_at": "2019-07-10T13:23:49.446Z",
+    "amount_money": {
+      "amount": 200,
+      "currency": "USD"
+    },
+    "app_fee_money": {
+      "amount": 10,
+      "currency": "USD"
+    },
+    "total_money": {
+      "amount": 200,
+      "currency": "USD"
+    },
+    "status": "COMPLETED",
+    "source_type": "CARD",
+    "card_details": {
+      "status": "CAPTURED",
+      "card": {
+        "card_brand": "VISA",
+        "last_4": "1111",
+        "exp_month": 7,
+        "exp_year": 2026,
+        "fingerprint": "sq-1-TpmjbNBMFdibiIjpQI5LiRgNUBC7u1689i0TgHjnlyHEWYB7tnn-K4QbW4ttvtaqXw",
+        "card_type": "DEBIT",
+        "prepaid_type": "PREPAID",
+        "bin": "411111"
+      },
+      "entry_method": "ON_FILE",
+      "cvv_status": "CVV_ACCEPTED",
+      "avs_status": "AVS_ACCEPTED",
+      "auth_result_code": "nsAyY2",
+      "statement_description": "SQ *MY MERCHANT"
+    },
+    "location_id": "XTI0H92143A39",
+    "order_id": "m2Hr8Hk8A3CTyQQ1k4ynExg92tO3",
+    "reference_id": "123456",
+    "note": "Brief description",
+    "customer_id": "RDX9Z4XTIZR7MRZJUXNY9HUK6I",
+    "receipt_number": "GQTF",
+    "receipt_url": "https://squareup.com/receipt/preview/GQTFp1ZlXdpoW4o6eGiZhbjosiDFf"
+  }
+  }
+  /*
+  {
+  "errors": [
+    {
+      "code": "VALUE_EMPTY",
+      "detail": "Field must not be blank",
+      "field": "source_id",
+      "category": "INVALID_REQUEST_ERROR"
+    },
+    {
+      "code": "VALUE_EMPTY",
+      "detail": "Field must not be blank",
+      "field": "idempotency_key",
+      "category": "INVALID_REQUEST_ERROR"
+    },
+    {
+      "code": "MISSING_REQUIRED_PARAMETER",
+      "detail": "Field must be set",
+      "field": "amount_money",
+      "category": "INVALID_REQUEST_ERROR"
+    }
+  ]
+  }
+  */
+  completePayment: function completePayment(model) {
+    return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+      return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              console.log("REAL completing payment: %s", model.orderNo);
+              return _context2.abrupt("return", "1234");
+
+            case 2:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2);
+    }))();
+  },
+  refundPayment: function refundPayment(model) {
+    return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+      return regeneratorRuntime.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              console.log("REAL refunding payment: %s", model.orderNo);
+
+            case 1:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3);
+    }))();
+  }
+};
+
+/***/ }),
+
+/***/ "./test/mock/shipping-service.js":
+/*!***************************************!*\
+  !*** ./test/mock/shipping-service.js ***!
+  \***************************************/
+/*! namespace exports */
+/*! export Shipping [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Shipping": () => /* binding */ Shipping
+/* harmony export */ });
+
+/**
+ * @typedef {import('../adapters/event-adapter').EventMessage} EventMessage
+ */
+
+/**
+ * @typedef {import('../adapters/event-adapter').CommandEvent} CommandEvent
+ */
+
+/**
+ * @callback shipOrder
+ * @param {string} shipTo
+ * @param {string} shipFrom
+ * @param {string} lineItems
+ * @param {string} signature
+ * @param {string} externalId
+ * @param {string} requester
+ * @param {string} respondOn
+ * @returns {EventMessage}
+ */
+
+/**
+ * @callback trackShipment
+ * @param {string} shipmentId
+ * @param {string} externalId
+ * @param {string} requester
+ * @param {string} respondOn
+ * @returns {EventMessage}
+ */
+
+/**
+ * @typedef {string} functionName
+ */
+
+/**
+ * @typedef {Object} shippingService formats and parses shipping event messages
+ * @property {string} serviceName - programmatic service name in eventSource/Target
+ * @property {string} topic - event topic "shippingChannel" when sending messasges
+ * @property {shipOrder} shipOrder - format event message requesting shipping label and pickup of order
+ * @property {trackShipment} trackShipment - report on location/status of parcel
+ * @property {function():EventMessage} verifyDelivery - ensure customer recieved parcel
+ * @property {function():EventMessage} returnShipment - return to sender if refunding
+ * @property {function(functionName,EventMessage):{[key]:string}} getPayload - extract payload
+ */
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function createEventMessage(_ref) {
+  var requester = _ref.requester,
+      service = _ref.service,
+      type = _ref.type,
+      name = _ref.name,
+      id = _ref.id,
+      data = _ref.data;
+  return {
+    eventSource: requester,
+    eventTarget: service,
+    eventType: type,
+    eventName: name,
+    eventTime: new Date().getTime(),
+    eventUuid: id,
+    eventData: data
+  };
+}
+
+function createCommandEvent(name, topic, args) {
+  return {
+    commandName: name,
+    commandResp: topic,
+    commandArgs: _objectSpread({}, args)
+  };
+}
+/**
+ * Shipping service events
+ * @type {shippingService}
+ */
+
+
+var Shipping = {
+  serviceName: "shippingService",
+  topic: "shippingChannel",
+
+  /**
+   *
+   * @param {*} param0
+   * @returns {shipMessage}
+   */
+  shipOrder: function shipOrder(_ref2) {
+    var shipTo = _ref2.shipTo,
+        shipFrom = _ref2.shipFrom,
+        lineItems = _ref2.lineItems,
+        signature = _ref2.signature,
+        externalId = _ref2.externalId,
+        requester = _ref2.requester,
+        respondOn = _ref2.respondOn;
+    return createEventMessage({
+      requester: requester,
+      service: this.serviceName,
+      type: "command",
+      name: this.shipOrder.name,
+      id: externalId,
+      data: createCommandEvent(this.shipOrder.name, respondOn, {
+        shipTo: shipTo,
+        shipFrom: shipFrom,
+        lineItems: lineItems,
+        signature: signature,
+        externalId: externalId
+      })
+    });
+  },
+
+  /**
+   *
+   * @param {*} param0
+   * @returns {EventMessage}
+   */
+  trackShipment: function trackShipment(_ref3) {
+    var externalId = _ref3.externalId,
+        shipmentId = _ref3.shipmentId,
+        trackingId = _ref3.trackingId,
+        requester = _ref3.requester,
+        respondOn = _ref3.respondOn;
+    return createEventMessage({
+      requester: requester,
+      service: this.serviceName,
+      type: "command",
+      name: this.trackShipment.name,
+      id: externalId,
+      data: createCommandEvent(this.trackShipment.name, respondOn, {
+        externalId: externalId,
+        shipmentId: shipmentId,
+        trackingId: trackingId
+      })
+    });
+  },
+
+  /**
+   *
+   * @param {*} param0
+   * @returns {EventMessage}
+   */
+  verifyDelivery: function verifyDelivery(_ref4) {
+    var requester = _ref4.requester,
+        respondOn = _ref4.respondOn,
+        trackingId = _ref4.trackingId,
+        externalId = _ref4.externalId;
+    return createEventMessage({
+      requester: requester,
+      service: this.serviceName,
+      type: "command",
+      name: this.verifyDelivery.name,
+      id: externalId,
+      data: createCommandEvent(this.verifyDelivery.name, respondOn, {
+        externalId: externalId,
+        trackingId: trackingId
+      })
+    });
+  },
+  returnShipment: function returnShipment(_ref5) {
+    var requester = _ref5.requester,
+        respondOn = _ref5.respondOn,
+        shipmentId = _ref5.shipmentId,
+        externalId = _ref5.externalId;
+    return createEventMessage({
+      requester: requester,
+      service: this.serviceName,
+      type: "command",
+      id: externalId,
+      name: this.returnShipment.name,
+      data: createCommandEvent(this.returnShipment, respondOn, {
+        shipmentId: shipmentId,
+        externalId: externalId
+      })
+    });
+  },
+  getPayload: function getPayload(func, event) {
+    var _payloads;
+
+    var payloads = (_payloads = {}, _defineProperty(_payloads, this.shipOrder.name, {
+      shipmentId: event.eventData.shipmentId
+    }), _defineProperty(_payloads, this.trackShipment.name, {
+      trackingId: event.eventData.trackingId,
+      trackingStatus: event.eventData.trackingStatus
+    }), _defineProperty(_payloads, this.verifyDelivery.name, {
+      proofOfDelivery: event.eventData.proofOfDelivery
+    }), _payloads);
+    return payloads[func];
+  },
+  getProperty: function getProperty(event, key) {
+    return event.eventData[key];
+  }
+};
+
+/***/ })
+
+};
+;
+//# sourceMappingURL=829.js.map

@@ -1199,7 +1199,7 @@ acorn@^7.4.0:
 
 aegis@^0.1.0:
   version "0.1.0"
-  resolved "https://registry.yarnpkg.com/aegis/-/aegis-0.1.0.tgz#9169e1c4ee409ab0c2f680c59c35ec1a2f8cec06"
+  resolved "https://registry.npmjs.org/aegis/-/aegis-0.1.0.tgz"
   integrity sha1-kWnhxO5AmrDC9oDFnDXsGi+M7AY=
   dependencies:
     boo "~1.2.0"
@@ -1690,7 +1690,7 @@ body-parser@1.19.0:
 
 boo@~1.2.0:
   version "1.2.4"
-  resolved "https://registry.yarnpkg.com/boo/-/boo-1.2.4.tgz#b33331c36c4ae79d82f4fd0e4490604cb7c513b5"
+  resolved "https://registry.npmjs.org/boo/-/boo-1.2.4.tgz"
   integrity sha1-szMxw2xK552C9P0ORJBgTLfFE7U=
 
 boxen@^4.2.0:
@@ -3588,7 +3588,7 @@ loader-runner@^4.0.0:
   resolved "https://registry.npmjs.org/loader-runner/-/loader-runner-4.1.0.tgz"
   integrity sha512-oR4lB4WvwFoC70ocraKhn5nkKSs23t57h9udUgw8o0iH8hMXeEoRuUgfcvgUwAJ1ZpRqBvcou4N2SMvM1DwMrA==
 
-loader-utils@^1.4.0:
+loader-utils@^1.1.0, loader-utils@^1.4.0:
   version "1.4.0"
   resolved "https://registry.npmjs.org/loader-utils/-/loader-utils-1.4.0.tgz"
   integrity sha512-qH0WSMBtn/oHuwjy/NucEgbx5dbxxnxup9s4PVXJUDHZBQY+s0NWA9rJf53RBnQZxfch7euUui7hpoAPvALZdA==
@@ -3968,6 +3968,11 @@ nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.npmjs.org/nice-try/-/nice-try-1.0.5.tgz"
   integrity sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
+
+node-cmd@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npmjs.org/node-cmd/-/node-cmd-3.0.0.tgz"
+  integrity sha1-OP/3CkqqT2WdID61eGJzcBjiT28=
 
 node-gyp@^7.1.0:
   version "7.1.2"
@@ -4482,6 +4487,14 @@ pupa@^2.0.1:
   integrity sha512-Pj8EhJzFiPwnf4dEXpuUWwH8M/Yl4vpl4cN2RX1i3R77DWvbY5ZPKni7CCKkOYxz+XKt2fieemsV+WTZbIlYzg==
   dependencies:
     escape-goat "^2.0.0"
+
+py-loader@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.npmjs.org/py-loader/-/py-loader-0.3.1.tgz"
+  integrity sha512-C9gYo9Yiinpw/Qm8G0Uu43KRh0wk1uLZ/YO4OLfar+6oW1lvRx6adf8tqtqOY+gZmeXGAKLu+AoRn+FKaBxxrA==
+  dependencies:
+    loader-utils "^1.1.0"
+    node-cmd "^3.0.0"
 
 qs@6.7.0:
   version "6.7.0"

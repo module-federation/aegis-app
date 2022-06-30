@@ -138,21 +138,20 @@
  * }} commands - configure functions to execute when specified in a
  * URL parameter or query of the auto-generate REST API
  */
+/**
+ * @callback controller
+ * @param {Request} req
+ * @param {Response} res
+ */
 
 /**
  * @typedef {{
- *  [x: string]: {
- *    endpointUri: string,
- *    port:ports[p],
- *    method:'get'|'post'|'patch'|'delete'
- *    callback: ({
- *      body:string,
- *      headers:{},
- *      params:{},
- *      query:{}}) => Promise<{
- *        body,status,headers,
- *      }>
- *    })
+ *  [path: string]: {
+ *    get?: controller,
+ *    post?: controller,
+ *    patch?: controller,
+ *    delete?:controller
+ *   }
  * }} endpoints
  */
 
@@ -183,7 +182,7 @@
  * @property {commands} [commands] - define functions to execute when specified in a
  * URL parameter or query of the auto-generated REST API
  * @property {accessControlList} [accessControlList] - configure authorization
- * @property {endpoints} [endpoints] - additional custom API endpoints - specify inbound port
+ * @property {endpoints} [routes] - additional custom API endpoints - specify inbound port
  * @property {{factory:import("../adapters/datasources/datasource-mongodb"),url:string,credentials?:string}} [datasource] - custom datasource
  * for this model. If not set, the default set by the server is used.
  *
