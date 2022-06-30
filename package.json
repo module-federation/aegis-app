@@ -11,10 +11,9 @@
   },
   "scripts": {
     "build": "npm run clean && webpack --config webpack.config.js",
-    "newModel": "yarn build && git commit -a -m test && git push && open http://localhost/reload",
-    "build-order": "cp test/config/index.order.js src/config/index.js && npm run build",
-    "build-customer": "cp test/config/index.customer.js src/config/index.js && npm run build",
-    "build-cache": "cp test/config/index.cache.js src/config/index.js && npm run clean && webpack --config webpack.cache.config.js",
+    "newModel": "yarn build && git commit -a -m test && git push && gp preview https://${PORT}-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}/hot-reload.html",
+    "updateModel": "yarn build && git commit -a -m test && git push",
+    "newBranch": "yarn build && cd ../aegis-host yarn build",
     "build-wasm": "asc src/assemblyscript/exports.ts -b src/assemblyscript/exports.wasm -t src/assemblyscript/exports.wat",
     "start": "node -r dotenv/config dist/main.js",
     "start-all": "npm run kafka-start && node -r dotenv/config dist/main.js",
