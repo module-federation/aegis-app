@@ -4,13 +4,14 @@ const path = require('path')
 const { ModuleFederationPlugin } = require('webpack').container
 const httpNode = require('./webpack/http-node')
 
+const ctx = JSON.stringify(process.env.GITPOD_WORKSPACE_CONTEXT)
+
 var serverConfig = {
   target: httpNode,
   entry: ['@babel/polyfill', path.resolve(__dirname, 'src/index.js')],
   output: {
     path: path.resolve(__dirname, 'dist'),
-    publicPath:
-      'https://api.github.com?owner=module-federation&repo=aegis-application&filedir=dist&branch=order',
+    publicPath: `https://api.github.com?owner=module-federation&repo=aegis-application&filedir=dist&branch=${ctx.ref}`,
     libraryTarget: 'commonjs'
   },
   devtool: 'source-map',
