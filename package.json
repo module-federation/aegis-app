@@ -48,6 +48,7 @@
     "ws": "^7.5.2"
   },
   "devDependencies": {
+    "babel-loader": "^8.2.5",
     "@babel/cli": "^7.10.5",
     "@babel/core": "^7.11.1",
     "@babel/helper-validator-option": "^7.12.17",
