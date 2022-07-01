@@ -32105,7 +32105,7 @@ module.exports = require("zlib");
 /******/ 	
 /******/ 	/* webpack/runtime/publicPath */
 /******/ 	(() => {
-/******/ 		__webpack_require__.p = "https://api.github.com?owner=module-federation&repo=aegis-application&filedir=dist&branch=order";
+/******/ 		__webpack_require__.p = "http://localhost:8000/";
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/sharing */

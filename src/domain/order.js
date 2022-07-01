@@ -157,7 +157,7 @@ const finalStatus = status =>
  * @returns {string | null} the key or `null`
  */
 export const freezeOnCompletion = propKey => o =>
-  finalStatus() ? propKey : null
+  finalStatus(o.orderStatus) ? null : propKey
 
 /**
  * If not a registered customer, provide shipping & payment details.

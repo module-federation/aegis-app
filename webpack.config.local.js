@@ -8,7 +8,7 @@ var serverConfig = {
   entry: ['@babel/polyfill', path.resolve(__dirname, 'src/index.js')],
   output: {
     path: path.resolve(__dirname, 'dist'),
-    publicPath: 'http://localhost:3000/',
+    publicPath: 'http://localhost:8000/',
     libraryTarget: 'commonjs'
   },
   devtool: 'source-map',
