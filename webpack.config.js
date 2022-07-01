@@ -60,7 +60,7 @@ var serverConfig = {
   },
   plugins: [
     new ModuleFederationPlugin({
-      name: 'order',
+      name: 'local',
       library: { type: 'commonjs-module' },
       filename: 'remoteEntry.js',
       exposes: {
