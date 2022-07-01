@@ -10,10 +10,12 @@
     "url": "https://github.com/module-federation/aegis-app?branch=order"
   },
   "scripts": {
-    "build": "npm run clean && webpack --config webpack.config.js",
+    "build": "yarn clean && webpack --config webpack.config.js",
+    "buildLocal": "yarn clean && webpack --config webpack.config.local.js",
     "newModel": "yarn build && git commit -a -m test && git push && gp preview https://${PORT}-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}/hot-reload.html",
     "updateModel": "yarn build && git commit -a -m test && git push",
     "newBranch": "yarn build && cd ../aegis-host yarn build",
+    "localRepo": "node repo.js",
     "build-wasm": "asc src/assemblyscript/exports.ts -b src/assemblyscript/exports.wasm -t src/assemblyscript/exports.wat",
     "start": "node -r dotenv/config dist/main.js",
     "start-all": "npm run kafka-start && node -r dotenv/config dist/main.js",
@@ -36,7 +38,6 @@
   "license": "MIT",
   "dependencies": {
     "@assemblyscript/loader": "^0.19.10",
-    "aegis": "^0.1.0",
     "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
@@ -45,8 +46,7 @@
     "nanoid": "^3.1.12",
     "smartystreets-javascript-sdk": "^1.6.0",
     "square": "^8.1.0",
-    "ws": "^7.5.2",
-    "ws-heartbeat": "^1.2.0"
+    "ws": "^7.5.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",
@@ -55,19 +55,11 @@
     "@babel/polyfill": "^7.11.5",
     "@babel/preset-env": "^7.11.0",
     "@babel/register": "^7.12.1",
-    "@babel/runtime-corejs2": "^7.13.10",
     "assemblyscript": "^0.19.10",
-    "babel-loader": "^8.1.0",
-    "babel-plugin-polyfill-corejs2": "^0.1.10",
-    "babel-plugin-polyfill-corejs3": "^0.1.7",
-    "babel-plugin-polyfill-regenerator": "^0.1.6",
-    "babel-register": "^6.26.0",
     "esm": "^3.2.25",
     "express-cli": "0.0.1",
     "is-core-module": "^2.2.0",
     "mocha": "^8.2.0",
-    "nodemon": "^2.0.6",
-    "nodemon-webpack-plugin": "^4.3.2",
     "py-loader": "^0.3.1",
     "snowpack": "^3.4.0",
     "webpack": "5.0.0-beta.28",
