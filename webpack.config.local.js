@@ -1,16 +1,14 @@
-'use strict'
-
-const path = require('path')
+var path = require('path')
 const { ModuleFederationPlugin } = require('webpack').container
 const httpNode = require('./webpack/http-node')
 
 var serverConfig = {
   target: httpNode,
+
   entry: ['@babel/polyfill', path.resolve(__dirname, 'src/index.js')],
   output: {
     path: path.resolve(__dirname, 'dist'),
-    publicPath:
-      'https://api.github.com?owner=module-federation&repo=aegis-application&filedir=dist&branch=order',
+    publicPath: 'http://localhost:3000/',
     libraryTarget: 'commonjs'
   },
   devtool: 'source-map',
