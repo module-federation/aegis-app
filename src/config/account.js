@@ -36,5 +36,15 @@ export const Account = {
   mixins: [
     requireProperties('name', 'billing_email'),
     freezeProperties('id', 'name', 'billing_email')
+  ],
+  routes: [
+    {
+      path: '/accounts/:id/members',
+      get: ({ req, res, model: account }) => res.send(account.users())
+    },
+    {
+      path: '/accounts/:id/totalMembers',
+      get: ({req, res, model: account}) => account.users().length
+    }
   ]
 }
