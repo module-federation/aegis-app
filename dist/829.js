@@ -243,14 +243,16 @@ var Account = {
   },
   mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)('name', 'billing_email'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.freezeProperties)('id', 'name', 'billing_email')],
   routes: [{
-    path: '/accounts/:id/members',
+    path: '/accounts/:id/member-list',
     get: function get(req, res) {
-      return res.send(req.url);
+      return res.json(['bob', 'raj']);
     }
   }, {
-    path: '/accounts/:id/totalMembers',
+    path: '/accounts/:id/member-count',
     get: function get(req, res) {
-      return res.send(req.url);
+      return res.json({
+        count: 2
+      });
     }
   }]
 };
@@ -610,19 +612,6 @@ var Order = {
       acl: ['read', 'write']
     }
   },
-  //   '/api/accounts/:id/issues': {
-  //     get (req, res) {}
-  //   },
-  //   '/api/orders/:id/accounts/:accountid': {
-  //     put: accountOrder,
-  //     get (req, res) {
-  //       res.send(JSON.stringify(req.model.account()))
-  //     },
-  //     delete (req, res) {
-  //       res.status(304).send('not permitted')
-  //     }
-  //   }
-  // },
   serializers: [{
     on: 'deserialize',
     key: 'creditCardNumber',
