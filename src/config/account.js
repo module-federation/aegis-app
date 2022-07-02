@@ -40,11 +40,11 @@ export const Account = {
   routes: [
     {
       path: '/accounts/:id/members',
-      get: ({ req, res, model: account }) => res.send(account.users())
+      get: (req, res) => res.send(path)
     },
     {
       path: '/accounts/:id/totalMembers',
-      get: ({ req, res, model: account }) => account.users().length
+      get: (req, res) => res.send(path + req.body)
     }
   ]
 }
