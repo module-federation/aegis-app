@@ -616,20 +616,19 @@ var Order = {
       acl: ['read', 'write']
     }
   },
-  routes: {
-    '/api/accounts/:id/issues': {
-      get: function get(req, res) {}
-    },
-    '/api/orders/:id/accounts/:accountid': {
-      put: _domain_order__WEBPACK_IMPORTED_MODULE_0__.accountOrder,
-      get: function get(req, res) {
-        res.send(JSON.stringify(req.model.account()));
-      },
-      "delete": function _delete(req, res) {
-        res.status(304).send('not permitted');
-      }
-    }
-  },
+  //   '/api/accounts/:id/issues': {
+  //     get (req, res) {}
+  //   },
+  //   '/api/orders/:id/accounts/:accountid': {
+  //     put: accountOrder,
+  //     get (req, res) {
+  //       res.send(JSON.stringify(req.model.account()))
+  //     },
+  //     delete (req, res) {
+  //       res.status(304).send('not permitted')
+  //     }
+  //   }
+  // },
   serializers: [{
     on: 'deserialize',
     key: 'creditCardNumber',
