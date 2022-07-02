@@ -244,19 +244,13 @@ var Account = {
   mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)('name', 'billing_email'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.freezeProperties)('id', 'name', 'billing_email')],
   routes: [{
     path: '/accounts/:id/members',
-    get: function get(_ref2) {
-      var req = _ref2.req,
-          res = _ref2.res,
-          account = _ref2.model;
-      return res.send(account.users());
+    get: function get(req, res) {
+      return res.send(path);
     }
   }, {
     path: '/accounts/:id/totalMembers',
-    get: function get(_ref3) {
-      var req = _ref3.req,
-          res = _ref3.res,
-          account = _ref3.model;
-      return account.users().length;
+    get: function get(req, res) {
+      return res.send(path + req.body);
     }
   }]
 };
