@@ -2,13 +2,14 @@
 
 import { requireProperties, freezeProperties } from '../domain/mixins'
 import { uuid } from '../domain/utils'
+import { theLicRoute } from '../domain'
 
 /**
  * @type {import('../domain/index').ModelSpecification}
  */
 export const Account = {
   endpoint: 'accounts',
-  modelName: 'Account',
+  modelName: 'account',
   dependencies: { uuid },
   factory: dependencies => ({
     name,
@@ -37,14 +38,26 @@ export const Account = {
     requireProperties('name', 'billing_email'),
     freezeProperties('id', 'name', 'billing_email')
   ],
+  relations: {
+    members: {
+      modelName: 'accountMembers',
+      foreignKey: 'acctId',
+      type: 'oneToMany',
+      desc: 'acct has many members, member belongs to just 1 acct'
+    }
+  },
   routes: [
     {
-      path: '/accounts/:id/member-list',
-      get: (req, res) => res.json(['bob', 'raj'])
+      path: '/accounts/:id/members',
+      get: async ({ req, res, api }) =>
+        res.json(api.getModel(req.params.id).members()),
+      post: async ({ req, res, api }) => res.json(api.addModel(req.body))
     },
     {
-      path: '/accounts/:id/member-count',
-      get: (req, res) => res.json({ count: 2 })
-    }
+      path: '/accounts/:id/members/count',
+      get: ({ req, res, api }) =>
+        res.json({ count: api.getModel(req.params.id).members().length })
+    },
+    theLicRoute
   ]
 }
