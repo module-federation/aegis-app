@@ -39,12 +39,12 @@ export const Account = {
   ],
   routes: [
     {
-      path: '/accounts/:id/members',
-      get: (req, res) => res.send(req.url)
+      path: '/accounts/:id/member-list',
+      get: (req, res) => res.json(['bob', 'raj'])
     },
     {
-      path: '/accounts/:id/totalMembers',
-      get: (req, res) => res.send(req.url)
+      path: '/accounts/:id/member-count',
+      get: (req, res) => res.json({ count: 2 })
     }
   ]
 }

@@ -245,12 +245,12 @@ var Account = {
   routes: [{
     path: '/accounts/:id/members',
     get: function get(req, res) {
-      return res.send(path);
+      return res.send(req.url);
     }
   }, {
     path: '/accounts/:id/totalMembers',
     get: function get(req, res) {
-      return res.send(path + req.body);
+      return res.send(req.url);
     }
   }]
 };
