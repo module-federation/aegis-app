@@ -291,20 +291,21 @@ export const Order = {
       acl: ['read', 'write']
     }
   },
-  routes: {
-    '/api/accounts/:id/issues': {
-      get (req, res) {}
-    },
-    '/api/orders/:id/accounts/:accountid': {
-      put: accountOrder,
-      get (req, res) {
-        res.send(JSON.stringify(req.model.account()))
-      },
-      delete (req, res) {
-        res.status(304).send('not permitted')
-      }
-    }
-  },
+
+  //   '/api/accounts/:id/issues': {
+  //     get (req, res) {}
+  //   },
+  
+  //   '/api/orders/:id/accounts/:accountid': {
+  //     put: accountOrder,
+  //     get (req, res) {
+  //       res.send(JSON.stringify(req.model.account()))
+  //     },
+  //     delete (req, res) {
+  //       res.status(304).send('not permitted')
+  //     }
+  //   }
+  // },
   serializers: [
     {
       on: 'deserialize',
