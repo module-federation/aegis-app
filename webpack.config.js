@@ -11,7 +11,7 @@ var serverConfig = {
   entry: ['@babel/polyfill', path.resolve(__dirname, 'src/index.js')],
   output: {
     path: path.resolve(__dirname, 'dist'),
-    publicPath: `https://api.github.com?owner=module-federation&repo=aegis-application&filedir=dist&branch=${ctx.ref}`,
+    publicPath: `https://api.github.com?owner=module-federation&repo=aegis-application&filedir=dist&branch=cache`,
     libraryTarget: 'commonjs'
   },
   devtool: 'source-map',
