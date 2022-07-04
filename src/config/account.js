@@ -47,7 +47,7 @@ export const Account = {
   },
   routes: [
     {
-      path: '/accounts/:id/members',
+      path: '/accounts/:id/detail',
       /**
        *
        * @param {Request} req
@@ -55,22 +55,26 @@ export const Account = {
        * @param {}
        * @returns
        */
-      get: async (req, res, ports) =>
-        res
-          .status(200)
-          .send(
-            JSON.stringify(
-              await ports.findModel({ id: req.params.id, query: req.query })
+      get: async (req, res, ports) => {
+        res.status(200).send(await ports.addPort(req.body))
+          res.status(200).send(
+           dd  JSON.stringify(
+              await ports.findModel({
+                id: req.params.id,
+                query: req.query
+              })
             )
-          ),
+          )
+      },
       post: async (req, res, ports) =>
-        req.status(200).send(ports.addModel(req.body))
+        res.status(200).send(await ports.addModel(req.body))
     },
     {
       path: '/accounts/:id/members/count',
-      get: (req, res, ports) =>
+      get: async (req, res, ports) =>
         res.json({
-          count: ports.findModel({ id: req.params.id }).members().length
+          count: await (await ports.findModel({ id: req.params.id })).members()
+            .length
         })
     }
   ]

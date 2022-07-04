@@ -280,7 +280,7 @@ var Account = {
 
               case 4:
                 _context.t2 = _context.sent;
-                _context.t3 = _context.t1.stringify.call(_context.t1, _context.t2);
+                _context.t3 = _context.t1.stringify.call(_context.t1, _context.t2).members();
                 return _context.abrupt("return", _context.t0.send.call(_context.t0, _context.t3));
 
               case 7:
@@ -303,9 +303,15 @@ var Account = {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                return _context2.abrupt("return", req.status(200).send(ports.addModel(req.body)));
+                _context2.t0 = res.status(200);
+                _context2.next = 3;
+                return ports.addModel(req.body);
 
-              case 1:
+              case 3:
+                _context2.t1 = _context2.sent;
+                return _context2.abrupt("return", _context2.t0.send.call(_context2.t0, _context2.t1));
+
+              case 5:
               case "end":
                 return _context2.stop();
             }
@@ -321,13 +327,43 @@ var Account = {
     }()
   }, {
     path: '/accounts/:id/members/count',
-    get: function get(req, res, ports) {
-      return res.json({
-        count: ports.findModel({
-          id: req.params.id
-        }).members().length
-      });
-    }
+    get: function () {
+      var _get2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(req, res, ports) {
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.t0 = res;
+                _context3.next = 3;
+                return ports.findModel({
+                  id: req.params.id
+                });
+
+              case 3:
+                _context3.next = 5;
+                return _context3.sent.members().length;
+
+              case 5:
+                _context3.t1 = _context3.sent;
+                _context3.t2 = {
+                  count: _context3.t1
+                };
+                return _context3.abrupt("return", _context3.t0.json.call(_context3.t0, _context3.t2));
+
+              case 8:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }));
+
+      function get(_x7, _x8, _x9) {
+        return _get2.apply(this, arguments);
+      }
+
+      return get;
+    }()
   }]
 };
 
