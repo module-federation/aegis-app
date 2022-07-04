@@ -52,15 +52,15 @@ export const Account = {
        *
        * @param {Request} req
        * @param {Response} res
-       * @param {}
+       * @param {import('../domain/index').DomainPortAPI} ports
        * @returns
        */
       get: async (req, res, ports) => {
-        res.status(200).send(await ports.addPort(req.body))
+        const model = await ports.addModel(req.body)
         res.status(200).send(
           JSON.stringify(
             await ports.findModel({
-              id: req.params.id,
+              id: model.getId(),
               query: req.query
             })
           )

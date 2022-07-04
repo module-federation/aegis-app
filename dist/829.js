@@ -261,39 +261,36 @@ var Account = {
      *
      * @param {Request} req
      * @param {Response} res
-     * @param {}
+     * @param {import('../domain/index').DomainPortAPI} ports
      * @returns
      */
     get: function () {
       var _get = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res, ports) {
+        var model;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
+                _context.next = 2;
+                return ports.addModel(req.body);
+
+              case 2:
+                model = _context.sent;
                 _context.t0 = res.status(200);
-                _context.next = 3;
-                return ports.addPort(req.body);
-
-              case 3:
-                _context.t1 = _context.sent;
-
-                _context.t0.send.call(_context.t0, _context.t1);
-
-                _context.t2 = res.status(200);
-                _context.t3 = JSON;
-                _context.next = 9;
+                _context.t1 = JSON;
+                _context.next = 7;
                 return ports.findModel({
-                  id: req.params.id,
+                  id: model.getId(),
                   query: req.query
                 });
 
-              case 9:
-                _context.t4 = _context.sent;
-                _context.t5 = _context.t3.stringify.call(_context.t3, _context.t4);
+              case 7:
+                _context.t2 = _context.sent;
+                _context.t3 = _context.t1.stringify.call(_context.t1, _context.t2);
 
-                _context.t2.send.call(_context.t2, _context.t5);
+                _context.t0.send.call(_context.t0, _context.t3);
 
-              case 12:
+              case 10:
               case "end":
                 return _context.stop();
             }
@@ -1138,6 +1135,53 @@ __webpack_require__.r(__webpack_exports__);
  *
  */
 
+/**
+ * @callback addModqqqqel
+ * @param {{ searchTerm1, searchTerm2, searchTermN }} input
+ * @returns {Model}
+ */
+
+/**
+ * @callback editModel
+ * @param {{ id:string, changes:object }} input
+ * @returns { Model }
+ */
+
+/**
+ * @callback findModel
+ * @param {{ id:string, query:object }} input
+ * @returns { Model }
+ */
+
+/**
+ * @callback findRelatedModels
+ * @param {{ query:object, relation:string }} input
+ * @returns { Model }
+ */
+
+/**
+ * @callback listModels
+ * @param {{ query:object }} input e.g. { searchTerm1 : 'val', ...etc }
+ * @returns { Model }
+ */
+
+/**
+ * @callback executeCommand
+ * @param {{ id:string }} input
+ * @returns { Model }
+ */
+
+/**
+ * @typedef DomainPortAPI
+ * @property { addModel } addModel
+ * @property { editModel } editModel
+ * @property { listModels } listModels
+ * @property { findModel } findModel
+ * @property { findRelatedModels } findModel
+ * @property { removeModel } removeModel
+ * @property { executeCommand } executeCommand
+ */
+
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -1151,6 +1195,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  // Model properties
 
 
+/**
+ *
+ * @param {ModelSpecification} spec
+ */
 
 function validateSpec(spec) {
   var missing = ['modelName', 'endpoint', 'factory'].filter(function (key) {

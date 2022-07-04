@@ -188,14 +188,67 @@
  *
  */
 
+/**
+ * @callback addModqqqqel
+ * @param {{ searchTerm1, searchTerm2, searchTermN }} input
+ * @returns {Model}
+ */
+
+/**
+ * @callback editModel
+ * @param {{ id:string, changes:object }} input
+ * @returns { Model }
+ */
+
+/**
+ * @callback findModel
+ * @param {{ id:string, query:object }} input
+ * @returns { Model }
+ */
+
+/**
+ * @callback findRelatedModels
+ * @param {{ query:object, relation:string }} input
+ * @returns { Model }
+ */
+
+/**
+ * @callback listModels
+ * @param {{ query:object }} input e.g. { searchTerm1 : 'val', ...etc }
+ * @returns { Model }
+ */
+
+/**
+ * @callback executeCommand
+ * @param {{ id:string }} input
+ * @returns { Model }
+ */
+
+/**
+ * @typedef DomainPortAPI
+ * @property { addModel } addModel
+ * @property { editModel } editModel
+ * @property { listModels } listModels
+ * @property { findModel } findModel
+ * @property { findRelatedModels } findModel
+ * @property { removeModel } removeModel
+ * @property { executeCommand } executeCommand
+ */
+
 import GlobalMixins from './mixins'
 import bindAdapters from './bind-adapters'
+
 // Service dependencies
 import * as services from '../../test/mock'
 import * as adapters from '../adapters'
+
 // Model properties
 import * as modelSpecs from '../config'
 
+/**
+ *
+ * @param {ModelSpecification} spec
+ */
 function validateSpec (spec) {
   const missing = ['modelName', 'endpoint', 'factory'].filter(key => !spec[key])
   if (missing?.length > 0) {
