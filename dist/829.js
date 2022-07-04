@@ -255,7 +255,7 @@ var Account = {
     }
   },
   routes: [{
-    path: '/accounts/:id/members',
+    path: '/accounts/:id/detail',
 
     /**
      *
@@ -271,19 +271,29 @@ var Account = {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.t0 = res.status(200);
-                _context.t1 = JSON;
-                _context.next = 4;
+                _context.next = 3;
+                return ports.addPort(req.body);
+
+              case 3:
+                _context.t1 = _context.sent;
+
+                _context.t0.send.call(_context.t0, _context.t1);
+
+                _context.t2 = res.status(200);
+                _context.t3 = JSON;
+                _context.next = 9;
                 return ports.findModel({
                   id: req.params.id,
                   query: req.query
                 });
 
-              case 4:
-                _context.t2 = _context.sent;
-                _context.t3 = _context.t1.stringify.call(_context.t1, _context.t2).members();
-                return _context.abrupt("return", _context.t0.send.call(_context.t0, _context.t3));
+              case 9:
+                _context.t4 = _context.sent;
+                _context.t5 = _context.t3.stringify.call(_context.t3, _context.t4);
 
-              case 7:
+                _context.t2.send.call(_context.t2, _context.t5);
+
+              case 12:
               case "end":
                 return _context.stop();
             }

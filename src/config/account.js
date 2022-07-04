@@ -57,14 +57,14 @@ export const Account = {
        */
       get: async (req, res, ports) => {
         res.status(200).send(await ports.addPort(req.body))
-          res.status(200).send(
-           dd  JSON.stringify(
-              await ports.findModel({
-                id: req.params.id,
-                query: req.query
-              })
-            )
+        res.status(200).send(
+          JSON.stringify(
+            await ports.findModel({
+              id: req.params.id,
+              query: req.query
+            })
           )
+        )
       },
       post: async (req, res, ports) =>
         res.status(200).send(await ports.addModel(req.body))
