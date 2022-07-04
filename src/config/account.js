@@ -50,16 +50,26 @@ export const Account = {
       path: '/accounts/:id/members',
       /**
        *
-       * @param {{Request,Response,import('../../../aegis/lib/adapters/}} param0
+       * @param {Request} req
+       * @param {Response} res
+       * @param {}
        * @returns
        */
-      get: async ({ req, res, ports }) =>
-        res.json(ports.findModel({ id: req.params.id })),
-      post: async ({ req, res, ports }) => res.json(ports.addModel(req.body))
+      get: async (req, res, ports) =>
+        res
+          .status(200)
+          .send( "it worked"
+            /*
+            JSON.stringify(
+              ports.findModel({ id: req.params.id, query: req.query })
+            )*/
+          ),
+      post: async (req, res, ports) =>
+        req.status(200).send(ports.addModel(req.body))
     },
     {
       path: '/accounts/:id/members/count',
-      get: ({ req, res, ports }) =>
+      get: (req, res, ports) =>
         res.json({
           count: ports.findModel({ id: req.params.id }).members().length
         })

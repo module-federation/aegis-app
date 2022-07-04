@@ -259,22 +259,25 @@ var Account = {
 
     /**
      *
-     * @param {{Request,Response,import('../../../aegis/lib/adapters/}} param0
+     * @param {Request} req
+     * @param {Response} res
+     * @param {}
      * @returns
      */
     get: function () {
-      var _get = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(_ref2) {
-        var req, res, api;
+      var _get = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res, ports) {
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                req = _ref2.req, res = _ref2.res, api = _ref2.api;
-                return _context.abrupt("return", res.json(api.findModel({
-                  id: req.params.id
-                })));
+                return _context.abrupt("return", res.status(200).send("it worked"
+                /*
+                JSON.stringify(
+                  ports.findModel({ id: req.params.id, query: req.query })
+                )*/
+                ));
 
-              case 2:
+              case 1:
               case "end":
                 return _context.stop();
             }
@@ -282,23 +285,21 @@ var Account = {
         }, _callee);
       }));
 
-      function get(_x) {
+      function get(_x, _x2, _x3) {
         return _get.apply(this, arguments);
       }
 
       return get;
     }(),
     post: function () {
-      var _post = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(_ref3) {
-        var req, res, api;
+      var _post = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(req, res, ports) {
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                req = _ref3.req, res = _ref3.res, api = _ref3.api;
-                return _context2.abrupt("return", res.json(api.addModel(req.body)));
+                return _context2.abrupt("return", req.status(200).send(ports.addModel(req.body)));
 
-              case 2:
+              case 1:
               case "end":
                 return _context2.stop();
             }
@@ -306,7 +307,7 @@ var Account = {
         }, _callee2);
       }));
 
-      function post(_x2) {
+      function post(_x4, _x5, _x6) {
         return _post.apply(this, arguments);
       }
 
@@ -314,12 +315,11 @@ var Account = {
     }()
   }, {
     path: '/accounts/:id/members/count',
-    get: function get(_ref4) {
-      var req = _ref4.req,
-          res = _ref4.res,
-          api = _ref4.api;
+    get: function get(req, res, ports) {
       return res.json({
-        count: api.getModel(req.params.id).members().length
+        count: ports.findModel({
+          id: req.params.id
+        }).members().length
       });
     }
   }]
