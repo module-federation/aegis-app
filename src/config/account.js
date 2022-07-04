@@ -58,11 +58,10 @@ export const Account = {
       get: async (req, res, ports) =>
         res
           .status(200)
-          .send( "it worked"
-            /*
+          .send(
             JSON.stringify(
-              ports.findModel({ id: req.params.id, query: req.query })
-            )*/
+              await ports.findModel({ id: req.params.id, query: req.query })
+            )
           ),
       post: async (req, res, ports) =>
         req.status(200).send(ports.addModel(req.body))

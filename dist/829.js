@@ -270,14 +270,20 @@ var Account = {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                return _context.abrupt("return", res.status(200).send("it worked"
-                /*
-                JSON.stringify(
-                  ports.findModel({ id: req.params.id, query: req.query })
-                )*/
-                ));
+                _context.t0 = res.status(200);
+                _context.t1 = JSON;
+                _context.next = 4;
+                return ports.findModel({
+                  id: req.params.id,
+                  query: req.query
+                });
 
-              case 1:
+              case 4:
+                _context.t2 = _context.sent;
+                _context.t3 = _context.t1.stringify.call(_context.t1, _context.t2);
+                return _context.abrupt("return", _context.t0.send.call(_context.t0, _context.t3));
+
+              case 7:
               case "end":
                 return _context.stop();
             }
