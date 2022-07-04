@@ -2,7 +2,6 @@
 
 import { requireProperties, freezeProperties } from '../domain/mixins'
 import { uuid } from '../domain/utils'
-import { theLicRoute } from '../domain'
 
 /**
  * @type {import('../domain/index').ModelSpecification}
@@ -49,15 +48,21 @@ export const Account = {
   routes: [
     {
       path: '/accounts/:id/members',
-      get: async ({ req, res, api }) =>
-        res.json(api.getModel(req.params.id).members()),
-      post: async ({ req, res, api }) => res.json(api.addModel(req.body))
+      /**
+       *
+       * @param {{Request,Response,import('../../../aegis/lib/adapters/}} param0
+       * @returns
+       */
+      get: async ({ req, res, ports }) =>
+        res.json(ports.findModel({ id: req.params.id })),
+      post: async ({ req, res, ports }) => res.json(ports.addModel(req.body))
     },
     {
       path: '/accounts/:id/members/count',
-      get: ({ req, res, api }) =>
-        res.json({ count: api.getModel(req.params.id).members().length })
-    },
-    theLicRoute
+      get: ({ req, res, ports }) =>
+        res.json({
+          count: ports.findModel({ id: req.params.id }).members().length
+        })
+    }
   ]
 }
