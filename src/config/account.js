@@ -56,6 +56,7 @@ export const Account = {
        * @returns
        */
       get: async (req, res, ports) => {
+         
         const model = await ports.addModel(req.body)
         res.status(200).send(
           JSON.stringify(

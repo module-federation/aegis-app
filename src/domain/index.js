@@ -191,31 +191,31 @@
 /**
  * @callback addModqqqqel
  * @param {{ searchTerm1, searchTerm2, searchTermN }} input
- * @returns {Model}
+ * @returns {Promise<Model>}
  */
 
 /**
  * @callback editModel
  * @param {{ id:string, changes:object }} input
- * @returns { Model }
+ * @returns { Promise<Model> }
  */
 
 /**
  * @callback findModel
  * @param {{ id:string, query:object }} input
- * @returns { Model }
+ * @returns { Promise<Model> }
  */
 
 /**
  * @callback findRelatedModels
  * @param {{ query:object, relation:string }} input
- * @returns { Model }
+ * @returns { Promise<{Model,[Model]}> }
  */
 
 /**
  * @callback listModels
  * @param {{ query:object }} input e.g. { searchTerm1 : 'val', ...etc }
- * @returns { Model }
+ * @returns { [Promise<Model>] }
  */
 
 /**

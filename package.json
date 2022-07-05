@@ -14,6 +14,7 @@
     "buildLocalRepo": "yarn clean && webpack --config webpack.config.local.js",
     "startLocalRepo": "node repo.js",
     "buildNewApi": "cd ../aegis && yarn build && cd ../aegis-app && yarn buildLocalRepo && cd ../aegis-host && yarn build",
+    "startHost": "cd ../aegis-host && yarn start",
     "newModel": "git commit -a -m test && yarn buildLocalRepo && gp preview https://${PORT}-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}/hot-reload.html",
     "newModel2": "git commit -a -m test && yarn buildLocalRepo && open 'http://localhost:8080/hot-reload.html'",
     "updateModel": "git commit -a -m test && yarn buildLocalRepo",
