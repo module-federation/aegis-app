@@ -7,15 +7,17 @@
     "pnp": false
   },
   "repository": {
-    "url": "https://github.com/module-federation/aegis-app?branch=order"
+    "url": "https://github.com/module-federation/aegis-app"
   },
   "scripts": {
     "build": "yarn clean && webpack --config webpack.config.js",
     "buildLocalRepo": "yarn clean && webpack --config webpack.config.local.js",
-    "startLocalRepo": "node repo.js",
-    "buildNewApi": "cd ../aegis && yarn build && cd ../aegis-app && yarn buildLocalRepo && cd ../aegis-host && yarn build && yarn openurl && yarn opengp",
-    "startHost": "cd ../aegis-host && yarn start",
     "newModel": "git commit -a -m test && yarn buildLocalRepo",
+    "startLocalRepo": "node repo.js",
+    "startHost": "cd ../aegis-host && yarn start",
+    "rebuild": "cd ../aegis && yarn build && cd ../aegis-host && yarn build && cd ../aegis && ./start.sh",
+    "stopHost": "cd ../aegis-host && yarn stop",
+    "restartHost": "yarn stopHost && yarn rebuild",
     "opengp": "gp preview https://${PORT}-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}/hot-reload.html",
     "openurl": "open http://localhost",
     "newModel2": "git commit -a -m test && yarn buildLocalRepo && open -u 'http://localhost:8080/hot-reload.html'",
@@ -24,7 +26,6 @@
     "start": "node -r dotenv/config dist/main.js",
     "start-all": "npm run kafka-start && node -r dotenv/config dist/main.js",
     "dev-start": "nodemon --watch src --exec npm restart",
-    "restart": "npm run build && npm run start",
     "clean": "rm -rf dist",
     "transpile": "babel src -d dist",
     "test": "mocha",
