@@ -750,7 +750,8 @@ export function makeOrderFactory (dependencies) {
  * @param {Order} order
  */
 export async function approve (order) {
-  const approvedOrder = await order.update({
+  console.debug({ msg: 'got order', order })
+  const approvedOrder = order.updateSync({
     orderStatus: OrderStatus.APPROVED
   })
   console.debug({ approvedOrder })
