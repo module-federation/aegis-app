@@ -430,6 +430,7 @@ export const allowProperties = (...propKeys) => o => {
     const unknownProps = Object.keys(o).filter(key => !allowList.includes(key))
 
     if (unknownProps?.length > 0) {
+      qs
       throw new Error(`invalid properties: ${unknownProps}`)
     }
   }
@@ -486,7 +487,7 @@ export const RegEx = {
  *  values?:any[],
  *  regex?:regexType,
  *  maxlen?:number
- *  maxnum?:number
+ *  maxnum?:numbertp
  *  typeof?:string
  *  unique?:{ encrypted:boolean }
  * }} validation
