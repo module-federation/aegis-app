@@ -1881,6 +1881,7 @@ var allowProperties = function allowProperties() {
       });
 
       if ((unknownProps === null || unknownProps === void 0 ? void 0 : unknownProps.length) > 0) {
+        qs;
         throw new Error("invalid properties: ".concat(unknownProps));
       }
     }
@@ -1934,7 +1935,7 @@ var RegEx = {
  *  values?:any[],
  *  regex?:regexType,
  *  maxlen?:number
- *  maxnum?:number
+ *  maxnum?:numbertp
  *  typeof?:string
  *  unique?:{ encrypted:boolean }
  * }} validation
