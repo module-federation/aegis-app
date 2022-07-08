@@ -21,7 +21,7 @@
     "opengp": "gp preview https://${PORT}-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}/hot-reload.html",
     "openReload": "open -u https://${PORT}-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}/hot-reload.html",
     "openurl": "open -u http://localhost",
-    "newModel2": "git commit -a -m test && yarn buildLocalRepo && open -u 'http://localhost:8080/hot-reload.html'",
+    "newModel2": "git commit -a -m test && yarn buildLocalRepo && open -u 'http://localhostqs                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           q/hot-reload.html'",
     "updateModel": "git commit -a -m test && yarn buildLocalRepo",
     "build-wasm": "asc src/assemblyscript/exports.ts -b src/assemblyscript/exports.wasm -t src/assemblyscript/exports.wat",
     "start": "node -r dotenv/config dist/main.js",
