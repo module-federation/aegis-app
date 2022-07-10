@@ -753,9 +753,9 @@ export async function approve (order) {
   console.debug({ msg: 'got order', order })
   const approvedOrder = order.updateSync({
     orderStatus: OrderStatus.APPROVED
-  })
+  }, false)
   console.debug({ approvedOrder })
-  //approvedOrder.logStateChange(OrderStatus.APPROVED)
+  approvedOrder.logStateChange(OrderStatus.APPROVED)
   return runOrderWorkflow(approvedOrder)
 }
 

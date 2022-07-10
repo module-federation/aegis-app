@@ -3554,7 +3554,7 @@ function _approve() {
             });
             approvedOrder = order.updateSync({
               orderStatus: OrderStatus.APPROVED
-            });
+            }, false);
             console.debug({
               approvedOrder: approvedOrder
             }); //approvedOrder.logStateChange(OrderStatus.APPROVED)
