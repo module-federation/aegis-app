@@ -3557,11 +3557,11 @@ function _approve() {
             }, false);
             console.debug({
               approvedOrder: approvedOrder
-            }); //approvedOrder.logStateChange(OrderStatus.APPROVED)
-
+            });
+            approvedOrder.logStateChange(OrderStatus.APPROVED);
             return _context19.abrupt("return", runOrderWorkflow(approvedOrder));
 
-          case 4:
+          case 5:
           case "end":
             return _context19.stop();
         }
