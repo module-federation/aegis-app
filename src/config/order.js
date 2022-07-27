@@ -257,6 +257,27 @@ export const Order = {
       desc: 'An order contains a list of inventory items to ship.'
     }
   },
+  routes: [
+    {
+      path: '/orders/filter',
+      get: (req, res, ports) => {
+        res.on('data', chunk => {
+          console.log(chunk)
+        })
+
+        res.on('done', () => {
+          console.log('done')
+        })
+
+        ports.listModels({
+          query: {
+            $or: [{ orderNo: { $eq: '123' } }, { orderNo: { $eq: '345' } }]
+          },
+          writable: res
+        })
+      }
+    }
+  ],
   commands: {
     decrypt: {
       command: 'decrypt',
