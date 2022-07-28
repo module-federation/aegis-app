@@ -7,7 +7,7 @@ export const Video = {
   factory: dependencies => () => {
     const { port1, port2 } = MessageChannel()
 
-    export function publish (message) {
+    function publish (message) {
       if (isMainThread) {
         port1.postMessage(message)
       } else {
@@ -15,7 +15,7 @@ export const Video = {
       }
     }
 
-    export function subscribe (cb) {
+    function subscribe (cb) {
       if (isMainThread) {
         port1.on('message', message => cb(message))
       } else {
