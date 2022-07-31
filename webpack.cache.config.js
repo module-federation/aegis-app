@@ -42,6 +42,7 @@ var serverConfig = {
         './model-cache': './src/domain',
         './adapter-cache': './src/adapters',
         './service-cache': './src/services',
+        './port-cache': './src/domain/ports',
         './event-bus': './src/services/event-bus'
       },
       shared: {

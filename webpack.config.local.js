@@ -64,6 +64,7 @@ var serverConfig = {
         './models': './src/domain',
         './adapters': './src/adapters',
         './services': './src/services',
+        './ports': './src/domain/ports.js',
         './event-bus': './src/services/event-bus'
       },
       shared: {
