@@ -36676,7 +36676,7 @@ module.exports = (batch, sender, Result, keyTranslationFormat) => {
 "use strict";
 var moduleMap = {
 	"./models": () => {
-		return Promise.all([__webpack_require__.e(867), __webpack_require__.e(935), __webpack_require__.e(829)]).then(() => () => (__webpack_require__(/*! ./src/domain */ "./src/domain/index.js")));
+		return Promise.all([__webpack_require__.e(867), __webpack_require__.e(353), __webpack_require__.e(829)]).then(() => () => (__webpack_require__(/*! ./src/domain */ "./src/domain/index.js")));
 	},
 	"./adapters": () => {
 		return __webpack_require__.e(867).then(() => () => (__webpack_require__(/*! ./src/adapters */ "./src/adapters/index.js")));
@@ -36685,7 +36685,7 @@ var moduleMap = {
 		return Promise.all([__webpack_require__.e(867), __webpack_require__.e(732)]).then(() => () => (__webpack_require__(/*! ./src/services */ "./src/services/index.js")));
 	},
 	"./ports": () => {
-		return Promise.all([__webpack_require__.e(935), __webpack_require__.e(334)]).then(() => () => (__webpack_require__(/*! ./src/domain/ports.js */ "./src/domain/ports.js")));
+		return Promise.all([__webpack_require__.e(353), __webpack_require__.e(334)]).then(() => () => (__webpack_require__(/*! ./src/domain/ports.js */ "./src/domain/ports.js")));
 	},
 	"./event-bus": () => {
 		return Promise.all([__webpack_require__.e(867), __webpack_require__.e(857)]).then(() => () => (__webpack_require__(/*! ./src/services/event-bus */ "./src/services/event-bus.js")));
@@ -36804,6 +36804,32 @@ module.exports = require("https");
 
 "use strict";
 module.exports = require("net");
+
+/***/ }),
+
+/***/ "os":
+/*!*********************!*\
+  !*** external "os" ***!
+  \*********************/
+/*! unknown exports (runtime-defined) */
+/*! runtime requirements: module */
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("os");
+
+/***/ }),
+
+/***/ "path":
+/*!***********************!*\
+  !*** external "path" ***!
+  \***********************/
+/*! unknown exports (runtime-defined) */
+/*! runtime requirements: module */
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("path");
 
 /***/ }),
 
@@ -37167,15 +37193,15 @@ module.exports = require("zlib");
 /******/ 			}
 /******/ 		});
 /******/ 		var chunkMapping = {
+/******/ 			"353": [
+/******/ 				"webpack/sharing/consume/default/nanoid/nanoid"
+/******/ 			],
 /******/ 			"732": [
 /******/ 				"webpack/sharing/consume/default/nanoid/nanoid",
 /******/ 				"webpack/sharing/consume/default/smartystreets-javascript-sdk/smartystreets-javascript-sdk"
 /******/ 			],
 /******/ 			"867": [
 /******/ 				"webpack/sharing/consume/default/kafkajs/kafkajs"
-/******/ 			],
-/******/ 			"935": [
-/******/ 				"webpack/sharing/consume/default/nanoid/nanoid"
 /******/ 			]
 /******/ 		};
 /******/ 		__webpack_require__.f.consumes = (chunkId, promises) => {
