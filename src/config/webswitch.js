@@ -1,13 +1,13 @@
 'use strict'
 
-import { makeClient } from '../domain/webswitch-client'
+import { makeClient } from '../domain/webswitch'
 
 /**
  * @type {import('../domain').ModelSpecification}
  */
-export const AppFabricClient = {
-  modelName: 'appFabricClient',
-  endpoint: 'app-fabric',
+export const WebSwitch = {
+  modelName: 'webswitch',
+  endpoint: 'service-mesh',
   factory: makeClient,
   ports: {
     serviceLocatorInit: {
@@ -36,27 +36,27 @@ export const AppFabricClient = {
       timeout: 3000
     },
     websocketOnClose: {
-      service: 'serviceLocator',
+      service: 'websocket',
       type: 'outbound',
       timeout: 0
     },
     websocketOnOpen: {
-      service: 'serviceLocator',
+      service: 'websocket',
       type: 'outbound',
       timeout: 0
     },
     websocketOnMessage: {
-      service: 'serviceLocator',
+      service: 'websocket',
       type: 'outbound',
       timeout: 0
     },
     websocketOnError: {
-      service: 'serviceLocator',
+      service: 'websocket',
       type: 'outbound',
       timeout: 0
     },
     websocketOnPong: {
-      service: 'serviceLocator',
+      service: 'websocket',
       type: 'outbound',
       timeout: 0
     },

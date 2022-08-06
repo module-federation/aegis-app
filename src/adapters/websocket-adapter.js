@@ -2,15 +2,16 @@
 
 import { WebSocket } from 'ws'
 
-let ws
+let socket
 
 export function websocketConnect () {
   return async function ({ args: [url, options] }) {
-    if (ws) return ws
+    if (socket) return socket
     if (url) {
-      ws = new WebSocket(url, options)
-      if (options?.binary) ws.binaryType = 'arraybuffer'
-      return ws
+      socket = new WebSocket(url, options)
+      console.debug('connected')
+      if (options?.binary) socket.binaryType = 'arraybuffer'
+      return socket
     }
     throw new Error('missing url', url)
   }
@@ -18,8 +19,8 @@ export function websocketConnect () {
 
 export function websocketSend () {
   return async function ({ model, args: [data = null, options = {}] }) {
-    if (ws && ws.readyState === ws.OPEN) {
-      ws.send(data || model, options)
+    if (socket && socket.readyState === socket.OPEN) {
+      socket.send(data || model, options)
       return true
     }
     return false
@@ -28,36 +29,36 @@ export function websocketSend () {
 
 export function websocketClose () {
   return async function ({ args: [code, reason] }) {
-    if (ws) return ws.close(code, reason)
+    if (socket) return socket.close(code, reason)
   }
 }
 
 export function websocketPing () {
   return async function ({ args: [options] }) {
-    if (ws) return ws.ping(options)
+    if (socket) return socket.ping(options)
   }
 }
 
 export function websocketOnMessage () {
   return async function ({ args: [callback] }) {
-    if (ws) return ws.on('message', callback)
+    if (socket) return socket.on('message', callback)
   }
 }
 
 export function websocketOnClose () {
   return async function ({ args: [callback] }) {
-    if (ws) ws.onclose = callback
+    if (socket) socket.onclose = callback
   }
 }
 
 export function websocketOnOpen () {
   return async function ({ args: [callback] }) {
-    if (ws) ws.onopen = callback
+    if (socket) socket.onopen = callback
   }
 }
 
 export function websocketOnPong () {
   return async function ({ args: [callback] }) {
-    if (ws) ws.on('pong', callback)
+    if (socket) socket.on('pong', callback)
   }
 }

@@ -15,10 +15,7 @@
 
 import os from 'os'
 import EventEmitter from 'events'
-import { readFileSync, writeFileSync } from 'fs'
-import path from 'path'
 import { nanoid } from 'nanoid'
-import { moduleLoaded } from 'webpack/lib/RuntimeGlobals'
 
 const HOSTNAME = 'webswitch.local'
 const SERVICENAME = 'webswitch'
@@ -55,31 +52,29 @@ const constructUrl = () =>
 
 let uplinkCallback
 
+const States = {
+  STARTING: Symbol('starting'),
+  CONNECTED: Symbol('connected'),
+  DISCONNECTED: Symbol('disconnected'),
+  DISPOSED: Symbol('disposed')
+}
 export class ServiceMeshClient extends EventEmitter {
-  constructor (model) {
+  constructor (mesh) {
     super()
     this.ws = null
     this.url = constructUrl()
-    this.model = model
+    this.mesh = mesh
     this.name = SERVICENAME
-    this.serviceList = []
     this.isPrimary = isPrimary
     this.isBackup = isBackup
     this.pong = true
     this.timerId = 0
-    this.sendQueue = []
-    this.sendQueueLimit = 20
+    this.state = States.STARTING
     this.headers = {
       'x-webswitch-host': os.hostname(),
       'x-webswitch-role': 'node',
       'x-webswitch-pid': process.pid
     }
-  }
-
-  services () {
-    return this.options.listServices
-      ? (this.serviceList = this.options.listServices())
-      : this.serviceList
   }
 
   telemetry () {
@@ -92,39 +87,42 @@ export class ServiceMeshClient extends EventEmitter {
       role: 'node',
       pid: process.pid,
       telemetry: { ...process.memoryUsage(), ...process.cpuUsage() },
-      services: this.services(),
-      state: this.ws?.readyState || 'undefined'
+      services: this.mesh.listServices(),
+      socketState: this.mesh.websocketStatus() || 'undefined',
+      clientState: this.state.toString()
     }
   }
 
   async resolveUrl () {
-    await this.model.serviceLocatorInit({
+    await this.mesh.serviceLocatorInit({
       name: this.name,
       serviceUrl: constructUrl(),
       primary: this.isPrimary,
       backup: this.isBackup
     })
     if (this.isPrimary) {
-      await this.model.serviceLocatorAnswer()
+      await this.mesh.serviceLocatorAnswer()
       return constructUrl()
     }
-    return this.model.serviceLocatorListen()
+    return this.mesh.serviceLocatorListen()
   }
 
-  async connect (options = {}) {
-    if (this.ws) {
-      console.info('conn already open')
+  async connect (options) {
+    if ([States.CONNECTED, States.DISPOSED].includes(this.state)) {
+      console.info('conn already open or client is disposed')
       return
     }
+    this.state = this.CONNECTED
     this.options = options
     this.url = await this.resolveUrl()
-    await this.model.websocketConnect('ws://localhost:8080', {
+    await this.mesh.websocketConnect('ws://localhost:8080', {
       agent: false,
       headers: this.headers,
       protocol: SERVICENAME
     })
 
-    this.model.websocketOnClose((code, reason) => {
+    this.mesh.websocketOnClose((code, reason) => {
+      this.state = States.DISCONNECTED
       console.log('received close frame', code, reason.toString())
       //this.ws.removeAllListeners()
       clearTimeout(this.timerId)
@@ -132,15 +130,16 @@ export class ServiceMeshClient extends EventEmitter {
       setTimeout(() => this.connect(), 3000)
     })
 
-    this.model.websocketOnOpen('open', () => {
+    this.mesh.websocketOnOpen(() => {
+      this.state = States.CONNECTED
       console.log('connection open')
-      this.model.websocketSend(this.telemetry())
+      this.mesh.websocketSend(this.telemetry())
       this.once('timeout', this.timeout)
       this.heartbeat()
       setTimeout(() => this.sendQueuedMsgs(), 3000).unref()
     })
 
-    this.model.websocketOnMessage('message', message => {
+    this.mesh.websocketOnMessage(message => {
       try {
         const event = this.decode(message)
         if (!event.eventName) {
@@ -155,12 +154,12 @@ export class ServiceMeshClient extends EventEmitter {
       }
     })
 
-    this.model.websocketOnError('error', error => {
+    this.mesh.websocketOnError(error => {
       this.emit(WSOCKETERROR, error)
       console.error({ fn: this.connect.name, error })
     })
 
-    this.ws.on('pong', () => (this.pong = true))
+    this.mesh.websocketOnPong(() => (this.pong = true))
   }
 
   timeout () {
@@ -170,10 +169,9 @@ export class ServiceMeshClient extends EventEmitter {
   }
 
   heartbeat () {
-    if (!this.model) return
     if (this.pong) {
       this.pong = false
-      this.model.ping()
+      this.mesh.websocketPing()
       this.timerId = setTimeout(() => this.heartbeat(), heartbeatMs)
       this.timerId.unref()
     } else {
@@ -212,32 +210,25 @@ export class ServiceMeshClient extends EventEmitter {
   }
 
   async send (msg) {
-    const sent = await this.model.websocketSend(this.encode(msg), {
+    const sent = await this.mesh.websocketSend(this.encode(msg), {
       binary: true,
       headers: {
         ...this.headers,
         'idempotency-key': nanoid()
       }
     })
-
     // breaker.detectErrors([TIMEOUTEVENT, CONNECTERROR, WSOCKETERROR], this)
     // breaker.invoke(msg)
-
     if (sent) return true
-
-    if (this.sendQueue.length < this.sendQueueLimit) {
-      this.sendQueue.push(msg)
-      return true
-    }
-
+    this.mesh.sendQueue.push(msg)
     return false
   }
 
   async sendQueuedMsgs () {
     try {
       let sent = true
-      while (this.sendQueue.length > 0 && sent)
-        sent = await this.send(this.sendQueue.pop())
+      while (this.mesh.sendQueue.length > 0 && sent)
+        sent = await this.send(this.mesh.sendQueue.pop())
     } catch (error) {
       console.error({ fn: this.sendQueuedMsgs.name, error })
     }
@@ -252,33 +243,40 @@ export class ServiceMeshClient extends EventEmitter {
     this.on(eventName, callback)
   }
 
-  close (code, reason) {
-    this.off('timeout', this.timeout)
+  async close (code, reason) {
+    if (code === 4991) return
+    this.state = States.DISPOSED
     console.debug('closing socket')
-    this.model.websocketClose(code, reason)
+    this.mesh.websocketClose(code, reason)
+    await this.mesh.save() // save queued messages
+    this.removeAllListeners()
+    this.mesh = null
   }
 }
 
-export function makeClient (dependencies) {
+export function makeClient (depedencies) {
   let client
-  return async function () {
+  return async function ({ listServices }) {
     return {
-      desc: 'service mesh client',
-      startTime: Date.now(),
-      init () {
+      listServices,
+      sendQueue: [],
+      sendQueueMax: 1000,
+      getClient () {
+        if (client) return client
         client = new ServiceMeshClient(this)
+        return client
       },
       async connect (options) {
-        client.connect(options)
+        this.getClient().connect(options)
       },
       async publish (event) {
-        client.publish(event)
+        this.getClient().publish(event)
       },
       subscribe (eventName, handler) {
-        client.subscribe(eventName, handler)
+        this.getClient().subscribe(eventName, handler)
       },
-      close (code, reason) {
-        client.close(code, reason)
+      async close (code, reason) {
+        this.getClient().close(code, reason)
       }
     }
   }
