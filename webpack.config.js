@@ -67,6 +67,7 @@ var serverConfig = {
         './models': './src/domain',
         './adapters': './src/adapters',
         './services': './src/services',
+        './event-bus': './src/services/event-bus'
       },
       shared: {
         axios: {
