@@ -300,7 +300,7 @@ export class ServiceMeshClient extends AsyncResource {
       let sent = true
       while (this.mesh.sendQueueLength() > 0 && sent) {
         console.debug('sending queued message')
-        sent = await this.send(this.decode(this.mesh.popSendQueue()))
+        sent = await this.send(this.mesh.popSendQueue())
       }
     } catch (error) {
       console.error({ fn: this.sendQueuedMsgs.name, error })
