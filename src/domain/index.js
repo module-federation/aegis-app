@@ -242,6 +242,10 @@ import bindAdapters from './bind-adapters'
 import * as services from '../../test/mock'
 import * as adapters from '../adapters'
 
+export * from './order'
+export * from './customer'
+export * from './inventory'
+
 // Model properties
 import * as modelSpecs from '../config'
 
