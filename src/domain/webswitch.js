@@ -139,9 +139,9 @@ export class ServiceMeshClient extends AsyncResource {
    * @param {*} options
    * @returns
    */
-  async connect (options = {}) {
+  async connect (options = { binary: true }) {
     if (
-      options?.asyncId &&
+      options.asyncId &&
       this.state.get(options.asyncId) === States.DISPOSED
     ) {
       console.info('client is disposed')
