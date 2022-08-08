@@ -60,15 +60,13 @@ var serverConfig = {
   },
   plugins: [
     new ModuleFederationPlugin({
-      name: 'local',
+      name: 'webswitch',
       library: { type: 'commonjs-module' },
       filename: 'remoteEntry.js',
       exposes: {
         './models': './src/domain',
         './adapters': './src/adapters',
         './services': './src/services',
-        './ports': './src/domain/ports',
-        './event-bus': './src/services/event-bus'
       },
       shared: {
         axios: {
