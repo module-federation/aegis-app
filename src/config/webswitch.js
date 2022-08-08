@@ -9,6 +9,7 @@ export const WebSwitch = {
   modelName: 'webswitch',
   endpoint: 'service-mesh',
   factory: makeClient,
+  internal: true,
   ports: {
     serviceLocatorInit: {
       service: 'serviceLocator',
@@ -21,7 +22,7 @@ export const WebSwitch = {
       timeout: 0
     },
     serviceLocatorListen: {
-      service: 'serviceLocęator',
+      service: 'serviceLocator',
       type: 'outbound',
       timeout: 0
     },
@@ -34,6 +35,36 @@ export const WebSwitch = {
       service: 'websocket',
       stype: 'outbound',
       timeout: 3000
+    },
+    websocketPing: {
+      service: 'websocket',
+      stype: 'outbound',
+      timeout: 3000
+    },
+    websocketSend: {
+      service: 'websocket',
+      type: 'outbound',
+      timeout: 3000
+    },
+    websocketClose: {
+      service: 'websocket',
+      type: 'outbound',
+      timeout: 0
+    },
+    websocketStatus: {
+      service: 'websocket',
+      type: 'outbound',
+      timeout: 0
+    },
+    websocketTerminate: {
+      service: 'websocket',
+      type: 'outbound',
+      timeout: 0
+    },
+    websocketDisconnected: {
+      service: 'websocket',
+      type: 'outbound',
+      timeout: 0
     },
     websocketOnClose: {
       service: 'websocket',
@@ -56,16 +87,6 @@ export const WebSwitch = {
       timeout: 0
     },
     websocketOnPong: {
-      service: 'websocket',
-      type: 'outbound',
-      timeout: 0
-    },
-    websocketSend: {
-      service: 'websocket',
-      type: 'outbound',
-      timeout: 0
-    },
-    websocketClose: {
       service: 'websocket',
       type: 'outbound',
       timeout: 0

@@ -30,14 +30,17 @@ export class ServiceLocator {
    * Query DNS for the webswitch service.
    * Recursively retry by incrementing a
    * counter we pass to ourselves on the
-   * stack.
+   * stack. Once the URL is populated, exit.
    *
    * @param {number} retries number of query attempts
    * @returns
    */
   ask (retries = 0) {
     // have we found the url?
-    if (this.url) return
+    if (this.url) {
+      console.log('url found')
+      return
+    }
 
     // if designated as backup, takeover for primary after maxRetries
     if (retries > this.maxRetries && this.isBackup) {
@@ -89,9 +92,8 @@ export class ServiceLocator {
   }
 
   listen () {
+    console.log('resolving service url')
     return new Promise(resolve => {
-      console.log('resolving service url')
-
       const buildUrl = response => {
         debug && console.debug({ answers: response.answers })
 
@@ -114,7 +116,7 @@ export class ServiceLocator {
           resolve(this.url)
         }
       }
-
+      console.log('looking for service', this.name)
       this.dns.on('response', buildUrl)
       this.ask()
     })
@@ -124,6 +126,7 @@ export class ServiceLocator {
 let locator
 export function serviceLocatorInit () {
   return async function ({ args: [options] }) {
+    console.debug('serviceLocatorInit called')
     locator = new ServiceLocator(options)
   }
 }

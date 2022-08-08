@@ -899,6 +899,7 @@ var WebSwitch = {
   modelName: 'webswitch',
   endpoint: 'service-mesh',
   factory: _domain_webswitch__WEBPACK_IMPORTED_MODULE_0__.makeClient,
+  internal: true,
   ports: {
     serviceLocatorInit: {
       service: 'serviceLocator',
@@ -911,7 +912,7 @@ var WebSwitch = {
       timeout: 0
     },
     serviceLocatorListen: {
-      service: 'serviceLocęator',
+      service: 'serviceLocator',
       type: 'outbound',
       timeout: 0
     },
@@ -924,6 +925,36 @@ var WebSwitch = {
       service: 'websocket',
       stype: 'outbound',
       timeout: 3000
+    },
+    websocketPing: {
+      service: 'websocket',
+      stype: 'outbound',
+      timeout: 3000
+    },
+    websocketSend: {
+      service: 'websocket',
+      type: 'outbound',
+      timeout: 3000
+    },
+    websocketClose: {
+      service: 'websocket',
+      type: 'outbound',
+      timeout: 0
+    },
+    websocketStatus: {
+      service: 'websocket',
+      type: 'outbound',
+      timeout: 0
+    },
+    websocketTerminate: {
+      service: 'websocket',
+      type: 'outbound',
+      timeout: 0
+    },
+    websocketDisconnected: {
+      service: 'websocket',
+      type: 'outbound',
+      timeout: 0
     },
     websocketOnClose: {
       service: 'websocket',
@@ -946,16 +977,6 @@ var WebSwitch = {
       timeout: 0
     },
     websocketOnPong: {
-      service: 'websocket',
-      type: 'outbound',
-      timeout: 0
-    },
-    websocketSend: {
-      service: 'websocket',
-      type: 'outbound',
-      timeout: 0
-    },
-    websocketClose: {
       service: 'websocket',
       type: 'outbound',
       timeout: 0
@@ -1427,6 +1448,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var events__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(events__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! nanoid */ "webpack/sharing/consume/default/nanoid/nanoid");
 /* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(nanoid__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var async_hooks__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! async_hooks */ "async_hooks");
+/* harmony import */ var async_hooks__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(async_hooks__WEBPACK_IMPORTED_MODULE_3__);
 /**
  * webswitch (c)
  *
@@ -1478,18 +1501,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
+
 var HOSTNAME = 'webswitch.local';
 var SERVICENAME = 'webswitch';
 var TIMEOUTEVENT = 'webswitchTimeout';
 var CONNECTERROR = 'webswitchConnect';
-var WSOCKETERROR = 'webswitchWsocket'; // const configRoot = require('../../config').hostConfig
-// const config = configRoot.services.serviceMesh.WebSwitch
-// const isPrimary =
-//   /true/i.test(process.env.SWITCH) ||
-//   (typeof process.env.SWITCH === 'undefined' && config.isSwitch)
-// const debug = config.debug || /true/i.test(process.env.DEBUG)
-
+var WSOCKETERROR = 'webswitchWsocket';
 var isPrimary = /true/i.test(process.env.SWITCH);
+var isBackup = /true/i.test(process.env.BACKUP);
 var debug = /true/i.test(process.env.DEBUG);
 var heartbeatMs = 10000;
 var sslEnabled = /true/i.test(process.env.SSL_ENABLED);
@@ -1497,27 +1516,40 @@ var clearPort = process.env.PORT || 80;
 var cipherPort = process.env.SSL_PORT || 443;
 var activePort = sslEnabled ? cipherPort : clearPort;
 var activeProto = sslEnabled ? 'wss' : 'ws';
-var activeHost = process.env.DOMAIN;
-var protocol = isPrimary ? activeProto : process.env.PROTO;
-var port = isPrimary ? activePort : process.env.PORT;
-var host = isPrimary ? activeHost : process.env.HOST;
-var isBackup = /true/i.test(process.env.BACKUP);
+var activeHost = process.env.DOMAIN || os__WEBPACK_IMPORTED_MODULE_0___default().hostname();
+var proto = isPrimary ? activeProto : process.env.SWITCH_PROTO;
+var port = isPrimary ? activePort : process.env.SWITCH_PORT;
+var host = isPrimary ? activeHost : process.env.SWITCH_HOST;
 var apiProto = sslEnabled ? 'https' : 'http';
 var apiUrl = "".concat(apiProto, "://").concat(activeHost, ":").concat(activePort);
 
-var constructUrl = function constructUrl() {
-  return protocol && host && port ? "".concat(protocol, "://").concat(host, ":").concat(port) : null;
-};
+function localUrl() {
+  var url = "".concat(proto, "://").concat(host, ":").concat(port);
 
-var uplinkCallback;
+  if (proto && host && port) {
+    return url;
+  }
+
+  if (isPrimary) throw new Error("invalid url ".concat(url));
+  return null;
+}
+
 var States = {
   STARTING: Symbol('starting'),
   CONNECTED: Symbol('connected'),
   DISCONNECTED: Symbol('disconnected'),
   DISPOSED: Symbol('disposed')
 };
-var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
-  _inherits(ServiceMeshClient, _EventEmitter);
+/**
+ * Service mesh client impl. Uses websocket and service-locator
+ * adapters through ports injected into the {@link mesh} model.
+ * Cf. modelSpec by the same name, i.e. `webswitch`. Extends
+ * {@link AsyncResource} to handle system reload on the main
+ * thread, in which two instances are active for a short time.
+ */
+
+var ServiceMeshClient = /*#__PURE__*/function (_AsyncResource) {
+  _inherits(ServiceMeshClient, _AsyncResource);
 
   var _super = _createSuper(ServiceMeshClient);
 
@@ -1526,7 +1558,7 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
 
     _classCallCheck(this, ServiceMeshClient);
 
-    _this = _super.call(this);
+    _this = _super.call(this, 'webswitch');
 
     _defineProperty(_assertThisInitialized(_this), "primitives", {
       encode: {
@@ -1565,15 +1597,15 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
       }
     });
 
-    _this.ws = null;
-    _this.url = constructUrl();
+    _this.url = localUrl();
     _this.mesh = mesh;
     _this.name = SERVICENAME;
     _this.isPrimary = isPrimary;
     _this.isBackup = isBackup;
-    _this.pong = true;
-    _this.timerId = 0;
-    _this.state = States.STARTING;
+    _this.pong = new Map();
+    _this.heartbeatTimer = new Map();
+    _this.state = new Map();
+    _this.broker = new (events__WEBPACK_IMPORTED_MODULE_1___default())();
     _this.headers = {
       'x-webswitch-host': os__WEBPACK_IMPORTED_MODULE_0___default().hostname(),
       'x-webswitch-role': 'node',
@@ -1581,10 +1613,16 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
     };
     return _this;
   }
+  /**
+   *
+   * @param {number} asyncId id's instance to kill
+   * @returns {{telemetry:{mem:number,cpu:number}}}
+   */
+
 
   _createClass(ServiceMeshClient, [{
     key: "telemetry",
-    value: function telemetry() {
+    value: function telemetry(asyncId) {
       return {
         eventName: 'telemetry',
         proto: this.name,
@@ -1596,9 +1634,17 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
         telemetry: _objectSpread(_objectSpread({}, process.memoryUsage()), process.cpuUsage()),
         services: this.mesh.listServices(),
         socketState: this.mesh.websocketStatus() || 'undefined',
-        clientState: this.state.toString()
+        clientState: this.state.toString(),
+        asyncId: asyncId
       };
     }
+    /**
+     * Zero-config, self-forming mesh network:
+     * Discover URL of service to connect to or, if
+     * this is the service, multicast this url
+     * @returns {Promise<string>} url
+     */
+
   }, {
     key: "resolveUrl",
     value: function () {
@@ -1607,30 +1653,31 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.next = 2;
+                console.debug('resolveUrl called');
+                _context.next = 3;
                 return this.mesh.serviceLocatorInit({
+                  serviceUrl: localUrl(),
                   name: this.name,
-                  serviceUrl: constructUrl(),
                   primary: this.isPrimary,
                   backup: this.isBackup
                 });
 
-              case 2:
+              case 3:
                 if (!this.isPrimary) {
-                  _context.next = 6;
+                  _context.next = 7;
                   break;
                 }
 
-                _context.next = 5;
+                _context.next = 6;
                 return this.mesh.serviceLocatorAnswer();
 
-              case 5:
-                return _context.abrupt("return", constructUrl());
-
               case 6:
-                return _context.abrupt("return", this.mesh.serviceLocatorListen());
+                return _context.abrupt("return", localUrl());
 
               case 7:
+                return _context.abrupt("return", this.mesh.serviceLocatorListen());
+
+              case 8:
               case "end":
                 return _context.stop();
             }
@@ -1644,26 +1691,44 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
 
       return resolveUrl;
     }()
+    /**
+     * Connect to service mesh broker and run stateful
+     * callbacks in async context to distinguish the old
+     * client instance from the new one created when the
+     * system hot-reloads. Allow listeners to subscribe
+     * to indivdual or all events. Use multicast dns to
+     * resolve broker url. Send binary messages with
+     * protocol and idempotentency headers. Send telemetry
+     * data, including asyncId for identifying context
+     * on socket close.
+     *
+     * @param {*} options
+     * @returns
+     */
+
   }, {
     key: "connect",
     value: function () {
-      var _connect = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(options) {
+      var _connect = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
         var _this2 = this;
 
+        var options,
+            _args2 = arguments;
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                if (![States.CONNECTED, States.DISPOSED].includes(this.state)) {
-                  _context2.next = 3;
+                options = _args2.length > 0 && _args2[0] !== undefined ? _args2[0] : {};
+
+                if (!(options !== null && options !== void 0 && options.asyncId && this.state.get(options.asyncId) === States.DISPOSED)) {
+                  _context2.next = 4;
                   break;
                 }
 
-                console.info('conn already open or client is disposed');
+                console.info('client is disposed');
                 return _context2.abrupt("return");
 
-              case 3:
-                this.state = this.CONNECTED;
+              case 4:
                 this.options = options;
                 _context2.next = 7;
                 return this.resolveUrl();
@@ -1671,36 +1736,31 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
               case 7:
                 this.url = _context2.sent;
                 _context2.next = 10;
-                return this.mesh.websocketConnect('ws://localhost:8080', {
+                return this.mesh.websocketConnect(this.url, {
                   agent: false,
                   headers: this.headers,
                   protocol: SERVICENAME
                 });
 
               case 10:
-                this.mesh.websocketOnClose(function (code, reason) {
-                  _this2.state = States.DISCONNECTED;
-                  console.log('received close frame', code, reason.toString()); //this.ws.removeAllListeners()
-
-                  clearTimeout(_this2.timerId); // this.ws = null
-
-                  setTimeout(function () {
-                    return _this2.connect();
-                  }, 3000);
-                });
                 this.mesh.websocketOnOpen(function () {
-                  _this2.state = States.CONNECTED;
-                  console.log('connection open');
+                  _this2.runInAsyncScope(function () {
+                    _this2.state.set(_this2.asyncId(), States.CONNECTED);
 
-                  _this2.mesh.websocketSend(_this2.telemetry());
+                    console.log('connection open');
 
-                  _this2.once('timeout', _this2.timeout);
+                    _this2.send(_this2.encode(_this2.telemetry(_this2.asyncId())));
 
-                  _this2.heartbeat();
+                    _this2.broker.once('timeout', function () {
+                      return _this2.timeout(_this2.asyncId());
+                    });
 
-                  setTimeout(function () {
-                    return _this2.sendQueuedMsgs();
-                  }, 3000).unref();
+                    _this2.heartbeat(_this2.asyncId());
+
+                    setTimeout(function () {
+                      return _this2.sendQueuedMsgs();
+                    }, 3000).unref();
+                  }, _this2);
                 });
                 this.mesh.websocketOnMessage(function (message) {
                   try {
@@ -1711,14 +1771,14 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
                         missingEventName: event
                       });
 
-                      _this2.emit('missingEventName', event);
+                      _this2.broker.emit('missingEventName', event);
 
                       return;
                     }
 
-                    _this2.emit(event.eventName, event);
+                    _this2.broker.emit(event.eventName, event);
 
-                    _this2.listeners('*').forEach(function (listener) {
+                    _this2.broker.listeners('*').forEach(function (listener) {
                       return listener(event);
                     });
                   } catch (error) {
@@ -1737,7 +1797,35 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
                   });
                 });
                 this.mesh.websocketOnPong(function () {
-                  return _this2.pong = true;
+                  return _this2.runInAsyncScope(function () {
+                    return _this2.pong.set(_this2.asyncId(), true), _this2;
+                  });
+                });
+                this.mesh.websocketOnClose(function (code, reason) {
+                  _this2.runInAsyncScope(function () {
+                    _this2.state.set(_this2.asyncId(), States.DISCONNECTED);
+
+                    console.log({
+                      msg: 'received close frame',
+                      asyncId: _this2.asyncId(),
+                      code: code,
+                      reason: reason === null || reason === void 0 ? void 0 : reason.toString()
+                    });
+                    clearTimeout(_this2.heartbeatTimer.get(_this2.asyncId()));
+
+                    if (code === 4040 && reason === _this2.asyncId()) {
+                      console.log('got dup code for this ctx (ie obj inst): die.');
+                      return;
+                    }
+
+                    setTimeout(function () {
+                      console.debug('reconnect due to socket close');
+
+                      _this2.connect({
+                        asyncId: _this2.asyncId()
+                      });
+                    }, 10000).unref();
+                  }, _this2);
                 });
 
               case 15:
@@ -1748,7 +1836,7 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
         }, _callee2, this);
       }));
 
-      function connect(_x) {
+      function connect() {
         return _connect.apply(this, arguments);
       }
 
@@ -1756,28 +1844,42 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
     }()
   }, {
     key: "timeout",
-    value: function timeout() {
+    value: function timeout(asyncId) {
+      var _this3 = this;
+
       console.warn('timeout');
-      this.emit(TIMEOUTEVENT, this.telemetry());
-      this.close(4911, 'timeout');
+      this.emit(TIMEOUTEVENT, this.telemetry(asyncId));
+      this.mesh.websocketTerminate();
+      this.state.set(asyncId, States.DISCONNECTED);
+      setTimeout(function () {
+        console.debug('reconnect due to timeout', asyncId);
+
+        _this3.connect({
+          asyncId: asyncId
+        });
+      }, 5000).unref();
     }
   }, {
     key: "heartbeat",
-    value: function heartbeat() {
-      var _this3 = this;
+    value: function heartbeat(asyncId) {
+      var _this4 = this;
 
       if (this.pong) {
-        this.pong = false;
+        this.pong.set(this.asyncId(), false);
         this.mesh.websocketPing();
-        this.timerId = setTimeout(function () {
-          return _this3.heartbeat();
-        }, heartbeatMs);
-        this.timerId.unref();
+        this.heartbeatTimer.set(asyncId, setTimeout(function () {
+          return _this4.heartbeat(asyncId);
+        }, heartbeatMs));
+        this.heartbeatTimer.get(asyncId).unref();
       } else {
-        clearTimeout(this.timerId);
-        this.emit('timeout');
+        clearTimeout(this.heartbeatTimer.get(asyncId));
+        this.broker.emit('timeout', asyncId);
       }
     }
+    /**
+     * use binary messages
+     */
+
   }, {
     key: "encode",
     value: function encode(msg) {
@@ -1798,6 +1900,16 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
       });
       return decoded;
     }
+    /**
+     * Convert message to binary and send with protocol and idempotency headers.
+     * If message cannot be sent because of connection state or buffering queue
+     * message in domain object for retry later. Using a domain object ensures
+     * persistence of the queue.
+     *
+     * @param {object} msg
+     * @returns {Promise<boolean>} true if sent, false if not
+     */
+
   }, {
     key: "send",
     value: function () {
@@ -1826,7 +1938,7 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
                 return _context3.abrupt("return", true);
 
               case 5:
-                this.mesh.sendQueue.push(msg);
+                this.mesh.pushSendQueue(msg);
                 return _context3.abrupt("return", false);
 
               case 7:
@@ -1837,12 +1949,16 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
         }, _callee3, this);
       }));
 
-      function send(_x2) {
+      function send(_x) {
         return _send.apply(this, arguments);
       }
 
       return send;
     }()
+    /**
+     * Send any messages buffered in `sendQueue`.
+     */
+
   }, {
     key: "sendQueuedMsgs",
     value: function () {
@@ -1856,37 +1972,38 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
                 sent = true;
 
               case 2:
-                if (!(this.mesh.sendQueue.length > 0 && sent)) {
-                  _context4.next = 8;
+                if (!(this.mesh.sendQueueLength() > 0 && sent)) {
+                  _context4.next = 9;
                   break;
                 }
 
-                _context4.next = 5;
-                return this.send(this.mesh.sendQueue.pop());
+                console.debug('sending queued message');
+                _context4.next = 6;
+                return this.send(this.decode(this.mesh.popSendQueue()));
 
-              case 5:
+              case 6:
                 sent = _context4.sent;
                 _context4.next = 2;
                 break;
 
-              case 8:
-                _context4.next = 13;
+              case 9:
+                _context4.next = 14;
                 break;
 
-              case 10:
-                _context4.prev = 10;
+              case 11:
+                _context4.prev = 11;
                 _context4.t0 = _context4["catch"](0);
                 console.error({
                   fn: this.sendQueuedMsgs.name,
                   error: _context4.t0
                 });
 
-              case 13:
+              case 14:
               case "end":
                 return _context4.stop();
             }
           }
-        }, _callee4, this, [[0, 10]]);
+        }, _callee4, this, [[0, 11]]);
       }));
 
       function sendQueuedMsgs() {
@@ -1895,6 +2012,11 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
 
       return sendQueuedMsgs;
     }()
+    /**
+     * Connects if needed then sends message to mesh broker service.
+     * @param {*} msg
+     */
+
   }, {
     key: "publish",
     value: function () {
@@ -1903,13 +2025,18 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                _context5.next = 2;
+                if (!this.mesh.websocketDisconnected()) {
+                  _context5.next = 3;
+                  break;
+                }
+
+                _context5.next = 3;
                 return this.connect();
 
-              case 2:
-                this.send(msg);
-
               case 3:
+                return _context5.abrupt("return", this.send(msg));
+
+              case 4:
               case "end":
                 return _context5.stop();
             }
@@ -1917,53 +2044,79 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
         }, _callee5, this);
       }));
 
-      function publish(_x3) {
+      function publish(_x2) {
         return _publish.apply(this, arguments);
       }
 
       return publish;
     }()
+    /**
+     * Register handler to fire on event.
+     * @param {string} eventName
+     * @param {function()} callback
+     */
+
   }, {
     key: "subscribe",
     value: function subscribe(eventName, callback) {
-      this.on(eventName, callback);
+      this.broker.on(eventName, callback);
     }
+    /**
+     * A new object will be created on system reload.
+     * Dispose of the old one. Run in context to
+     * distinguish between the new and old instance.
+     *
+     * @param {*} code
+     * @param {*} reason
+     */
+
   }, {
     key: "close",
     value: function () {
-      var _close = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(code, reason) {
-        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+      var _close = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(code, reason) {
+        var _this5 = this;
+
+        return _regeneratorRuntime().wrap(function _callee7$(_context7) {
           while (1) {
-            switch (_context6.prev = _context6.next) {
+            switch (_context7.prev = _context7.next) {
               case 0:
-                if (!(code === 4991)) {
-                  _context6.next = 2;
-                  break;
-                }
+                this.runInAsyncScope( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+                  return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+                    while (1) {
+                      switch (_context6.prev = _context6.next) {
+                        case 0:
+                          console.debug('closing socket, asyncId:', _this5.asyncId());
 
-                return _context6.abrupt("return");
+                          _this5.mesh.websocketClose(code, reason);
 
-              case 2:
-                this.state = States.DISPOSED;
-                console.debug('closing socket');
-                this.mesh.websocketClose(code, reason);
-                _context6.next = 7;
-                return this.mesh.save();
+                          _this5.state.set(_this5.asyncId(), States.DISPOSED);
 
-              case 7:
-                // save queued messages
-                this.removeAllListeners();
-                this.mesh = null;
+                          _context6.next = 5;
+                          return _this5.mesh.save();
 
-              case 9:
+                        case 5:
+                          // save queued messages
+                          _this5.broker.removeAllListeners();
+
+                          _this5.emitDestroy();
+
+                        case 7:
+                        case "end":
+                          return _context6.stop();
+                      }
+                    }
+                  }, _callee6);
+                })), this);
+
+              case 1:
               case "end":
-                return _context6.stop();
+                return _context7.stop();
             }
           }
-        }, _callee6, this);
+        }, _callee7, this);
       }));
 
-      function close(_x4, _x5) {
+      function close(_x3, _x4) {
         return _close.apply(this, arguments);
       }
 
@@ -1972,53 +2125,54 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
   }]);
 
   return ServiceMeshClient;
-}((events__WEBPACK_IMPORTED_MODULE_1___default()));
-function makeClient(depedencies) {
+}(async_hooks__WEBPACK_IMPORTED_MODULE_3__.AsyncResource);
+/**
+ * Domain model factory function. This model is
+ * used internally by the Aegis framework as a
+ * pluggable service mesh client. Implement the
+ * the methods below to create a new plugin.
+ *
+ * @param {*} dependencies injected depedencies
+ * @returns
+ */
+
+function makeClient(dependencies) {
   var client;
   return /*#__PURE__*/function () {
-    var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10(_ref) {
+    var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11(_ref2) {
       var listServices;
-      return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+      return _regeneratorRuntime().wrap(function _callee11$(_context11) {
         while (1) {
-          switch (_context10.prev = _context10.next) {
+          switch (_context11.prev = _context11.next) {
             case 0:
-              listServices = _ref.listServices;
-              return _context10.abrupt("return", {
+              listServices = _ref2.listServices;
+              return _context11.abrupt("return", {
                 listServices: listServices,
                 sendQueue: [],
                 sendQueueMax: 1000,
+                sendQueueLength: function sendQueueLength() {
+                  return this.sendQueue.length;
+                },
+                pushSendQueue: function pushSendQueue(msg) {
+                  this.sendQueue.push(msg);
+                },
+                popSendQueue: function popSendQueue() {
+                  return this.sendQueue.pop();
+                },
                 getClient: function getClient() {
                   if (client) return client;
                   client = new ServiceMeshClient(this);
                   return client;
                 },
                 connect: function connect(options) {
-                  var _this4 = this;
-
-                  return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
-                    return _regeneratorRuntime().wrap(function _callee7$(_context7) {
-                      while (1) {
-                        switch (_context7.prev = _context7.next) {
-                          case 0:
-                            _this4.getClient().connect(options);
-
-                          case 1:
-                          case "end":
-                            return _context7.stop();
-                        }
-                      }
-                    }, _callee7);
-                  }))();
-                },
-                publish: function publish(event) {
-                  var _this5 = this;
+                  var _this6 = this;
 
                   return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
                     return _regeneratorRuntime().wrap(function _callee8$(_context8) {
                       while (1) {
                         switch (_context8.prev = _context8.next) {
                           case 0:
-                            _this5.getClient().publish(event);
+                            _this6.getClient().connect(options);
 
                           case 1:
                           case "end":
@@ -2028,18 +2182,15 @@ function makeClient(depedencies) {
                     }, _callee8);
                   }))();
                 },
-                subscribe: function subscribe(eventName, handler) {
-                  this.getClient().subscribe(eventName, handler);
-                },
-                close: function close(code, reason) {
-                  var _this6 = this;
+                publish: function publish(event) {
+                  var _this7 = this;
 
                   return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
                     return _regeneratorRuntime().wrap(function _callee9$(_context9) {
                       while (1) {
                         switch (_context9.prev = _context9.next) {
                           case 0:
-                            _this6.getClient().close(code, reason);
+                            _this7.getClient().publish(event);
 
                           case 1:
                           case "end":
@@ -2048,19 +2199,40 @@ function makeClient(depedencies) {
                       }
                     }, _callee9);
                   }))();
+                },
+                subscribe: function subscribe(eventName, handler) {
+                  this.getClient().subscribe(eventName, handler);
+                },
+                close: function close(code, reason) {
+                  var _this8 = this;
+
+                  return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10() {
+                    return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+                      while (1) {
+                        switch (_context10.prev = _context10.next) {
+                          case 0:
+                            _this8.getClient().close(code, reason);
+
+                          case 1:
+                          case "end":
+                            return _context10.stop();
+                        }
+                      }
+                    }, _callee10);
+                  }))();
                 }
               });
 
             case 2:
             case "end":
-              return _context10.stop();
+              return _context11.stop();
           }
         }
-      }, _callee10);
+      }, _callee11);
     }));
 
-    return function (_x6) {
-      return _ref2.apply(this, arguments);
+    return function (_x5) {
+      return _ref3.apply(this, arguments);
     };
   }();
 }

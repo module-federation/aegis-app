@@ -1,7 +1,7 @@
 'use strict'
 
-import { WebSocket } from 'ws'
-
+import WebSocket from 'ws'
+/** @type {WebSocket} */
 let socket
 
 export function websocketConnect () {
@@ -18,9 +18,9 @@ export function websocketConnect () {
 }
 
 export function websocketSend () {
-  return async function ({ model, args: [data = null, options = {}] }) {
+  return async function ({ args: [data, options = {}] }) {
     if (socket && socket.readyState === socket.OPEN) {
-      socket.send(data || model, options)
+      socket.send(data, options)
       return true
     }
     return false
@@ -60,5 +60,23 @@ export function websocketOnOpen () {
 export function websocketOnPong () {
   return async function ({ args: [callback] }) {
     if (socket) socket.on('pong', callback)
+  }
+}
+
+export function websocketStatus () {
+  return async function ({ args: [callback] }) {
+    if (socket) return socket.readyState
+  }
+}
+
+export function websockeTerminate () {
+  return async function () {
+    if (socket) return socket.terminate()
+  }
+}
+
+export function websocketDisconnected () {
+  return async function () {
+    return socket.readyState !== socket.OPEN
   }
 }

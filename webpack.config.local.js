@@ -79,6 +79,9 @@ var serverConfig = {
         },
         nanoid: {
           eager: true
+        },
+        'multicast-dns': {
+          eager: true
         }
       }
     })
