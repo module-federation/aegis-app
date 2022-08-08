@@ -139,9 +139,9 @@ export class ServiceMeshClient extends AsyncResource {
    * @param {*} options
    * @returns
    */
-  async connect (options = {}) {
+  async connect (options = { binary: true }) {
     if (
-      options?.asyncId &&
+      options.asyncId &&
       this.state.get(options.asyncId) === States.DISPOSED
     ) {
       console.info('client is disposed')
@@ -300,7 +300,7 @@ export class ServiceMeshClient extends AsyncResource {
       let sent = true
       while (this.mesh.sendQueueLength() > 0 && sent) {
         console.debug('sending queued message')
-        sent = await this.send(this.decode(this.mesh.popSendQueue()))
+        sent = await this.send(this.mesh.popSendQueue())
       }
     } catch (error) {
       console.error({ fn: this.sendQueuedMsgs.name, error })
