@@ -11,7 +11,7 @@ var serverConfig = {
   entry: ['@babel/polyfill', path.resolve(__dirname, 'src/index.js')],
   output: {
     path: path.resolve(__dirname, 'dist'),
-    publicPath: `https://api.github.com?owner=module-federation&repo=aegis-app&filedir=dist&branch=master`,
+    publicPath: `https://api.github.com?owner=module-federation&repo=aegis-app&filedir=dist&branch=webswitch`,
     libraryTarget: 'commonjs'
   },
   devtool: 'source-map',
@@ -66,20 +66,6 @@ var serverConfig = {
       exposes: {
         './models': './src/domain',
         './adapters': './src/adapters'
-      },
-      shared: {
-        axios: {
-          eager: true
-        },
-        'smartystreets-javascript-sdk': {
-          eager: true
-        },
-        kafkajs: {
-          eager: true
-        },
-        nanoid: {
-          eager: true
-        }
       }
     })
   ]
