@@ -2,183 +2,132 @@ exports.id = 334;
 exports.ids = [334];
 exports.modules = {
 
-/***/ "./src/domain/utils.js":
+/***/ "./src/domain/ports.js":
 /*!*****************************!*\
-  !*** ./src/domain/utils.js ***!
+  !*** ./src/domain/ports.js ***!
   \*****************************/
 /*! namespace exports */
-/*! export async [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export asyncPipe [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export compose [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export composeAsync [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export decrypt [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export encrypt [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export hash [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export makeArray [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export makeObject [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export uuid [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export OrderStatus [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .OrderStatus */
+/*! export accountOrder [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .accountOrder */
+/*! export addressValidated [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .addressValidated */
+/*! export approve [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .approve */
+/*! export assetTypes [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/inventory.js .assetTypes */
+/*! export calcTotal [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .calcTotal */
+/*! export cancel [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .cancel */
+/*! export cancelPayment [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .cancelPayment */
+/*! export categories [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/inventory.js .categories */
+/*! export checkItem [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .checkItem */
+/*! export checkItems [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .checkItems */
+/*! export checkout [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .checkout */
+/*! export errorCallback [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .errorCallback */
+/*! export freezeOnApproval [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .freezeOnApproval */
+/*! export freezeOnCompletion [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .freezeOnCompletion */
+/*! export handleOrderEvent [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .handleOrderEvent */
+/*! export itemCount [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .itemCount */
+/*! export makeCustomerFactory [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/customer.js .makeCustomerFactory */
+/*! export makeInventoryFactory [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/inventory.js .makeInventoryFactory */
+/*! export makeOrderFactory [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .makeOrderFactory */
+/*! export okToDelete [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/customer.js .okToDelete */
+/*! export orderPicked [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .orderPicked */
+/*! export orderShipped [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .orderShipped */
+/*! export orderTotalValid [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .orderTotalValid */
+/*! export paymentAuthorized [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .paymentAuthorized */
+/*! export paymentCompleted [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .paymentCompleted */
+/*! export properties [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/inventory.js .properties */
+/*! export readyToDelete [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .readyToDelete */
+/*! export recalcTotal [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .recalcTotal */
+/*! export refundPayment [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .refundPayment */
+/*! export requiredForApproval [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .requiredForApproval */
+/*! export requiredForCompletion [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .requiredForCompletion */
+/*! export requiredForGuest [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .requiredForGuest */
+/*! export returnDelivery [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .returnDelivery */
+/*! export returnInventory [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .returnInventory */
+/*! export returnShipment [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .returnShipment */
+/*! export runOrderWorkflow [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .runOrderWorkflow */
+/*! export statusChangeValid [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .statusChangeValid */
+/*! export timeoutCallback [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .timeoutCallback */
+/*! export updateSignature [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .updateSignature */
+/*! export userFactory [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/user.js .userFactory */
+/*! export userMixins [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/user.js .userMixins */
 /*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/*! runtime requirements: __webpack_require__, __webpack_exports__, __webpack_require__.d, __webpack_require__.r, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "compose": () => /* binding */ compose,
-/* harmony export */   "composeAsync": () => /* binding */ composeAsync,
-/* harmony export */   "asyncPipe": () => /* binding */ asyncPipe,
-/* harmony export */   "encrypt": () => /* binding */ encrypt,
-/* harmony export */   "decrypt": () => /* binding */ decrypt,
-/* harmony export */   "hash": () => /* binding */ hash,
-/* harmony export */   "uuid": () => /* binding */ uuid,
-/* harmony export */   "makeArray": () => /* binding */ makeArray,
-/* harmony export */   "makeObject": () => /* binding */ makeObject,
-/* harmony export */   "async": () => /* binding */ async
+/* harmony export */   "OrderStatus": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.OrderStatus,
+/* harmony export */   "accountOrder": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.accountOrder,
+/* harmony export */   "addressValidated": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.addressValidated,
+/* harmony export */   "approve": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.approve,
+/* harmony export */   "calcTotal": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.calcTotal,
+/* harmony export */   "cancel": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.cancel,
+/* harmony export */   "cancelPayment": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.cancelPayment,
+/* harmony export */   "checkItem": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.checkItem,
+/* harmony export */   "checkItems": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.checkItems,
+/* harmony export */   "checkout": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.checkout,
+/* harmony export */   "errorCallback": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.errorCallback,
+/* harmony export */   "freezeOnApproval": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.freezeOnApproval,
+/* harmony export */   "freezeOnCompletion": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.freezeOnCompletion,
+/* harmony export */   "handleOrderEvent": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.handleOrderEvent,
+/* harmony export */   "itemCount": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.itemCount,
+/* harmony export */   "makeOrderFactory": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.makeOrderFactory,
+/* harmony export */   "orderPicked": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.orderPicked,
+/* harmony export */   "orderShipped": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.orderShipped,
+/* harmony export */   "orderTotalValid": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.orderTotalValid,
+/* harmony export */   "paymentAuthorized": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.paymentAuthorized,
+/* harmony export */   "paymentCompleted": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.paymentCompleted,
+/* harmony export */   "readyToDelete": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.readyToDelete,
+/* harmony export */   "recalcTotal": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.recalcTotal,
+/* harmony export */   "refundPayment": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.refundPayment,
+/* harmony export */   "requiredForApproval": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.requiredForApproval,
+/* harmony export */   "requiredForCompletion": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.requiredForCompletion,
+/* harmony export */   "requiredForGuest": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.requiredForGuest,
+/* harmony export */   "returnDelivery": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.returnDelivery,
+/* harmony export */   "returnInventory": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.returnInventory,
+/* harmony export */   "returnShipment": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.returnShipment,
+/* harmony export */   "runOrderWorkflow": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.runOrderWorkflow,
+/* harmony export */   "statusChangeValid": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.statusChangeValid,
+/* harmony export */   "timeoutCallback": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.timeoutCallback,
+/* harmony export */   "updateSignature": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.updateSignature,
+/* harmony export */   "makeCustomerFactory": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_1__.makeCustomerFactory,
+/* harmony export */   "okToDelete": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_1__.okToDelete,
+/* harmony export */   "assetTypes": () => /* reexport safe */ _inventory__WEBPACK_IMPORTED_MODULE_2__.assetTypes,
+/* harmony export */   "categories": () => /* reexport safe */ _inventory__WEBPACK_IMPORTED_MODULE_2__.categories,
+/* harmony export */   "makeInventoryFactory": () => /* reexport safe */ _inventory__WEBPACK_IMPORTED_MODULE_2__.makeInventoryFactory,
+/* harmony export */   "properties": () => /* reexport safe */ _inventory__WEBPACK_IMPORTED_MODULE_2__.properties,
+/* harmony export */   "userFactory": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_3__.userFactory,
+/* harmony export */   "userMixins": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_3__.userMixins
 /* harmony export */ });
-/* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! crypto */ "crypto");
-/* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(crypto__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! nanoid */ "webpack/sharing/consume/default/nanoid/nanoid");
-/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(nanoid__WEBPACK_IMPORTED_MODULE_1__);
-
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+/* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./order */ "./src/domain/order.js");
+/* harmony import */ var _customer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./customer */ "./src/domain/customer.js");
+/* harmony import */ var _inventory__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./inventory */ "./src/domain/inventory.js");
+/* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./user */ "./src/domain/user.js");
 
 
 
-function compose() {
-  for (var _len = arguments.length, funcs = new Array(_len), _key = 0; _key < _len; _key++) {
-    funcs[_key] = arguments[_key];
-  }
 
-  return function (initVal) {
-    return funcs.reduceRight(function (val, func) {
-      return func(val);
-    }, initVal);
-  };
-}
-function composeAsync() {
-  for (var _len2 = arguments.length, funcs = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-    funcs[_key2] = arguments[_key2];
-  }
-
-  return function (initVal) {
-    return funcs.reduceRight(function (val, func) {
-      return val.then(func);
-    }, Promise.resolve(initVal));
-  };
-}
-/**
- * @callback pipeFn
- * @param {object} obj - the object to compose
- * @returns {object} - the composed object
- */
-
-/**
- * @param {pipeFn} func
- */
-
-var asyncPipe = function asyncPipe() {
-  for (var _len3 = arguments.length, func = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-    func[_key3] = arguments[_key3];
-  }
-
-  return function (obj) {
-    return func.reduce(function (o, f) {
-      return o.then(f);
-    }, Promise.resolve(obj));
-  };
-};
-var passwd = process.env.ENCRYPTION_PWD;
-var algo = 'aes-192-cbc';
-var key = crypto__WEBPACK_IMPORTED_MODULE_0___default().scryptSync(String(passwd), 'salt', 24);
-var iv = Buffer.alloc(16, 0);
-function encrypt(text) {
-  var cipher = crypto__WEBPACK_IMPORTED_MODULE_0___default().createCipheriv(algo, key, iv);
-  var encrypted = cipher.update(text, 'utf8', 'hex');
-  encrypted += cipher["final"]('hex');
-  return encrypted;
-}
-function decrypt(cipherText) {
-  console.log('decrypt(%s)', cipherText);
-  var decipher = crypto__WEBPACK_IMPORTED_MODULE_0___default().createDecipheriv(algo, key, iv);
-  var decrypted = decipher.update(cipherText, 'hex', 'utf8');
-  decrypted += decipher["final"]('utf8');
-  return decrypted;
-}
-function hash(data) {
-  return crypto__WEBPACK_IMPORTED_MODULE_0___default().createHash('sha1').update(data).digest('hex');
-}
-function uuid() {
-  // return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-  //   (c ^ (crypto.randomBytes(16)[0] & (15 >> (c / 4)))).toString(16)
-  // );
-  return (0,nanoid__WEBPACK_IMPORTED_MODULE_1__.nanoid)();
-}
-function makeArray(v) {
-  return Array.isArray(v) ? v : [v];
-}
-function makeObject(prop) {
-  if (Array.isArray(prop)) {
-    return prop.reduce(function (p, c) {
-      return _objectSpread(_objectSpread({}, p), c);
-    });
-  }
-
-  return prop;
-}
-/**
- *
- * @param {Promise<{
- * ok:()=>any,
- *
- * }} promise
- * @returns
- */
-
-function async(promise) {
-  return promise.then(function (result) {
-    return {
-      ok: true,
-      object: result,
-      asObject: function asObject() {
-        return makeObject(result);
-      },
-      asArray: function asArray() {
-        return makeArray(result);
-      }
-    };
-  })["catch"](function (error) {
-    console.error(error);
-    return Promise.resolve({
-      ok: false,
-      error: error
-    });
-  });
-}
 
 /***/ }),
 
-/***/ "./src/services/event-service.js":
-/*!***************************************!*\
-  !*** ./src/services/event-service.js ***!
-  \***************************************/
+/***/ "./src/domain/user.js":
+/*!****************************!*\
+  !*** ./src/domain/user.js ***!
+  \****************************/
 /*! namespace exports */
-/*! export Event [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export userFactory [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export userMixins [provided] [no usage info] [missing usage info prevents renaming] */
 /*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Event": () => /* binding */ Event
+/* harmony export */   "userFactory": () => /* binding */ userFactory,
+/* harmony export */   "userMixins": () => /* binding */ userMixins
 /* harmony export */ });
-/* harmony import */ var kafkajs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! kafkajs */ "webpack/sharing/consume/default/kafkajs/kafkajs");
-/* harmony import */ var kafkajs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(kafkajs__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mixins */ "./src/domain/mixins.js");
 
 
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
@@ -190,156 +139,57 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 
-var brokers = process.env.KAFKA_BROKERS || "localhost:9092";
-var topics = new RegExp(process.env.KAFKA_TOPICS) || /Channel/;
-var groupId = (process.env.KAFKA_GROUP_ID || "MicroLib") + process.pid;
-var kafka = new kafkajs__WEBPACK_IMPORTED_MODULE_0__.Kafka({
-  clientId: "MicroLib",
-  brokers: brokers.split(",")
-});
-var consumer = kafka.consumer({
-  groupId: groupId
-});
-var producer = kafka.producer();
-/**
- * @typedef {EventService}
- */
+function userFactory(_ref) {
+  var uuid = _ref.uuid;
+  return /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+    var _ref3,
+        userName,
+        password,
+        customerId,
+        firstName,
+        lastName,
+        phone,
+        email,
+        fibonacci,
+        _args = arguments;
 
-var Event = {
-  listening: false,
-  topics: topics,
+    return _regeneratorRuntime().wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _ref3 = _args.length > 0 && _args[0] !== undefined ? _args[0] : {}, userName = _ref3.userName, password = _ref3.password, customerId = _ref3.customerId, firstName = _ref3.firstName, lastName = _ref3.lastName, phone = _ref3.phone, email = _ref3.email, fibonacci = _ref3.fibonacci;
+            return _context.abrupt("return", Object.freeze({
+              userId: uuid(),
+              password: password,
+              userName: userName,
+              customerId: customerId,
+              firstName: firstName,
+              lastName: lastName,
+              phone: phone,
+              email: email,
+              fibonacci: fibonacci
+            }));
 
-  /**
-   * Implements event consumer service.
-   * @param {string|RegExp} topic
-   * @param {function({message, topic})} callback
-   */
-  listen: function listen(topic, callback) {
-    var _this = this;
-
-    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-        while (1) {
-          switch (_context2.prev = _context2.next) {
-            case 0:
-              _context2.prev = 0;
-              _context2.next = 3;
-              return consumer.connect();
-
-            case 3:
-              _context2.next = 5;
-              return consumer.subscribe({
-                topic: topic,
-                fromBeginning: true
-              });
-
-            case 5:
-              _this.listening = true;
-              _context2.next = 8;
-              return consumer.run({
-                eachMessage: function () {
-                  var _eachMessage = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(_ref) {
-                    var topic, message;
-                    return _regeneratorRuntime().wrap(function _callee$(_context) {
-                      while (1) {
-                        switch (_context.prev = _context.next) {
-                          case 0:
-                            topic = _ref.topic, message = _ref.message;
-
-                            try {
-                              callback({
-                                topic: topic,
-                                message: message.value.toString()
-                              });
-                            } catch (error) {
-                              console.error(error);
-                            }
-
-                          case 2:
-                          case "end":
-                            return _context.stop();
-                        }
-                      }
-                    }, _callee);
-                  }));
-
-                  function eachMessage(_x) {
-                    return _eachMessage.apply(this, arguments);
-                  }
-
-                  return eachMessage;
-                }()
-              });
-
-            case 8:
-              _context2.next = 13;
-              break;
-
-            case 10:
-              _context2.prev = 10;
-              _context2.t0 = _context2["catch"](0);
-              console.error(_context2.t0);
-
-            case 13:
-            case "end":
-              return _context2.stop();
-          }
+          case 2:
+          case "end":
+            return _context.stop();
         }
-      }, _callee2, null, [[0, 10]]);
-    }))();
-  },
-
-  /**
-   * Implemements event producer service.
-   * @param {string|RegExp} topic
-   * @param {string} message
-   */
-  notify: function notify(topic, message) {
-    var _this2 = this;
-
-    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
-      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-        while (1) {
-          switch (_context3.prev = _context3.next) {
-            case 0:
-              _context3.prev = 0;
-              _context3.next = 3;
-              return producer.connect();
-
-            case 3:
-              _context3.next = 5;
-              return producer.send({
-                topic: topic,
-                messages: [{
-                  value: message
-                }]
-              });
-
-            case 5:
-              _context3.next = 7;
-              return producer.disconnect();
-
-            case 7:
-              _context3.next = 12;
-              break;
-
-            case 9:
-              _context3.prev = 9;
-              _context3.t0 = _context3["catch"](0);
-              console.error({
-                func: _this2.notify.name,
-                error: _context3.t0
-              });
-
-            case 12:
-            case "end":
-              return _context3.stop();
-          }
-        }
-      }, _callee3, null, [[0, 9]]);
-    }))();
+      }
+    }, _callee);
+  }));
+}
+var userMixins = [(0,_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)('userName', 'password', 'firstName'), (0,_mixins__WEBPACK_IMPORTED_MODULE_0__.freezeProperties)('userId', 'userName'), (0,_mixins__WEBPACK_IMPORTED_MODULE_0__.hashPasswords)('password'), (0,_mixins__WEBPACK_IMPORTED_MODULE_0__.validateProperties)([{
+  propKey: 'email',
+  regex: 'email',
+  unique: {
+    encrypted: true
   }
-};
+}, {
+  propKey: 'userName',
+  unique: {
+    encrypted: false
+  }
+}])];
 
 /***/ })
 

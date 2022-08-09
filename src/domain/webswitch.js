@@ -225,7 +225,7 @@ export class ServiceMeshClient extends AsyncResource {
 
   heartbeat (asyncId) {
     if (this.pong) {
-      this.pong.set(this.asyncId(), false)
+      this.pong.set(asyncId, false)
       this.mesh.websocketPing()
       this.heartbeatTimer.set(
         asyncId,

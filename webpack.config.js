@@ -66,21 +66,7 @@ var serverConfig = {
       exposes: {
         './models': './src/domain',
         './adapters': './src/adapters',
-        './services': './src/services',
-      },
-      shared: {
-        axios: {
-          eager: true
-        },
-        'smartystreets-javascript-sdk': {
-          eager: true
-        },
-        kafkajs: {
-          eager: true
-        },
-        nanoid: {
-          eager: true
-        }
+        './services': './src/services'
       }
     })
   ]

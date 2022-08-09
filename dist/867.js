@@ -83,7 +83,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "serviceLocatorListen": () => /* binding */ serviceLocatorListen,
 /* harmony export */   "serviceLocatorAnswer": () => /* binding */ serviceLocatorAnswer
 /* harmony export */ });
-/* harmony import */ var multicast_dns__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! multicast-dns */ "./node_modules/multicast-dns/index.js");
+/* harmony import */ var multicast_dns__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! multicast-dns */ "webpack/sharing/consume/default/multicast-dns/multicast-dns");
 /* harmony import */ var multicast_dns__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(multicast_dns__WEBPACK_IMPORTED_MODULE_0__);
 
 
