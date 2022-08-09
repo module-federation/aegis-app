@@ -65,9 +65,7 @@ var serverConfig = {
       filename: 'remoteEntry.js',
       exposes: {
         './models': './src/domain',
-        './adapters': './src/adapters',
-        './services': './src/services',
-        './event-bus': './src/services/event-bus'
+        './adapters': './src/adapters'
       },
       shared: {
         axios: {
