@@ -953,8 +953,8 @@ var ServiceMeshClient = /*#__PURE__*/function (_AsyncResource) {
                     return _this2.pong.set(_this2.asyncId(), true), _this2;
                   });
                 });
-                this.mesh.websocketOnClose(function (code, reason) {
-                  _this2.runInAsyncScope(function () {
+                this.websocketOnClose(function () {
+                  _this2.runInAsyncScope(function (code, reason) {
                     _this2.state.set(_this2.asyncId(), States.DISCONNECTED);
 
                     console.log({
@@ -977,7 +977,7 @@ var ServiceMeshClient = /*#__PURE__*/function (_AsyncResource) {
                         asyncId: _this2.asyncId()
                       });
                     }, 10000).unref();
-                  }, _this2);
+                  });
                 });
 
               case 15:

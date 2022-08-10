@@ -57,6 +57,26 @@ const States = {
 }
 
 /**
+ * use binary messages
+ */
+const primitives = {
+  encode: {
+    object: msg => Buffer.from(JSON.stringify(msg)),
+    string: msg => Buffer.from(JSON.stringify(msg)),
+    number: msg => Buffer.from(JSON.stringify(msg)),
+    symbol: msg => console.log('unsupported', msg),
+    undefined: msg => console.log('undefined', msg)
+  },
+  decode: {
+    object: msg => JSON.parse(Buffer.from(msg).toString()),
+    string: msg => JSON.parse(Buffer.from(msg).toString()),
+    number: msg => JSON.parse(Buffer.from(msg).toString()),
+    symbol: msg => console.log('unsupported', msg),
+    undefined: msg => console.error('undefined', msg)
+  }
+}
+
+/**
  * Service mesh client impl. Uses websocket and service-locator
  * adapters through ports injected into the {@link mesh} model.
  * Cf. modelSpec by the same name, i.e. `webswitch`. Extends
@@ -190,8 +210,8 @@ export class ServiceMeshClient extends AsyncResource {
       this.runInAsyncScope(() => (this.pong.set(this.asyncId(), true), this))
     )
 
-    this.mesh.websocketOnClose((code, reason) => {
-      this.runInAsyncScope(() => {
+    this.websocketOnClose(() => {
+      this.runInAsyncScope((code, reason) => {
         this.state.set(this.asyncId(), States.DISCONNECTED)
         console.log({
           msg: 'received close frame',
@@ -208,7 +228,7 @@ export class ServiceMeshClient extends AsyncResource {
           console.debug('reconnect due to socket close')
           this.connect({ asyncId: this.asyncId() })
         }, 10000).unref()
-      }, this)
+      })
     })
   }
 
@@ -238,34 +258,14 @@ export class ServiceMeshClient extends AsyncResource {
     }
   }
 
-  /**
-   * use binary messages
-   */
-  primitives = {
-    encode: {
-      object: msg => Buffer.from(JSON.stringify(msg)),
-      string: msg => Buffer.from(JSON.stringify(msg)),
-      number: msg => Buffer.from(JSON.stringify(msg)),
-      symbol: msg => console.log('unsupported', msg),
-      undefined: msg => console.log('undefined', msg)
-    },
-    decode: {
-      object: msg => JSON.parse(Buffer.from(msg).toString()),
-      string: msg => JSON.parse(Buffer.from(msg).toString()),
-      number: msg => JSON.parse(Buffer.from(msg).toString()),
-      symbol: msg => console.log('unsupported', msg),
-      undefined: msg => console.error('undefined', msg)
-    }
-  }
-
   encode (msg) {
-    const encoded = this.primitives.encode[typeof msg](msg)
+    const encoded = primitives.encode[typeof msg](msg)
     debug && console.debug({ encoded })
     return encoded
   }
 
   decode (msg) {
-    const decoded = this.primitives.decode[typeof msg](msg)
+    const decoded = primitives.decode[typeof msg](msg)
     debug && console.debug({ decoded })
     return decoded
   }
