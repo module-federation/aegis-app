@@ -761,7 +761,7 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
-var axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+var axios = __webpack_require__(/*! axios */ "webpack/sharing/consume/default/axios/axios?5326");
 
 var OrderAdapter = /*#__PURE__*/function () {
   function OrderAdapter() {
@@ -1324,7 +1324,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "serviceLocatorListen": () => /* binding */ serviceLocatorListen,
 /* harmony export */   "serviceLocatorAnswer": () => /* binding */ serviceLocatorAnswer
 /* harmony export */ });
-/* harmony import */ var multicast_dns__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! multicast-dns */ "./node_modules/multicast-dns/index.js");
+/* harmony import */ var multicast_dns__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! multicast-dns */ "webpack/sharing/consume/default/multicast-dns/multicast-dns");
 /* harmony import */ var multicast_dns__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(multicast_dns__WEBPACK_IMPORTED_MODULE_0__);
 
 
@@ -2411,7 +2411,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Event": () => /* binding */ Event
 /* harmony export */ });
-/* harmony import */ var kafkajs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! kafkajs */ "./node_modules/kafkajs/index.js");
+/* harmony import */ var kafkajs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! kafkajs */ "webpack/sharing/consume/default/kafkajs/kafkajs");
 /* harmony import */ var kafkajs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(kafkajs__WEBPACK_IMPORTED_MODULE_0__);
 
 
