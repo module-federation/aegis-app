@@ -239,14 +239,9 @@ import GlobalMixins from './mixins'
 import bindAdapters from './bind-adapters'
 
 // Service dependencies
-import * as services from '../../test/mock'
+import * as services from '../services'
 import * as adapters from '../adapters'
-
-export * from './order'
-export * from './customer'
-export * from './inventory'
-
-// Model properties
+// Models
 import * as modelSpecs from '../config'
 
 /**

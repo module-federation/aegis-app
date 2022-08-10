@@ -37,8 +37,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! crypto */ "crypto");
 /* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(crypto__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! nanoid */ "webpack/sharing/consume/default/nanoid/nanoid");
-/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(nanoid__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! nanoid */ "./node_modules/nanoid/index.js");
 
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
@@ -189,7 +188,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 var uuid = __webpack_require__(/*! ../domain/utils */ "./src/domain/utils.js").uuid;
 
-var SmartyStreetsSDK = __webpack_require__(/*! smartystreets-javascript-sdk */ "webpack/sharing/consume/default/smartystreets-javascript-sdk/smartystreets-javascript-sdk");
+var SmartyStreetsSDK = __webpack_require__(/*! smartystreets-javascript-sdk */ "./node_modules/smartystreets-javascript-sdk/index.js");
 
 var SmartyStreetsCore = SmartyStreetsSDK.core;
 var Lookup = SmartyStreetsSDK.usStreet.Lookup; // for Server-to-server requests, use this code:
