@@ -75,8 +75,3 @@ export function websockeTerminate () {
   }
 }
 
-export function websocketDisconnected () {
-  return async function () {
-    return socket.readyState !== socket.OPEN
-  }
-}

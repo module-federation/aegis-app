@@ -485,7 +485,6 @@ function notify() {
 /*! export websockeTerminate [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websockeTerminate */
 /*! export websocketClose [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websocketClose */
 /*! export websocketConnect [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websocketConnect */
-/*! export websocketDisconnected [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websocketDisconnected */
 /*! export websocketOnClose [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websocketOnClose */
 /*! export websocketOnMessage [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websocketOnMessage */
 /*! export websocketOnOpen [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websocketOnOpen */
@@ -508,7 +507,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "websockeTerminate": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websockeTerminate,
 /* harmony export */   "websocketClose": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websocketClose,
 /* harmony export */   "websocketConnect": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websocketConnect,
-/* harmony export */   "websocketDisconnected": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websocketDisconnected,
 /* harmony export */   "websocketOnClose": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websocketOnClose,
 /* harmony export */   "websocketOnMessage": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websocketOnMessage,
 /* harmony export */   "websocketOnOpen": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websocketOnOpen,
@@ -2022,7 +2020,6 @@ function verifyDelivery(service) {
 /*! export websockeTerminate [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export websocketClose [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export websocketConnect [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export websocketDisconnected [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export websocketOnClose [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export websocketOnMessage [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export websocketOnOpen [provided] [no usage info] [missing usage info prevents renaming] */
@@ -2046,8 +2043,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "websocketOnOpen": () => /* binding */ websocketOnOpen,
 /* harmony export */   "websocketOnPong": () => /* binding */ websocketOnPong,
 /* harmony export */   "websocketStatus": () => /* binding */ websocketStatus,
-/* harmony export */   "websockeTerminate": () => /* binding */ websockeTerminate,
-/* harmony export */   "websocketDisconnected": () => /* binding */ websocketDisconnected
+/* harmony export */   "websockeTerminate": () => /* binding */ websockeTerminate
 /* harmony export */ });
 /* harmony import */ var ws__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ws */ "./node_modules/ws/index.js");
 /* harmony import */ var ws__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(ws__WEBPACK_IMPORTED_MODULE_0__);
@@ -2375,22 +2371,6 @@ function websockeTerminate() {
         }
       }
     }, _callee10);
-  }));
-}
-function websocketDisconnected() {
-  return /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11() {
-    return _regeneratorRuntime().wrap(function _callee11$(_context11) {
-      while (1) {
-        switch (_context11.prev = _context11.next) {
-          case 0:
-            return _context11.abrupt("return", socket.readyState !== socket.OPEN);
-
-          case 1:
-          case "end":
-            return _context11.stop();
-        }
-      }
-    }, _callee11);
   }));
 }
 

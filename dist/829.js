@@ -821,11 +821,6 @@ var WebSwitch = {
       type: 'outbound',
       timeout: 0
     },
-    websocketDisconnected: {
-      service: 'websocket',
-      type: 'outbound',
-      timeout: 0
-    },
     websocketOnClose: {
       service: 'websocket',
       type: 'outbound',
@@ -1346,6 +1341,8 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -1365,8 +1362,6 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
@@ -1403,12 +1398,46 @@ function localUrl() {
   if (isPrimary) throw new Error("invalid url ".concat(url));
   return null;
 }
+/**
+ * use binary messages
+ */
 
-var States = {
-  STARTING: Symbol('starting'),
-  CONNECTED: Symbol('connected'),
-  DISCONNECTED: Symbol('disconnected'),
-  DISPOSED: Symbol('disposed')
+
+var primitives = {
+  encode: {
+    object: function object(msg) {
+      return Buffer.from(JSON.stringify(msg));
+    },
+    string: function string(msg) {
+      return Buffer.from(JSON.stringify(msg));
+    },
+    number: function number(msg) {
+      return Buffer.from(JSON.stringify(msg));
+    },
+    symbol: function symbol(msg) {
+      return console.log('unsupported', msg);
+    },
+    undefined: function undefined(msg) {
+      return console.log('undefined', msg);
+    }
+  },
+  decode: {
+    object: function object(msg) {
+      return JSON.parse(Buffer.from(msg).toString());
+    },
+    string: function string(msg) {
+      return JSON.parse(Buffer.from(msg).toString());
+    },
+    number: function number(msg) {
+      return JSON.parse(Buffer.from(msg).toString());
+    },
+    symbol: function symbol(msg) {
+      return console.log('unsupported', msg);
+    },
+    undefined: function undefined(msg) {
+      return console.error('undefined', msg);
+    }
+  }
 };
 /**
  * Service mesh client impl. Uses websocket and service-locator
@@ -1418,8 +1447,8 @@ var States = {
  * thread, in which two instances are active for a short time.
  */
 
-var ServiceMeshClient = /*#__PURE__*/function (_AsyncResource) {
-  _inherits(ServiceMeshClient, _AsyncResource);
+var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
+  _inherits(ServiceMeshClient, _EventEmitter);
 
   var _super = _createSuper(ServiceMeshClient);
 
@@ -1429,53 +1458,13 @@ var ServiceMeshClient = /*#__PURE__*/function (_AsyncResource) {
     _classCallCheck(this, ServiceMeshClient);
 
     _this = _super.call(this, 'webswitch');
-
-    _defineProperty(_assertThisInitialized(_this), "primitives", {
-      encode: {
-        object: function object(msg) {
-          return Buffer.from(JSON.stringify(msg));
-        },
-        string: function string(msg) {
-          return Buffer.from(JSON.stringify(msg));
-        },
-        number: function number(msg) {
-          return Buffer.from(JSON.stringify(msg));
-        },
-        symbol: function symbol(msg) {
-          return console.log('unsupported', msg);
-        },
-        undefined: function undefined(msg) {
-          return console.log('undefined', msg);
-        }
-      },
-      decode: {
-        object: function object(msg) {
-          return JSON.parse(Buffer.from(msg).toString());
-        },
-        string: function string(msg) {
-          return JSON.parse(Buffer.from(msg).toString());
-        },
-        number: function number(msg) {
-          return JSON.parse(Buffer.from(msg).toString());
-        },
-        symbol: function symbol(msg) {
-          return console.log('unsupported', msg);
-        },
-        undefined: function undefined(msg) {
-          return console.error('undefined', msg);
-        }
-      }
-    });
-
     _this.url = localUrl();
     _this.mesh = mesh;
     _this.name = SERVICENAME;
     _this.isPrimary = isPrimary;
     _this.isBackup = isBackup;
-    _this.pong = new Map();
-    _this.heartbeatTimer = new Map();
-    _this.state = new Map();
-    _this.broker = new (events__WEBPACK_IMPORTED_MODULE_1___default())();
+    _this.pong = true;
+    _this.heartbeatTimer = 3000;
     _this.headers = {
       'x-webswitch-host': os__WEBPACK_IMPORTED_MODULE_0___default().hostname(),
       'x-webswitch-role': 'node',
@@ -1492,7 +1481,7 @@ var ServiceMeshClient = /*#__PURE__*/function (_AsyncResource) {
 
   _createClass(ServiceMeshClient, [{
     key: "telemetry",
-    value: function telemetry(asyncId) {
+    value: function telemetry() {
       return {
         eventName: 'telemetry',
         proto: this.name,
@@ -1503,9 +1492,7 @@ var ServiceMeshClient = /*#__PURE__*/function (_AsyncResource) {
         pid: process.pid,
         telemetry: _objectSpread(_objectSpread({}, process.memoryUsage()), process.cpuUsage()),
         services: this.mesh.listServices(),
-        socketState: this.mesh.websocketStatus() || 'undefined',
-        clientState: this.state.toString(),
-        asyncId: asyncId
+        socketState: this.mesh.websocketStatus() || 'undefined'
       };
     }
     /**
@@ -1523,8 +1510,7 @@ var ServiceMeshClient = /*#__PURE__*/function (_AsyncResource) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                console.debug('resolveUrl called');
-                _context.next = 3;
+                _context.next = 2;
                 return this.mesh.serviceLocatorInit({
                   serviceUrl: localUrl(),
                   name: this.name,
@@ -1532,22 +1518,22 @@ var ServiceMeshClient = /*#__PURE__*/function (_AsyncResource) {
                   backup: this.isBackup
                 });
 
-              case 3:
+              case 2:
                 if (!this.isPrimary) {
-                  _context.next = 7;
+                  _context.next = 6;
                   break;
                 }
 
-                _context.next = 6;
+                _context.next = 5;
                 return this.mesh.serviceLocatorAnswer();
 
-              case 6:
+              case 5:
                 return _context.abrupt("return", localUrl());
 
-              case 7:
+              case 6:
                 return _context.abrupt("return", this.mesh.serviceLocatorListen());
 
-              case 8:
+              case 7:
               case "end":
                 return _context.stop();
             }
@@ -1591,66 +1577,48 @@ var ServiceMeshClient = /*#__PURE__*/function (_AsyncResource) {
                 options = _args2.length > 0 && _args2[0] !== undefined ? _args2[0] : {
                   binary: true
                 };
-
-                if (!(options.asyncId && this.state.get(options.asyncId) === States.DISPOSED)) {
-                  _context2.next = 4;
-                  break;
-                }
-
-                console.info('client is disposed');
-                return _context2.abrupt("return");
-
-              case 4:
                 this.options = options;
-                _context2.next = 7;
+                _context2.next = 4;
                 return this.resolveUrl();
 
-              case 7:
+              case 4:
                 this.url = _context2.sent;
-                _context2.next = 10;
+                _context2.next = 7;
                 return this.mesh.websocketConnect(this.url, {
                   agent: false,
                   headers: this.headers,
                   protocol: SERVICENAME
                 });
 
-              case 10:
+              case 7:
                 this.mesh.websocketOnOpen(function () {
-                  _this2.runInAsyncScope(function () {
-                    _this2.state.set(_this2.asyncId(), States.CONNECTED);
+                  console.log('connection open');
 
-                    console.log('connection open');
+                  _this2.send(_this2.encode(_this2.telemetry()));
 
-                    _this2.send(_this2.encode(_this2.telemetry(_this2.asyncId())));
+                  _this2.heartbeat();
 
-                    _this2.broker.once('timeout', function () {
-                      return _this2.timeout(_this2.asyncId());
-                    });
-
-                    _this2.heartbeat(_this2.asyncId());
-
-                    setTimeout(function () {
-                      return _this2.sendQueuedMsgs();
-                    }, 3000).unref();
-                  }, _this2);
+                  setTimeout(function () {
+                    return _this2.sendQueuedMsgs();
+                  }, 3000).unref();
                 });
                 this.mesh.websocketOnMessage(function (message) {
+                  var event = _this2.decode(message);
+
+                  if (!event.eventName) {
+                    debug && console.debug({
+                      missingEventName: event
+                    });
+
+                    _this2.emit('missingEventName', event);
+
+                    return;
+                  }
+
                   try {
-                    var event = _this2.decode(message);
+                    _this2.emit(event.eventName, event);
 
-                    if (!event.eventName) {
-                      debug && console.debug({
-                        missingEventName: event
-                      });
-
-                      _this2.broker.emit('missingEventName', event);
-
-                      return;
-                    }
-
-                    _this2.broker.emit(event.eventName, event);
-
-                    _this2.broker.listeners('*').forEach(function (listener) {
+                    _this2.listeners('*').forEach(function (listener) {
                       return listener(event);
                     });
                   } catch (error) {
@@ -1668,39 +1636,31 @@ var ServiceMeshClient = /*#__PURE__*/function (_AsyncResource) {
                     error: error
                   });
                 });
-                this.mesh.websocketOnPong(function () {
-                  return _this2.runInAsyncScope(function () {
-                    return _this2.pong.set(_this2.asyncId(), true), _this2;
-                  });
-                });
                 this.mesh.websocketOnClose(function (code, reason) {
-                  _this2.runInAsyncScope(function () {
-                    _this2.state.set(_this2.asyncId(), States.DISCONNECTED);
+                  console.log({
+                    msg: 'received close frame',
+                    code: code,
+                    reason: reason === null || reason === void 0 ? void 0 : reason.toString()
+                  });
+                  clearTimeout(_this2.heartbeatTimer);
 
-                    console.log({
-                      msg: 'received close frame',
-                      asyncId: _this2.asyncId(),
-                      code: code,
-                      reason: reason === null || reason === void 0 ? void 0 : reason.toString()
-                    });
-                    clearTimeout(_this2.heartbeatTimer.get(_this2.asyncId()));
+                  if (code === 4040) {
+                    console.log('server found duplicate connection');
+                    return;
+                  }
 
-                    if (code === 4040 && reason === _this2.asyncId()) {
-                      console.log('got dup code for this ctx (ie obj inst): die.');
-                      return;
-                    }
+                  setTimeout(function () {
+                    console.debug('reconnect due to socket close');
 
-                    setTimeout(function () {
-                      console.debug('reconnect due to socket close');
-
-                      _this2.connect({
-                        asyncId: _this2.asyncId()
-                      });
-                    }, 10000).unref();
-                  }, _this2);
+                    _this2.connect();
+                  }, 10000).unref();
                 });
+                this.mesh.websocketOnPong(function () {
+                  return _this2.pong = true;
+                });
+                this.once('timeout', this.timeout);
 
-              case 15:
+              case 13:
               case "end":
                 return _context2.stop();
             }
@@ -1716,46 +1676,39 @@ var ServiceMeshClient = /*#__PURE__*/function (_AsyncResource) {
     }()
   }, {
     key: "timeout",
-    value: function timeout(asyncId) {
+    value: function timeout() {
       var _this3 = this;
 
       console.warn('timeout');
-      this.emit(TIMEOUTEVENT, this.telemetry(asyncId));
+      this.emit(TIMEOUTEVENT, this.telemetry());
       this.mesh.websocketTerminate();
-      this.state.set(asyncId, States.DISCONNECTED);
       setTimeout(function () {
-        console.debug('reconnect due to timeout', asyncId);
+        console.debug('reconnect due to timeout');
 
-        _this3.connect({
-          asyncId: asyncId
-        });
+        _this3.connect();
       }, 5000).unref();
     }
   }, {
     key: "heartbeat",
-    value: function heartbeat(asyncId) {
+    value: function heartbeat() {
       var _this4 = this;
 
       if (this.pong) {
-        this.pong.set(this.asyncId(), false);
+        this.pong = false;
         this.mesh.websocketPing();
-        this.heartbeatTimer.set(asyncId, setTimeout(function () {
-          return _this4.heartbeat(asyncId);
-        }, heartbeatMs));
-        this.heartbeatTimer.get(asyncId).unref();
+        this.heartbeatTimer = setTimeout(function () {
+          return _this4.heartbeat();
+        }, heartbeatMs);
+        this.heartbeatTimer.unref();
       } else {
-        clearTimeout(this.heartbeatTimer.get(asyncId));
-        this.broker.emit('timeout', asyncId);
+        clearTimeout(this.heartbeatTimer);
+        this.emit('timeout');
       }
     }
-    /**
-     * use binary messages
-     */
-
   }, {
     key: "encode",
     value: function encode(msg) {
-      var encoded = this.primitives.encode[_typeof(msg)](msg);
+      var encoded = primitives.encode[_typeof(msg)](msg);
 
       debug && console.debug({
         encoded: encoded
@@ -1765,7 +1718,7 @@ var ServiceMeshClient = /*#__PURE__*/function (_AsyncResource) {
   }, {
     key: "decode",
     value: function decode(msg) {
-      var decoded = this.primitives.decode[_typeof(msg)](msg);
+      var decoded = primitives.decode[_typeof(msg)](msg);
 
       debug && console.debug({
         decoded: decoded
@@ -1840,42 +1793,29 @@ var ServiceMeshClient = /*#__PURE__*/function (_AsyncResource) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                _context4.prev = 0;
                 sent = true;
 
-              case 2:
+              case 1:
                 if (!(this.mesh.sendQueueLength() > 0 && sent)) {
-                  _context4.next = 9;
+                  _context4.next = 8;
                   break;
                 }
 
                 console.debug('sending queued message');
-                _context4.next = 6;
+                _context4.next = 5;
                 return this.send(this.mesh.popSendQueue());
 
-              case 6:
+              case 5:
                 sent = _context4.sent;
-                _context4.next = 2;
+                _context4.next = 1;
                 break;
 
-              case 9:
-                _context4.next = 14;
-                break;
-
-              case 11:
-                _context4.prev = 11;
-                _context4.t0 = _context4["catch"](0);
-                console.error({
-                  fn: this.sendQueuedMsgs.name,
-                  error: _context4.t0
-                });
-
-              case 14:
+              case 8:
               case "end":
                 return _context4.stop();
             }
           }
-        }, _callee4, this, [[0, 11]]);
+        }, _callee4, this);
       }));
 
       function sendQueuedMsgs() {
@@ -1897,18 +1837,9 @@ var ServiceMeshClient = /*#__PURE__*/function (_AsyncResource) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                if (!this.mesh.websocketDisconnected()) {
-                  _context5.next = 3;
-                  break;
-                }
-
-                _context5.next = 3;
-                return this.connect();
-
-              case 3:
                 return _context5.abrupt("return", this.send(msg));
 
-              case 4:
+              case 1:
               case "end":
                 return _context5.stop();
             }
@@ -1931,7 +1862,7 @@ var ServiceMeshClient = /*#__PURE__*/function (_AsyncResource) {
   }, {
     key: "subscribe",
     value: function subscribe(eventName, callback) {
-      this.broker.on(eventName, callback);
+      this.on(eventName, callback);
     }
     /**
      * A new object will be created on system reload.
@@ -1945,47 +1876,26 @@ var ServiceMeshClient = /*#__PURE__*/function (_AsyncResource) {
   }, {
     key: "close",
     value: function () {
-      var _close = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(code, reason) {
-        var _this5 = this;
-
-        return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+      var _close = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(code, reason) {
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
           while (1) {
-            switch (_context7.prev = _context7.next) {
+            switch (_context6.prev = _context6.next) {
               case 0:
-                this.runInAsyncScope( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
-                  return _regeneratorRuntime().wrap(function _callee6$(_context6) {
-                    while (1) {
-                      switch (_context6.prev = _context6.next) {
-                        case 0:
-                          console.debug('closing socket, asyncId:', _this5.asyncId());
+                console.debug('closing socket');
+                _context6.next = 3;
+                return this.mesh.save();
 
-                          _this5.mesh.websocketClose(code, reason);
+              case 3:
+                // save queued messages
+                this.mesh.websocketClose(code, reason);
+                this.removeAllListeners();
 
-                          _this5.state.set(_this5.asyncId(), States.DISPOSED);
-
-                          _context6.next = 5;
-                          return _this5.mesh.save();
-
-                        case 5:
-                          // save queued messages
-                          _this5.broker.removeAllListeners();
-
-                          _this5.emitDestroy();
-
-                        case 7:
-                        case "end":
-                          return _context6.stop();
-                      }
-                    }
-                  }, _callee6);
-                })), this);
-
-              case 1:
+              case 5:
               case "end":
-                return _context7.stop();
+                return _context6.stop();
             }
           }
-        }, _callee7, this);
+        }, _callee6, this);
       }));
 
       function close(_x3, _x4) {
@@ -1997,7 +1907,7 @@ var ServiceMeshClient = /*#__PURE__*/function (_AsyncResource) {
   }]);
 
   return ServiceMeshClient;
-}(async_hooks__WEBPACK_IMPORTED_MODULE_3__.AsyncResource);
+}((events__WEBPACK_IMPORTED_MODULE_1___default()));
 /**
  * Domain model factory function. This model is
  * used internally by the Aegis framework as a
@@ -2011,14 +1921,14 @@ var ServiceMeshClient = /*#__PURE__*/function (_AsyncResource) {
 function makeClient(dependencies) {
   var client;
   return /*#__PURE__*/function () {
-    var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11(_ref2) {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10(_ref) {
       var listServices;
-      return _regeneratorRuntime().wrap(function _callee11$(_context11) {
+      return _regeneratorRuntime().wrap(function _callee10$(_context10) {
         while (1) {
-          switch (_context11.prev = _context11.next) {
+          switch (_context10.prev = _context10.next) {
             case 0:
-              listServices = _ref2.listServices;
-              return _context11.abrupt("return", {
+              listServices = _ref.listServices;
+              return _context10.abrupt("return", {
                 listServices: listServices,
                 sendQueue: [],
                 sendQueueMax: 1000,
@@ -2037,6 +1947,24 @@ function makeClient(dependencies) {
                   return client;
                 },
                 connect: function connect(options) {
+                  var _this5 = this;
+
+                  return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
+                    return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+                      while (1) {
+                        switch (_context7.prev = _context7.next) {
+                          case 0:
+                            _this5.getClient().connect(options);
+
+                          case 1:
+                          case "end":
+                            return _context7.stop();
+                        }
+                      }
+                    }, _callee7);
+                  }))();
+                },
+                publish: function publish(event) {
                   var _this6 = this;
 
                   return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
@@ -2044,7 +1972,7 @@ function makeClient(dependencies) {
                       while (1) {
                         switch (_context8.prev = _context8.next) {
                           case 0:
-                            _this6.getClient().connect(options);
+                            _this6.getClient().publish(event);
 
                           case 1:
                           case "end":
@@ -2054,7 +1982,10 @@ function makeClient(dependencies) {
                     }, _callee8);
                   }))();
                 },
-                publish: function publish(event) {
+                subscribe: function subscribe(eventName, handler) {
+                  this.getClient().subscribe(eventName, handler);
+                },
+                close: function close(code, reason) {
                   var _this7 = this;
 
                   return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
@@ -2062,7 +1993,7 @@ function makeClient(dependencies) {
                       while (1) {
                         switch (_context9.prev = _context9.next) {
                           case 0:
-                            _this7.getClient().publish(event);
+                            _this7.getClient().close(code, reason);
 
                           case 1:
                           case "end":
@@ -2071,40 +2002,19 @@ function makeClient(dependencies) {
                       }
                     }, _callee9);
                   }))();
-                },
-                subscribe: function subscribe(eventName, handler) {
-                  this.getClient().subscribe(eventName, handler);
-                },
-                close: function close(code, reason) {
-                  var _this8 = this;
-
-                  return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10() {
-                    return _regeneratorRuntime().wrap(function _callee10$(_context10) {
-                      while (1) {
-                        switch (_context10.prev = _context10.next) {
-                          case 0:
-                            _this8.getClient().close(code, reason);
-
-                          case 1:
-                          case "end":
-                            return _context10.stop();
-                        }
-                      }
-                    }, _callee10);
-                  }))();
                 }
               });
 
             case 2:
             case "end":
-              return _context11.stop();
+              return _context10.stop();
           }
         }
-      }, _callee11);
+      }, _callee10);
     }));
 
     return function (_x5) {
-      return _ref3.apply(this, arguments);
+      return _ref2.apply(this, arguments);
     };
   }();
 }
