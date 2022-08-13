@@ -171,10 +171,6 @@ export class ServiceMeshClient extends EventEmitter {
         reason: reason?.toString()
       })
       clearTimeout(this.heartbeatTimer)
-      if (code === 4040) {
-        console.log('server found duplicate connection')
-        return
-      }
       setTimeout(() => {
         console.debug('reconnect due to socket close')
         this.connect()
@@ -296,7 +292,7 @@ export function makeClient (dependencies) {
       },
 
       dequeue () {
-        return this.sendQueue.pop()
+        return this.sendQueue.shift()
       },
 
       getClient () {
