@@ -50,26 +50,6 @@ function localUrl () {
 }
 
 /**
- * use binary messages
- */
-const primitives = {
-  encode: {
-    object: msg => Buffer.from(JSON.stringify(msg)),
-    string: msg => Buffer.from(JSON.stringify(msg)),
-    number: msg => Buffer.from(JSON.stringify(msg)),
-    symbol: msg => console.log('unsupported', msg),
-    undefined: msg => console.log('undefined', msg)
-  },
-  decode: {
-    object: msg => JSON.parse(Buffer.from(msg).toString()),
-    string: msg => JSON.parse(Buffer.from(msg).toString()),
-    number: msg => JSON.parse(Buffer.from(msg).toString()),
-    symbol: msg => console.log('unsupported', msg),
-    undefined: msg => console.error('undefined', msg)
-  }
-}
-
-/**
  * Service mesh client impl. Uses websocket and service-locator
  * adapters through ports injected into the {@link mesh} model.
  * Cf. modelSpec by the same name, i.e. `webswitch`. Extends
@@ -150,29 +130,30 @@ export class ServiceMeshClient extends EventEmitter {
   async connect (options = { binary: true }) {
     this.options = options
     this.url = await this.resolveUrl()
-    await this.mesh.websocketConnect(this.url, {
+
+    this.mesh.websocketConnect(this.url, {
       agent: false,
       headers: this.headers,
-      protocol: SERVICENAME
+      protocol: SERVICENAME,
+      useBinary: true
     })
 
     this.mesh.websocketOnOpen(() => {
       console.log('connection open')
-      this.send(this.encode(this.telemetry()))
+      this.send(this.telemetry())
       this.heartbeat()
       setTimeout(() => this.sendQueuedMsgs(), 3000).unref()
     })
 
     this.mesh.websocketOnMessage(message => {
-      const event = this.decode(message)
-      if (!event.eventName) {
-        debug && console.debug({ missingEventName: event })
-        this.emit('missingEventName', event)
+      if (!message.eventName) {
+        debug && console.debug({ missingEventName: message })
+        this.emit('missingEventName', message)
         return
       }
       try {
-        this.emit(event.eventName, event)
-        this.listeners('*').forEach(listener => listener(event))
+        this.emit(message.eventName, message)
+        this.listeners('*').forEach(listener => listener(message))
       } catch (error) {
         console.error({ fn: this.connect.name, error })
       }
@@ -226,56 +207,41 @@ export class ServiceMeshClient extends EventEmitter {
     }
   }
 
-  encode (msg) {
-    const encoded = primitives.encode[typeof msg](msg)
-    debug && console.debug({ encoded })
-    return encoded
-  }
-
-  decode (msg) {
-    const decoded = primitives.decode[typeof msg](msg)
-    debug && console.debug({ decoded })
-    return decoded
-  }
-
   /**
    * Convert message to binary and send with protocol and idempotency headers.
    * If message cannot be sent because of connection state or buffering queue
    * message in domain object for retry later. Using a domain object ensures
-   * persistence of the queue.
+   * persistence of the queue across boots.
    *
    * @param {object} msg
    * @returns {Promise<boolean>} true if sent, false if not
    */
-  async send (msg) {
-    const sent = await this.mesh.websocketSend(this.encode(msg), {
-      binary: true,
+  send (msg) {
+    const sent = this.mesh.websocketSend(msg, {
       headers: {
         ...this.headers,
         'idempotency-key': nanoid()
       }
     })
     if (sent) return true
-    this.mesh.pushSendQueue(msg)
+    this.mesh.enqueue(msg)
     return false
   }
 
   /**
    * Send any messages buffered in `sendQueue`.
    */
-  async sendQueuedMsgs () {
+  sendQueuedMsgs () {
     let sent = true
-    while (this.mesh.sendQueueLength() > 0 && sent) {
-      console.debug('sending queued message')
-      sent = await this.send(this.mesh.popSendQueue())
-    }
+    while (this.mesh.queueDepth() > 0 && sent)
+      sent = this.send(this.mesh.dequeue())
   }
 
   /**
    * Connects if needed then sends message to mesh broker service.
    * @param {*} msg
    */
-  async publish (msg) {
+  publish (msg) {
     return this.send(msg)
   }
 
@@ -321,15 +287,15 @@ export function makeClient (dependencies) {
       sendQueue: [],
       sendQueueMax: 1000,
 
-      sendQueueLength () {
+      queueDepth () {
         return this.sendQueue.length
       },
 
-      pushSendQueue (msg) {
+      enqueue (msg) {
         this.sendQueue.push(msg)
       },
 
-      popSendQueue () {
+      dequeue () {
         return this.sendQueue.pop()
       },
 

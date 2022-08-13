@@ -1399,53 +1399,13 @@ function localUrl() {
   return null;
 }
 /**
- * use binary messages
- */
-
-
-var primitives = {
-  encode: {
-    object: function object(msg) {
-      return Buffer.from(JSON.stringify(msg));
-    },
-    string: function string(msg) {
-      return Buffer.from(JSON.stringify(msg));
-    },
-    number: function number(msg) {
-      return Buffer.from(JSON.stringify(msg));
-    },
-    symbol: function symbol(msg) {
-      return console.log('unsupported', msg);
-    },
-    undefined: function undefined(msg) {
-      return console.log('undefined', msg);
-    }
-  },
-  decode: {
-    object: function object(msg) {
-      return JSON.parse(Buffer.from(msg).toString());
-    },
-    string: function string(msg) {
-      return JSON.parse(Buffer.from(msg).toString());
-    },
-    number: function number(msg) {
-      return JSON.parse(Buffer.from(msg).toString());
-    },
-    symbol: function symbol(msg) {
-      return console.log('unsupported', msg);
-    },
-    undefined: function undefined(msg) {
-      return console.error('undefined', msg);
-    }
-  }
-};
-/**
  * Service mesh client impl. Uses websocket and service-locator
  * adapters through ports injected into the {@link mesh} model.
  * Cf. modelSpec by the same name, i.e. `webswitch`. Extends
  * {@link AsyncResource} to handle system reload on the main
  * thread, in which two instances are active for a short time.
  */
+
 
 var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
   _inherits(ServiceMeshClient, _EventEmitter);
@@ -1583,18 +1543,16 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
 
               case 4:
                 this.url = _context2.sent;
-                _context2.next = 7;
-                return this.mesh.websocketConnect(this.url, {
+                this.mesh.websocketConnect(this.url, {
                   agent: false,
                   headers: this.headers,
-                  protocol: SERVICENAME
+                  protocol: SERVICENAME,
+                  useBinary: true
                 });
-
-              case 7:
                 this.mesh.websocketOnOpen(function () {
                   console.log('connection open');
 
-                  _this2.send(_this2.encode(_this2.telemetry()));
+                  _this2.send(_this2.telemetry());
 
                   _this2.heartbeat();
 
@@ -1603,23 +1561,21 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
                   }, 3000).unref();
                 });
                 this.mesh.websocketOnMessage(function (message) {
-                  var event = _this2.decode(message);
-
-                  if (!event.eventName) {
+                  if (!message.eventName) {
                     debug && console.debug({
-                      missingEventName: event
+                      missingEventName: message
                     });
 
-                    _this2.emit('missingEventName', event);
+                    _this2.emit('missingEventName', message);
 
                     return;
                   }
 
                   try {
-                    _this2.emit(event.eventName, event);
+                    _this2.emit(message.eventName, message);
 
                     _this2.listeners('*').forEach(function (listener) {
-                      return listener(event);
+                      return listener(message);
                     });
                   } catch (error) {
                     console.error({
@@ -1660,7 +1616,7 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
                 });
                 this.once('timeout', this.timeout);
 
-              case 13:
+              case 12:
               case "end":
                 return _context2.stop();
             }
@@ -1705,31 +1661,11 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
         this.emit('timeout');
       }
     }
-  }, {
-    key: "encode",
-    value: function encode(msg) {
-      var encoded = primitives.encode[_typeof(msg)](msg);
-
-      debug && console.debug({
-        encoded: encoded
-      });
-      return encoded;
-    }
-  }, {
-    key: "decode",
-    value: function decode(msg) {
-      var decoded = primitives.decode[_typeof(msg)](msg);
-
-      debug && console.debug({
-        decoded: decoded
-      });
-      return decoded;
-    }
     /**
      * Convert message to binary and send with protocol and idempotency headers.
      * If message cannot be sent because of connection state or buffering queue
      * message in domain object for retry later. Using a domain object ensures
-     * persistence of the queue.
+     * persistence of the queue across boots.
      *
      * @param {object} msg
      * @returns {Promise<boolean>} true if sent, false if not
@@ -1737,93 +1673,29 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
 
   }, {
     key: "send",
-    value: function () {
-      var _send = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(msg) {
-        var sent;
-        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-          while (1) {
-            switch (_context3.prev = _context3.next) {
-              case 0:
-                _context3.next = 2;
-                return this.mesh.websocketSend(this.encode(msg), {
-                  binary: true,
-                  headers: _objectSpread(_objectSpread({}, this.headers), {}, {
-                    'idempotency-key': (0,nanoid__WEBPACK_IMPORTED_MODULE_2__.nanoid)()
-                  })
-                });
-
-              case 2:
-                sent = _context3.sent;
-
-                if (!sent) {
-                  _context3.next = 5;
-                  break;
-                }
-
-                return _context3.abrupt("return", true);
-
-              case 5:
-                this.mesh.pushSendQueue(msg);
-                return _context3.abrupt("return", false);
-
-              case 7:
-              case "end":
-                return _context3.stop();
-            }
-          }
-        }, _callee3, this);
-      }));
-
-      function send(_x) {
-        return _send.apply(this, arguments);
-      }
-
-      return send;
-    }()
+    value: function send(msg) {
+      var sent = this.mesh.websocketSend(msg, {
+        headers: _objectSpread(_objectSpread({}, this.headers), {}, {
+          'idempotency-key': (0,nanoid__WEBPACK_IMPORTED_MODULE_2__.nanoid)()
+        })
+      });
+      if (sent) return true;
+      this.mesh.enqueue(msg);
+      return false;
+    }
     /**
      * Send any messages buffered in `sendQueue`.
      */
 
   }, {
     key: "sendQueuedMsgs",
-    value: function () {
-      var _sendQueuedMsgs = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-        var sent;
-        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-          while (1) {
-            switch (_context4.prev = _context4.next) {
-              case 0:
-                sent = true;
+    value: function sendQueuedMsgs() {
+      var sent = true;
 
-              case 1:
-                if (!(this.mesh.sendQueueLength() > 0 && sent)) {
-                  _context4.next = 8;
-                  break;
-                }
-
-                console.debug('sending queued message');
-                _context4.next = 5;
-                return this.send(this.mesh.popSendQueue());
-
-              case 5:
-                sent = _context4.sent;
-                _context4.next = 1;
-                break;
-
-              case 8:
-              case "end":
-                return _context4.stop();
-            }
-          }
-        }, _callee4, this);
-      }));
-
-      function sendQueuedMsgs() {
-        return _sendQueuedMsgs.apply(this, arguments);
+      while (this.mesh.queueDepth() > 0 && sent) {
+        sent = this.send(this.mesh.dequeue());
       }
-
-      return sendQueuedMsgs;
-    }()
+    }
     /**
      * Connects if needed then sends message to mesh broker service.
      * @param {*} msg
@@ -1831,28 +1703,9 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
 
   }, {
     key: "publish",
-    value: function () {
-      var _publish = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(msg) {
-        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-          while (1) {
-            switch (_context5.prev = _context5.next) {
-              case 0:
-                return _context5.abrupt("return", this.send(msg));
-
-              case 1:
-              case "end":
-                return _context5.stop();
-            }
-          }
-        }, _callee5, this);
-      }));
-
-      function publish(_x2) {
-        return _publish.apply(this, arguments);
-      }
-
-      return publish;
-    }()
+    value: function publish(msg) {
+      return this.send(msg);
+    }
     /**
      * Register handler to fire on event.
      * @param {string} eventName
@@ -1876,13 +1729,13 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "close",
     value: function () {
-      var _close = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(code, reason) {
-        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+      var _close = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(code, reason) {
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context6.prev = _context6.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
                 console.debug('closing socket');
-                _context6.next = 3;
+                _context3.next = 3;
                 return this.mesh.save();
 
               case 3:
@@ -1892,13 +1745,13 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
 
               case 5:
               case "end":
-                return _context6.stop();
+                return _context3.stop();
             }
           }
-        }, _callee6, this);
+        }, _callee3, this);
       }));
 
-      function close(_x3, _x4) {
+      function close(_x, _x2) {
         return _close.apply(this, arguments);
       }
 
@@ -1921,24 +1774,24 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
 function makeClient(dependencies) {
   var client;
   return /*#__PURE__*/function () {
-    var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10(_ref) {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(_ref) {
       var listServices;
-      return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+      return _regeneratorRuntime().wrap(function _callee7$(_context7) {
         while (1) {
-          switch (_context10.prev = _context10.next) {
+          switch (_context7.prev = _context7.next) {
             case 0:
               listServices = _ref.listServices;
-              return _context10.abrupt("return", {
+              return _context7.abrupt("return", {
                 listServices: listServices,
                 sendQueue: [],
                 sendQueueMax: 1000,
-                sendQueueLength: function sendQueueLength() {
+                queueDepth: function queueDepth() {
                   return this.sendQueue.length;
                 },
-                pushSendQueue: function pushSendQueue(msg) {
+                enqueue: function enqueue(msg) {
                   this.sendQueue.push(msg);
                 },
-                popSendQueue: function popSendQueue() {
+                dequeue: function dequeue() {
                   return this.sendQueue.pop();
                 },
                 getClient: function getClient() {
@@ -1949,37 +1802,37 @@ function makeClient(dependencies) {
                 connect: function connect(options) {
                   var _this5 = this;
 
-                  return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
-                    return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+                  return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+                    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
                       while (1) {
-                        switch (_context7.prev = _context7.next) {
+                        switch (_context4.prev = _context4.next) {
                           case 0:
                             _this5.getClient().connect(options);
 
                           case 1:
                           case "end":
-                            return _context7.stop();
+                            return _context4.stop();
                         }
                       }
-                    }, _callee7);
+                    }, _callee4);
                   }))();
                 },
                 publish: function publish(event) {
                   var _this6 = this;
 
-                  return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
-                    return _regeneratorRuntime().wrap(function _callee8$(_context8) {
+                  return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+                    return _regeneratorRuntime().wrap(function _callee5$(_context5) {
                       while (1) {
-                        switch (_context8.prev = _context8.next) {
+                        switch (_context5.prev = _context5.next) {
                           case 0:
                             _this6.getClient().publish(event);
 
                           case 1:
                           case "end":
-                            return _context8.stop();
+                            return _context5.stop();
                         }
                       }
-                    }, _callee8);
+                    }, _callee5);
                   }))();
                 },
                 subscribe: function subscribe(eventName, handler) {
@@ -1988,32 +1841,32 @@ function makeClient(dependencies) {
                 close: function close(code, reason) {
                   var _this7 = this;
 
-                  return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
-                    return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+                  return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+                    return _regeneratorRuntime().wrap(function _callee6$(_context6) {
                       while (1) {
-                        switch (_context9.prev = _context9.next) {
+                        switch (_context6.prev = _context6.next) {
                           case 0:
                             _this7.getClient().close(code, reason);
 
                           case 1:
                           case "end":
-                            return _context9.stop();
+                            return _context6.stop();
                         }
                       }
-                    }, _callee9);
+                    }, _callee6);
                   }))();
                 }
               });
 
             case 2:
             case "end":
-              return _context10.stop();
+              return _context7.stop();
           }
         }
-      }, _callee10);
+      }, _callee7);
     }));
 
-    return function (_x5) {
+    return function (_x3) {
       return _ref2.apply(this, arguments);
     };
   }();
