@@ -49,33 +49,6 @@ function localUrl () {
   return null
 }
 
-const States = {
-  STARTING: Symbol('starting'),
-  CONNECTED: Symbol('connected'),
-  DISCONNECTED: Symbol('disconnected'),
-  DISPOSED: Symbol('disposed')
-}
-
-/**
- * use binary messages
- */
-const primitives = {
-  encode: {
-    object: msg => Buffer.from(JSON.stringify(msg)),
-    string: msg => Buffer.from(JSON.stringify(msg)),
-    number: msg => Buffer.from(JSON.stringify(msg)),
-    symbol: msg => console.log('unsupported', msg),
-    undefined: msg => console.log('undefined', msg)
-  },
-  decode: {
-    object: msg => JSON.parse(Buffer.from(msg).toString()),
-    string: msg => JSON.parse(Buffer.from(msg).toString()),
-    number: msg => JSON.parse(Buffer.from(msg).toString()),
-    symbol: msg => console.log('unsupported', msg),
-    undefined: msg => console.error('undefined', msg)
-  }
-}
-
 /**
  * Service mesh client impl. Uses websocket and service-locator
  * adapters through ports injected into the {@link mesh} model.
@@ -83,7 +56,7 @@ const primitives = {
  * {@link AsyncResource} to handle system reload on the main
  * thread, in which two instances are active for a short time.
  */
-export class ServiceMeshClient extends AsyncResource {
+export class ServiceMeshClient extends EventEmitter {
   constructor (mesh) {
     super('webswitch')
     this.url = localUrl()
@@ -91,10 +64,8 @@ export class ServiceMeshClient extends AsyncResource {
     this.name = SERVICENAME
     this.isPrimary = isPrimary
     this.isBackup = isBackup
-    this.pong = new Map()
-    this.heartbeatTimer = new Map()
-    this.state = new Map()
-    this.broker = new EventEmitter()
+    this.pong = true
+    this.heartbeatTimer = 3000
     this.headers = {
       'x-webswitch-host': os.hostname(),
       'x-webswitch-role': 'node',
@@ -107,7 +78,7 @@ export class ServiceMeshClient extends AsyncResource {
    * @param {number} asyncId id's instance to kill
    * @returns {{telemetry:{mem:number,cpu:number}}}
    */
-  telemetry (asyncId) {
+  telemetry () {
     return {
       eventName: 'telemetry',
       proto: this.name,
@@ -118,9 +89,7 @@ export class ServiceMeshClient extends AsyncResource {
       pid: process.pid,
       telemetry: { ...process.memoryUsage(), ...process.cpuUsage() },
       services: this.mesh.listServices(),
-      socketState: this.mesh.websocketStatus() || 'undefined',
-      clientState: this.state.toString(),
-      asyncId
+      socketState: this.mesh.websocketStatus() || 'undefined'
     }
   }
 
@@ -131,7 +100,6 @@ export class ServiceMeshClient extends AsyncResource {
    * @returns {Promise<string>} url
    */
   async resolveUrl () {
-    console.debug('resolveUrl called')
     await this.mesh.serviceLocatorInit({
       serviceUrl: localUrl(),
       name: this.name,
@@ -160,42 +128,32 @@ export class ServiceMeshClient extends AsyncResource {
    * @returns
    */
   async connect (options = { binary: true }) {
-    if (
-      options.asyncId &&
-      this.state.get(options.asyncId) === States.DISPOSED
-    ) {
-      console.info('client is disposed')
-      return
-    }
     this.options = options
     this.url = await this.resolveUrl()
-    await this.mesh.websocketConnect(this.url, {
+
+    this.mesh.websocketConnect(this.url, {
       agent: false,
       headers: this.headers,
-      protocol: SERVICENAME
+      protocol: SERVICENAME,
+      useBinary: true
     })
 
     this.mesh.websocketOnOpen(() => {
-      this.runInAsyncScope(() => {
-        this.state.set(this.asyncId(), States.CONNECTED)
-        console.log('connection open')
-        this.send(this.encode(this.telemetry(this.asyncId())))
-        this.broker.once('timeout', () => this.timeout(this.asyncId()))
-        this.heartbeat(this.asyncId())
-        setTimeout(() => this.sendQueuedMsgs(), 3000).unref()
-      }, this)
+      console.log('connection open')
+      this.send(this.telemetry())
+      this.heartbeat()
+      setTimeout(() => this.sendQueuedMsgs(), 3000).unref()
     })
 
     this.mesh.websocketOnMessage(message => {
+      if (!message.eventName) {
+        debug && console.debug({ missingEventName: message })
+        this.emit('missingEventName', message)
+        return
+      }
       try {
-        const event = this.decode(message)
-        if (!event.eventName) {
-          debug && console.debug({ missingEventName: event })
-          this.broker.emit('missingEventName', event)
-          return
-        }
-        this.broker.emit(event.eventName, event)
-        this.broker.listeners('*').forEach(listener => listener(event))
+        this.emit(message.eventName, message)
+        this.listeners('*').forEach(listener => listener(message))
       } catch (error) {
         console.error({ fn: this.connect.name, error })
       }
@@ -206,113 +164,80 @@ export class ServiceMeshClient extends AsyncResource {
       console.error({ fn: this.connect.name, error })
     })
 
-    this.mesh.websocketOnPong(() =>
-      this.runInAsyncScope(() => (this.pong.set(this.asyncId(), true), this))
-    )
-
-    this.websocketOnClose(() => {
-      this.runInAsyncScope((code, reason) => {
-        this.state.set(this.asyncId(), States.DISCONNECTED)
-        console.log({
-          msg: 'received close frame',
-          asyncId: this.asyncId(),
-          code,
-          reason: reason?.toString()
-        })
-        clearTimeout(this.heartbeatTimer.get(this.asyncId()))
-        if (code === 4040 && reason === this.asyncId()) {
-          console.log('got dup code for this ctx (ie obj inst): die.')
-          return
-        }
-        setTimeout(() => {
-          console.debug('reconnect due to socket close')
-          this.connect({ asyncId: this.asyncId() })
-        }, 10000).unref()
+    this.mesh.websocketOnClose((code, reason) => {
+      console.log({
+        msg: 'received close frame',
+        code,
+        reason: reason?.toString()
       })
+      clearTimeout(this.heartbeatTimer)
+      setTimeout(() => {
+        console.debug('reconnect due to socket close')
+        this.connect()
+      }, 10000).unref()
     })
+
+    this.mesh.websocketOnPong(() => (this.pong = true))
+    this.once('timeout', this.timeout)
   }
 
-  timeout (asyncId) {
+  timeout () {
     console.warn('timeout')
-    this.emit(TIMEOUTEVENT, this.telemetry(asyncId))
+    this.emit(TIMEOUTEVENT, this.telemetry())
     this.mesh.websocketTerminate()
-    this.state.set(asyncId, States.DISCONNECTED)
     setTimeout(() => {
-      console.debug('reconnect due to timeout', asyncId)
-      this.connect({ asyncId })
+      console.debug('reconnect due to timeout')
+      this.connect()
     }, 5000).unref()
   }
 
-  heartbeat (asyncId) {
+  heartbeat () {
     if (this.pong) {
-      this.pong.set(asyncId, false)
+      this.pong = false
       this.mesh.websocketPing()
-      this.heartbeatTimer.set(
-        asyncId,
-        setTimeout(() => this.heartbeat(asyncId), heartbeatMs)
-      )
-      this.heartbeatTimer.get(asyncId).unref()
+      this.heartbeatTimer = setTimeout(() => this.heartbeat(), heartbeatMs)
+      this.heartbeatTimer.unref()
     } else {
-      clearTimeout(this.heartbeatTimer.get(asyncId))
-      this.broker.emit('timeout', asyncId)
+      clearTimeout(this.heartbeatTimer)
+      this.emit('timeout')
     }
-  }
-
-  encode (msg) {
-    const encoded = primitives.encode[typeof msg](msg)
-    debug && console.debug({ encoded })
-    return encoded
-  }
-
-  decode (msg) {
-    const decoded = primitives.decode[typeof msg](msg)
-    debug && console.debug({ decoded })
-    return decoded
   }
 
   /**
    * Convert message to binary and send with protocol and idempotency headers.
    * If message cannot be sent because of connection state or buffering queue
    * message in domain object for retry later. Using a domain object ensures
-   * persistence of the queue.
+   * persistence of the queue across boots.
    *
    * @param {object} msg
    * @returns {Promise<boolean>} true if sent, false if not
    */
-  async send (msg) {
-    const sent = await this.mesh.websocketSend(this.encode(msg), {
-      binary: true,
+  send (msg) {
+    const sent = this.mesh.websocketSend(msg, {
       headers: {
         ...this.headers,
         'idempotency-key': nanoid()
       }
     })
     if (sent) return true
-    this.mesh.pushSendQueue(msg)
+    this.mesh.enqueue(msg)
     return false
   }
 
   /**
    * Send any messages buffered in `sendQueue`.
    */
-  async sendQueuedMsgs () {
-    try {
-      let sent = true
-      while (this.mesh.sendQueueLength() > 0 && sent) {
-        console.debug('sending queued message')
-        sent = await this.send(this.mesh.popSendQueue())
-      }
-    } catch (error) {
-      console.error({ fn: this.sendQueuedMsgs.name, error })
-    }
+  sendQueuedMsgs () {
+    let sent = true
+    while (this.mesh.queueDepth() > 0 && sent)
+      sent = this.send(this.mesh.dequeue())
   }
 
   /**
    * Connects if needed then sends message to mesh broker service.
    * @param {*} msg
    */
-  async publish (msg) {
-    if (this.mesh.websocketDisconnected()) await this.connect()
+  publish (msg) {
     return this.send(msg)
   }
 
@@ -322,7 +247,7 @@ export class ServiceMeshClient extends AsyncResource {
    * @param {function()} callback
    */
   subscribe (eventName, callback) {
-    this.broker.on(eventName, callback)
+    this.on(eventName, callback)
   }
 
   /**
@@ -334,14 +259,10 @@ export class ServiceMeshClient extends AsyncResource {
    * @param {*} reason
    */
   async close (code, reason) {
-    this.runInAsyncScope(async () => {
-      console.debug('closing socket, asyncId:', this.asyncId())
-      this.mesh.websocketClose(code, reason)
-      this.state.set(this.asyncId(), States.DISPOSED)
-      await this.mesh.save() // save queued messages
-      this.broker.removeAllListeners()
-      this.emitDestroy()
-    }, this)
+    console.debug('closing socket')
+    await this.mesh.save() // save queued messages
+    this.removeAllListeners()
+    this.mesh.websocketClose(code, reason)
   }
 }
 
@@ -361,29 +282,37 @@ export function makeClient (dependencies) {
       listServices,
       sendQueue: [],
       sendQueueMax: 1000,
-      sendQueueLength () {
+
+      queueDepth () {
         return this.sendQueue.length
       },
-      pushSendQueue (msg) {
+
+      enqueue (msg) {
         this.sendQueue.push(msg)
       },
-      popSendQueue () {
-        return this.sendQueue.pop()
+
+      dequeue () {
+        return this.sendQueue.shift()
       },
+
       getClient () {
         if (client) return client
         client = new ServiceMeshClient(this)
         return client
       },
+
       async connect (options) {
         this.getClient().connect(options)
       },
+
       async publish (event) {
         this.getClient().publish(event)
       },
+
       subscribe (eventName, handler) {
         this.getClient().subscribe(eventName, handler)
       },
+
       async close (code, reason) {
         this.getClient().close(code, reason)
       }
