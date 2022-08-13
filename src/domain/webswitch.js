@@ -261,8 +261,8 @@ export class ServiceMeshClient extends EventEmitter {
   async close (code, reason) {
     console.debug('closing socket')
     await this.mesh.save() // save queued messages
-    this.mesh.websocketClose(code, reason)
     this.removeAllListeners()
+    this.mesh.websocketClose(code, reason)
   }
 }
 
