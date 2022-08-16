@@ -21,11 +21,6 @@ export const WebSwitch = {
       type: 'outbound',
       timeout: 0
     },
-    serviceLocatorListen: {
-      service: 'serviceLocator',
-      type: 'outbound',
-      timeout: 0
-    },
     serviceLocatorAnswer: {
       service: 'serviceLocator',
       type: 'outbound',

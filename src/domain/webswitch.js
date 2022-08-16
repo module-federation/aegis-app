@@ -114,7 +114,7 @@ export class ServiceMeshClient extends EventEmitter {
       await this.mesh.serviceLocatorAnswer()
       return localUrl()
     }
-    return this.mesh.serviceLocatorListen()
+    return this.mesh.serviceLocatorAsk()
   }
 
   /**

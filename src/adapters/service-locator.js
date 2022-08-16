@@ -133,12 +133,6 @@ export function serviceLocatorInit () {
 
 export function serviceLocatorAsk () {
   return async function () {
-    return locator.ask()
-  }
-}
-
-export function serviceLocatorListen () {
-  return async function () {
     return locator.listen()
   }
 }
