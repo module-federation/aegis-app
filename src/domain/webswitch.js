@@ -87,7 +87,11 @@ export class ServiceMeshClient extends EventEmitter {
       hostname: os.hostname(),
       role: 'node',
       pid: process.pid,
-      telemetry: { ...process.memoryUsage(), ...process.cpuUsage() },
+      telemetry: {
+        ...process.memoryUsage(),
+        ...process.cpuUsage(),
+        ...performance.nodeTiming
+      },
       services: this.mesh.listServices(),
       socketState: this.mesh.websocketStatus() || 'undefined'
     }

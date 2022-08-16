@@ -15,6 +15,7 @@
     "newModel": "git commit -a -m test && yarn buildLocalRepo && yarn openReload",
     "startLocalRepo": "node repo.js",
     "startHost": "cd ../aegis-host && yarn start",
+    "webswitch": "cd ../aegis-host ; export SWITCH=true ; export PORT=8888 ; yarn start",
     "linkAndStart": "cd ../aegis && ./start.sh",
     "buildAll": "cd ../aegis && yarn build && cd ../aegis-host && yarn build && cd ../aegis-app && yarn buildLocalRepo",
     "buildAndRestart": "yarn buildAll && yarn linkAndStart",
