@@ -61,11 +61,6 @@ export const WebSwitch = {
       type: 'outbound',
       timeout: 0
     },
-    websocketDisconnected: {
-      service: 'websocket',
-      type: 'outbound',
-      timeout: 0
-    },
     websocketOnClose: {
       service: 'websocket',
       type: 'outbound',
