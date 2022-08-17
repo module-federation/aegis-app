@@ -2059,10 +2059,14 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 /** @type {WebSocket} */
 
 var socket;
-var useBinary = Symbol('useBinary');
+
+var useBinary = function useBinary() {
+  return socket.binaryType === 'arraybuffer';
+};
 /**
  * use binary messages
  */
+
 
 var primitives = {
   encode: {
@@ -2076,10 +2080,10 @@ var primitives = {
       return Buffer.from(JSON.stringify(msg));
     },
     symbol: function symbol(msg) {
-      return console.log('unsupported', msg);
+      return console.error('unsupported', msg);
     },
     undefined: function undefined(msg) {
-      return console.log('undefined', msg);
+      return console.error('undefined', msg);
     }
   },
   decode: {
@@ -2093,7 +2097,7 @@ var primitives = {
       return JSON.parse(Buffer.from(msg).toString());
     },
     symbol: function symbol(msg) {
-      return console.log('unsupported', msg);
+      return console.error('unsupported', msg);
     },
     undefined: function undefined(msg) {
       return console.error('undefined', msg);
@@ -2112,7 +2116,6 @@ function websocketConnect() {
       socket = new (ws__WEBPACK_IMPORTED_MODULE_0___default())(url, options);
       console.debug('connected');
       if (options.useBinary) socket.binaryType = 'arraybuffer';
-      socket[useBinary] = socket.binaryType === 'arraybuffer';
       return socket;
     }
 
@@ -2121,12 +2124,12 @@ function websocketConnect() {
 }
 
 function encode(msg) {
-  if (socket[useBinary]) return primitives.encode[_typeof(msg)](msg);
+  if (useBinary()) return primitives.encode[_typeof(msg)](msg);
   return msg;
 }
 
 function decode(msg) {
-  if (socket[useBinary]) return primitives.decode[_typeof(msg)](msg);
+  if (useBinary()) return primitives.decode[_typeof(msg)](msg);
   return msg;
 }
 
@@ -2138,7 +2141,7 @@ function websocketSend() {
         options = _ref2$args$ === void 0 ? {} : _ref2$args$;
 
     if (socket && socket.readyState === socket.OPEN && socket.bufferedAmount < 1) {
-      socket.send(encode(msg), socket[useBinary] ? _objectSpread(_objectSpread({}, options), {}, {
+      socket.send(encode(msg), useBinary() ? _objectSpread(_objectSpread({}, options), {}, {
         binary: true
       }) : options);
       return true;
