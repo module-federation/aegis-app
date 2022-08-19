@@ -241,6 +241,7 @@ import bindAdapters from './bind-adapters'
 // Service dependencies
 import * as services from '../services'
 import * as adapters from '../adapters'
+import * as ports from '../domain/ports'
 // Models
 import * as modelSpecs from '../config'
 

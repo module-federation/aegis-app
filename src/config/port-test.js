@@ -13,9 +13,6 @@ export const PortTest = {
       service: 'test',
       type: 'inbound',
       timeout: 3000
-    },
-    test1: {
-      service: 'test'
     }
   }
 }

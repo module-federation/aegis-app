@@ -710,9 +710,6 @@ var PortTest = {
       service: 'test',
       type: 'inbound',
       timeout: 3000
-    },
-    test1: {
-      service: 'test'
     }
   }
 };
@@ -846,12 +843,12 @@ var WebSwitch = {
     },
     websocketConnect: {
       service: 'websocket',
-      stype: 'outbound',
+      type: 'outbound',
       timeout: 3000
     },
     websocketPing: {
       service: 'websocket',
-      stype: 'outbound',
+      type: 'outbound',
       timeout: 3000
     },
     websocketSend: {
@@ -968,7 +965,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _bind_adapters__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bind-adapters */ "./src/domain/bind-adapters.js");
 /* harmony import */ var _services__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../services */ "./src/services/index.js");
 /* harmony import */ var _adapters__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../adapters */ "./src/adapters/index.js");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../config */ "./src/config/index.js");
+/* harmony import */ var _domain_ports__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../domain/ports */ "./src/domain/ports.js");
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../config */ "./src/config/index.js");
 
 /**
  * @typedef {string} eventName
@@ -1218,6 +1216,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  // Service dependencies
 
 
+
  // Models
 
 
@@ -1251,7 +1250,7 @@ function makeModel(spec) {
   });
 }
 
-var models = Object.values(_config__WEBPACK_IMPORTED_MODULE_4__).map(function (spec) {
+var models = Object.values(_config__WEBPACK_IMPORTED_MODULE_5__).map(function (spec) {
   return makeModel(spec);
 });
 

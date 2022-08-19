@@ -28,12 +28,12 @@ export const WebSwitch = {
     },
     websocketConnect: {
       service: 'websocket',
-      stype: 'outbound',
+      type: 'outbound',
       timeout: 3000
     },
     websocketPing: {
       service: 'websocket',
-      stype: 'outbound',
+      type: 'outbound',
       timeout: 3000
     },
     websocketSend: {
