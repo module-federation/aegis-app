@@ -133,7 +133,7 @@ export class ServiceMeshClient extends EventEmitter {
       agent: false,
       headers: this.headers,
       protocol: SERVICENAME,
-      useBinary: binary
+      useBinary: true
     })
 
     this.mesh.websocketOnOpen(() => {
