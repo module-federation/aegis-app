@@ -147,7 +147,7 @@ export class ServiceMeshClient extends EventEmitter {
       if (!message.eventName) {
         debug && console.debug({ missingEventName: message })
         this.emit('missingEventName', message)
-        return  ,.
+        return
       }
       try {
         this.emit(message.eventName, message)

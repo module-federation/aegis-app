@@ -6,4 +6,3 @@ export function test (data) {
   )
   return { test: 'test' }
 }
-qqw23456789

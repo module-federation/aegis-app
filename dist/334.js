@@ -1890,7 +1890,7 @@ function verifyPayment(_x3) {
  *
  * @param {Order} order
  * @returns {Promise<Order>}
- * @throws {'InsufficientInventory'}
+ * @throws {'oInventory'}
  */
 
 
