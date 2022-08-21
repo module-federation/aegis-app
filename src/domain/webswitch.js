@@ -52,9 +52,7 @@ function localUrl () {
 /**
  * Service mesh client impl. Uses websocket and service-locator
  * adapters through ports injected into the {@link mesh} model.
- * Cf. modelSpec by the same name, i.e. `webswitch`. Extends
- * {@link AsyncResource} to handle system reload on the main
- * thread, in which two instances are active for a short time.
+ * Cf. modelSpec by the same name, i.e. `webswitch`.
  */
 export class ServiceMeshClient extends EventEmitter {
   constructor (mesh) {
@@ -118,15 +116,11 @@ export class ServiceMeshClient extends EventEmitter {
   }
 
   /**
-   * Connect to service mesh broker and run stateful
-   * callbacks in async context to distinguish the old
-   * client instance from the new one created when the
-   * system hot-reloads. Allow listeners to subscribe
-   * to indivdual or all events. Use multicast dns to
-   * resolve broker url. Send binary messages with
-   * protocol and idempotentency headers. Send telemetry
-   * data, including asyncId for identifying context
-   * on socket close.
+   * Use multicast dns to resolve broker url. Connect to
+   * service mesh broker. Allow listeners to subscribe to
+   * indivdual or all events. Send binary messages with
+   * protocol and idempotentency headers. Periodically send
+   * telemetry data.
    *
    * @param {*} options
    * @returns
@@ -139,7 +133,7 @@ export class ServiceMeshClient extends EventEmitter {
       agent: false,
       headers: this.headers,
       protocol: SERVICENAME,
-      useBinary: true
+      useBinary: binary
     })
 
     this.mesh.websocketOnOpen(() => {
@@ -153,7 +147,7 @@ export class ServiceMeshClient extends EventEmitter {
       if (!message.eventName) {
         debug && console.debug({ missingEventName: message })
         this.emit('missingEventName', message)
-        return
+        return  ,.
       }
       try {
         this.emit(message.eventName, message)

@@ -709,7 +709,7 @@ var PortTest = {
     test: {
       service: 'test',
       type: 'inbound',
-      timeout: 3000
+      timeout: 0
     }
   }
 };
@@ -1367,9 +1367,7 @@ function localUrl() {
 /**
  * Service mesh client impl. Uses websocket and service-locator
  * adapters through ports injected into the {@link mesh} model.
- * Cf. modelSpec by the same name, i.e. `webswitch`. Extends
- * {@link AsyncResource} to handle system reload on the main
- * thread, in which two instances are active for a short time.
+ * Cf. modelSpec by the same name, i.e. `webswitch`.
  */
 
 
@@ -1474,15 +1472,11 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
       return resolveUrl;
     }()
     /**
-     * Connect to service mesh broker and run stateful
-     * callbacks in async context to distinguish the old
-     * client instance from the new one created when the
-     * system hot-reloads. Allow listeners to subscribe
-     * to indivdual or all events. Use multicast dns to
-     * resolve broker url. Send binary messages with
-     * protocol and idempotentency headers. Send telemetry
-     * data, including asyncId for identifying context
-     * on socket close.
+     * Use multicast dns to resolve broker url. Connect to
+     * service mesh broker. Allow listeners to subscribe to
+     * indivdual or all events. Send binary messages with
+     * protocol and idempotentency headers. Periodically send
+     * telemetry data.
      *
      * @param {*} options
      * @returns
@@ -1513,7 +1507,7 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
                   agent: false,
                   headers: this.headers,
                   protocol: SERVICENAME,
-                  useBinary: true
+                  useBinary: binary
                 });
                 this.mesh.websocketOnOpen(function () {
                   console.log('connection open');

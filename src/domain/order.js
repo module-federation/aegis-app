@@ -421,7 +421,7 @@ async function verifyPayment (order) {
  *
  * @param {Order} order
  * @returns {Promise<Order>}
- * @throws {'InsufficientInventory'}
+ * @throws {'oInventory'}
  */
 async function verifyInventory (order) {
   const inventory = await order.inventory()
@@ -751,9 +751,12 @@ export function makeOrderFactory (dependencies) {
  */
 export async function approve (order) {
   console.debug({ msg: 'got order', order })
-  const approvedOrder = order.updateSync({
-    orderStatus: OrderStatus.APPROVED
-  }, false)
+  const approvedOrder = order.updateSync(
+    {
+      orderStatus: OrderStatus.APPROVED
+    },
+    false
+  )
   console.debug({ approvedOrder })
   approvedOrder.logStateChange(OrderStatus.APPROVED)
   return runOrderWorkflow(approvedOrder)

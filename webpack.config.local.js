@@ -57,7 +57,7 @@ var serverConfig = {
   },
   plugins: [
     new ModuleFederationPlugin({
-      name: 'webswitch',
+      name: 'local',
       library: { type: 'commonjs-module' },
       filename: 'remoteEntry.js',
       exposes: {
