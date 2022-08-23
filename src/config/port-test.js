@@ -12,7 +12,10 @@ export const PortTest = {
     test: {
       service: 'test',
       type: 'inbound',
-      timeout: 0
+      timeout: 0,
+      callback: ({ model, payload }) => ({
+        payload: { ...payload, altered: 'by callback' }
+      })
     }
   }
 }

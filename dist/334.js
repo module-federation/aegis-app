@@ -2751,10 +2751,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function test(data) {
-  console.log('###################################################### test port');
-  return {
-    test: 'test'
-  };
+  return data.args;
 }
 
 /***/ }),

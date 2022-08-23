@@ -1,4 +1,4 @@
-'use strict'
+  'use strict'
 
 import { requireProperties, freezeProperties } from '../domain/mixins'
 import { uuid } from '../domain/utils'

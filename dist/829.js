@@ -709,7 +709,16 @@ var PortTest = {
     test: {
       service: 'test',
       type: 'inbound',
-      timeout: 0
+      timeout: 0,
+      callback: function callback(_ref) {
+        var model = _ref.model,
+            payload = _ref.payload;
+        return {
+          payload: _objectSpread(_objectSpread({}, payload), {}, {
+            altered: 'by callback'
+          })
+        };
+      }
     }
   }
 };
