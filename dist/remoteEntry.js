@@ -39329,19 +39329,6 @@ module.exports = require("assert");
 
 /***/ }),
 
-/***/ "async_hooks":
-/*!******************************!*\
-  !*** external "async_hooks" ***!
-  \******************************/
-/*! unknown exports (runtime-defined) */
-/*! runtime requirements: module */
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("async_hooks");
-
-/***/ }),
-
 /***/ "buffer":
 /*!*************************!*\
   !*** external "buffer" ***!

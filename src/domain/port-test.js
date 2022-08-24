@@ -1,5 +1,7 @@
 'use strict'
 
 export function test (data) {
-  return data.args
-}
+  console.log(data)
+  this.save(data.id, JSON.stringify(data.args))
+  return this.find(data.id)
+} 

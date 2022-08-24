@@ -3,6 +3,7 @@
 import { prevmodel } from './mixins'
 import { asyncPipe } from '../domain/utils'
 import checkPayload from './check-payload'
+import { Transform } from 'stream'
 
 /** @typedef { import('../domain/index.js').ModelSpecification} ModelSpecification */
 /** @typedef {string|RegExp} topic*/
@@ -849,4 +850,25 @@ export async function returnDelivery (order) {
 export async function cancelPayment (order) {
   console.log(cancelPayment.name)
   return order.update({ orderStatus: OrderStatus.CANCELED })
+}
+
+export async function cancelOrders (data) {
+  const cancelOrders = new Transform({
+    objectMode: true,
+    transform: (chunk, _encoding, done) => {
+      done(
+        null,
+        JSON.stringify({ ...chunk, orderStatus: OrderStatus.CANCELED })
+      )
+    }
+  })
+
+  await this.list(data.args.filter, {
+    writable: this.createWriteStream({ orderStatus: OrderStatus.PENDING }),
+    transform: cancelOrders,
+    cache: false,
+    serialize: false
+  })
+
+  return { status: 'ok' }
 }

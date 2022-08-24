@@ -16,7 +16,6 @@
 import os from 'os'
 import EventEmitter from 'events'
 import { nanoid } from 'nanoid'
-import { AsyncResource } from 'async_hooks'
 
 const HOSTNAME = 'webswitch.local'
 const SERVICENAME = 'webswitch'

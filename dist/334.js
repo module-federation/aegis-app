@@ -1229,6 +1229,7 @@ var GlobalMixins = [encryptPersonalInfo];
 /*! export approve [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export calcTotal [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export cancel [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export cancelOrders [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export cancelPayment [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export checkItem [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export checkItems [provided] [no usage info] [missing usage info prevents renaming] */
@@ -1258,7 +1259,7 @@ var GlobalMixins = [encryptPersonalInfo];
 /*! export timeoutCallback [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export updateSignature [provided] [no usage info] [missing usage info prevents renaming] */
 /*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -1297,11 +1298,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "returnShipment": () => /* binding */ returnShipment,
 /* harmony export */   "accountOrder": () => /* binding */ accountOrder,
 /* harmony export */   "returnDelivery": () => /* binding */ returnDelivery,
-/* harmony export */   "cancelPayment": () => /* binding */ cancelPayment
+/* harmony export */   "cancelPayment": () => /* binding */ cancelPayment,
+/* harmony export */   "cancelOrders": () => /* binding */ cancelOrders
 /* harmony export */ });
 /* harmony import */ var _mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mixins */ "./src/domain/mixins.js");
 /* harmony import */ var _domain_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/utils */ "./src/domain/utils.js");
 /* harmony import */ var _check_payload__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./check-payload */ "./src/domain/check-payload.js");
+/* harmony import */ var stream__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! stream */ "stream");
+/* harmony import */ var stream__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(stream__WEBPACK_IMPORTED_MODULE_3__);
 
 
 var _OrderActions;
@@ -1319,6 +1323,7 @@ function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyri
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 
 
 
@@ -2731,6 +2736,50 @@ function _cancelPayment() {
   return _cancelPayment.apply(this, arguments);
 }
 
+function cancelOrders(_x21) {
+  return _cancelOrders.apply(this, arguments);
+}
+
+function _cancelOrders() {
+  _cancelOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee26(data) {
+    var cancelOrders;
+    return _regeneratorRuntime().wrap(function _callee26$(_context26) {
+      while (1) {
+        switch (_context26.prev = _context26.next) {
+          case 0:
+            cancelOrders = new stream__WEBPACK_IMPORTED_MODULE_3__.Transform({
+              objectMode: true,
+              transform: function transform(chunk, _encoding, done) {
+                done(null, JSON.stringify(_objectSpread(_objectSpread({}, chunk), {}, {
+                  orderStatus: OrderStatus.CANCELED
+                })));
+              }
+            });
+            _context26.next = 3;
+            return this.list(data.args.filter, {
+              writable: this.createWriteStream({
+                orderStatus: OrderStatus.PENDING
+              }),
+              transform: cancelOrders,
+              cache: false,
+              serialize: false
+            });
+
+          case 3:
+            return _context26.abrupt("return", {
+              status: 'ok'
+            });
+
+          case 4:
+          case "end":
+            return _context26.stop();
+        }
+      }
+    }, _callee26, this);
+  }));
+  return _cancelOrders.apply(this, arguments);
+}
+
 /***/ }),
 
 /***/ "./src/domain/port-test.js":
@@ -2751,7 +2800,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function test(data) {
-  return data.args;
+  console.log(data);
+  this.save(data.id, JSON.stringify(data.args));
+  return this.find(data.id);
 }
 
 /***/ }),
@@ -2768,6 +2819,7 @@ function test(data) {
 /*! export assetTypes [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/inventory.js .assetTypes */
 /*! export calcTotal [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .calcTotal */
 /*! export cancel [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .cancel */
+/*! export cancelOrders [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .cancelOrders */
 /*! export cancelPayment [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .cancelPayment */
 /*! export categories [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/inventory.js .categories */
 /*! export checkItem [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .checkItem */
@@ -2817,6 +2869,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "approve": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.approve,
 /* harmony export */   "calcTotal": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.calcTotal,
 /* harmony export */   "cancel": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.cancel,
+/* harmony export */   "cancelOrders": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.cancelOrders,
 /* harmony export */   "cancelPayment": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.cancelPayment,
 /* harmony export */   "checkItem": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.checkItem,
 /* harmony export */   "checkItems": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.checkItems,

@@ -240,6 +240,10 @@ export const Order = {
     refundPayment: {
       service: 'Payment',
       type: 'outbound'
+    },
+    cancelOrders: {
+      service: 'Order',
+      type: 'inbound'
     }
   },
   relations: {
