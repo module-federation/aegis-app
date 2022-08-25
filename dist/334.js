@@ -2750,6 +2750,7 @@ function _cancelOrders() {
             cancelOrders = new stream__WEBPACK_IMPORTED_MODULE_3__.Transform({
               objectMode: true,
               transform: function transform(chunk, _encoding, done) {
+                if (chunk._id) delete chunk._id;
                 done(null, JSON.stringify(_objectSpread(_objectSpread({}, chunk), {}, {
                   orderStatus: OrderStatus.CANCELED
                 })));

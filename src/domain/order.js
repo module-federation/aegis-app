@@ -856,6 +856,7 @@ export async function cancelOrders (data) {
   const cancelOrders = new Transform({
     objectMode: true,
     transform: (chunk, _encoding, done) => {
+      if (chunk._id) delete chunk._id
       done(
         null,
         JSON.stringify({ ...chunk, orderStatus: OrderStatus.CANCELED })
