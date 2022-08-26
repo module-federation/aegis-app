@@ -865,7 +865,7 @@ export async function cancelOrders (data) {
   })
 
   await this.list(data.args.filter, {
-    writable: this.createWriteStream({ orderStatus: OrderStatus.PENDING }),
+    writable: this.createWriteStream(),
     transform: cancelOrders,
     cache: false,
     serialize: false
