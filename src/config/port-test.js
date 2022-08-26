@@ -16,6 +16,10 @@ export const PortTest = {
       callback: ({ model, payload }) => ({
         payload: { ...payload, altered: 'by callback' }
       })
+    },
+    cancelOrders: {
+      type: 'inbound',
+      service: 'test'
     }
   }
 }

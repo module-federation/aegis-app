@@ -723,6 +723,10 @@ var PortTest = {
           })
         };
       }
+    },
+    cancelOrders: {
+      type: 'inbound',
+      service: 'test'
     }
   }
 };

@@ -859,7 +859,7 @@ export async function cancelOrders (data) {
       if (chunk._id) delete chunk._id
       done(
         null,
-        JSON.stringify({ ...chunk, orderStatus: OrderStatus.CANCELED })
+        JSON.stringify({ ...chunk, orderStatus: OrderStatus.APPROVED })
       )
     }
   })
