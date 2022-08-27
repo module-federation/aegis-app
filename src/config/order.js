@@ -33,9 +33,8 @@ import {
   validateProperties,
   validateModel
 } from '../domain/mixins'
-
-import { DataSourceAdapterMongoDb } from '../adapters/datasources/datasource-mongodb'
 import { nanoid } from 'nanoid'
+import { DataSourceAdapterMongoDb } from '../adapters/datasources/datasource-mongodb'
 import { DataSourceFileAdapter } from '../adapters/datasources/datasource-file-adapter'
 
 /**
@@ -44,18 +43,14 @@ import { DataSourceFileAdapter } from '../adapters/datasources/datasource-file-a
 export const Order = {
   modelName: 'order',
   endpoint: 'orders',
+  path: { endpointPort: '/orders/:port' },
   factory: makeOrderFactory,
-  // datasource: {
-  //   factory: DataSourceAdapterMongoDb,
-  //   url: 'mongodb://127.0.0.1:27017',
-  //   cacheSize: 4000,
-  //   baseClass: 'DataSourceMongoDb'
-  // },
-  // datasource: {
-  //   factory: DataSourceFileAdapter,
-  //   cacheSize: 4000,
-  //   baseClass: 'DataSourceFile'
-  // },
+  datasource: {
+    factory: DataSourceAdapterMongoDb,
+    url: 'mongodb://127.0.0.1:27017',
+    cacheSize: 4000,
+    baseClass: 'DataSourceMongoDb'
+  },
   dependencies: { uuid: () => nanoid(8) },
   mixins: [
     requireProperties(
@@ -133,16 +128,6 @@ export const Order = {
     },
     notify: {
       service: 'Event',
-      type: 'outbound',
-      timeout: 0
-    },
-    save: {
-      service: 'Persistence',
-      type: 'outbound',
-      timeout: 0
-    },
-    find: {
-      service: 'Persistence',
       type: 'outbound',
       timeout: 0
     },
@@ -273,12 +258,18 @@ export const Order = {
           console.log('done')
         })
 
-        ports.listModels({
-          query: {
-            $or: [{ orderNo: { $eq: '123' } }, { orderNo: { $eq: '345' } }]
+        ports.listModels(
+          {
+            filter: {
+              query: {
+                $or: [{ orderNo: { $eq: '123' } }, { orderNo: { $eq: '345' } }]
+              }
+            }
           },
-          writable: res
-        })
+          {
+            writable: res
+          }
+        )
       }
     }
   ],

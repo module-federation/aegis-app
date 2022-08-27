@@ -397,6 +397,9 @@ __webpack_require__.r(__webpack_exports__);
 var Order = {
   modelName: 'order',
   endpoint: 'orders',
+  path: {
+    endpointPort: '/orders/:port'
+  },
   factory: _domain_order__WEBPACK_IMPORTED_MODULE_0__.makeOrderFactory,
   // datasource: {
   //   factory: DataSourceAdapterMongoDb,
