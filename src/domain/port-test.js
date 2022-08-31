@@ -15,7 +15,8 @@ export async function cancelOrders (data) {
     }
   })
 
-  await this.list(data.args.filter, {
+  await this.list({
+    filter: data.args.filter,
     writable: this.createWriteStream(),
     transform: cancelOrders,
     cache: false,

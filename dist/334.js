@@ -2757,7 +2757,8 @@ function _cancelOrders() {
               }
             });
             _context26.next = 3;
-            return this.list(data.args.filter, {
+            return this.list({
+              filter: data.args.filter,
               writable: this.createWriteStream(),
               transform: cancelOrders,
               cache: false,
@@ -2840,7 +2841,8 @@ function _cancelOrders() {
               }
             });
             _context.next = 3;
-            return this.list(data.args.filter, {
+            return this.list({
+              filter: data.args.filter,
               writable: this.createWriteStream(),
               transform: cancelOrders,
               cache: false,
