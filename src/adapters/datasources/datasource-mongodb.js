@@ -1,11 +1,11 @@
-"use strict";
+'use strict'
 
-function getSecret() {
-  return process.env.MONGODB_CREDS || { user: null, pass: null, token: null };
+function getSecret () {
+  return process.env.MONGODB_CREDS || { user: null, pass: null, token: null }
 }
 
-function archive(id) {
-  console.debug("mock archive", id);
+function archive (id) {
+  console.debug('mock archive', id)
 }
 
 /**
@@ -26,21 +26,23 @@ export const DataSourceAdapterMongoDb = function (
    * even when the database is offline.
    */
   class DataSourceMongoDbArchive extends DataSourceMongoDb {
-    constructor(datasource, factory, name) {
-      super(datasource, factory, name);
-      this.url = url;
-      this.cacheSize = cacheSize;
-      this.creds = getSecret();
+    constructor (datasource, factory, name) {
+      super(datasource, factory, name)
+      this.url = url
+      this.cacheSize = cacheSize
+      this.creds = getSecret()
     }
 
     /**
      * @override
      */
-    delete(id) {
-      console.debug("archive", id);
-      archive(id);
+    delete (id) {
+      console.debug('archive', id)
+      archive(id)
     }
+
+    stevemethod () {}
   }
 
-  return DataSourceMongoDbArchive;
-};
+  return DataSourceMongoDbArchive
+}

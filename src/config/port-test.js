@@ -15,7 +15,8 @@ export const PortTest = {
       timeout: 0,
       callback: ({ model, payload }) => ({
         payload: { ...payload, altered: 'by callback' }
-      })
+      }),
+      path: '/tyson-port'
     },
     cancelOrders: {
       type: 'inbound',

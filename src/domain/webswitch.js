@@ -132,7 +132,7 @@ export class ServiceMeshClient extends EventEmitter {
       agent: false,
       headers: this.headers,
       protocol: SERVICENAME,
-      useBinary: true
+      useBinary: options.binary
     })
 
     this.mesh.websocketOnOpen(() => {
@@ -274,7 +274,7 @@ export class ServiceMeshClient extends EventEmitter {
  */
 export function makeClient (dependencies) {
   let client
-  return async function ({ listServices }) {
+  return function ({ listServices }) {
     return {
       listServices,
       sendQueue: [],

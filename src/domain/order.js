@@ -16,6 +16,7 @@ import { Transform } from 'stream'
  * @callback logMessageFn
  * @param {object|string} message
  * @param {logType} [type]
+ *
  */
 
 /** @typedef {'first'|'last'|'lastStateChange'|'stateChange'|'error'|'undo'} logType */
@@ -647,7 +648,7 @@ function logMessage (message, type) {
  * @param {*} dependencies - inject dependencies
  */
 export function makeOrderFactory (dependencies) {
-  return async function createOrder ({
+  return function createOrder ({
     orderItems,
     email = null,
     lastName = null,
