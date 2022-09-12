@@ -1750,7 +1750,7 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
                   agent: false,
                   headers: this.headers,
                   protocol: SERVICENAME,
-                  useBinary: true
+                  useBinary: options.binary
                 });
                 this.mesh.websocketOnOpen(function () {
                   console.log('connection open');
