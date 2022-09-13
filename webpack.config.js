@@ -2,7 +2,6 @@ var path = require('path')
 const ModuleFederationPlugin = require('webpack').container
   .ModuleFederationPlugin
 const httpNode = require('./webpack/http-node')
-const NodemonPlugin = require('nodemon-webpack-plugin')
 
 var serverConfig = {
   target: httpNode,
@@ -33,7 +32,6 @@ var serverConfig = {
     ]
   },
   plugins: [
-    new NodemonPlugin(),
     new ModuleFederationPlugin({
       name: 'distributed-cache',
       library: { type: 'commonjs-module' },
