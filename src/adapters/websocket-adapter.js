@@ -107,7 +107,7 @@ export function websocketStatus () {
   }
 }
 
-export function websockeTerminate () {
+export function websocketTerminate () {
   return function () {
     if (socket) return socket.terminate()
   }
