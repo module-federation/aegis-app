@@ -1,17 +1,16 @@
-'use strict'
-
-const path = require('path')
-const { ModuleFederationPlugin } = require('webpack').container
+var path = require('path')
+const ModuleFederationPlugin = require('webpack').container
+  .ModuleFederationPlugin
 const httpNode = require('./webpack/http-node')
-
-const ctx = JSON.stringify(process.env.GITPOD_WORKSPACE_CONTEXT)
+const NodemonPlugin = require('nodemon-webpack-plugin')
 
 var serverConfig = {
   target: httpNode,
   entry: ['@babel/polyfill', path.resolve(__dirname, 'src/index.js')],
   output: {
     path: path.resolve(__dirname, 'dist'),
-    publicPath: `https://api.github.com?owner=module-federation&repo=aegis-app&filedir=dist&branch=webswitch`,
+    publicPath:
+      'https://api.github.com?owner=module-federation&repo=microlib-example&filedir=dist&branch=cache',
     libraryTarget: 'commonjs'
   },
   devtool: 'source-map',
@@ -21,31 +20,6 @@ var serverConfig = {
   mode: 'development',
   module: {
     rules: [
-      {
-        test: /\.py$/,
-        use: [{ loader: 'python-webpack-loader' }]
-      },
-      {
-        test: /\.wasm$/,
-        type: 'webassembly/async'
-      }
-    ]
-  },
-  experiments: {
-    asyncWebAssembly: true
-  },
-  optimization: {
-    chunkIds: 'deterministic' // To keep filename consistent between different modes (for example building only)
-  },
-  module: {
-    rules: [
-      {
-        test: /\.py$/,
-        loader: 'py-loader',
-        options: {
-          compiler: 'transcrypt'
-        }
-      },
       {
         test: /\.js?$/,
         exclude: /node_modules/,
@@ -59,13 +33,28 @@ var serverConfig = {
     ]
   },
   plugins: [
+    new NodemonPlugin(),
     new ModuleFederationPlugin({
-      name: 'webswitch',
+      name: 'distributed-cache',
       library: { type: 'commonjs-module' },
       filename: 'remoteEntry.js',
       exposes: {
-        './models': './src/domain',
-        './adapters': './src/adapters'
+        './model-cache': './src/domain',
+        './adapter-cache': './src/adapters',
+        './service-cache': './src/services',
+        './port-cache': './src/domain/ports',
+        './event-bus': './src/services/event-bus'
+      },
+      shared: {
+        axios: {
+          eager: true
+        },
+        'smartystreets-javascript-sdk': {
+          eager: true
+        },
+        kafkajs: {
+          eager: true
+        }
       }
     })
   ]
