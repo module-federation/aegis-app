@@ -36,6 +36,7 @@ const activeHost = process.env.DOMAIN || os.hostname()
 const proto = isPrimary ? activeProto : process.env.SWITCH_PROTO
 const port = isPrimary ? activePort : process.env.SWITCH_PORT
 const host = isPrimary ? activeHost : process.env.SWITCH_HOST
+const override = /true/i.test(process.env.SWITCH_OVERRIDE)
 const apiProto = sslEnabled ? 'https' : 'http'
 const apiUrl = `${apiProto}://${activeHost}:${activePort}`
 
@@ -111,7 +112,7 @@ export class ServiceMeshClient extends EventEmitter {
       await this.mesh.serviceLocatorAnswer()
       return localUrl()
     }
-    return this.mesh.serviceLocatorAsk()
+    return override ? localUrl() : this.mesh.serviceLocatorAsk()
   }
 
   /**
@@ -186,7 +187,7 @@ export class ServiceMeshClient extends EventEmitter {
       console.debug('reconnect due to timeout')
       this.connect()
     }, 5000).unref()
-  }
+  }                             
 
   heartbeat () {
     if (this.pong) {
@@ -239,7 +240,7 @@ export class ServiceMeshClient extends EventEmitter {
   }
 
   /**
-   * Register handler to fire on event.
+   * Register handler to fire on event
    * @param {string} eventName
    * @param {function()} callback
    */

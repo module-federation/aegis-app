@@ -2,79 +2,6 @@ exports.id = 829;
 exports.ids = [829];
 exports.modules = {
 
-/***/ "./src/adapters/datasources/datasource-file-adapter.js":
-/*!*************************************************************!*\
-  !*** ./src/adapters/datasources/datasource-file-adapter.js ***!
-  \*************************************************************/
-/*! namespace exports */
-/*! export DataSourceFileAdapter [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "DataSourceFileAdapter": () => /* binding */ DataSourceFileAdapter
-/* harmony export */ });
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
-function _get() { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get.bind(); } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(arguments.length < 3 ? target : receiver); } return desc.value; }; } return _get.apply(this, arguments); }
-
-function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-var DataSourceFileAdapter = function DataSourceFileAdapter(url, cacheSize, DataSourceFile) {
-  /**
-   * Datasource adapter for AWS Dynamo DB
-   */
-  var DataSourceFileOrder = /*#__PURE__*/function (_DataSourceFile) {
-    _inherits(DataSourceFileOrder, _DataSourceFile);
-
-    var _super = _createSuper(DataSourceFileOrder);
-
-    function DataSourceFileOrder() {
-      _classCallCheck(this, DataSourceFileOrder);
-
-      return _super.apply(this, arguments);
-    }
-
-    _createClass(DataSourceFileOrder, [{
-      key: "save",
-      value: function save(id, data) {
-        _get(_getPrototypeOf(DataSourceFileOrder.prototype), "save", this).call(this, id, data);
-
-        console.log("DataSourceFileOrder datasource", id, data);
-      }
-    }]);
-
-    return DataSourceFileOrder;
-  }(DataSourceFile);
-
-  return DataSourceFileOrder;
-};
-
-/***/ }),
-
 /***/ "./src/adapters/datasources/datasource-mongodb.js":
 /*!********************************************************!*\
   !*** ./src/adapters/datasources/datasource-mongodb.js ***!
@@ -260,7 +187,6 @@ var Customer = {
 /*! namespace exports */
 /*! export Customer [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/customer.js .Customer */
 /*! export Inventory [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/inventory.js .Inventory */
-/*! export Order [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/order.js .Order */
 /*! export PortTest [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/port-test.js .PortTest */
 /*! export User [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/user.js .User */
 /*! export WebSwitch [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/webswitch.js .WebSwitch */
@@ -272,19 +198,17 @@ var Customer = {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "WebSwitch": () => /* reexport safe */ _webswitch__WEBPACK_IMPORTED_MODULE_0__.WebSwitch,
-/* harmony export */   "Order": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_1__.Order,
-/* harmony export */   "Customer": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_2__.Customer,
-/* harmony export */   "User": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_3__.User,
-/* harmony export */   "Inventory": () => /* reexport safe */ _inventory__WEBPACK_IMPORTED_MODULE_4__.Inventory,
-/* harmony export */   "PortTest": () => /* reexport safe */ _port_test__WEBPACK_IMPORTED_MODULE_5__.PortTest
+/* harmony export */   "Customer": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_1__.Customer,
+/* harmony export */   "User": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_2__.User,
+/* harmony export */   "Inventory": () => /* reexport safe */ _inventory__WEBPACK_IMPORTED_MODULE_3__.Inventory,
+/* harmony export */   "PortTest": () => /* reexport safe */ _port_test__WEBPACK_IMPORTED_MODULE_4__.PortTest
 /* harmony export */ });
 /* harmony import */ var _webswitch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./webswitch */ "./src/config/webswitch.js");
-/* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./order */ "./src/config/order.js");
-/* harmony import */ var _customer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./customer */ "./src/config/customer.js");
-/* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./user */ "./src/config/user.js");
-/* harmony import */ var _inventory__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./inventory */ "./src/config/inventory.js");
-/* harmony import */ var _port_test__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./port-test */ "./src/config/port-test.js");
-
+/* harmony import */ var _customer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./customer */ "./src/config/customer.js");
+/* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./user */ "./src/config/user.js");
+/* harmony import */ var _inventory__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./inventory */ "./src/config/inventory.js");
+/* harmony import */ var _port_test__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./port-test */ "./src/config/port-test.js");
+ //export * from './order'
 
 
 
@@ -361,304 +285,6 @@ var Inventory = {
       desc: 'many items per order'
     }
   }
-};
-
-/***/ }),
-
-/***/ "./src/config/order.js":
-/*!*****************************!*\
-  !*** ./src/config/order.js ***!
-  \*****************************/
-/*! namespace exports */
-/*! export Order [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Order": () => /* binding */ Order
-/* harmony export */ });
-/* harmony import */ var _domain_order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../domain/order */ "./src/domain/order.js");
-/* harmony import */ var _domain_mixins__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/mixins */ "./src/domain/mixins.js");
-/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! nanoid */ "webpack/sharing/consume/default/nanoid/nanoid");
-/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(nanoid__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _adapters_datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../adapters/datasources/datasource-mongodb */ "./src/adapters/datasources/datasource-mongodb.js");
-/* harmony import */ var _adapters_datasources_datasource_file_adapter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../adapters/datasources/datasource-file-adapter */ "./src/adapters/datasources/datasource-file-adapter.js");
-
-
-
-
-
-
-
-/**
- * @type {import('../domain/index').ModelSpecification}
- */
-
-var Order = {
-  modelName: 'order',
-  endpoint: 'orders',
-  path: {
-    endpointPort: '/orders/:port'
-  },
-  factory: _domain_order__WEBPACK_IMPORTED_MODULE_0__.makeOrderFactory,
-  datasource: {
-    factory: _adapters_datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_3__.DataSourceAdapterMongoDb,
-    url: 'mongodb://127.0.0.1:27017',
-    cacheSize: 4000,
-    baseClass: 'DataSourceMongoDb'
-  },
-  dependencies: {
-    uuid: function uuid() {
-      return (0,nanoid__WEBPACK_IMPORTED_MODULE_2__.nanoid)(8);
-    }
-  },
-  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.requireProperties)('orderItems', (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForGuest)(['lastName', 'firstName', 'billingAddress', 'shippingAddress', 'creditCardNumber', 'email']), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForApproval)('paymentAuthorization'), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForCompletion)('proofOfDelivery')), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.freezeProperties)('orderNo', 'customerId', (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.freezeOnApproval)(['email', 'lastName', 'firstName', 'orderItems', 'orderTotal', 'billingAddress', 'shippingAddress', 'creditCardNumber', 'paymentAuthorization']), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.freezeOnCompletion)('*')), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.updateProperties)([{
-    propKey: 'orderItems',
-    update: _domain_order__WEBPACK_IMPORTED_MODULE_0__.recalcTotal
-  }, {
-    propKey: 'orderItems',
-    update: _domain_order__WEBPACK_IMPORTED_MODULE_0__.updateSignature
-  }]), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.validateProperties)([{
-    propKey: 'orderStatus',
-    values: Object.values(_domain_order__WEBPACK_IMPORTED_MODULE_0__.OrderStatus),
-    isValid: _domain_order__WEBPACK_IMPORTED_MODULE_0__.statusChangeValid
-  }, {
-    propKey: 'orderTotal',
-    maxnum: 99999.99,
-    isValid: _domain_order__WEBPACK_IMPORTED_MODULE_0__.orderTotalValid
-  }, {
-    propKey: 'email',
-    regex: 'email'
-  }, {
-    propKey: 'creditCardNumber',
-    regex: 'creditCard'
-  }, {
-    propKey: 'phone',
-    regex: 'phone'
-  }])],
-  validate: _domain_mixins__WEBPACK_IMPORTED_MODULE_1__.validateModel,
-  onDelete: _domain_order__WEBPACK_IMPORTED_MODULE_0__.readyToDelete,
-  eventHandlers: [_domain_order__WEBPACK_IMPORTED_MODULE_0__.handleOrderEvent],
-  ports: {
-    listen: {
-      service: 'Event',
-      type: 'outbound',
-      timeout: 0
-    },
-    notify: {
-      service: 'Event',
-      type: 'outbound',
-      timeout: 0
-    },
-    validateAddress: {
-      service: 'Address',
-      type: 'outbound',
-      keys: 'shippingAddress',
-      producesEvent: 'addressValidated',
-      disabled: true
-    },
-    authorizePayment: {
-      service: 'Payment',
-      type: 'outbound',
-      keys: 'paymentStatus',
-      consumesEvent: 'startWorkflow',
-      producesEvent: 'paymentAuthorized',
-      undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.cancelPayment,
-      disabled: true
-    },
-    pickOrder: {
-      service: 'Inventory',
-      type: 'outbound',
-      keys: 'pickupAddress',
-      consumesEvent: 'itemsAvailable',
-      producesEvent: 'orderPicked',
-      undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.returnInventory,
-      circuitBreaker: {
-        portTimeout_pickOrder_order: {
-          callVolume: 2,
-          errorRate: 1,
-          intervalMs: 60000
-        }
-      }
-    },
-    shipOrder: {
-      service: 'Shipping',
-      type: 'outbound',
-      callback: _domain_order__WEBPACK_IMPORTED_MODULE_0__.orderShipped,
-      consumesEvent: 'orderPicked',
-      producesEvent: 'orderShipped',
-      undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.returnShipment,
-      circuitBreaker: {
-        portTimeout_shipOrder_order: {
-          callVolume: 2,
-          errorRate: 1,
-          intervalMs: 60000
-        },
-        portRetryFailed_order: {
-          callVolume: 3,
-          errorRate: 2,
-          intervalMs: 60000,
-          fallbackFn: _domain_order__WEBPACK_IMPORTED_MODULE_0__.cancel
-        },
-        "default": {
-          callVolume: 3,
-          errorRate: 3,
-          intervalMs: 60000
-        }
-      }
-    },
-    trackShipment: {
-      service: 'Shipping',
-      type: 'outbound',
-      keys: ['trackingStatus', 'trackingId'],
-      consumesEvent: 'orderShipped',
-      producesEvent: 'orderDelivered',
-      circuitBreaker: {
-        portRetryFailed_order: {
-          callVolume: 2,
-          errorRate: 1,
-          intervalMs: 60000
-        }
-      }
-    },
-    verifyDelivery: {
-      service: 'Shipping',
-      type: 'outbound',
-      keys: 'proofOfDelivery',
-      consumesEvent: 'orderDelivered',
-      producesEvent: 'deliveryVerified',
-      undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.returnDelivery
-    },
-    completePayment: {
-      service: 'Payment',
-      type: 'outbound',
-      callback: _domain_order__WEBPACK_IMPORTED_MODULE_0__.paymentCompleted,
-      consumesEvent: 'deliveryVerified',
-      producesEvent: 'orderComplete',
-      undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.refundPayment
-    },
-    cancelShipment: {
-      service: 'Shipping',
-      type: 'outbound'
-    },
-    refundPayment: {
-      service: 'Payment',
-      type: 'outbound'
-    },
-    cancelOrders: {
-      service: 'Order',
-      type: 'inbound'
-    }
-  },
-  relations: {
-    customer: {
-      modelName: 'customer',
-      type: 'manyToOne',
-      foreignKey: 'customerId',
-      desc: 'Many orders per customer, just one customer per order'
-    },
-    inventory: {
-      modelName: 'inventory',
-      type: 'containsMany',
-      foreignKey: 'itemId',
-      arrayKey: 'orderItems',
-      desc: 'An order contains a list of inventory items to ship.'
-    }
-  },
-  routes: [{
-    path: '/orders/filter',
-    get: function get(req, res, ports) {
-      res.on('data', function (chunk) {
-        console.log(chunk);
-      });
-      res.on('done', function () {
-        console.log('done');
-      });
-      ports.listModels({
-        filter: {
-          query: {
-            $or: [{
-              orderNo: {
-                $eq: '123'
-              }
-            }, {
-              orderNo: {
-                $eq: '345'
-              }
-            }]
-          }
-        }
-      }, {
-        writable: res
-      });
-    }
-  }],
-  commands: {
-    decrypt: {
-      command: 'decrypt',
-      acl: ['read', 'decrypt']
-    },
-    approve: {
-      command: _domain_order__WEBPACK_IMPORTED_MODULE_0__.approve,
-      acl: ['write', 'approve']
-    },
-    cancel: {
-      command: _domain_order__WEBPACK_IMPORTED_MODULE_0__.cancel,
-      acl: ['write', 'cancel']
-    },
-    runFibonacci: {
-      command: function command(model) {
-        var start = Date.now();
-
-        function fibonacci(x) {
-          if (x === 0) {
-            return 0;
-          }
-
-          if (x === 1) {
-            return 1;
-          }
-
-          return fibonacci(x - 1) + fibonacci(x - 2);
-        }
-
-        var param = parseFloat(model.fibonacci);
-        return {
-          result: fibonacci(Number.isNaN(param) ? 10 : param),
-          time: Date.now() - start
-        };
-      },
-      acl: ['read', 'write']
-    }
-  },
-  serializers: [{
-    on: 'deserialize',
-    key: 'creditCardNumber',
-    type: 'string',
-    value: function value(key, _value) {
-      return decrypt(_value);
-    },
-    enabled: false
-  }, {
-    on: 'deserialize',
-    key: 'shippingAddress',
-    type: 'string',
-    value: function value(key, _value2) {
-      return decrypt(_value2);
-    },
-    enabled: false
-  }, {
-    on: 'deserialize',
-    key: 'billingAddress',
-    type: 'string',
-    value: function value(key, _value3) {
-      return decrypt(_value3);
-    },
-    enabled: false
-  }]
 };
 
 /***/ }),
@@ -1594,6 +1220,7 @@ var activeHost = process.env.DOMAIN || os__WEBPACK_IMPORTED_MODULE_0___default()
 var proto = isPrimary ? activeProto : process.env.SWITCH_PROTO;
 var port = isPrimary ? activePort : process.env.SWITCH_PORT;
 var host = isPrimary ? activeHost : process.env.SWITCH_HOST;
+var override = /true/i.test(process.env.SWITCH_OVERRIDE);
 var apiProto = sslEnabled ? 'https' : 'http';
 var apiUrl = "".concat(apiProto, "://").concat(activeHost, ":").concat(activePort);
 
@@ -1698,7 +1325,7 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
                 return _context.abrupt("return", localUrl());
 
               case 6:
-                return _context.abrupt("return", this.mesh.serviceLocatorAsk());
+                return _context.abrupt("return", override ? localUrl() : this.mesh.serviceLocatorAsk());
 
               case 7:
               case "end":
@@ -1904,7 +1531,7 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
       return this.send(msg);
     }
     /**
-     * Register handler to fire on event.
+     * Register handler to fire on event
      * @param {string} eventName
      * @param {function()} callback
      */

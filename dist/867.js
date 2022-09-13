@@ -2114,7 +2114,7 @@ function websocketConnect() {
 
     if (url) {
       socket = new (ws__WEBPACK_IMPORTED_MODULE_0___default())(url, options);
-      console.debug('connected');
+      console.debug('connected', url);
       if (options.useBinary) socket.binaryType = 'arraybuffer';
       return socket;
     }

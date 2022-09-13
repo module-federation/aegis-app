@@ -30,7 +30,7 @@ export function websocketConnect () {
     if (socket) return socket
     if (url) {
       socket = new WebSocket(url, options)
-      console.debug('connected')
+      console.debug('connected', url)
       if (options.useBinary) socket.binaryType = 'arraybuffer'
       return socket
     }
