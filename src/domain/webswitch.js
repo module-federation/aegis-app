@@ -19,9 +19,8 @@ import { nanoid } from 'nanoid'
 
 const HOSTNAME = 'webswitch.local'
 const SERVICENAME = 'webswitch'
-const TIMEOUTEVENT = 'webswitchTimeout'
-const CONNECTERROR = 'webswitchConnect'
-const WSOCKETERROR = 'webswitchWsocket'
+const HBEATTIMEOUT = 'heartBeatTimeout'
+const WSOCKETERROR = 'webSocketError'
 
 const isPrimary = /true/i.test(process.env.SWITCH)
 const isBackup = /true/i.test(process.env.BACKUP)
@@ -40,11 +39,9 @@ const override = /true/i.test(process.env.SWITCH_OVERRIDE)
 const apiProto = sslEnabled ? 'https' : 'http'
 const apiUrl = `${apiProto}://${activeHost}:${activePort}`
 
-function localUrl () {
+function serviceUrl () {
   const url = `${proto}://${host}:${port}`
-  if (proto && host && port) {
-    return url
-  }
+  if (proto && host && port) return url
   if (isPrimary) throw new Error(`invalid url ${url}`)
   return null
 }
@@ -57,7 +54,7 @@ function localUrl () {
 export class ServiceMeshClient extends EventEmitter {
   constructor (mesh) {
     super('webswitch')
-    this.url = localUrl()
+    this.url
     this.mesh = mesh
     this.name = SERVICENAME
     this.isPrimary = isPrimary
@@ -97,22 +94,22 @@ export class ServiceMeshClient extends EventEmitter {
 
   /**
    * Zero-config, self-forming mesh network:
-   * Discover URL of service to connect to or, if
-   * this is the service, multicast this url
+   * Discover URL of broker to connect to, or
+   * if this is the broker, cast the local url
    * @returns {Promise<string>} url
    */
   async resolveUrl () {
     await this.mesh.serviceLocatorInit({
-      serviceUrl: localUrl(),
+      serviceUrl: serviceUrl(),
       name: this.name,
       primary: this.isPrimary,
       backup: this.isBackup
     })
     if (this.isPrimary) {
       await this.mesh.serviceLocatorAnswer()
-      return localUrl()
+      return serviceUrl()
     }
-    return override ? localUrl() : this.mesh.serviceLocatorAsk()
+    return override ? serviceUrl() : this.mesh.serviceLocatorAsk()
   }
 
   /**
@@ -140,7 +137,7 @@ export class ServiceMeshClient extends EventEmitter {
       console.log('connection open')
       this.send(this.telemetry())
       this.heartbeat()
-      setTimeout(() => this.sendQueuedMsgs(), 3000).unref()
+      setTimeout(() => this.sendQueuedMsgs(), 3000)
     })
 
     this.mesh.websocketOnMessage(message => {
@@ -172,7 +169,7 @@ export class ServiceMeshClient extends EventEmitter {
       setTimeout(() => {
         console.debug('reconnect due to socket close')
         this.connect()
-      }, 10000).unref()
+      }, 5000)
     })
 
     this.mesh.websocketOnPong(() => (this.pong = true))
@@ -181,20 +178,19 @@ export class ServiceMeshClient extends EventEmitter {
 
   timeout () {
     console.warn('timeout')
-    this.emit(TIMEOUTEVENT, this.telemetry())
+    this.emit(HBEATTIMEOUT, this.telemetry())
     this.mesh.websocketTerminate()
     setTimeout(() => {
       console.debug('reconnect due to timeout')
       this.connect()
-    }, 5000).unref()
-  }                             
+    }, 5000)
+  }
 
   heartbeat () {
     if (this.pong) {
       this.pong = false
       this.mesh.websocketPing()
       this.heartbeatTimer = setTimeout(() => this.heartbeat(), heartbeatMs)
-      this.heartbeatTimer.unref()
     } else {
       clearTimeout(this.heartbeatTimer)
       this.emit('timeout')
