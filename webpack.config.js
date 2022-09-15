@@ -1,17 +1,14 @@
-'use strict'
-
-const path = require('path')
+var path = require('path')
 const { ModuleFederationPlugin } = require('webpack').container
 const httpNode = require('./webpack/http-node')
 
-const ctx = JSON.stringify(process.env.GITPOD_WORKSPACE_CONTEXT)
-
 var serverConfig = {
   target: httpNode,
+
   entry: ['@babel/polyfill', path.resolve(__dirname, 'src/index.js')],
   output: {
     path: path.resolve(__dirname, 'dist'),
-    publicPath: `https://api.github.com?owner=module-federation&repo=aegis-app&filedir=dist&branch=webswitch`,
+    publicPath: 'http://localhost:8000/',
     libraryTarget: 'commonjs'
   },
   devtool: 'source-map',
@@ -60,12 +57,32 @@ var serverConfig = {
   },
   plugins: [
     new ModuleFederationPlugin({
-      name: 'webswitch',
+      name: 'local',
       library: { type: 'commonjs-module' },
       filename: 'remoteEntry.js',
       exposes: {
         './models': './src/domain',
-        './adapters': './src/adapters'
+        './adapters': './src/adapters',
+        './services': './src/services',
+        './ports': './src/domain/ports.js',
+        './event-bus': './src/services/event-bus'
+      },
+      shared: {
+        axios: {
+          eager: true
+        },
+        'smartystreets-javascript-sdk': {
+          eager: true
+        },
+        kafkajs: {
+          eager: true
+        },
+        nanoid: {
+          eager: true
+        },
+        'multicast-dns': {
+          eager: true
+        }
       }
     })
   ]
