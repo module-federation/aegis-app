@@ -1,6 +1,6 @@
 {
-  "name": "microlib-example",
-  "version": "1.0.0",
+  "name": "aegis-app",
+  "version": "1.0.1",
   "description": "",
   "main": "./dist/main.js",
   "installConfig": {
