@@ -41,6 +41,7 @@ var serverConfig = {
         './adapter-cache': './src/adapters',
         './service-cache': './src/services',
         './port-cache': './src/domain/ports',
+        './worker-cache': './src/domain/workers',
         './event-bus': './src/services/event-bus'
       },
       shared: {
