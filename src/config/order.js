@@ -228,7 +228,13 @@ export const Order = {
     },
     cancelOrders: {
       service: 'Order',
-      type: 'inbound'
+      type: 'inbound',
+      timeout: 0
+    },
+    approveOrders: {
+      service: 'Order',
+      type: 'inbound',
+      timeout: 0
     }
   },
   relations: {

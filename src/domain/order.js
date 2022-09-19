@@ -723,6 +723,7 @@ export function makeOrderFactory (dependencies) {
       logStateChange (message) {
         this.logEvent(message, 'stateChange')
       },
+
       /**
        *
        * @param {viewLog} options
@@ -854,7 +855,28 @@ export async function cancelPayment (order) {
 }
 
 export async function cancelOrders (data) {
-  const cancelOrders = new Transform({
+  const cancelOrdersTransform = new Transform({
+    objectMode: true,
+    transform: (chunk, _encoding, done) => {
+      if (chunk._id) delete chunk._id
+      done(
+        null,
+        JSON.stringify({ ...chunk, orderStatus: OrderStatus.CANCELED })
+      )
+    }
+  })
+
+  await this.list({
+    writable: this.createWriteStream(),
+    transform: cancelOrdersTransform,
+    serialize: false
+  })
+
+  return { status: 'ok' }
+}
+
+export async function approveOrders (data) {
+  const approveOrdersTransform = new Transform({
     objectMode: true,
     transform: (chunk, _encoding, done) => {
       if (chunk._id) delete chunk._id
@@ -866,10 +888,8 @@ export async function cancelOrders (data) {
   })
 
   await this.list({
-    filter: data.args.filter,
     writable: this.createWriteStream(),
-    transform: cancelOrders,
-    cache: false,
+    transform: approveOrdersTransform,
     serialize: false
   })
 

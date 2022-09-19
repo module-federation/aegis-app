@@ -1075,6 +1075,7 @@ var GlobalMixins = [encryptPersonalInfo];
 /*! export accountOrder [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export addressValidated [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export approve [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export approveOrders [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export calcTotal [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export cancel [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export cancelOrders [provided] [no usage info] [missing usage info prevents renaming] */
@@ -1147,7 +1148,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "accountOrder": () => /* binding */ accountOrder,
 /* harmony export */   "returnDelivery": () => /* binding */ returnDelivery,
 /* harmony export */   "cancelPayment": () => /* binding */ cancelPayment,
-/* harmony export */   "cancelOrders": () => /* binding */ cancelOrders
+/* harmony export */   "cancelOrders": () => /* binding */ cancelOrders,
+/* harmony export */   "approveOrders": () => /* binding */ approveOrders
 /* harmony export */ });
 /* harmony import */ var _mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mixins */ "./src/domain/mixins.js");
 /* harmony import */ var _domain_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/utils */ "./src/domain/utils.js");
@@ -2594,26 +2596,24 @@ function cancelOrders(_x20) {
 
 function _cancelOrders() {
   _cancelOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee25(data) {
-    var cancelOrders;
+    var cancelOrdersTransform;
     return _regeneratorRuntime().wrap(function _callee25$(_context25) {
       while (1) {
         switch (_context25.prev = _context25.next) {
           case 0:
-            cancelOrders = new stream__WEBPACK_IMPORTED_MODULE_3__.Transform({
+            cancelOrdersTransform = new stream__WEBPACK_IMPORTED_MODULE_3__.Transform({
               objectMode: true,
               transform: function transform(chunk, _encoding, done) {
                 if (chunk._id) delete chunk._id;
                 done(null, JSON.stringify(_objectSpread(_objectSpread({}, chunk), {}, {
-                  orderStatus: OrderStatus.APPROVED
+                  orderStatus: OrderStatus.CANCELED
                 })));
               }
             });
             _context25.next = 3;
             return this.list({
-              filter: data.args.filter,
               writable: this.createWriteStream(),
-              transform: cancelOrders,
-              cache: false,
+              transform: cancelOrdersTransform,
               serialize: false
             });
 
@@ -2630,6 +2630,48 @@ function _cancelOrders() {
     }, _callee25, this);
   }));
   return _cancelOrders.apply(this, arguments);
+}
+
+function approveOrders(_x21) {
+  return _approveOrders.apply(this, arguments);
+}
+
+function _approveOrders() {
+  _approveOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee26(data) {
+    var approveOrdersTransform;
+    return _regeneratorRuntime().wrap(function _callee26$(_context26) {
+      while (1) {
+        switch (_context26.prev = _context26.next) {
+          case 0:
+            approveOrdersTransform = new stream__WEBPACK_IMPORTED_MODULE_3__.Transform({
+              objectMode: true,
+              transform: function transform(chunk, _encoding, done) {
+                if (chunk._id) delete chunk._id;
+                done(null, JSON.stringify(_objectSpread(_objectSpread({}, chunk), {}, {
+                  orderStatus: OrderStatus.APPROVED
+                })));
+              }
+            });
+            _context26.next = 3;
+            return this.list({
+              writable: this.createWriteStream(),
+              transform: approveOrdersTransform,
+              serialize: false
+            });
+
+          case 3:
+            return _context26.abrupt("return", {
+              status: 'ok'
+            });
+
+          case 4:
+          case "end":
+            return _context26.stop();
+        }
+      }
+    }, _callee26, this);
+  }));
+  return _approveOrders.apply(this, arguments);
 }
 
 /***/ }),
