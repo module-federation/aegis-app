@@ -875,7 +875,19 @@ export async function cancelOrders (data) {
   return { status: 'ok' }
 }
 
+class LTHCError extends Error {
+  constructor (error, code) {
+    super(error)
+    this.code = code
+  }
+}
 export async function approveOrders (data) {
+  try {
+    console.log(x)
+  } catch (error) {
+    throw new LTHCError(error, 401)
+  }
+
   const approveOrdersTransform = new Transform({
     objectMode: true,
     transform: (chunk, _encoding, done) => {

@@ -35,7 +35,6 @@ import {
 } from '../domain/mixins'
 import { nanoid } from 'nanoid'
 import { DataSourceAdapterMongoDb } from '../adapters/datasources/datasource-mongodb'
-import { DataSourceFileAdapter } from '../adapters/datasources/datasource-file-adapter'
 
 /**
  * @type {import('../domain/index').ModelSpecification}
@@ -229,12 +228,14 @@ export const Order = {
     cancelOrders: {
       service: 'Order',
       type: 'inbound',
-      timeout: 0
+      timeout: 0,
+      methods: ['PATCH']
     },
     approveOrders: {
       service: 'Order',
       type: 'inbound',
-      timeout: 0
+      timeout: 0,
+      methods: ['PATCH']
     }
   },
   relations: {
@@ -255,27 +256,9 @@ export const Order = {
   routes: [
     {
       path: '/orders/filter',
-      get: (req, res, ports) => {
-        res.on('data', chunk => {
-          console.log(chunk)
-        })
-
-        res.on('done', () => {
-          console.log('done')
-        })
-
-        ports.listModels(
-          {
-            filter: {
-              query: {
-                $or: [{ orderNo: { $eq: '123' } }, { orderNo: { $eq: '345' } }]
-              }
-            }
-          },
-          {
-            writable: res
-          }
-        )
+      post: (req, res, ports) => {
+        console.log('/orders/filter')
+        res.status(200).json({ message: 'ok' })
       }
     }
   ],
