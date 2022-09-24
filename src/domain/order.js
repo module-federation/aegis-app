@@ -854,6 +854,18 @@ export async function cancelPayment (order) {
   return order.update({ orderStatus: OrderStatus.CANCELED })
 }
 
+export class OrderError extends Error {
+  constructor (error, code) {
+    super(error)
+    this.code = code
+  }
+}
+
+/**
+ *
+ * @param {Date.now} data
+ * @returns
+ */
 export async function cancelOrders (data) {
   const cancelOrdersTransform = new Transform({
     objectMode: true,
@@ -875,17 +887,19 @@ export async function cancelOrders (data) {
   return { status: 'ok' }
 }
 
-class LTHCError extends Error {
-  constructor (error, code) {
-    super(error)
-    this.code = code
-  }
-}
+/**
+ *
+ * @param {Date.now} data
+ * @returns
+ */
+
 export async function approveOrders (data) {
+  const requestId = this.getContext().get('id')
+
   try {
     console.log(x)
   } catch (error) {
-    throw new LTHCError(error, 401)
+    throw new (error, 401)()
   }
 
   const approveOrdersTransform = new Transform({
@@ -905,5 +919,42 @@ export async function approveOrders (data) {
     serialize: false
   })
 
-  return { status: 'ok' }
+  return { status: 'ok', requestId }
+}
+
+/**
+ *
+ * @returns
+ */
+export async function trackAsyncContext () {
+  const ctx = this.getContext()
+  const dur = 'test-duration'
+  const startTime = Date.now()
+
+  await new Promise(setTimeout, 1000)
+
+  // require('fs')
+  //   .stream('/etc/hosts')
+  //   .pipe(ctx.get('res'))
+
+  ctx.set(dur, Date.now() - startTime)
+
+  const metric = {
+    requestId: ctx.get('id'),
+    fn: trackAsyncContext.name,
+    duration: ctx.get(dur)
+  }
+
+  this.emit('metric', metric)
+  console.log(metric.ctx)
+
+  return metric
+}
+
+export async function customHttpStatus () {
+  try {
+    console.log(x)
+  } catch (error) {
+    throw new OrderError(error, 401)
+  }
 }
