@@ -23,7 +23,8 @@ import {
   requiredForApproval,
   approve,
   cancel,
-  accountOrder
+  accountOrder,
+  OrderError
 } from '../domain/order'
 
 import {
@@ -42,7 +43,6 @@ import { DataSourceAdapterMongoDb } from '../adapters/datasources/datasource-mon
 export const Order = {
   modelName: 'order',
   endpoint: 'orders',
-  path: { endpointPort: '/orders/:port' },
   factory: makeOrderFactory,
   datasource: {
     factory: DataSourceAdapterMongoDb,
@@ -229,13 +229,23 @@ export const Order = {
       service: 'Order',
       type: 'inbound',
       timeout: 0,
-      methods: ['PATCH']
+      methods: ['post']
     },
     approveOrders: {
       service: 'Order',
       type: 'inbound',
       timeout: 0,
-      methods: ['PATCH']
+      methods: ['patch']
+    },
+    trackAsyncContext: {
+      service: 'Telemetry',
+      type: 'inbound',
+      timeout: 0
+    },
+    customHttpStatus: {
+      service: 'Telemetry',
+      type: 'inbound',
+      timeout: 0
     }
   },
   relations: {
@@ -255,10 +265,46 @@ export const Order = {
   },
   routes: [
     {
-      path: '/orders/filter',
-      post: (req, res, ports) => {
-        console.log('/orders/filter')
-        res.status(200).json({ message: 'ok' })
+      path: '/orders',
+      get: async (req, res, ports) =>
+        ports.listModels({
+          writable: res,
+          serialize: true,
+          query: req.query
+        }),
+
+      post: async (req, res, ports) => {
+        console.log('/orders')
+        try {
+          const result = await ports.addModel(req.body)
+          res
+            .status(200)
+            .json({ message: 'ok', ctx: result.context, id: result.id })
+        } catch (error) {
+          throw new OrderError(error, 404)
+        }
+      }
+    },
+    {
+      path: '/orders/:id',
+      get: async (req, res, ports) =>
+        ports.listModels({
+          writable: res,
+          serialize: true,
+          query: req.query
+        }),
+
+      patch: async (req, res, ports) => {
+        console.log('/orders/:id')
+        try {
+          const result = await ports.editModel({
+            id: req.params.id,
+            changes: req.body
+          })
+          res.status(200).json({ message: 'ok', ctx: result.context })
+        } catch (error) {
+          throw new OrderError(error, 404)
+        }
       }
     }
   ],
