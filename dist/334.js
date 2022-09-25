@@ -1166,6 +1166,18 @@ __webpack_require__.r(__webpack_exports__);
 
 var _OrderActions;
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
@@ -2702,23 +2714,22 @@ function approveOrders(_x21) {
 
 function _approveOrders() {
   _approveOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee26(data) {
-    var requestId, approveOrdersTransform;
+    var approveOrdersTransform;
     return _regeneratorRuntime().wrap(function _callee26$(_context26) {
       while (1) {
         switch (_context26.prev = _context26.next) {
           case 0:
-            requestId = this.getContext().get('id');
-            _context26.prev = 1;
+            _context26.prev = 0;
             console.log(x);
-            _context26.next = 8;
+            _context26.next = 7;
             break;
 
-          case 5:
-            _context26.prev = 5;
-            _context26.t0 = _context26["catch"](1);
-            throw new (_context26.t0, 401)();
+          case 4:
+            _context26.prev = 4;
+            _context26.t0 = _context26["catch"](0);
+            throw new OrderError(_context26.t0, 401);
 
-          case 8:
+          case 7:
             approveOrdersTransform = new stream__WEBPACK_IMPORTED_MODULE_3__.Transform({
               objectMode: true,
               transform: function transform(chunk, _encoding, done) {
@@ -2728,25 +2739,24 @@ function _approveOrders() {
                 })));
               }
             });
-            _context26.next = 11;
+            _context26.next = 10;
             return this.list({
               writable: this.createWriteStream(),
               transform: approveOrdersTransform,
               serialize: false
             });
 
-          case 11:
+          case 10:
             return _context26.abrupt("return", {
-              status: 'ok',
-              requestId: requestId
+              status: 'ok'
             });
 
-          case 12:
+          case 11:
           case "end":
             return _context26.stop();
         }
       }
-    }, _callee26, this, [[1, 5]]);
+    }, _callee26, this, [[0, 4]]);
   }));
   return _approveOrders.apply(this, arguments);
 }
@@ -2766,7 +2776,9 @@ function _trackAsyncContext() {
             dur = 'test-duration';
             startTime = Date.now();
             _context27.next = 5;
-            return new Promise(setTimeout, 1000);
+            return new Promise(function (resolve) {
+              return setTimeout(resolve, 100);
+            });
 
           case 5:
             // require('fs')
@@ -2776,7 +2788,8 @@ function _trackAsyncContext() {
             metric = {
               requestId: ctx.get('id'),
               fn: trackAsyncContext.name,
-              duration: ctx.get(dur)
+              duration: ctx.get(dur),
+              context: _toConsumableArray(ctx)
             };
             this.emit('metric', metric);
             console.log(metric.ctx);

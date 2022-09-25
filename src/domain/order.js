@@ -894,12 +894,10 @@ export async function cancelOrders (data) {
  */
 
 export async function approveOrders (data) {
-  const requestId = this.getContext().get('id')
-
   try {
     console.log(x)
   } catch (error) {
-    throw new (error, 401)()
+    throw new OrderError(error, 401)
   }
 
   const approveOrdersTransform = new Transform({
@@ -919,7 +917,7 @@ export async function approveOrders (data) {
     serialize: false
   })
 
-  return { status: 'ok', requestId }
+  return { status: 'ok' }
 }
 
 /**
@@ -931,7 +929,7 @@ export async function trackAsyncContext () {
   const dur = 'test-duration'
   const startTime = Date.now()
 
-  await new Promise(setTimeout, 1000)
+  await new Promise(resolve => setTimeout(resolve, 100))
 
   // require('fs')
   //   .stream('/etc/hosts')
@@ -942,7 +940,8 @@ export async function trackAsyncContext () {
   const metric = {
     requestId: ctx.get('id'),
     fn: trackAsyncContext.name,
-    duration: ctx.get(dur)
+    duration: ctx.get(dur),
+    context: [...ctx]
   }
 
   this.emit('metric', metric)
