@@ -341,21 +341,23 @@ var Order = {
       return (0,nanoid__WEBPACK_IMPORTED_MODULE_2__.nanoid)(8);
     }
   },
-  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.requireProperties)('orderItems', (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForGuest)(['lastName', 'firstName', 'billingAddress', 'shippingAddress', 'creditCardNumber', 'email']), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForApproval)('paymentAuthorization'), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForCompletion)('proofOfDelivery')), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.freezeProperties)('orderNo', 'customerId', (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.freezeOnApproval)(['email', 'lastName', 'firstName', 'orderItems', 'orderTotal', 'billingAddress', 'shippingAddress', 'creditCardNumber', 'paymentAuthorization']), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.freezeOnCompletion)('*')), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.updateProperties)([{
-    propKey: 'orderItems',
-    update: _domain_order__WEBPACK_IMPORTED_MODULE_0__.recalcTotal
-  }, {
+  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.requireProperties)('orderItems', (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForGuest)(['lastName', 'firstName', 'billingAddress', 'shippingAddress', 'creditCardNumber', 'email']), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForApproval)('paymentAuthorization'), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForCompletion)('proofOfDelivery')), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.freezeProperties)('orderNo', 'customerId', (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.freezeOnApproval)(['email', 'lastName', 'firstName', 'orderItems', 'orderTotal', 'billingAddress', 'shippingAddress', 'creditCardNumber', 'paymentAuthorization']), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.freezeOnCompletion)('*')), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.updateProperties)([// {
+  //   propKey: 'orderItems',
+  //   update: recalcTotal
+  // },
+  {
     propKey: 'orderItems',
     update: _domain_order__WEBPACK_IMPORTED_MODULE_0__.updateSignature
   }]), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.validateProperties)([{
     propKey: 'orderStatus',
     values: Object.values(_domain_order__WEBPACK_IMPORTED_MODULE_0__.OrderStatus),
     isValid: _domain_order__WEBPACK_IMPORTED_MODULE_0__.statusChangeValid
-  }, {
-    propKey: 'orderTotal',
-    maxnum: 99999.99,
-    isValid: _domain_order__WEBPACK_IMPORTED_MODULE_0__.orderTotalValid
-  }, {
+  }, // {
+  //   propKey: 'orderTotal',
+  //   maxnum: 99999.99,
+  //   isValid: orderTotalValid
+  // },
+  {
     propKey: 'email',
     regex: 'email'
   }, {
@@ -493,6 +495,11 @@ var Order = {
     },
     customHttpStatus: {
       service: 'Telemetry',
+      type: 'inbound',
+      timeout: 0
+    },
+    testContainsMany: {
+      service: 'Inventory',
       type: 'inbound',
       timeout: 0
     }

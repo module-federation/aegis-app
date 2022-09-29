@@ -82,10 +82,10 @@ export const Order = {
       freezeOnCompletion('*')
     ),
     updateProperties([
-      {
-        propKey: 'orderItems',
-        update: recalcTotal
-      },
+      // {
+      //   propKey: 'orderItems',
+      //   update: recalcTotal
+      // },
       {
         propKey: 'orderItems',
         update: updateSignature
@@ -97,11 +97,11 @@ export const Order = {
         values: Object.values(OrderStatus),
         isValid: statusChangeValid
       },
-      {
-        propKey: 'orderTotal',
-        maxnum: 99999.99,
-        isValid: orderTotalValid
-      },
+      // {
+      //   propKey: 'orderTotal',
+      //   maxnum: 99999.99,
+      //   isValid: orderTotalValid
+      // },
       {
         propKey: 'email',
         regex: 'email'
@@ -244,6 +244,11 @@ export const Order = {
     },
     customHttpStatus: {
       service: 'Telemetry',
+      type: 'inbound',
+      timeout: 0
+    },
+    testContainsMany: {
+      service: 'Inventory',
       type: 'inbound',
       timeout: 0
     }

@@ -2,5 +2,6 @@ export {
   cancelOrders,
   approveOrders,
   trackAsyncContext,
-  customHttpStatus
+  customHttpStatus,
+  testContainsMany
 } from './order'

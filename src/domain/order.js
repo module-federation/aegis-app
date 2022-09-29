@@ -489,10 +489,10 @@ async function getCustomerOrder (order) {
  * - verify shipping address
  */
 const processPendingOrder = asyncPipe(
-  getCustomerOrder,
-  verifyInventory,
-  verifyPayment,
-  verifyAddress
+  getCustomerOrder
+  //verifyInventory,
+  //verifyPayment,
+  //verifyAddress
 )
 
 /**
@@ -509,20 +509,15 @@ const OrderActions = {
    * @param {Order} order - the order
    * @returns {Promise<Readonly<Order>>}
    */
-  [OrderStatus.PENDING]: async order => {
-    try {
-      /**@type {Order} */
-      const processedOrder = await processPendingOrder(order)
-
-      if (processedOrder.autoCheckout()) {
-        runOrderWorkflow(
-          processedOrder.update({ OrderStatus: OrderStatus.APPROVED }, false)
-        )
+  [OrderStatus.PENDING]: order => {
+    /**@type {Order} */
+    const processedOrder = processPendingOrder(order).then(o => {
+      if (o.autoCheckout()) {
+        console.log(o)
+        return o // o.update({ orderStatus: OrderStatus.APPROVED }, false)
       }
-    } catch (e) {
-      console.error(e)
-    }
-    return order
+    })
+    processedOrder.then(o => OrderActions.APPROVED(o))
   },
 
   /**
@@ -532,14 +527,15 @@ const OrderActions = {
    * @param {Order} order
    * @returns {Promise<Readonly<Order>>}
    */
-  [OrderStatus.APPROVED]: async order => {
+  [OrderStatus.APPROVED]: order => {
     console.log('typeof order', typeof order)
     try {
-      if (/approved/i.test(order.paymentStatus)) {
-        return order.pickOrder(orderPicked)
-      }
-      await order.emit('PayAuthFail', 'Payment authorization problem')
-      return order
+      //if (/approved/i.test(order.paymentStatus)) {
+
+      return order.pickOrder(orderPicked)
+
+      // order.emit('PayAuthFail', 'Payment authorization problem')
+      // return order
     } catch (error) {
       console.log({ error })
       handleError(error, order, OrderStatus.APPROVED)
@@ -600,18 +596,19 @@ const OrderActions = {
  * @param {Order} order
  * @returns {Promise<Readonly<Order>>}
  */
-export async function runOrderWorkflow (order) {
-  return OrderActions[order.orderStatus](order)
+export function runOrderWorkflow (order) {
+  console.log({ orderStatus: order.orderStatus })
+  OrderActions[order.orderStatus](order)
 }
 
 /**
  * Called on create, update, delete of model instance.
  * @param {{model:Promise<ReadOnly<Order>>}}
  */
-export async function handleOrderEvent ({ model: order, eventType, changes }) {
+export function handleOrderEvent ({ model: order, eventType, changes }) {
   if (changes?.orderStatus || eventType === 'CREATE') {
     // console.debug({ fn: handleOrderEvent.name, order })
-    return runOrderWorkflow(order)
+    runOrderWorkflow(order)
   }
 }
 
@@ -663,7 +660,7 @@ export function makeOrderFactory (dependencies) {
     requireSignature,
     fibonacci = 10
   }) {
-    const total = calcTotal(orderItems)
+    const total = 0 //calcTotal(orderItems)
     const signatureRequired = needsSignature(requireSignature, total)
     const order = {
       email,
@@ -950,10 +947,16 @@ export async function trackAsyncContext () {
   return metric
 }
 
-export async function customHttpStatus () {
+export async function customHttpStatus (data) {
+  if (data.args.code)
+    throw new OrderError(data.args.message || 'custom status', data.args.code)
   try {
     console.log(x)
   } catch (error) {
-    throw new OrderError(error, 401)
+    throw new OrderError(error, 500)
   }
+}
+
+export function testContainsMany (data) {
+  return this.inventory(data)
 }

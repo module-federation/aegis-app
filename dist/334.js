@@ -1107,6 +1107,7 @@ var GlobalMixins = [encryptPersonalInfo];
 /*! export returnShipment [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export runOrderWorkflow [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export statusChangeValid [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export testContainsMany [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export timeoutCallback [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export trackAsyncContext [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export updateSignature [provided] [no usage info] [missing usage info prevents renaming] */
@@ -1155,7 +1156,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "cancelOrders": () => /* binding */ cancelOrders,
 /* harmony export */   "approveOrders": () => /* binding */ approveOrders,
 /* harmony export */   "trackAsyncContext": () => /* binding */ trackAsyncContext,
-/* harmony export */   "customHttpStatus": () => /* binding */ customHttpStatus
+/* harmony export */   "customHttpStatus": () => /* binding */ customHttpStatus,
+/* harmony export */   "testContainsMany": () => /* binding */ testContainsMany
 /* harmony export */ });
 /* harmony import */ var _mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mixins */ "./src/domain/mixins.js");
 /* harmony import */ var _domain_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/utils */ "./src/domain/utils.js");
@@ -1210,9 +1212,9 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return generator._invoke = function (innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; }(innerFn, self, context), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; this._invoke = function (method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); }; } function maybeInvokeDelegate(delegate, context) { var method = delegate.iterator[context.method]; if (undefined === method) { if (context.delegate = null, "throw" === context.method) { if (delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel; context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method"); } return ContinueSentinel; } var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) { if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; } return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, define(Gp, "constructor", GeneratorFunctionPrototype), define(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (object) { var keys = []; for (var key in object) { keys.push(key); } return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) { "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); } }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
@@ -1534,30 +1536,30 @@ function paymentCompleted() {
  */
 
 function _paymentCompleted() {
-  _paymentCompleted = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+  _paymentCompleted = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
     var options,
         payload,
         order,
         changes,
-        _args6 = arguments;
-    return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+        _args4 = arguments;
+    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
       while (1) {
-        switch (_context6.prev = _context6.next) {
+        switch (_context4.prev = _context4.next) {
           case 0:
-            options = _args6.length > 0 && _args6[0] !== undefined ? _args6[0] : {};
-            payload = _args6.length > 1 && _args6[1] !== undefined ? _args6[1] : {};
+            options = _args4.length > 0 && _args4[0] !== undefined ? _args4[0] : {};
+            payload = _args4.length > 1 && _args4[1] !== undefined ? _args4[1] : {};
             order = options.model;
             changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('confirmationCode', options, payload, paymentCompleted.name);
-            return _context6.abrupt("return", order.update(_objectSpread(_objectSpread({}, changes), {}, {
+            return _context4.abrupt("return", order.update(_objectSpread(_objectSpread({}, changes), {}, {
               orderStatus: OrderStatus.COMPLETE
             })));
 
           case 5:
           case "end":
-            return _context6.stop();
+            return _context4.stop();
         }
       }
-    }, _callee6);
+    }, _callee4);
   }));
   return _paymentCompleted.apply(this, arguments);
 }
@@ -1571,31 +1573,31 @@ function orderShipped() {
  */
 
 function _orderShipped() {
-  _orderShipped = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
+  _orderShipped = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
     var options,
         payload,
         order,
         shipmentPayload,
-        _args7 = arguments;
-    return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+        _args5 = arguments;
+    return _regeneratorRuntime().wrap(function _callee5$(_context5) {
       while (1) {
-        switch (_context7.prev = _context7.next) {
+        switch (_context5.prev = _context5.next) {
           case 0:
-            options = _args7.length > 0 && _args7[0] !== undefined ? _args7[0] : {};
-            payload = _args7.length > 1 && _args7[1] !== undefined ? _args7[1] : {};
+            options = _args5.length > 0 && _args5[0] !== undefined ? _args5[0] : {};
+            payload = _args5.length > 1 && _args5[1] !== undefined ? _args5[1] : {};
             order = options.model;
             shipmentPayload = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('shipmentId', options, payload, orderShipped.name);
-            return _context7.abrupt("return", order.update({
+            return _context5.abrupt("return", order.update({
               shipmentId: shipmentPayload.shipmentId,
               orderStatus: OrderStatus.SHIPPING
             }));
 
           case 5:
           case "end":
-            return _context7.stop();
+            return _context5.stop();
         }
       }
-    }, _callee7);
+    }, _callee5);
   }));
   return _orderShipped.apply(this, arguments);
 }
@@ -1610,28 +1612,28 @@ function orderPicked() {
  */
 
 function _orderPicked() {
-  _orderPicked = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
+  _orderPicked = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
     var options,
         payload,
         order,
         changes,
-        _args8 = arguments;
-    return _regeneratorRuntime().wrap(function _callee8$(_context8) {
+        _args6 = arguments;
+    return _regeneratorRuntime().wrap(function _callee6$(_context6) {
       while (1) {
-        switch (_context8.prev = _context8.next) {
+        switch (_context6.prev = _context6.next) {
           case 0:
-            options = _args8.length > 0 && _args8[0] !== undefined ? _args8[0] : {};
-            payload = _args8.length > 1 && _args8[1] !== undefined ? _args8[1] : {};
+            options = _args6.length > 0 && _args6[0] !== undefined ? _args6[0] : {};
+            payload = _args6.length > 1 && _args6[1] !== undefined ? _args6[1] : {};
             order = options.model;
             changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('pickupAddress', options, payload, addressValidated.name);
-            return _context8.abrupt("return", order.update(changes));
+            return _context6.abrupt("return", order.update(changes));
 
           case 5:
           case "end":
-            return _context8.stop();
+            return _context6.stop();
         }
       }
-    }, _callee8);
+    }, _callee6);
   }));
   return _orderPicked.apply(this, arguments);
 }
@@ -1646,30 +1648,30 @@ function addressValidated() {
  */
 
 function _addressValidated() {
-  _addressValidated = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
+  _addressValidated = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
     var options,
         payload,
         order,
         addressPayload,
-        _args9 = arguments;
-    return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+        _args7 = arguments;
+    return _regeneratorRuntime().wrap(function _callee7$(_context7) {
       while (1) {
-        switch (_context9.prev = _context9.next) {
+        switch (_context7.prev = _context7.next) {
           case 0:
-            options = _args9.length > 0 && _args9[0] !== undefined ? _args9[0] : {};
-            payload = _args9.length > 1 && _args9[1] !== undefined ? _args9[1] : {};
+            options = _args7.length > 0 && _args7[0] !== undefined ? _args7[0] : {};
+            payload = _args7.length > 1 && _args7[1] !== undefined ? _args7[1] : {};
             order = options.model;
             addressPayload = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('shippingAddress', options, payload, addressValidated.name);
-            return _context9.abrupt("return", order.update({
+            return _context7.abrupt("return", order.update({
               shippingAddress: addressPayload.shippingAddress
             }));
 
           case 5:
           case "end":
-            return _context9.stop();
+            return _context7.stop();
         }
       }
-    }, _callee9);
+    }, _callee7);
   }));
   return _addressValidated.apply(this, arguments);
 }
@@ -1685,30 +1687,30 @@ function paymentAuthorized() {
  */
 
 function _paymentAuthorized() {
-  _paymentAuthorized = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10() {
+  _paymentAuthorized = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
     var options,
         payload,
         order,
         changes,
-        _args10 = arguments;
-    return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+        _args8 = arguments;
+    return _regeneratorRuntime().wrap(function _callee8$(_context8) {
       while (1) {
-        switch (_context10.prev = _context10.next) {
+        switch (_context8.prev = _context8.next) {
           case 0:
-            options = _args10.length > 0 && _args10[0] !== undefined ? _args10[0] : {};
-            payload = _args10.length > 1 && _args10[1] !== undefined ? _args10[1] : {};
+            options = _args8.length > 0 && _args8[0] !== undefined ? _args8[0] : {};
+            payload = _args8.length > 1 && _args8[1] !== undefined ? _args8[1] : {};
             order = options.model;
             changes = (0,_check_payload__WEBPACK_IMPORTED_MODULE_2__.default)('paymentStatus', options, payload, paymentAuthorized.name);
-            return _context10.abrupt("return", order.update(_objectSpread(_objectSpread({}, changes), {}, {
+            return _context8.abrupt("return", order.update(_objectSpread(_objectSpread({}, changes), {}, {
               paymentStatus: paymentStatus
             }), false));
 
           case 5:
           case "end":
-            return _context10.stop();
+            return _context8.stop();
         }
       }
-    }, _callee10);
+    }, _callee8);
   }));
   return _paymentAuthorized.apply(this, arguments);
 }
@@ -1723,10 +1725,10 @@ function refundPayment(_x) {
  */
 
 function _refundPayment() {
-  _refundPayment = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11(order) {
-    return _regeneratorRuntime().wrap(function _callee11$(_context11) {
+  _refundPayment = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9(order) {
+    return _regeneratorRuntime().wrap(function _callee9$(_context9) {
       while (1) {
-        switch (_context11.prev = _context11.next) {
+        switch (_context9.prev = _context9.next) {
           case 0:
             // call port by same name.
             order.refundPayment(function (options, payload) {
@@ -1738,10 +1740,10 @@ function _refundPayment() {
 
           case 1:
           case "end":
-            return _context11.stop();
+            return _context9.stop();
         }
       }
-    }, _callee11);
+    }, _callee9);
   }));
   return _refundPayment.apply(this, arguments);
 }
@@ -1762,23 +1764,23 @@ function verifyAddress(_x2) {
 
 
 function _verifyAddress() {
-  _verifyAddress = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12(order) {
-    return _regeneratorRuntime().wrap(function _callee12$(_context12) {
+  _verifyAddress = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10(order) {
+    return _regeneratorRuntime().wrap(function _callee10$(_context10) {
       while (1) {
-        switch (_context12.prev = _context12.next) {
+        switch (_context10.prev = _context10.next) {
           case 0:
             console.debug({
               fn: verifyAddress.name,
               validateAddress: order.validateAddress
             });
-            return _context12.abrupt("return", order.validateAddress(addressValidated));
+            return _context10.abrupt("return", order.validateAddress(addressValidated));
 
           case 2:
           case "end":
-            return _context12.stop();
+            return _context10.stop();
         }
       }
-    }, _callee12);
+    }, _callee10);
   }));
   return _verifyAddress.apply(this, arguments);
 }
@@ -1795,43 +1797,43 @@ function verifyPayment(_x3) {
 
 
 function _verifyPayment() {
-  _verifyPayment = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13(order) {
+  _verifyPayment = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11(order) {
     var authorizeOrder;
-    return _regeneratorRuntime().wrap(function _callee13$(_context13) {
+    return _regeneratorRuntime().wrap(function _callee11$(_context11) {
       while (1) {
-        switch (_context13.prev = _context13.next) {
+        switch (_context11.prev = _context11.next) {
           case 0:
-            _context13.prev = 0;
-            _context13.next = 3;
+            _context11.prev = 0;
+            _context11.next = 3;
             return order.authorizePayment(paymentAuthorized);
 
           case 3:
-            authorizeOrder = _context13.sent;
+            authorizeOrder = _context11.sent;
 
             if (authorizeOrder.paymentDeclined) {
-              _context13.next = 6;
+              _context11.next = 6;
               break;
             }
 
             throw new Error('payment declined');
 
           case 6:
-            return _context13.abrupt("return", authorizeOrder);
+            return _context11.abrupt("return", authorizeOrder);
 
           case 9:
-            _context13.prev = 9;
-            _context13.t0 = _context13["catch"](0);
-            handleError(_context13.t0, order, verifyPayment.name);
+            _context11.prev = 9;
+            _context11.t0 = _context11["catch"](0);
+            handleError(_context11.t0, order, verifyPayment.name);
 
           case 12:
-            return _context13.abrupt("return", order);
+            return _context11.abrupt("return", order);
 
           case 13:
           case "end":
-            return _context13.stop();
+            return _context11.stop();
         }
       }
-    }, _callee13, null, [[0, 9]]);
+    }, _callee11, null, [[0, 9]]);
   }));
   return _verifyPayment.apply(this, arguments);
 }
@@ -1849,20 +1851,20 @@ function verifyInventory(_x4) {
 
 
 function _verifyInventory() {
-  _verifyInventory = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee14(order) {
+  _verifyInventory = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12(order) {
     var inventory, insufficient;
-    return _regeneratorRuntime().wrap(function _callee14$(_context14) {
+    return _regeneratorRuntime().wrap(function _callee12$(_context12) {
       while (1) {
-        switch (_context14.prev = _context14.next) {
+        switch (_context12.prev = _context12.next) {
           case 0:
-            _context14.next = 2;
+            _context12.next = 2;
             return order.inventory();
 
           case 2:
-            inventory = _context14.sent;
+            inventory = _context12.sent;
 
             if (!(inventory.length < 1)) {
-              _context14.next = 5;
+              _context12.next = 5;
               break;
             }
 
@@ -1879,7 +1881,7 @@ function _verifyInventory() {
             });
 
             if (!(insufficient.length > 0)) {
-              _context14.next = 9;
+              _context12.next = 9;
               break;
             }
 
@@ -1890,10 +1892,10 @@ function _verifyInventory() {
 
           case 9:
           case "end":
-            return _context14.stop();
+            return _context12.stop();
         }
       }
-    }, _callee14);
+    }, _callee12);
   }));
   return _verifyInventory.apply(this, arguments);
 }
@@ -1911,15 +1913,15 @@ function getCustomerOrder(_x5) {
 
 
 function _getCustomerOrder() {
-  _getCustomerOrder = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee15(order) {
+  _getCustomerOrder = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13(order) {
     var customer, custInfo, update, _custInfo, _customer;
 
-    return _regeneratorRuntime().wrap(function _callee15$(_context15) {
+    return _regeneratorRuntime().wrap(function _callee13$(_context13) {
       while (1) {
-        switch (_context15.prev = _context15.next) {
+        switch (_context13.prev = _context13.next) {
           case 0:
             if (!order.customerId) {
-              _context15.next = 13;
+              _context13.next = 13;
               break;
             }
 
@@ -1930,14 +1932,14 @@ function _getCustomerOrder() {
             } // Use the relation defined in the spec
 
 
-            _context15.next = 4;
+            _context13.next = 4;
             return order.customer();
 
           case 4:
-            customer = _context15.sent;
+            customer = _context13.sent;
 
             if (customer) {
-              _context15.next = 7;
+              _context13.next = 7;
               break;
             }
 
@@ -1948,235 +1950,177 @@ function _getCustomerOrder() {
             custInfo = _objectSpread(_objectSpread({}, customer.decrypt()), {}, {
               firstName: customer.firstName
             });
-            _context15.next = 10;
+            _context13.next = 10;
             return order.update(custInfo);
 
           case 10:
-            update = _context15.sent;
+            update = _context13.sent;
             console.info('update order with data from existing customer', custInfo);
-            return _context15.abrupt("return", update);
+            return _context13.abrupt("return", update);
 
           case 13:
             if (!order.saveShippingDetails) {
-              _context15.next = 20;
+              _context13.next = 20;
               break;
             }
 
             _custInfo = _objectSpread(_objectSpread({}, order.decrypt()), {}, {
               firstName: order.firstName
             });
-            _context15.next = 17;
+            _context13.next = 17;
             return order.customer(_custInfo);
 
           case 17:
-            _customer = _context15.sent;
+            _customer = _context13.sent;
             console.info('create new customer with data from order', _customer);
-            return _context15.abrupt("return", order);
+            return _context13.abrupt("return", order);
 
           case 20:
-            return _context15.abrupt("return", order);
+            return _context13.abrupt("return", order);
 
           case 21:
           case "end":
-            return _context15.stop();
+            return _context13.stop();
         }
       }
-    }, _callee15);
+    }, _callee13);
   }));
   return _getCustomerOrder.apply(this, arguments);
 }
 
-var processPendingOrder = (0,_domain_utils__WEBPACK_IMPORTED_MODULE_1__.asyncPipe)(getCustomerOrder, verifyInventory, verifyPayment, verifyAddress);
+var processPendingOrder = (0,_domain_utils__WEBPACK_IMPORTED_MODULE_1__.asyncPipe)(getCustomerOrder //verifyInventory,
+//verifyPayment,
+//verifyAddress
+);
 /**
  * Implements the beginging of the order service workflow.
  * The rest is implemented by the {@link ModelSpecification}.
  * See the port configuration section of {@link Order}.
  */
 
-var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStatus.PENDING, function () {
+var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStatus.PENDING, function (order) {
+  /**@type {Order} */
+  var processedOrder = processPendingOrder(order).then(function (o) {
+    if (o.autoCheckout()) {
+      console.log(o);
+      return o; // o.update({ orderStatus: OrderStatus.APPROVED }, false)
+    }
+  });
+  processedOrder.then(function (o) {
+    return OrderActions.APPROVED(o);
+  });
+}), _defineProperty(_OrderActions, OrderStatus.APPROVED, function (order) {
+  console.log('typeof order', _typeof(order));
+
+  try {
+    //if (/approved/i.test(order.paymentStatus)) {
+    return order.pickOrder(orderPicked); // order.emit('PayAuthFail', 'Payment authorization problem')
+    // return order
+  } catch (error) {
+    console.log({
+      error: error
+    });
+    handleError(error, order, OrderStatus.APPROVED);
+  }
+
+  return order;
+}), _defineProperty(_OrderActions, OrderStatus.SHIPPING, function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(order) {
-    var processedOrder;
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             _context.prev = 0;
-            _context.next = 3;
-            return processPendingOrder(order);
-
-          case 3:
-            processedOrder = _context.sent;
-
-            if (processedOrder.autoCheckout()) {
-              runOrderWorkflow(processedOrder.update({
-                OrderStatus: OrderStatus.APPROVED
-              }, false));
-            }
-
-            _context.next = 10;
-            break;
-
-          case 7:
-            _context.prev = 7;
-            _context.t0 = _context["catch"](0);
-            console.error(_context.t0);
-
-          case 10:
-            return _context.abrupt("return", order);
-
-          case 11:
-          case "end":
-            return _context.stop();
-        }
-      }
-    }, _callee, null, [[0, 7]]);
-  }));
-
-  return function (_x6) {
-    return _ref.apply(this, arguments);
-  };
-}()), _defineProperty(_OrderActions, OrderStatus.APPROVED, function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(order) {
-    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
-            console.log('typeof order', _typeof(order));
-            _context2.prev = 1;
-
-            if (!/approved/i.test(order.paymentStatus)) {
-              _context2.next = 4;
-              break;
-            }
-
-            return _context2.abrupt("return", order.pickOrder(orderPicked));
-
-          case 4:
-            _context2.next = 6;
-            return order.emit('PayAuthFail', 'Payment authorization problem');
-
-          case 6:
-            return _context2.abrupt("return", order);
-
-          case 9:
-            _context2.prev = 9;
-            _context2.t0 = _context2["catch"](1);
-            console.log({
-              error: _context2.t0
-            });
-            handleError(_context2.t0, order, OrderStatus.APPROVED);
-
-          case 13:
-            return _context2.abrupt("return", order);
-
-          case 14:
-          case "end":
-            return _context2.stop();
-        }
-      }
-    }, _callee2, null, [[1, 9]]);
-  }));
-
-  return function (_x7) {
-    return _ref2.apply(this, arguments);
-  };
-}()), _defineProperty(_OrderActions, OrderStatus.SHIPPING, function () {
-  var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(order) {
-    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-      while (1) {
-        switch (_context3.prev = _context3.next) {
-          case 0:
-            _context3.prev = 0;
             order.trackShipment(trackingUpdate);
             console.debug({
               func: OrderStatus.SHIPPING,
               order: order
             });
-            _context3.next = 5;
+            _context.next = 5;
             return order.update({
               orderStatus: OrderStatus.SHIPPING
             });
 
           case 5:
-            _context3.next = 7;
-            return _context3.sent.emit('orderPicked');
+            _context.next = 7;
+            return _context.sent.emit('orderPicked');
 
           case 7:
-            _context3.next = 12;
+            _context.next = 12;
             break;
 
           case 9:
-            _context3.prev = 9;
-            _context3.t0 = _context3["catch"](0);
-            handleError(_context3.t0, order, OrderStatus.SHIPPING);
+            _context.prev = 9;
+            _context.t0 = _context["catch"](0);
+            handleError(_context.t0, order, OrderStatus.SHIPPING);
 
           case 12:
-            return _context3.abrupt("return", order);
+            return _context.abrupt("return", order);
 
           case 13:
           case "end":
-            return _context3.stop();
+            return _context.stop();
         }
       }
-    }, _callee3, null, [[0, 9]]);
+    }, _callee, null, [[0, 9]]);
   }));
 
-  return function (_x8) {
-    return _ref3.apply(this, arguments);
+  return function (_x6) {
+    return _ref.apply(this, arguments);
   };
 }()), _defineProperty(_OrderActions, OrderStatus.CANCELED, function () {
-  var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(order) {
-    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(order) {
+    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
       while (1) {
-        switch (_context4.prev = _context4.next) {
+        switch (_context2.prev = _context2.next) {
           case 0:
-            _context4.prev = 0;
+            _context2.prev = 0;
             console.debug({
               func: OrderStatus.CANCELED,
               desc: 'order canceled, calling undo',
               orderNo: order.orderNo
             });
-            return _context4.abrupt("return", order.undo());
+            return _context2.abrupt("return", order.undo());
 
           case 5:
-            _context4.prev = 5;
-            _context4.t0 = _context4["catch"](0);
-            handleError(_context4.t0, order, OrderStatus.CANCELED);
+            _context2.prev = 5;
+            _context2.t0 = _context2["catch"](0);
+            handleError(_context2.t0, order, OrderStatus.CANCELED);
 
           case 8:
-            return _context4.abrupt("return", order);
+            return _context2.abrupt("return", order);
 
           case 9:
           case "end":
-            return _context4.stop();
+            return _context2.stop();
         }
       }
-    }, _callee4, null, [[0, 5]]);
+    }, _callee2, null, [[0, 5]]);
   }));
 
-  return function (_x9) {
-    return _ref4.apply(this, arguments);
+  return function (_x7) {
+    return _ref2.apply(this, arguments);
   };
 }()), _defineProperty(_OrderActions, OrderStatus.COMPLETE, function () {
-  var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(order) {
-    return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+  var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(order) {
+    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
       while (1) {
-        switch (_context5.prev = _context5.next) {
+        switch (_context3.prev = _context3.next) {
           case 0:
             // send route to questionnaire, perform analysis, schedule follow-up
             console.log('customer sentiment analysis, customer care, sales analysis');
-            return _context5.abrupt("return", order);
+            return _context3.abrupt("return", order);
 
           case 2:
           case "end":
-            return _context5.stop();
+            return _context3.stop();
         }
       }
-    }, _callee5);
+    }, _callee3);
   }));
 
-  return function (_x10) {
-    return _ref5.apply(this, arguments);
+  return function (_x8) {
+    return _ref3.apply(this, arguments);
   };
 }()), _OrderActions);
 /**
@@ -2185,66 +2129,32 @@ var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStat
  * @returns {Promise<Readonly<Order>>}
  */
 
-function runOrderWorkflow(_x11) {
-  return _runOrderWorkflow.apply(this, arguments);
+function runOrderWorkflow(order) {
+  console.log({
+    orderStatus: order.orderStatus
+  });
+  OrderActions[order.orderStatus](order);
 }
 /**
  * Called on create, update, delete of model instance.
  * @param {{model:Promise<ReadOnly<Order>>}}
  */
 
-function _runOrderWorkflow() {
-  _runOrderWorkflow = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee16(order) {
-    return _regeneratorRuntime().wrap(function _callee16$(_context16) {
-      while (1) {
-        switch (_context16.prev = _context16.next) {
-          case 0:
-            return _context16.abrupt("return", OrderActions[order.orderStatus](order));
+function handleOrderEvent(_ref4) {
+  var order = _ref4.model,
+      eventType = _ref4.eventType,
+      changes = _ref4.changes;
 
-          case 1:
-          case "end":
-            return _context16.stop();
-        }
-      }
-    }, _callee16);
-  }));
-  return _runOrderWorkflow.apply(this, arguments);
-}
-
-function handleOrderEvent(_x12) {
-  return _handleOrderEvent.apply(this, arguments);
+  if (changes !== null && changes !== void 0 && changes.orderStatus || eventType === 'CREATE') {
+    // console.debug({ fn: handleOrderEvent.name, order })
+    runOrderWorkflow(order);
+  }
 }
 /**
  * Require a signature for orders $1000 and up
  * @param {*} input
  * @param {*} orderTotal
  */
-
-function _handleOrderEvent() {
-  _handleOrderEvent = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee17(_ref6) {
-    var order, eventType, changes;
-    return _regeneratorRuntime().wrap(function _callee17$(_context17) {
-      while (1) {
-        switch (_context17.prev = _context17.next) {
-          case 0:
-            order = _ref6.model, eventType = _ref6.eventType, changes = _ref6.changes;
-
-            if (!(changes !== null && changes !== void 0 && changes.orderStatus || eventType === 'CREATE')) {
-              _context17.next = 3;
-              break;
-            }
-
-            return _context17.abrupt("return", runOrderWorkflow(order));
-
-          case 3:
-          case "end":
-            return _context17.stop();
-        }
-      }
-    }, _callee17);
-  }));
-  return _handleOrderEvent.apply(this, arguments);
-}
 
 function needsSignature(input, orderTotal) {
   return typeof input === 'boolean' ? input : orderTotal > 999.99;
@@ -2275,35 +2185,36 @@ function logMessage(message, type) {
 
 
 function makeOrderFactory(dependencies) {
-  return function createOrder(_ref7) {
+  return function createOrder(_ref5) {
     var _order;
 
-    var orderItems = _ref7.orderItems,
-        _ref7$email = _ref7.email,
-        email = _ref7$email === void 0 ? null : _ref7$email,
-        _ref7$lastName = _ref7.lastName,
-        lastName = _ref7$lastName === void 0 ? null : _ref7$lastName,
-        _ref7$firstName = _ref7.firstName,
-        firstName = _ref7$firstName === void 0 ? null : _ref7$firstName,
-        _ref7$customerId = _ref7.customerId,
-        customerId = _ref7$customerId === void 0 ? null : _ref7$customerId,
-        _ref7$billingAddress = _ref7.billingAddress,
-        billingAddress = _ref7$billingAddress === void 0 ? null : _ref7$billingAddress,
-        _ref7$shippingAddress = _ref7.shippingAddress,
-        shippingAddress = _ref7$shippingAddress === void 0 ? null : _ref7$shippingAddress,
-        _ref7$creditCardNumbe = _ref7.creditCardNumber,
-        creditCardNumber = _ref7$creditCardNumbe === void 0 ? null : _ref7$creditCardNumbe,
-        _ref7$shippingPriorit = _ref7.shippingPriority,
-        shippingPriority = _ref7$shippingPriorit === void 0 ? null : _ref7$shippingPriorit,
-        _ref7$autoCheckout = _ref7.autoCheckout,
-        _autoCheckout = _ref7$autoCheckout === void 0 ? false : _ref7$autoCheckout,
-        _ref7$saveShippingDet = _ref7.saveShippingDetails,
-        saveShippingDetails = _ref7$saveShippingDet === void 0 ? false : _ref7$saveShippingDet,
-        requireSignature = _ref7.requireSignature,
-        _ref7$fibonacci = _ref7.fibonacci,
-        fibonacci = _ref7$fibonacci === void 0 ? 10 : _ref7$fibonacci;
+    var orderItems = _ref5.orderItems,
+        _ref5$email = _ref5.email,
+        email = _ref5$email === void 0 ? null : _ref5$email,
+        _ref5$lastName = _ref5.lastName,
+        lastName = _ref5$lastName === void 0 ? null : _ref5$lastName,
+        _ref5$firstName = _ref5.firstName,
+        firstName = _ref5$firstName === void 0 ? null : _ref5$firstName,
+        _ref5$customerId = _ref5.customerId,
+        customerId = _ref5$customerId === void 0 ? null : _ref5$customerId,
+        _ref5$billingAddress = _ref5.billingAddress,
+        billingAddress = _ref5$billingAddress === void 0 ? null : _ref5$billingAddress,
+        _ref5$shippingAddress = _ref5.shippingAddress,
+        shippingAddress = _ref5$shippingAddress === void 0 ? null : _ref5$shippingAddress,
+        _ref5$creditCardNumbe = _ref5.creditCardNumber,
+        creditCardNumber = _ref5$creditCardNumbe === void 0 ? null : _ref5$creditCardNumbe,
+        _ref5$shippingPriorit = _ref5.shippingPriority,
+        shippingPriority = _ref5$shippingPriorit === void 0 ? null : _ref5$shippingPriorit,
+        _ref5$autoCheckout = _ref5.autoCheckout,
+        _autoCheckout = _ref5$autoCheckout === void 0 ? false : _ref5$autoCheckout,
+        _ref5$saveShippingDet = _ref5.saveShippingDetails,
+        saveShippingDetails = _ref5$saveShippingDet === void 0 ? false : _ref5$saveShippingDet,
+        requireSignature = _ref5.requireSignature,
+        _ref5$fibonacci = _ref5.fibonacci,
+        fibonacci = _ref5$fibonacci === void 0 ? 10 : _ref5$fibonacci;
 
-    var total = calcTotal(orderItems);
+    var total = 0; //calcTotal(orderItems)
+
     var signatureRequired = needsSignature(requireSignature, total);
     var order = (_order = {
       email: email,
@@ -2346,11 +2257,11 @@ function makeOrderFactory(dependencies) {
       this.logEvent(message, 'undo');
     }), _defineProperty(_order, "logStateChange", function logStateChange(message) {
       this.logEvent(message, 'stateChange');
-    }), _defineProperty(_order, "readLog", function readLog(_ref8) {
-      var _ref8$index = _ref8.index,
-          index = _ref8$index === void 0 ? null : _ref8$index,
-          _ref8$type = _ref8.type,
-          type = _ref8$type === void 0 ? null : _ref8$type;
+    }), _defineProperty(_order, "readLog", function readLog(_ref6) {
+      var _ref6$index = _ref6.index,
+          index = _ref6$index === void 0 ? null : _ref6$index,
+          _ref6$type = _ref6.type,
+          type = _ref6$type === void 0 ? null : _ref6$type;
       var indx = parseInt(index);
       if (indx < this.log.length && indx !== NaN) return this.log[indx];
       if (type === 'first') return this.log[0];
@@ -2377,7 +2288,7 @@ function makeOrderFactory(dependencies) {
  * @param {Order} order
  */
 
-function approve(_x13) {
+function approve(_x9) {
   return _approve.apply(this, arguments);
 }
 /**
@@ -2386,11 +2297,11 @@ function approve(_x13) {
  */
 
 function _approve() {
-  _approve = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee18(order) {
+  _approve = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee14(order) {
     var approvedOrder;
-    return _regeneratorRuntime().wrap(function _callee18$(_context18) {
+    return _regeneratorRuntime().wrap(function _callee14$(_context14) {
       while (1) {
-        switch (_context18.prev = _context18.next) {
+        switch (_context14.prev = _context14.next) {
           case 0:
             console.debug({
               msg: 'got order',
@@ -2403,19 +2314,19 @@ function _approve() {
               approvedOrder: approvedOrder
             });
             approvedOrder.logStateChange(OrderStatus.APPROVED);
-            return _context18.abrupt("return", runOrderWorkflow(approvedOrder));
+            return _context14.abrupt("return", runOrderWorkflow(approvedOrder));
 
           case 5:
           case "end":
-            return _context18.stop();
+            return _context14.stop();
         }
       }
-    }, _callee18);
+    }, _callee14);
   }));
   return _approve.apply(this, arguments);
 }
 
-function cancel(_x14) {
+function cancel(_x10) {
   return _cancel.apply(this, arguments);
 }
 /**
@@ -2425,33 +2336,33 @@ function cancel(_x14) {
  */
 
 function _cancel() {
-  _cancel = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee19(order) {
+  _cancel = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee15(order) {
     var canceledOrder;
-    return _regeneratorRuntime().wrap(function _callee19$(_context19) {
+    return _regeneratorRuntime().wrap(function _callee15$(_context15) {
       while (1) {
-        switch (_context19.prev = _context19.next) {
+        switch (_context15.prev = _context15.next) {
           case 0:
-            _context19.next = 2;
+            _context15.next = 2;
             return order.update({
               orderStatus: OrderStatus.CANCELED
             });
 
           case 2:
-            canceledOrder = _context19.sent;
+            canceledOrder = _context15.sent;
             canceledOrder.logStateChange(OrderStatus.CANCELED);
-            return _context19.abrupt("return", runOrderWorkflow(canceledOrder));
+            return _context15.abrupt("return", runOrderWorkflow(canceledOrder));
 
           case 5:
           case "end":
-            return _context19.stop();
+            return _context15.stop();
         }
       }
-    }, _callee19);
+    }, _callee15);
   }));
   return _cancel.apply(this, arguments);
 }
 
-function checkout(_x15) {
+function checkout(_x11) {
   return _checkout.apply(this, arguments);
 }
 /**
@@ -2460,27 +2371,27 @@ function checkout(_x15) {
  */
 
 function _checkout() {
-  _checkout = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee20(order) {
-    return _regeneratorRuntime().wrap(function _callee20$(_context20) {
+  _checkout = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee16(order) {
+    return _regeneratorRuntime().wrap(function _callee16$(_context16) {
       while (1) {
-        switch (_context20.prev = _context20.next) {
+        switch (_context16.prev = _context16.next) {
           case 0:
-            return _context20.abrupt("return", approve(order));
+            return _context16.abrupt("return", approve(order));
 
           case 1:
           case "end":
-            return _context20.stop();
+            return _context16.stop();
         }
       }
-    }, _callee20);
+    }, _callee16);
   }));
   return _checkout.apply(this, arguments);
 }
 
-function errorCallback(_ref9) {
-  var port = _ref9.port,
-      order = _ref9.model,
-      error = _ref9.error;
+function errorCallback(_ref7) {
+  var port = _ref7.port,
+      order = _ref7.model,
+      error = _ref7.error;
 
   var errMsg = _defineProperty({
     error: error,
@@ -2497,11 +2408,11 @@ function errorCallback(_ref9) {
  * @param {{model:Order}} param0
  */
 
-function timeoutCallback(_ref10) {
-  var port = _ref10.port,
-      ports = _ref10.ports,
-      adapterFn = _ref10.adapterFn,
-      order = _ref10.model;
+function timeoutCallback(_ref8) {
+  var port = _ref8.port,
+      ports = _ref8.ports,
+      adapterFn = _ref8.adapterFn,
+      order = _ref8.model;
   console.error('timeout...', port); //order.logError(timeoutCallback.name, 'timeout')
 
   order.emit(timeoutCallback.name, errMsg);
@@ -2513,7 +2424,7 @@ function timeoutCallback(_ref10) {
  * reverse) if we get here.
  */
 
-function returnInventory(_x16) {
+function returnInventory(_x12) {
   return _returnInventory.apply(this, arguments);
 }
 /**
@@ -2524,50 +2435,50 @@ function returnInventory(_x16) {
  */
 
 function _returnInventory() {
-  _returnInventory = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee21(order) {
-    return _regeneratorRuntime().wrap(function _callee21$(_context21) {
+  _returnInventory = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee17(order) {
+    return _regeneratorRuntime().wrap(function _callee17$(_context17) {
       while (1) {
-        switch (_context21.prev = _context21.next) {
+        switch (_context17.prev = _context17.next) {
           case 0:
             console.log(returnInventory.name);
             order.logEvent(returnInventory.name, 'timeout');
             order.emit(returnInventory.name, errMsg);
-            return _context21.abrupt("return", order.update({
+            return _context17.abrupt("return", order.update({
               orderStatus: OrderStatus.CANCELED
             }));
 
           case 4:
           case "end":
-            return _context21.stop();
+            return _context17.stop();
         }
       }
-    }, _callee21);
+    }, _callee17);
   }));
   return _returnInventory.apply(this, arguments);
 }
 
-function returnShipment(_x17) {
+function returnShipment(_x13) {
   return _returnShipment.apply(this, arguments);
 }
 
 function _returnShipment() {
-  _returnShipment = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee22(order) {
-    return _regeneratorRuntime().wrap(function _callee22$(_context22) {
+  _returnShipment = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee18(order) {
+    return _regeneratorRuntime().wrap(function _callee18$(_context18) {
       while (1) {
-        switch (_context22.prev = _context22.next) {
+        switch (_context18.prev = _context18.next) {
           case 0:
             console.log(returnShipment.name);
             order.logUndo(returnShipment.name);
-            return _context22.abrupt("return", order.update({
+            return _context18.abrupt("return", order.update({
               orderStatus: OrderStatus.CANCELED
             }));
 
           case 3:
           case "end":
-            return _context22.stop();
+            return _context18.stop();
         }
       }
-    }, _callee22);
+    }, _callee18);
   }));
   return _returnShipment.apply(this, arguments);
 }
@@ -2581,7 +2492,7 @@ function accountOrder(req, res) {}
  * reverse) if we get here.
  */
 
-function returnDelivery(_x18) {
+function returnDelivery(_x14) {
   return _returnDelivery.apply(this, arguments);
 }
 /**
@@ -2589,47 +2500,47 @@ function returnDelivery(_x18) {
  */
 
 function _returnDelivery() {
-  _returnDelivery = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee23(order) {
-    return _regeneratorRuntime().wrap(function _callee23$(_context23) {
+  _returnDelivery = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee19(order) {
+    return _regeneratorRuntime().wrap(function _callee19$(_context19) {
       while (1) {
-        switch (_context23.prev = _context23.next) {
+        switch (_context19.prev = _context19.next) {
           case 0:
             console.log(returnDelivery.name);
-            return _context23.abrupt("return", order.update({
+            return _context19.abrupt("return", order.update({
               orderStatus: OrderStatus.CANCELED
             }));
 
           case 2:
           case "end":
-            return _context23.stop();
+            return _context19.stop();
         }
       }
-    }, _callee23);
+    }, _callee19);
   }));
   return _returnDelivery.apply(this, arguments);
 }
 
-function cancelPayment(_x19) {
+function cancelPayment(_x15) {
   return _cancelPayment.apply(this, arguments);
 }
 
 function _cancelPayment() {
-  _cancelPayment = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee24(order) {
-    return _regeneratorRuntime().wrap(function _callee24$(_context24) {
+  _cancelPayment = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee20(order) {
+    return _regeneratorRuntime().wrap(function _callee20$(_context20) {
       while (1) {
-        switch (_context24.prev = _context24.next) {
+        switch (_context20.prev = _context20.next) {
           case 0:
             console.log(cancelPayment.name);
-            return _context24.abrupt("return", order.update({
+            return _context20.abrupt("return", order.update({
               orderStatus: OrderStatus.CANCELED
             }));
 
           case 2:
           case "end":
-            return _context24.stop();
+            return _context20.stop();
         }
       }
-    }, _callee24);
+    }, _callee20);
   }));
   return _cancelPayment.apply(this, arguments);
 }
@@ -2657,7 +2568,7 @@ var OrderError = /*#__PURE__*/function (_Error) {
  * @returns
  */
 
-function cancelOrders(_x20) {
+function cancelOrders(_x16) {
   return _cancelOrders.apply(this, arguments);
 }
 /**
@@ -2667,11 +2578,11 @@ function cancelOrders(_x20) {
  */
 
 function _cancelOrders() {
-  _cancelOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee25(data) {
+  _cancelOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee21(data) {
     var cancelOrdersTransform;
-    return _regeneratorRuntime().wrap(function _callee25$(_context25) {
+    return _regeneratorRuntime().wrap(function _callee21$(_context21) {
       while (1) {
-        switch (_context25.prev = _context25.next) {
+        switch (_context21.prev = _context21.next) {
           case 0:
             cancelOrdersTransform = new stream__WEBPACK_IMPORTED_MODULE_3__.Transform({
               objectMode: true,
@@ -2682,7 +2593,7 @@ function _cancelOrders() {
                 })));
               }
             });
-            _context25.next = 3;
+            _context21.next = 3;
             return this.list({
               writable: this.createWriteStream(),
               transform: cancelOrdersTransform,
@@ -2690,21 +2601,21 @@ function _cancelOrders() {
             });
 
           case 3:
-            return _context25.abrupt("return", {
+            return _context21.abrupt("return", {
               status: 'ok'
             });
 
           case 4:
           case "end":
-            return _context25.stop();
+            return _context21.stop();
         }
       }
-    }, _callee25, this);
+    }, _callee21, this);
   }));
   return _cancelOrders.apply(this, arguments);
 }
 
-function approveOrders(_x21) {
+function approveOrders(_x17) {
   return _approveOrders.apply(this, arguments);
 }
 /**
@@ -2713,21 +2624,21 @@ function approveOrders(_x21) {
  */
 
 function _approveOrders() {
-  _approveOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee26(data) {
+  _approveOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee22(data) {
     var approveOrdersTransform;
-    return _regeneratorRuntime().wrap(function _callee26$(_context26) {
+    return _regeneratorRuntime().wrap(function _callee22$(_context22) {
       while (1) {
-        switch (_context26.prev = _context26.next) {
+        switch (_context22.prev = _context22.next) {
           case 0:
-            _context26.prev = 0;
+            _context22.prev = 0;
             console.log(x);
-            _context26.next = 7;
+            _context22.next = 7;
             break;
 
           case 4:
-            _context26.prev = 4;
-            _context26.t0 = _context26["catch"](0);
-            throw new OrderError(_context26.t0, 401);
+            _context22.prev = 4;
+            _context22.t0 = _context22["catch"](0);
+            throw new OrderError(_context22.t0, 401);
 
           case 7:
             approveOrdersTransform = new stream__WEBPACK_IMPORTED_MODULE_3__.Transform({
@@ -2739,7 +2650,7 @@ function _approveOrders() {
                 })));
               }
             });
-            _context26.next = 10;
+            _context22.next = 10;
             return this.list({
               writable: this.createWriteStream(),
               transform: approveOrdersTransform,
@@ -2747,16 +2658,16 @@ function _approveOrders() {
             });
 
           case 10:
-            return _context26.abrupt("return", {
+            return _context22.abrupt("return", {
               status: 'ok'
             });
 
           case 11:
           case "end":
-            return _context26.stop();
+            return _context22.stop();
         }
       }
-    }, _callee26, this, [[0, 4]]);
+    }, _callee22, this, [[0, 4]]);
   }));
   return _approveOrders.apply(this, arguments);
 }
@@ -2766,16 +2677,16 @@ function trackAsyncContext() {
 }
 
 function _trackAsyncContext() {
-  _trackAsyncContext = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee27() {
+  _trackAsyncContext = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee23() {
     var ctx, dur, startTime, metric;
-    return _regeneratorRuntime().wrap(function _callee27$(_context27) {
+    return _regeneratorRuntime().wrap(function _callee23$(_context23) {
       while (1) {
-        switch (_context27.prev = _context27.next) {
+        switch (_context23.prev = _context23.next) {
           case 0:
             ctx = this.getContext();
             dur = 'test-duration';
             startTime = Date.now();
-            _context27.next = 5;
+            _context23.next = 5;
             return new Promise(function (resolve) {
               return setTimeout(resolve, 100);
             });
@@ -2793,46 +2704,58 @@ function _trackAsyncContext() {
             };
             this.emit('metric', metric);
             console.log(metric.ctx);
-            return _context27.abrupt("return", metric);
+            return _context23.abrupt("return", metric);
 
           case 10:
           case "end":
-            return _context27.stop();
+            return _context23.stop();
         }
       }
-    }, _callee27, this);
+    }, _callee23, this);
   }));
   return _trackAsyncContext.apply(this, arguments);
 }
 
-function customHttpStatus() {
+function customHttpStatus(_x18) {
   return _customHttpStatus.apply(this, arguments);
 }
 
 function _customHttpStatus() {
-  _customHttpStatus = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee28() {
-    return _regeneratorRuntime().wrap(function _callee28$(_context28) {
+  _customHttpStatus = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee24(data) {
+    return _regeneratorRuntime().wrap(function _callee24$(_context24) {
       while (1) {
-        switch (_context28.prev = _context28.next) {
+        switch (_context24.prev = _context24.next) {
           case 0:
-            _context28.prev = 0;
+            if (!data.args.code) {
+              _context24.next = 2;
+              break;
+            }
+
+            throw new OrderError(data.args.message || 'custom status', data.args.code);
+
+          case 2:
+            _context24.prev = 2;
             console.log(x);
-            _context28.next = 7;
+            _context24.next = 9;
             break;
 
-          case 4:
-            _context28.prev = 4;
-            _context28.t0 = _context28["catch"](0);
-            throw new OrderError(_context28.t0, 401);
+          case 6:
+            _context24.prev = 6;
+            _context24.t0 = _context24["catch"](2);
+            throw new OrderError(_context24.t0, 500);
 
-          case 7:
+          case 9:
           case "end":
-            return _context28.stop();
+            return _context24.stop();
         }
       }
-    }, _callee28, null, [[0, 4]]);
+    }, _callee24, null, [[2, 6]]);
   }));
   return _customHttpStatus.apply(this, arguments);
+}
+
+function testContainsMany(data) {
+  return this.inventory(data);
 }
 
 /***/ }),
@@ -2845,6 +2768,7 @@ function _customHttpStatus() {
 /*! export approveOrders [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .approveOrders */
 /*! export cancelOrders [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .cancelOrders */
 /*! export customHttpStatus [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .customHttpStatus */
+/*! export testContainsMany [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .testContainsMany */
 /*! export trackAsyncContext [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .trackAsyncContext */
 /*! other exports [not provided] [no usage info] */
 /*! runtime requirements: __webpack_require__, __webpack_exports__, __webpack_require__.d, __webpack_require__.r, __webpack_require__.* */
@@ -2856,7 +2780,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "cancelOrders": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.cancelOrders,
 /* harmony export */   "approveOrders": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.approveOrders,
 /* harmony export */   "trackAsyncContext": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.trackAsyncContext,
-/* harmony export */   "customHttpStatus": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.customHttpStatus
+/* harmony export */   "customHttpStatus": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.customHttpStatus,
+/* harmony export */   "testContainsMany": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.testContainsMany
 /* harmony export */ });
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./order */ "./src/domain/order.js");
 
