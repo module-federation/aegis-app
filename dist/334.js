@@ -326,7 +326,7 @@ function validateModel(model, changes, event) {
   } // keep a history of the last saved model
 
 
-  var input = _objectSpread(_objectSpread({}, changes), {}, _defineProperty({}, prevmodel, JSON.parse(JSON.stringify(model)))); // Validate just the input data
+  var input = _objectSpread(_objectSpread({}, changes), {}, _defineProperty({}, prevmodel, JSON.parse(JSON.stringify(model || {})))); // Validate just the input data
 
 
   var updates = model[validations].filter(function (v) {
@@ -1341,7 +1341,9 @@ var checkItems = function checkItems(orderItems) {
     return items;
   }
 
-  throw new Error('order items invalid');
+  throw new Error('order items invalid', {
+    items: items
+  });
 };
 /**
  * Calculate order total
@@ -2213,9 +2215,7 @@ function makeOrderFactory(dependencies) {
         _ref5$fibonacci = _ref5.fibonacci,
         fibonacci = _ref5$fibonacci === void 0 ? 10 : _ref5$fibonacci;
 
-    var total = 0; //calcTotal(orderItems)
-
-    var signatureRequired = needsSignature(requireSignature, total);
+    //const signatureRequired = needsSignature(requireSignature, total)
     var order = (_order = {
       email: email,
       lastName: lastName,
@@ -2225,7 +2225,7 @@ function makeOrderFactory(dependencies) {
       creditCardNumber: creditCardNumber,
       billingAddress: billingAddress,
       shippingAddress: shippingAddress,
-      signatureRequired: signatureRequired,
+      signatureRequired: false,
       saveShippingDetails: saveShippingDetails,
       shippingPriority: shippingPriority,
       fibonacci: fibonacci,
@@ -2233,7 +2233,7 @@ function makeOrderFactory(dependencies) {
       time: 0,
       estimatedArrival: null,
       log: [logMessage('order created')]
-    }, _defineProperty(_order, orderTotal, total), _defineProperty(_order, orderStatus, OrderStatus.PENDING), _defineProperty(_order, orderNo, dependencies.uuid()), _defineProperty(_order, "desc", 'new order 25'), _defineProperty(_order, "paymentAccepted", function paymentAccepted() {
+    }, _defineProperty(_order, orderTotal, 0), _defineProperty(_order, orderStatus, OrderStatus.PENDING), _defineProperty(_order, orderNo, dependencies.uuid()), _defineProperty(_order, "desc", 'new order 25'), _defineProperty(_order, "paymentAccepted", function paymentAccepted() {
       return true;
     }), _defineProperty(_order, "autoCheckout", function autoCheckout() {
       return _autoCheckout;
@@ -2754,8 +2754,31 @@ function _customHttpStatus() {
   return _customHttpStatus.apply(this, arguments);
 }
 
-function testContainsMany(data) {
-  return this.inventory(data);
+function testContainsMany(_x19) {
+  return _testContainsMany.apply(this, arguments);
+}
+
+function _testContainsMany() {
+  _testContainsMany = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee25(data) {
+    return _regeneratorRuntime().wrap(function _callee25$(_context25) {
+      while (1) {
+        switch (_context25.prev = _context25.next) {
+          case 0:
+            console.log('Order.testContainsMany port func', data);
+            data.args["this"].inventory(data.args); //await this.save()
+
+            return _context25.abrupt("return", {
+              status: 'ok'
+            });
+
+          case 3:
+          case "end":
+            return _context25.stop();
+        }
+      }
+    }, _callee25);
+  }));
+  return _testContainsMany.apply(this, arguments);
 }
 
 /***/ }),

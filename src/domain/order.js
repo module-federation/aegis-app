@@ -116,7 +116,7 @@ export const checkItems = function (orderItems) {
   if (items.length > 0 && items.every(checkItem)) {
     return items
   }
-  throw new Error('order items invalid')
+  throw new Error('order items invalid', { items })
 }
 
 /**
@@ -660,8 +660,7 @@ export function makeOrderFactory (dependencies) {
     requireSignature,
     fibonacci = 10
   }) {
-    const total = 0 //calcTotal(orderItems)
-    const signatureRequired = needsSignature(requireSignature, total)
+    //const signatureRequired = needsSignature(requireSignature, total)
     const order = {
       email,
       lastName,
@@ -671,7 +670,7 @@ export function makeOrderFactory (dependencies) {
       creditCardNumber,
       billingAddress,
       shippingAddress,
-      signatureRequired,
+      signatureRequired: false,
       saveShippingDetails,
       shippingPriority,
       fibonacci,
@@ -679,7 +678,7 @@ export function makeOrderFactory (dependencies) {
       time: 0,
       estimatedArrival: null,
       log: [logMessage('order created')],
-      [orderTotal]: total,
+      [orderTotal]: 0,
       [orderStatus]: OrderStatus.PENDING,
       [orderNo]: dependencies.uuid(),
       desc: 'new order 25',
@@ -957,6 +956,10 @@ export async function customHttpStatus (data) {
   }
 }
 
-export function testContainsMany (data) {
-  return this.inventory(data)
+export async function testContainsMany (data) {
+  console.log('Order.testContainsMany port func', data)
+  data.args.
+  this.inventory(data.args)
+  //await this.save()
+  return { status: 'ok' }
 }

@@ -164,7 +164,10 @@ export function validateModel (model, changes, event) {
   }
 
   // keep a history of the last saved model
-  const input = { ...changes, [prevmodel]: JSON.parse(JSON.stringify(model)) }
+  const input = {
+    ...changes,
+    [prevmodel]: JSON.parse(JSON.stringify(model || {}))
+  }
 
   // Validate just the input data
   const updates = model[validations]
