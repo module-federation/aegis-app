@@ -49,8 +49,8 @@
   "dependencies": {
     "@assemblyscript/loader": "^0.19.10",
     "axios": "^0.21.1",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.1",
     "express-session": "^1.17.1",
     "kafkajs": "^1.14.0",
     "multicast-dns": "^7.2.5",
