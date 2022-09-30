@@ -95,8 +95,10 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
         archive(id);
       }
     }, {
-      key: "stevemethod",
-      value: function stevemethod() {}
+      key: "chat",
+      value: function chat() {
+        console.log('chat datasource custom method');
+      }
     }]);
 
     return DataSourceMongoDbArchive;
@@ -517,6 +519,12 @@ var Order = {
       foreignKey: 'itemId',
       arrayKey: 'orderItems',
       desc: 'An order contains a list of inventory items to ship.'
+    },
+    chat: {
+      modelName: 'user',
+      type: 'custom',
+      foreignKey: 'userId',
+      desc: 'A custom relation used for integrated chat'
     }
   },
   routes: [{

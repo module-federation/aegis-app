@@ -266,6 +266,12 @@ export const Order = {
       foreignKey: 'itemId',
       arrayKey: 'orderItems',
       desc: 'An order contains a list of inventory items to ship.'
+    },
+    chat: {
+      modelName: 'user',
+      type: 'custom',
+      foreignKey: 'userId',
+      desc: 'A custom relation used for integrated chat'
     }
   },
   routes: [

@@ -41,7 +41,9 @@ export const DataSourceAdapterMongoDb = function (
       archive(id)
     }
 
-    stevemethod () {}
+    chat () {
+      console.log('chat datasource custom method')
+    }
   }
 
   return DataSourceMongoDbArchive

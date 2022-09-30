@@ -678,6 +678,7 @@ export function makeOrderFactory (dependencies) {
       [orderStatus]: OrderStatus.PENDING,
       [orderNo]: dependencies.uuid(),
       desc: 'new order 25',
+      itemId: null,
       /**
        * Has payment for the order been authorized?
        */
@@ -953,6 +954,7 @@ export async function customHttpStatus (data) {
 }
 
 export async function testContainsMany (data) {
-  this.listSync({})
+  this.chat()
   return { status: 'ok' }
 }
+
