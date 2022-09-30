@@ -537,7 +537,7 @@ var encryptProperties = function encryptProperties() {
           return _this[key] ? _defineProperty({}, key, (0,_domain_utils__WEBPACK_IMPORTED_MODULE_0__.decrypt)(_this[key])) : {};
         }).reduce(function (p, c) {
           return _objectSpread(_objectSpread({}, p), c);
-        });
+        }, {});
       }
     });
   };
@@ -2002,14 +2002,10 @@ var processPendingOrder = (0,_domain_utils__WEBPACK_IMPORTED_MODULE_1__.asyncPip
 
 var OrderActions = (_OrderActions = {}, _defineProperty(_OrderActions, OrderStatus.PENDING, function (order) {
   /**@type {Order} */
-  var processedOrder = processPendingOrder(order).then(function (o) {
-    if (o.autoCheckout()) {
-      console.log(o);
-      return o; // o.update({ orderStatus: OrderStatus.APPROVED }, false)
-    }
-  });
-  processedOrder.then(function (o) {
-    return OrderActions.APPROVED(o);
+  getCustomerOrder(order).then(function (order) {
+    return runOrderWorkflow(order.updateSync({
+      orderStatus: OrderStatus.APPROVED
+    }));
   });
 }), _defineProperty(_OrderActions, OrderStatus.APPROVED, function (order) {
   console.log('typeof order', _typeof(order));
@@ -2764,19 +2760,17 @@ function _testContainsMany() {
       while (1) {
         switch (_context25.prev = _context25.next) {
           case 0:
-            console.log('Order.testContainsMany port func', data);
-            data.args["this"].inventory(data.args); //await this.save()
-
+            this.listSync({});
             return _context25.abrupt("return", {
               status: 'ok'
             });
 
-          case 3:
+          case 2:
           case "end":
             return _context25.stop();
         }
       }
-    }, _callee25);
+    }, _callee25, this);
   }));
   return _testContainsMany.apply(this, arguments);
 }

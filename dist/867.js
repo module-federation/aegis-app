@@ -481,7 +481,6 @@ function notify() {
 /*! export trackShipment [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/shipping-adapter.js .trackShipment */
 /*! export validateAddress [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/address-adapter.js .validateAddress */
 /*! export verifyDelivery [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/shipping-adapter.js .verifyDelivery */
-/*! export websockeTerminate [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websockeTerminate */
 /*! export websocketClose [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websocketClose */
 /*! export websocketConnect [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websocketConnect */
 /*! export websocketOnClose [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websocketOnClose */
@@ -491,6 +490,7 @@ function notify() {
 /*! export websocketPing [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websocketPing */
 /*! export websocketSend [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websocketSend */
 /*! export websocketStatus [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websocketStatus */
+/*! export websocketTerminate [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websocketTerminate */
 /*! other exports [not provided] [no usage info] */
 /*! runtime requirements: __webpack_require__, __webpack_exports__, __webpack_require__.d, __webpack_require__.r, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
@@ -502,7 +502,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "serviceLocatorAnswer": () => /* reexport safe */ _service_locator__WEBPACK_IMPORTED_MODULE_0__.serviceLocatorAnswer,
 /* harmony export */   "serviceLocatorAsk": () => /* reexport safe */ _service_locator__WEBPACK_IMPORTED_MODULE_0__.serviceLocatorAsk,
 /* harmony export */   "serviceLocatorInit": () => /* reexport safe */ _service_locator__WEBPACK_IMPORTED_MODULE_0__.serviceLocatorInit,
-/* harmony export */   "websockeTerminate": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websockeTerminate,
 /* harmony export */   "websocketClose": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websocketClose,
 /* harmony export */   "websocketConnect": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websocketConnect,
 /* harmony export */   "websocketOnClose": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websocketOnClose,
@@ -512,6 +511,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "websocketPing": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websocketPing,
 /* harmony export */   "websocketSend": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websocketSend,
 /* harmony export */   "websocketStatus": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websocketStatus,
+/* harmony export */   "websocketTerminate": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websocketTerminate,
 /* harmony export */   "validateAddress": () => /* reexport safe */ _address_adapter__WEBPACK_IMPORTED_MODULE_2__.validateAddress,
 /* harmony export */   "listen": () => /* reexport safe */ _event_adapter__WEBPACK_IMPORTED_MODULE_3__.listen,
 /* harmony export */   "notify": () => /* reexport safe */ _event_adapter__WEBPACK_IMPORTED_MODULE_3__.notify,
@@ -1997,7 +1997,6 @@ function verifyDelivery(service) {
   !*** ./src/adapters/websocket-adapter.js ***!
   \*******************************************/
 /*! namespace exports */
-/*! export websockeTerminate [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export websocketClose [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export websocketConnect [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export websocketOnClose [provided] [no usage info] [missing usage info prevents renaming] */
@@ -2007,6 +2006,7 @@ function verifyDelivery(service) {
 /*! export websocketPing [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export websocketSend [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export websocketStatus [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export websocketTerminate [provided] [no usage info] [missing usage info prevents renaming] */
 /*! other exports [not provided] [no usage info] */
 /*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
@@ -2023,7 +2023,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "websocketOnOpen": () => /* binding */ websocketOnOpen,
 /* harmony export */   "websocketOnPong": () => /* binding */ websocketOnPong,
 /* harmony export */   "websocketStatus": () => /* binding */ websocketStatus,
-/* harmony export */   "websockeTerminate": () => /* binding */ websockeTerminate
+/* harmony export */   "websocketTerminate": () => /* binding */ websocketTerminate
 /* harmony export */ });
 /* harmony import */ var ws__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ws */ "./node_modules/ws/index.js");
 /* harmony import */ var ws__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(ws__WEBPACK_IMPORTED_MODULE_0__);
@@ -2226,7 +2226,7 @@ function websocketStatus() {
     if (socket) return socket.readyState;
   };
 }
-function websockeTerminate() {
+function websocketTerminate() {
   return function () {
     if (socket) return socket.terminate();
   };

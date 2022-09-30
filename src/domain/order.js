@@ -511,13 +511,9 @@ const OrderActions = {
    */
   [OrderStatus.PENDING]: order => {
     /**@type {Order} */
-    const processedOrder = processPendingOrder(order).then(o => {
-      if (o.autoCheckout()) {
-        console.log(o)
-        return o // o.update({ orderStatus: OrderStatus.APPROVED }, false)
-      }
-    })
-    processedOrder.then(o => OrderActions.APPROVED(o))
+    getCustomerOrder(order).then(order =>
+      runOrderWorkflow(order.updateSync({ orderStatus: OrderStatus.APPROVED }))
+    )
   },
 
   /**
@@ -957,9 +953,6 @@ export async function customHttpStatus (data) {
 }
 
 export async function testContainsMany (data) {
-  console.log('Order.testContainsMany port func', data)
-  data.args.
-  this.inventory(data.args)
-  //await this.save()
+  this.listSync({})
   return { status: 'ok' }
 }

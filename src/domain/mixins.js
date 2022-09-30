@@ -327,7 +327,7 @@ export const encryptProperties = (...propKeys) => o => {
     decrypt () {
       return keys
         .map(key => (this[key] ? { [key]: decrypt(this[key]) } : {}))
-        .reduce((p, c) => ({ ...p, ...c }))
+        .reduce((p, c) => ({ ...p, ...c }), {})
     }
   }
 }
