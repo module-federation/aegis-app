@@ -189,7 +189,7 @@
  */
 
 /**
- * @callback addModqqqqel
+ * @callback addModel
  * @param {{ searchTerm1, searchTerm2, searchTermN }} input
  * @returns {Promise<Model>}
  */

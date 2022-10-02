@@ -3,5 +3,6 @@ export {
   approveOrders,
   trackAsyncContext,
   customHttpStatus,
-  testContainsMany,
+  testContainsMany
 } from './order'
+export { listSolarSystemsPort } from './Galaxy'

@@ -109,6 +109,102 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
 
 /***/ }),
 
+/***/ "./src/config/Galaxy.js":
+/*!******************************!*\
+  !*** ./src/config/Galaxy.js ***!
+  \******************************/
+/*! namespace exports */
+/*! export Galaxy [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Galaxy": () => /* binding */ Galaxy
+/* harmony export */ });
+
+/**
+ * @type {import('../domain/index').ModelSpecification}
+ */
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var Galaxy = {
+  endpoint: 'Galaxies',
+  modelName: 'Galaxy',
+  factory: function factory() {
+    return function (args) {
+      return _objectSpread({}, args);
+    };
+  },
+  relations: {
+    solarSystems: {
+      modelName: 'SolarSystem',
+      type: 'oneToMany',
+      foreignKey: 'galaxyId'
+    }
+  },
+  ports: {
+    listSolarSystemsPort: {
+      service: 'Cosmology',
+      type: 'inbound',
+      timeout: 0 //path: '/galaxies/:id/:port'
+
+    }
+  }
+};
+
+/***/ }),
+
+/***/ "./src/config/SolarSystem.js":
+/*!***********************************!*\
+  !*** ./src/config/SolarSystem.js ***!
+  \***********************************/
+/*! namespace exports */
+/*! export SolarSystem [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "SolarSystem": () => /* binding */ SolarSystem
+/* harmony export */ });
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+/**
+ * @type {import('../domain/index').ModelSpecification}
+ */
+var SolarSystem = {
+  endpoint: 'SolarSystems',
+  modelName: 'SolarSystem',
+  factory: function factory() {
+    return function (args) {
+      return _objectSpread({}, args);
+    };
+  },
+  relations: {
+    galaxy: {
+      modelName: 'Galaxy',
+      type: 'manyToOne',
+      foreignKey: 'galaxyId'
+    }
+  }
+};
+
+/***/ }),
+
 /***/ "./src/config/customer.js":
 /*!********************************!*\
   !*** ./src/config/customer.js ***!
@@ -188,8 +284,10 @@ var Customer = {
   \*****************************/
 /*! namespace exports */
 /*! export Customer [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/customer.js .Customer */
+/*! export Galaxy [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/Galaxy.js .Galaxy */
 /*! export Inventory [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/inventory.js .Inventory */
 /*! export Order [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/order.js .Order */
+/*! export SolarSystem [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/SolarSystem.js .SolarSystem */
 /*! export User [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/user.js .User */
 /*! export WebSwitch [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/webswitch.js .WebSwitch */
 /*! other exports [not provided] [no usage info] */
@@ -203,13 +301,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Order": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_1__.Order,
 /* harmony export */   "Customer": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_2__.Customer,
 /* harmony export */   "User": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_3__.User,
-/* harmony export */   "Inventory": () => /* reexport safe */ _inventory__WEBPACK_IMPORTED_MODULE_4__.Inventory
+/* harmony export */   "Inventory": () => /* reexport safe */ _inventory__WEBPACK_IMPORTED_MODULE_4__.Inventory,
+/* harmony export */   "Galaxy": () => /* reexport safe */ _Galaxy__WEBPACK_IMPORTED_MODULE_5__.Galaxy,
+/* harmony export */   "SolarSystem": () => /* reexport safe */ _SolarSystem__WEBPACK_IMPORTED_MODULE_6__.SolarSystem
 /* harmony export */ });
 /* harmony import */ var _webswitch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./webswitch */ "./src/config/webswitch.js");
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./order */ "./src/config/order.js");
 /* harmony import */ var _customer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./customer */ "./src/config/customer.js");
 /* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./user */ "./src/config/user.js");
 /* harmony import */ var _inventory__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./inventory */ "./src/config/inventory.js");
+/* harmony import */ var _Galaxy__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Galaxy */ "./src/config/Galaxy.js");
+/* harmony import */ var _SolarSystem__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./SolarSystem */ "./src/config/SolarSystem.js");
+
+
 
 
 
@@ -1272,7 +1376,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 /**
- * @callback addModqqqqel
+ * @callback addModel
  * @param {{ searchTerm1, searchTerm2, searchTermN }} input
  * @returns {Promise<Model>}
  */
