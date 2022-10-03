@@ -1,3 +1,5 @@
+import { systemsInGalaxy } from './SolarSystem'
+
 export {
   cancelOrders,
   approveOrders,
@@ -5,4 +7,5 @@ export {
   customHttpStatus,
   testContainsMany
 } from './order'
-export { listSolarSystemsPort } from './Galaxy'
+export { listSolarSystems } from './Galaxy'
+export { systemsInGalaxy } from './SolarSystem'

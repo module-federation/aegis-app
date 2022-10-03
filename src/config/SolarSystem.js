@@ -11,5 +11,12 @@ export const SolarSystem = {
       type: 'manyToOne',
       foreignKey: 'galaxyId'
     }
+  },
+  ports: {
+    systemsInGalaxy: {
+      service: 'Galaxy',
+      type: 'inbound',
+      timeout: 0
+    }
   }
 }

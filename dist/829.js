@@ -151,11 +151,10 @@ var Galaxy = {
     }
   },
   ports: {
-    listSolarSystemsPort: {
+    listSolarSystems: {
       service: 'Cosmology',
       type: 'inbound',
-      timeout: 0 //path: '/galaxies/:id/:port'
-
+      timeout: 0
     }
   }
 };
@@ -199,6 +198,13 @@ var SolarSystem = {
       modelName: 'Galaxy',
       type: 'manyToOne',
       foreignKey: 'galaxyId'
+    }
+  },
+  ports: {
+    systemsInGalaxy: {
+      service: 'Galaxy',
+      type: 'inbound',
+      timeout: 0
     }
   }
 };

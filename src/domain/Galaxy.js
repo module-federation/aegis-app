@@ -1,11 +1,16 @@
+'use strict'
+
 /**
  * @type {import('./index').ModelSpecification}
  */
-export async function listSolarSystemsPort (data) {
+export async function listSolarSystems (data) {
   console.log({ data })
-  const result = await this.listRelated('SOLARSYSTEM', {
-    options: { filter: { galaxyId: data.id } }
-  })
-  console.log({ result })
-  return { result }
+  // return { SOLARSYSTEMS: await this.solarSystems() }
+  const solarSystem = await this.fetchRelatedModel('SOLARSYSTEM')
+  console.log({ solarSystem })
+  return { SOLARSYSTEMS: await solarSystem.systemsInGalaxy(data) }
 }
+
+export async function receiveSignal (data) {}
+
+export async function sendSignal (data) {}

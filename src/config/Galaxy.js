@@ -15,11 +15,10 @@ export const Galaxy = {
     }
   },
   ports: {
-    listSolarSystemsPort: {
+    listSolarSystems: {
       service: 'Cosmology',
       type: 'inbound',
       timeout: 0
-      //path: '/galaxies/:id/:port'
     }
   }
 }
