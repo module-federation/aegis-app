@@ -12,6 +12,10 @@ export async function planetsInSolarSystem (data) {
   return systems
 }
 
-export async function receiveSignal (data) {}
+export async function receiveSignal (data) {
+  console.log({ fn: receiveSignal.name, o: 'Planet' })
+}
 
-export async function sendSignal (data) {}
+export async function sendSignal (data) {
+  console.log({ fn: sendSignal.name, o: 'Planet' })
+}

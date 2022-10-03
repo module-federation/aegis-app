@@ -16,9 +16,16 @@ export const Galaxy = {
   },
   ports: {
     listSolarSystems: {
-      service: 'Cosmology',
+      service: 'Cosmos',
       type: 'inbound',
       timeout: 0
+    },
+    broadcastGalaticSignal: {
+      service: 'Cosmos',
+      type: 'inbound',
+      timeout: 0,
+      consumesEvent: 'broadcastGalaticSignal',
+      producesEvent: 'galacticSignalBroadcasting'
     }
   }
 }

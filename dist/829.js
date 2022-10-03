@@ -152,9 +152,16 @@ var Galaxy = {
   },
   ports: {
     listSolarSystems: {
-      service: 'Cosmology',
+      service: 'Cosmos',
       type: 'inbound',
       timeout: 0
+    },
+    broadcastGalaticSignal: {
+      service: 'Cosmos',
+      type: 'inbound',
+      timeout: 0,
+      consumesEvent: 'broadcastGalaticSignal',
+      producesEvent: 'galacticSignalBroadcasting'
     }
   }
 };
@@ -202,9 +209,23 @@ var SolarSystem = {
   },
   ports: {
     systemsInGalaxy: {
-      service: 'Galaxy',
+      service: 'Cosmos',
       type: 'inbound',
       timeout: 0
+    },
+    receiveGalacticBroadcast: {
+      service: 'Cosmos',
+      type: 'inbound',
+      timeout: 1000,
+      consumesEvent: 'galacticSignalBroadcasting',
+      producesEvent: 'galacticSignalReceived'
+    },
+    broadcastSolarSystemSignal: {
+      service: 'Cosmos',
+      type: 'outbound',
+      timeout: 0,
+      consumesEvent: 'galacticSignalReceived',
+      producesEvent: 'solarSystemSignalBroadcast'
     }
   }
 };

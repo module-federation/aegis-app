@@ -7,5 +7,10 @@ export {
   customHttpStatus,
   testContainsMany
 } from './order'
-export { listSolarSystems } from './Galaxy'
-export { systemsInGalaxy } from './SolarSystem'
+export { listSolarSystems, broadcastGalaticSignal } from './Galaxy'
+export {
+  systemsInGalaxy,
+  broadcastSolarSystemSignal,
+  receiveGalacticBroadcast
+} from './SolarSystem'
+export { receiveSignal, sendSignal, planetsInSolarSystem } from './Planet'

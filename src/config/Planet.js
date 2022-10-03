@@ -22,15 +22,15 @@ export const Planet = {
       service: 'Galaxy',
       type: 'inbound',
       timeout: 0,
-      consumesEvent: 'planetSignalRequested',
-      producesEvent: 'planetSignalReceived'
+      consumesEvent: 'solarSystemSignalBroadcasting',
+      producesEvent: 'solarSystemSignalReceived'
     },
     sendSignal: {
       service: 'Galaxy',
       type: 'outbound ',
       timeout: 0,
-      consumesEvent: 'planetSignalRecevied',
-      producesEvent: 'planet'
+      consumesEvent: 'solarSystemSignalReceived',
+      producesEvent: 'notifyPlanet'
     }
   }
 }
