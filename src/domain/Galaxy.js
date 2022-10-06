@@ -11,6 +11,6 @@ export async function listSolarSystems (data) {
   return { SOLARSYSTEMS: await solarSystem.systemsInGalaxy(data) }
 }
 
-export async function broadcastGalaticSignal (data) {
-  console.log({ fn: receiveSignal.name, o: 'Galaxy' })
+export async function sendGalaticSignal (data) {
+  console.log({ fn: sendGalaticSignal.name, o: 'Galaxy' })
 }

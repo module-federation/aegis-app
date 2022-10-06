@@ -7,8 +7,8 @@ exports.modules = {
   !*** ./src/domain/Galaxy.js ***!
   \******************************/
 /*! namespace exports */
-/*! export broadcastGalaticSignal [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export listSolarSystems [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export sendGalaticSignal [provided] [no usage info] [missing usage info prevents renaming] */
 /*! other exports [not provided] [no usage info] */
 /*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
@@ -17,7 +17,7 @@ exports.modules = {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "listSolarSystems": () => /* binding */ listSolarSystems,
-/* harmony export */   "broadcastGalaticSignal": () => /* binding */ broadcastGalaticSignal
+/* harmony export */   "sendGalaticSignal": () => /* binding */ sendGalaticSignal
 /* harmony export */ });
 
 /**
@@ -74,18 +74,18 @@ function _listSolarSystems() {
   return _listSolarSystems.apply(this, arguments);
 }
 
-function broadcastGalaticSignal(_x2) {
-  return _broadcastGalaticSignal.apply(this, arguments);
+function sendGalaticSignal(_x2) {
+  return _sendGalaticSignal.apply(this, arguments);
 }
 
-function _broadcastGalaticSignal() {
-  _broadcastGalaticSignal = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(data) {
+function _sendGalaticSignal() {
+  _sendGalaticSignal = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(data) {
     return _regeneratorRuntime().wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
             console.log({
-              fn: receiveSignal.name,
+              fn: sendGalaticSignal.name,
               o: 'Galaxy'
             });
 
@@ -96,7 +96,7 @@ function _broadcastGalaticSignal() {
       }
     }, _callee2);
   }));
-  return _broadcastGalaticSignal.apply(this, arguments);
+  return _sendGalaticSignal.apply(this, arguments);
 }
 
 /***/ }),
@@ -107,8 +107,8 @@ function _broadcastGalaticSignal() {
   \******************************/
 /*! namespace exports */
 /*! export planetsInSolarSystem [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export receiveSignal [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export sendSignal [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export receiveSolarSignal [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export sendSolarSignal [provided] [no usage info] [missing usage info prevents renaming] */
 /*! other exports [not provided] [no usage info] */
 /*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
@@ -117,8 +117,8 @@ function _broadcastGalaticSignal() {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "planetsInSolarSystem": () => /* binding */ planetsInSolarSystem,
-/* harmony export */   "receiveSignal": () => /* binding */ receiveSignal,
-/* harmony export */   "sendSignal": () => /* binding */ sendSignal
+/* harmony export */   "receiveSolarSignal": () => /* binding */ receiveSolarSignal,
+/* harmony export */   "sendSolarSignal": () => /* binding */ sendSolarSignal
 /* harmony export */ });
 
 /**
@@ -173,18 +173,18 @@ function _planetsInSolarSystem() {
   return _planetsInSolarSystem.apply(this, arguments);
 }
 
-function receiveSignal(_x2) {
-  return _receiveSignal.apply(this, arguments);
+function receiveSolarSignal(_x2) {
+  return _receiveSolarSignal.apply(this, arguments);
 }
 
-function _receiveSignal() {
-  _receiveSignal = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(data) {
+function _receiveSolarSignal() {
+  _receiveSolarSignal = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(data) {
     return _regeneratorRuntime().wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
             console.log({
-              fn: receiveSignal.name,
+              fn: receiveSolarSignal.name,
               o: 'Planet'
             });
 
@@ -195,21 +195,21 @@ function _receiveSignal() {
       }
     }, _callee2);
   }));
-  return _receiveSignal.apply(this, arguments);
+  return _receiveSolarSignal.apply(this, arguments);
 }
 
-function sendSignal(_x3) {
-  return _sendSignal.apply(this, arguments);
+function sendSolarSignal(_x3) {
+  return _sendSolarSignal.apply(this, arguments);
 }
 
-function _sendSignal() {
-  _sendSignal = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(data) {
+function _sendSolarSignal() {
+  _sendSolarSignal = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(data) {
     return _regeneratorRuntime().wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
             console.log({
-              fn: sendSignal.name,
+              fn: sendSolarSignal.name,
               o: 'Planet'
             });
 
@@ -220,7 +220,7 @@ function _sendSignal() {
       }
     }, _callee3);
   }));
-  return _sendSignal.apply(this, arguments);
+  return _sendSolarSignal.apply(this, arguments);
 }
 
 /***/ }),
@@ -230,8 +230,8 @@ function _sendSignal() {
   !*** ./src/domain/SolarSystem.js ***!
   \***********************************/
 /*! namespace exports */
-/*! export broadcastSolarSystemSignal [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export receiveGalacticBroadcast [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export receiveGalacticSignal [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export sendSolarSignal [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export systemsInGalaxy [provided] [no usage info] [missing usage info prevents renaming] */
 /*! other exports [not provided] [no usage info] */
 /*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
@@ -241,8 +241,8 @@ function _sendSignal() {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "systemsInGalaxy": () => /* binding */ systemsInGalaxy,
-/* harmony export */   "receiveGalacticBroadcast": () => /* binding */ receiveGalacticBroadcast,
-/* harmony export */   "broadcastSolarSystemSignal": () => /* binding */ broadcastSolarSystemSignal
+/* harmony export */   "receiveGalacticSignal": () => /* binding */ receiveGalacticSignal,
+/* harmony export */   "sendSolarSignal": () => /* binding */ sendSolarSignal
 /* harmony export */ });
 
 /**
@@ -297,18 +297,18 @@ function _systemsInGalaxy() {
   return _systemsInGalaxy.apply(this, arguments);
 }
 
-function receiveGalacticBroadcast(_x2) {
-  return _receiveGalacticBroadcast.apply(this, arguments);
+function receiveGalacticSignal(_x2) {
+  return _receiveGalacticSignal.apply(this, arguments);
 }
 
-function _receiveGalacticBroadcast() {
-  _receiveGalacticBroadcast = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(data) {
+function _receiveGalacticSignal() {
+  _receiveGalacticSignal = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(data) {
     return _regeneratorRuntime().wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
             console.log({
-              fn: receiveGalacticBroadcast.name,
+              fn: receiveGalacticSignal.name,
               o: 'SolarSystem'
             });
 
@@ -319,21 +319,21 @@ function _receiveGalacticBroadcast() {
       }
     }, _callee2);
   }));
-  return _receiveGalacticBroadcast.apply(this, arguments);
+  return _receiveGalacticSignal.apply(this, arguments);
 }
 
-function broadcastSolarSystemSignal(_x3) {
-  return _broadcastSolarSystemSignal.apply(this, arguments);
+function sendSolarSignal(_x3) {
+  return _sendSolarSignal.apply(this, arguments);
 }
 
-function _broadcastSolarSystemSignal() {
-  _broadcastSolarSystemSignal = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(data) {
+function _sendSolarSignal() {
+  _sendSolarSignal = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(data) {
     return _regeneratorRuntime().wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
             console.log({
-              fn: broadcastSolarSystemSignal.name,
+              fn: sendSolarSignal.name,
               o: 'SolarSystem'
             });
 
@@ -344,7 +344,7 @@ function _broadcastSolarSystemSignal() {
       }
     }, _callee3);
   }));
-  return _broadcastSolarSystemSignal.apply(this, arguments);
+  return _sendSolarSignal.apply(this, arguments);
 }
 
 /***/ }),
@@ -3130,15 +3130,14 @@ function _testContainsMany() {
   \*****************************/
 /*! namespace exports */
 /*! export approveOrders [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .approveOrders */
-/*! export broadcastGalaticSignal [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/Galaxy.js .broadcastGalaticSignal */
-/*! export broadcastSolarSystemSignal [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/SolarSystem.js .broadcastSolarSystemSignal */
 /*! export cancelOrders [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .cancelOrders */
 /*! export customHttpStatus [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .customHttpStatus */
 /*! export listSolarSystems [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/Galaxy.js .listSolarSystems */
 /*! export planetsInSolarSystem [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/Planet.js .planetsInSolarSystem */
-/*! export receiveGalacticBroadcast [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/SolarSystem.js .receiveGalacticBroadcast */
-/*! export receiveSignal [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/Planet.js .receiveSignal */
-/*! export sendSignal [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/Planet.js .sendSignal */
+/*! export receiveGalacticSignal [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/SolarSystem.js .receiveGalacticSignal */
+/*! export receiveSolarSignal [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/Planet.js .receiveSolarSignal */
+/*! export sendGalaticSignal [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/Galaxy.js .sendGalaticSignal */
+/*! export sendSolarSignal [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/SolarSystem.js .sendSolarSignal */
 /*! export systemsInGalaxy [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/SolarSystem.js .systemsInGalaxy */
 /*! export testContainsMany [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .testContainsMany */
 /*! export trackAsyncContext [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .trackAsyncContext */
@@ -3155,12 +3154,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "customHttpStatus": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_1__.customHttpStatus,
 /* harmony export */   "testContainsMany": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_1__.testContainsMany,
 /* harmony export */   "listSolarSystems": () => /* reexport safe */ _Galaxy__WEBPACK_IMPORTED_MODULE_2__.listSolarSystems,
-/* harmony export */   "broadcastGalaticSignal": () => /* reexport safe */ _Galaxy__WEBPACK_IMPORTED_MODULE_2__.broadcastGalaticSignal,
+/* harmony export */   "sendGalaticSignal": () => /* reexport safe */ _Galaxy__WEBPACK_IMPORTED_MODULE_2__.sendGalaticSignal,
 /* harmony export */   "systemsInGalaxy": () => /* reexport safe */ _SolarSystem__WEBPACK_IMPORTED_MODULE_0__.systemsInGalaxy,
-/* harmony export */   "broadcastSolarSystemSignal": () => /* reexport safe */ _SolarSystem__WEBPACK_IMPORTED_MODULE_0__.broadcastSolarSystemSignal,
-/* harmony export */   "receiveGalacticBroadcast": () => /* reexport safe */ _SolarSystem__WEBPACK_IMPORTED_MODULE_0__.receiveGalacticBroadcast,
-/* harmony export */   "receiveSignal": () => /* reexport safe */ _Planet__WEBPACK_IMPORTED_MODULE_3__.receiveSignal,
-/* harmony export */   "sendSignal": () => /* reexport safe */ _Planet__WEBPACK_IMPORTED_MODULE_3__.sendSignal,
+/* harmony export */   "sendSolarSignal": () => /* reexport safe */ _SolarSystem__WEBPACK_IMPORTED_MODULE_0__.sendSolarSignal,
+/* harmony export */   "receiveGalacticSignal": () => /* reexport safe */ _SolarSystem__WEBPACK_IMPORTED_MODULE_0__.receiveGalacticSignal,
+/* harmony export */   "receiveSolarSignal": () => /* reexport safe */ _Planet__WEBPACK_IMPORTED_MODULE_3__.receiveSolarSignal,
 /* harmony export */   "planetsInSolarSystem": () => /* reexport safe */ _Planet__WEBPACK_IMPORTED_MODULE_3__.planetsInSolarSystem
 /* harmony export */ });
 /* harmony import */ var _SolarSystem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SolarSystem */ "./src/domain/SolarSystem.js");

@@ -156,12 +156,12 @@ var Galaxy = {
       type: 'inbound',
       timeout: 0
     },
-    broadcastGalaticSignal: {
+    sendGalaticSignal: {
       service: 'Cosmos',
       type: 'inbound',
-      timeout: 0,
-      consumesEvent: 'broadcastGalaticSignal',
-      producesEvent: 'galacticSignalBroadcasting'
+      timeout: 1000,
+      consumesEvent: 'sendGalacticSignal',
+      producesEvent: 'galacticSignalSent'
     }
   }
 };
@@ -213,19 +213,19 @@ var SolarSystem = {
       type: 'inbound',
       timeout: 0
     },
-    receiveGalacticBroadcast: {
+    receiveGalacticSignal: {
       service: 'Cosmos',
       type: 'inbound',
       timeout: 1000,
-      consumesEvent: 'galacticSignalBroadcasting',
+      consumesEvent: 'galacticSignalSent',
       producesEvent: 'galacticSignalReceived'
     },
-    broadcastSolarSystemSignal: {
+    sendSolarSignal: {
       service: 'Cosmos',
-      type: 'outbound',
-      timeout: 0,
+      type: 'inbound',
+      timeout: 1000,
       consumesEvent: 'galacticSignalReceived',
-      producesEvent: 'solarSystemSignalBroadcast'
+      producesEvent: 'sendSolarSignal'
     }
   }
 };

@@ -18,14 +18,14 @@ export const Planet = {
       type: 'inbound',
       timeout: 0
     },
-    receiveSignal: {
+    receiveSolarSignal: {
       service: 'Galaxy',
       type: 'inbound',
       timeout: 0,
-      consumesEvent: 'solarSystemSignalBroadcasting',
+      consumesEvent: 'solarSystemSignalSenting',
       producesEvent: 'solarSystemSignalReceived'
     },
-    sendSignal: {
+    sendSolarSignal: {
       service: 'Galaxy',
       type: 'outbound ',
       timeout: 0,

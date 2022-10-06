@@ -20,12 +20,12 @@ export const Galaxy = {
       type: 'inbound',
       timeout: 0
     },
-    broadcastGalaticSignal: {
+    sendGalaticSignal: {
       service: 'Cosmos',
       type: 'inbound',
-      timeout: 0,
-      consumesEvent: 'broadcastGalaticSignal',
-      producesEvent: 'galacticSignalBroadcasting'
+      timeout: 1000,
+      consumesEvent: 'sendGalacticSignal',
+      producesEvent: 'galacticSignalSent'
     }
   }
 }

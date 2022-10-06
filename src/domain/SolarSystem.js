@@ -12,10 +12,10 @@ export async function systemsInGalaxy (data) {
   return systems
 }
 
-export async function receiveGalacticBroadcast (data) {
-  console.log({ fn: receiveGalacticBroadcast.name, o: 'SolarSystem' })
+export async function receiveGalacticSignal (data) {
+  console.log({ fn: receiveGalacticSignal.name, o: 'SolarSystem' })
 }
 
-export async function broadcastSolarSystemSignal (data) {
-  console.log({ fn: broadcastSolarSystemSignal.name, o: 'SolarSystem' })
+export async function sendSolarSignal (data) {
+  console.log({ fn: sendSolarSignal.name, o: 'SolarSystem' })
 }
