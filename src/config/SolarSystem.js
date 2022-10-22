@@ -4,6 +4,7 @@
 export const SolarSystem = {
   endpoint: 'SolarSystems',
   modelName: 'SolarSystem',
+  domain: 'galaxy',
   factory: () => args => ({ ...args }),
   relations: {
     galaxy: {

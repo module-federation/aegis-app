@@ -6,6 +6,7 @@
 export const Galaxy = {
   endpoint: 'Galaxies',
   modelName: 'Galaxy',
+  domain: 'galaxy',
   factory: () => args => ({ ...args }),
   relations: {
     solarSystems: {
