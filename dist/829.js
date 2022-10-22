@@ -138,6 +138,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var Galaxy = {
   endpoint: 'Galaxies',
   modelName: 'Galaxy',
+  domain: 'galaxy',
   factory: function factory() {
     return function (args) {
       return _objectSpread({}, args);
@@ -195,6 +196,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var SolarSystem = {
   endpoint: 'SolarSystems',
   modelName: 'SolarSystem',
+  domain: 'galaxy',
   factory: function factory() {
     return function (args) {
       return _objectSpread({}, args);
