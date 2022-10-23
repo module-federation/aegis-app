@@ -45,18 +45,21 @@ function _listSolarSystems() {
           case 0:
             console.log({
               data: data
-            }); // return { SOLARSYSTEMS: await this.solarSystems() }
-
+            });
             _context.next = 3;
             return this.fetchRelatedModel('SOLARSYSTEM');
 
           case 3:
             solarSystem = _context.sent;
             console.log({
+              msg: 'result of',
+              fn: this.fetchRelatedModel.name,
               solarSystem: solarSystem
             });
             _context.next = 7;
-            return solarSystem.systemsInGalaxy(data);
+            return solarSystem.systemsInGalaxy({
+              galaxyId: data.id
+            });
 
           case 7:
             _context.t0 = _context.sent;
@@ -86,7 +89,9 @@ function _sendGalaticSignal() {
           case 0:
             console.log({
               fn: sendGalaticSignal.name,
-              o: 'Galaxy'
+              o: 'Galaxy',
+              msg: 'port function invoked',
+              data: data
             });
 
           case 1:
@@ -273,10 +278,8 @@ function _systemsInGalaxy() {
             });
             _context.next = 3;
             return this.list({
-              options: {
-                filter: {
-                  galaxyId: data.id
-                }
+              query: {
+                galaxyId: data.galaxyId || data.args.galaxyId
               }
             });
 

@@ -5,12 +5,13 @@
  */
 export async function listSolarSystems (data) {
   console.log({ data })
-  // return { SOLARSYSTEMS: await this.solarSystems() }
   const solarSystem = await this.fetchRelatedModel('SOLARSYSTEM')
-  console.log({ solarSystem })
-  return { SOLARSYSTEMS: await solarSystem.systemsInGalaxy(data) }
+  console.log({ msg: 'result of', fn: this.fetchRelatedModel.name, solarSystem })
+  return {
+    SOLARSYSTEMS: await solarSystem.systemsInGalaxy({ galaxyId: data.id })
+  }
 }
 
 export async function sendGalaticSignal (data) {
-  console.log({ fn: sendGalaticSignal.name, o: 'Galaxy' })
+  console.log({ fn: sendGalaticSignal.name, o: 'Galaxy', msg: 'port function invoked', data })
 }

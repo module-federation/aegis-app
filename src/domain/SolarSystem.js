@@ -6,7 +6,7 @@
 export async function systemsInGalaxy (data) {
   console.log({ data })
   const systems = await this.list({
-    options: { filter: { galaxyId: data.id } }
+    query: { galaxyId: data.galaxyId || data.args.galaxyId }
   })
   console.log({ systems })
   return systems
