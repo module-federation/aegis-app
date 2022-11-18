@@ -10,8 +10,8 @@
     "url": "https://github.com/module-federation/aegis-app"
   },
   "scripts": {
-    "build": "export NODE_OPTIONS=--openssl-legacy-provider && yarn clean && webpack --config webpack.config.js",
-    "buildLocalRepo": "export NODE_OPTIONS=--openssl-legacy-provider && yarn clean && webpack --config webpack.config.local.js",
+    "build": "yarn clean && webpack --config webpack.config.js",
+    "buildLocalRepo": "yarn clean && webpack --config webpack.config.local.js",
     "startLocalRepo": "node repo.js",
     "startLocalRepo2": "export FORKRUN_CMD=$NVM_BIN; export FORKRUN_ARG=./repo.js; sudo ../aegis/forkrun",
     "bar": "yarn buildAndRestart",
