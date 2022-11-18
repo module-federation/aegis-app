@@ -24,7 +24,8 @@ import {
   approve,
   cancel,
   accountOrder,
-  OrderError
+  OrderError,
+  orderPicked
 } from '../domain/order'
 
 import {
@@ -62,7 +63,7 @@ export const Order = {
         'creditCardNumber',
         'email'
       ]),
-      requiredForApproval('paymentAuthorization'),
+      requiredForApproval('paymentStatus'),
       requiredForCompletion('proofOfDelivery')
     ),
     freezeProperties(
@@ -77,15 +78,15 @@ export const Order = {
         'billingAddress',
         'shippingAddress',
         'creditCardNumber',
-        'paymentAuthorization'
+        'paymentStatus'
       ]),
       freezeOnCompletion('*')
     ),
     updateProperties([
-      // {
-      //   propKey: 'orderItems',
-      //   update: recalcTotal
-      // },
+      {
+        propKey: 'orderItems',
+        update: recalcTotal
+      },
       {
         propKey: 'orderItems',
         update: updateSignature
@@ -97,11 +98,11 @@ export const Order = {
         values: Object.values(OrderStatus),
         isValid: statusChangeValid
       },
-      // {
-      //   propKey: 'orderTotal',
-      //   maxnum: 99999.99,
-      //   isValid: orderTotalValid
-      // },
+      {
+        propKey: 'orderTotal',
+        maxnum: 99999.99,
+        isValid: orderTotalValid
+      },
       {
         propKey: 'email',
         regex: 'email'
@@ -150,6 +151,7 @@ export const Order = {
       service: 'Inventory',
       type: 'outbound',
       keys: 'pickupAddress',
+      callback: orderPicked,
       consumesEvent: 'itemsAvailable',
       producesEvent: 'orderPicked',
       undo: returnInventory,

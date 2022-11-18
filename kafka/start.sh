@@ -1,6 +1,8 @@
 #!/bin/sh
 
-nohup bin/zookeeper-server-start.sh  config/zookeeper.properties &
+export JAVA_HOME=/opt/homebrew/opt/openjdk/bin
+
+nohup bin/zookeeper-server-start.sh config/zookeeper.properties &
 
 sleep 5
 
@@ -13,6 +15,3 @@ bin/kafka-topics.sh --if-not-exists --create --topic orderChannel --bootstrap-se
 bin/kafka-topics.sh --if-not-exists --create --topic shippingChannel --bootstrap-server localhost:9092
 
 bin/kafka-topics.sh --if-not-exists --create --topic inventoryChannel --bootstrap-server localhost:9092
-
-
-

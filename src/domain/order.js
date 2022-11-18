@@ -489,10 +489,10 @@ async function getCustomerOrder (order) {
  * - verify shipping address
  */
 const processPendingOrder = asyncPipe(
-  getCustomerOrder
-  //verifyInventory,
-  //verifyPayment,
-  //verifyAddress
+  getCustomerOrder,
+  verifyInventory,
+  verifyPayment,
+  verifyAddress
 )
 
 /**
@@ -510,10 +510,15 @@ const OrderActions = {
    * @returns {Promise<Readonly<Order>>}
    */
   [OrderStatus.PENDING]: order => {
-    /**@type {Order} */
-    getCustomerOrder(order).then(order =>
-      runOrderWorkflow(order.updateSync({ orderStatus: OrderStatus.APPROVED }))
-    )
+    // return processPendingOrder(order)
+    
+    if (order.autoCheckout)
+      /**@type {Order} */
+      getCustomerOrder(order).then(order =>
+        runOrderWorkflow(
+          order.updateSync({ orderStatus: OrderStatus.APPROVED })
+        )
+      )
   },
 
   /**
@@ -524,10 +529,8 @@ const OrderActions = {
    * @returns {Promise<Readonly<Order>>}
    */
   [OrderStatus.APPROVED]: order => {
-    console.log('typeof order', typeof order)
     try {
-      //if (/approved/i.test(order.paymentStatus)) {
-
+      //if (/approved/i.test(order.paymentStatus))
       return order.pickOrder(orderPicked)
 
       // order.emit('PayAuthFail', 'Payment authorization problem')
@@ -957,4 +960,3 @@ export async function testContainsMany (data) {
   this.chat()
   return { status: 'ok' }
 }
-

@@ -476,23 +476,21 @@ var Order = {
       return (0,nanoid__WEBPACK_IMPORTED_MODULE_2__.nanoid)(8);
     }
   },
-  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.requireProperties)('orderItems', (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForGuest)(['lastName', 'firstName', 'billingAddress', 'shippingAddress', 'creditCardNumber', 'email']), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForApproval)('paymentAuthorization'), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForCompletion)('proofOfDelivery')), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.freezeProperties)('orderNo', 'customerId', (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.freezeOnApproval)(['email', 'lastName', 'firstName', 'orderItems', 'orderTotal', 'billingAddress', 'shippingAddress', 'creditCardNumber', 'paymentAuthorization']), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.freezeOnCompletion)('*')), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.updateProperties)([// {
-  //   propKey: 'orderItems',
-  //   update: recalcTotal
-  // },
-  {
+  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.requireProperties)('orderItems', (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForGuest)(['lastName', 'firstName', 'billingAddress', 'shippingAddress', 'creditCardNumber', 'email']), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForApproval)('paymentStatus'), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.requiredForCompletion)('proofOfDelivery')), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.freezeProperties)('orderNo', 'customerId', (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.freezeOnApproval)(['email', 'lastName', 'firstName', 'orderItems', 'orderTotal', 'billingAddress', 'shippingAddress', 'creditCardNumber', 'paymentStatus']), (0,_domain_order__WEBPACK_IMPORTED_MODULE_0__.freezeOnCompletion)('*')), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.updateProperties)([{
+    propKey: 'orderItems',
+    update: _domain_order__WEBPACK_IMPORTED_MODULE_0__.recalcTotal
+  }, {
     propKey: 'orderItems',
     update: _domain_order__WEBPACK_IMPORTED_MODULE_0__.updateSignature
   }]), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_1__.validateProperties)([{
     propKey: 'orderStatus',
     values: Object.values(_domain_order__WEBPACK_IMPORTED_MODULE_0__.OrderStatus),
     isValid: _domain_order__WEBPACK_IMPORTED_MODULE_0__.statusChangeValid
-  }, // {
-  //   propKey: 'orderTotal',
-  //   maxnum: 99999.99,
-  //   isValid: orderTotalValid
-  // },
-  {
+  }, {
+    propKey: 'orderTotal',
+    maxnum: 99999.99,
+    isValid: _domain_order__WEBPACK_IMPORTED_MODULE_0__.orderTotalValid
+  }, {
     propKey: 'email',
     regex: 'email'
   }, {
@@ -536,6 +534,7 @@ var Order = {
       service: 'Inventory',
       type: 'outbound',
       keys: 'pickupAddress',
+      callback: _domain_order__WEBPACK_IMPORTED_MODULE_0__.orderPicked,
       consumesEvent: 'itemsAvailable',
       producesEvent: 'orderPicked',
       undo: _domain_order__WEBPACK_IMPORTED_MODULE_0__.returnInventory,
@@ -1390,8 +1389,7 @@ __webpack_require__.r(__webpack_exports__);
  * @property {onDelete} [onDelete] - Function called before deletion.
  * @property {validate} [validate] - called to validate model updates
  * @property {ports} [ports] - input/output ports for the domain
- * @property {eventHandler[]} [eventHandlers] - callbacks invoked to handle application
- * events, e.g. CRUD events
+ * @property {eventHandler[]} [eventHandlers] - callbacks invoked to handle CRUD events
  * @property {serializer[]} [serializers] - use for custom de/serialization of the model
  * when reading or writing to storage or network
  * @property {relations} [relations] - create related models or query in aggregate

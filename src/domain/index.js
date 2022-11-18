@@ -174,8 +174,7 @@
  * @property {onDelete} [onDelete] - Function called before deletion.
  * @property {validate} [validate] - called to validate model updates
  * @property {ports} [ports] - input/output ports for the domain
- * @property {eventHandler[]} [eventHandlers] - callbacks invoked to handle application
- * events, e.g. CRUD events
+ * @property {eventHandler[]} [eventHandlers] - callbacks invoked to handle CRUD events
  * @property {serializer[]} [serializers] - use for custom de/serialization of the model
  * when reading or writing to storage or network
  * @property {relations} [relations] - create related models or query in aggregate

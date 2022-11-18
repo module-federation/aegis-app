@@ -196,7 +196,7 @@ export function validateModel (model, changes, event) {
  * the object is being loaded into memory after being deserialized.
  * Defaults to `false`.
  */
-function enableEvent (onUpdate = true, onCreate = true, onLoad = false) {
+function enableEvent ({ onUpdate = true, onCreate = true, onLoad = false }) {
   let enabled = 0
 
   if (onUpdate) {
@@ -219,27 +219,59 @@ const enableValidation = (() => {
     /**
      * Validation runs on update.
      */
-    onUpdate: enableEvent(true, false, false),
+    onUpdate: enableEvent({
+      onUpdate: true,
+      onCreate: false,
+      onLoad: false
+    }),
     /**
      * Validation runs on create.
      */
-    onCreate: enableEvent(false, true, false),
+    onCreate: enableEvent({
+      onUpdate: false,
+      onCreate: true,
+      onLoad: false
+    }),
     /**
      * Validation runs on both create and update.
      */
-    onCreateAndUpdate: enableEvent(true, true, false),
+    onCreateAndUpdate: enableEvent({
+      onUpdate: true,
+      onCreate: true,
+      onLoad: false
+    }),
     /**
      * Validation runs on load.
      */
-    onLoad: enableEvent(false, false, true),
+    onLoad: enableEvent({
+      onUpdate: false,
+      onCreate: false,
+      onLoad: true
+    }),
+    /**
+     * Validation runs on load and create.
+     */
+    onLoadAndCreate: enableEvent({
+      onUpdate: false,
+      onCreate: true,
+      onLoad: true
+    }),
+    /**
+     * Validation runs on load and create.
+     */
+    onLoadAndUpdate: enableEvent({
+      onUpdate: true,
+      onCreate: false,
+      onLoad: true
+    }),
     /**
      * Validation runs on all events.
      */
-    onAll: enableEvent(true, true, true),
-    /**
-     * Validation runs on zero events (disabled).
-     */
-    never: enableEvent(false, false, false)
+    onAll: enableEvent({
+      onUpdate: true,
+      onCreate: true,
+      onLoad: true
+    })
   }
 })()
 
@@ -605,7 +637,7 @@ export const updateProperties = updaters => o => {
     ...addValidation({
       model: o,
       name: updateProperties.name,
-      input: enableValidation.onUpdate,
+      output: enableValidation.onUpdate,
       order: 30
     })
   }
