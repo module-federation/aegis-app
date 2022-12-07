@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 
 /**
  * @typedef {string|RegExp} topic
@@ -40,12 +40,12 @@
 /**
  * @type {adapterFactory}
  */
-export function pickOrder(service) {
+export function pickOrder (service) {
   return function (options) {
     const {
       model: order,
-      args: [callback],
-    } = options;
+      args: [callback]
+    } = options
 
     return new Promise(function (resolve, reject) {
       // start listening first then send the event
@@ -54,41 +54,41 @@ export function pickOrder(service) {
           once: true,
           model: order,
           id: order.orderNo,
-          topic: "orderChannel",
-          filters: [order.orderNo, "orderPicked", "warehouse_addr"],
+          topic: 'orderChannel',
+          filters: [order.orderNo, 'orderPicked', 'warehouse_addr'],
           callback: async ({ message }) => {
             try {
-              const event = JSON.parse(message);
-              console.log("recieved event: ", event);
-              const pickupAddress = event.eventData.warehouse_addr;
-              const newOrder = await callback(options, { pickupAddress });
-              resolve(newOrder); // hold promise until we get an answer
+              const event = JSON.parse(message)
+              console.log('recieved event: ', event)
+              const pickupAddress = event.eventData.warehouse_addr
+              const newOrder = await callback(options, { pickupAddress })
+              resolve(newOrder) // hold promise until we get an answer
             } catch (error) {
-              reject(error);
+              reject(error)
             }
-          },
+          }
         })
         .then(() => {
           return order.notify(
-            "inventoryChannel",
+            'inventoryChannel',
             JSON.stringify({
-              eventType: "Command",
-              eventTime: new Date().toUTCString(),
-              eventSource: "orderService",
+              eventType: 'Command',
+              eventTime: new Date().toISOString(),
+              eventSource: 'orderService',
               eventData: {
-                replyChannel: "orderChannel",
-                commandName: "pickOrder",
+                replyChannel: 'orderChannel',
+                commandName: 'pickOrder',
                 commandArgs: {
                   lineItems: order.orderItems,
-                  externalId: order.orderNo,
-                },
-              },
+                  externalId: order.orderNo
+                }
+              }
             })
-          );
+          )
         })
-        .catch((reason) => {
-          throw new Error(reason);
-        });
-    });
-  };
+        .catch(reason => {
+          throw new Error(reason)
+        })
+    })
+  }
 }

@@ -1,0 +1,13 @@
+{
+  "name": "host-config",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "buildLocalRepo": "export NODE_OPTIONS=--openssl-legacy-provider && yarn clean && webpack --config webpack.config.local.js",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "webpack": "5.0.0-beta.28"
+  }
+}

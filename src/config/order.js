@@ -33,7 +33,8 @@ import {
   freezeProperties,
   updateProperties,
   validateProperties,
-  validateModel
+  validateModel,
+  allowProperties
 } from '../domain/mixins'
 import { nanoid } from 'nanoid'
 import { DataSourceAdapterMongoDb } from '../adapters/datasources/datasource-mongodb'
@@ -116,6 +117,7 @@ export const Order = {
         regex: 'phone'
       }
     ])
+    // allowProperties([fibonacci, time, result])
   ],
   validate: validateModel,
   onDelete: readyToDelete,
@@ -159,7 +161,7 @@ export const Order = {
         portTimeout_pickOrder_order: {
           callVolume: 2,
           errorRate: 1,
-          intervalMs: 60000
+          intervalMs: 5000
         }
       }
     },
@@ -253,7 +255,12 @@ export const Order = {
       service: 'Inventory',
       type: 'inbound',
       timeout: 0
-    }
+    },
+    runFibonacciJs: {
+      service: 'Test',
+      type: 'inbound',
+      timeout: 0
+    },
   },
   relations: {
     customer: {

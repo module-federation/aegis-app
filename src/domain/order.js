@@ -511,7 +511,7 @@ const OrderActions = {
    */
   [OrderStatus.PENDING]: order => {
     // return processPendingOrder(order)
-    
+
     if (order.autoCheckout)
       /**@type {Order} */
       getCustomerOrder(order).then(order =>
@@ -632,7 +632,7 @@ function logMessage (message, type) {
       return {
         desc: this.desc,
         type,
-        time: new Date(this.time).toUTCString()
+        time: new Date(this.time).toISOString()
       }
     }
   }
@@ -959,4 +959,25 @@ export async function customHttpStatus (data) {
 export async function testContainsMany (data) {
   this.chat()
   return { status: 'ok' }
+}
+
+function fibonacci (x) {
+  if (x === 0) {
+    return 0
+  }
+  if (x === 1) {
+    return 1
+  }
+  return fibonacci(x - 1) + fibonacci(x - 2)
+}
+
+export async function runFibonacciJs (data) {
+  console.log({ data })
+  const param = parseInt(data.args.fibonacci || 20)
+  const start = Date.now()
+  return {
+    fibonacci: param,
+    result: fibonacci(param),
+    time: Date.now() - start
+  }
 }

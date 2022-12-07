@@ -1,11 +1,12 @@
-"use strict";
+'use strict'
 
 // JSON.stringify({
 //     eventType: "Command",
-//     eventTime: new Date().toUTCString(),
+//     eventTime: new Date().toISOString(),
 //     eventSource: "orderService",
 //     eventData: {
 //       replyChannel: "orderChannel",
 //       commandName: "pickOrder",
 //       commandArgs: {
 //       }
+

@@ -5,7 +5,8 @@ export {
   approveOrders,
   trackAsyncContext,
   customHttpStatus,
-  testContainsMany
+  testContainsMany,
+  runFibonacciJs
 } from './order'
 export { listSolarSystems, sendGalaticSignal } from './Galaxy'
 export {
@@ -13,7 +14,9 @@ export {
   sendSolarSignal,
   receiveGalacticSignal
 } from './SolarSystem'
+export { receiveSolarSignal, planetsInSolarSystem } from './Planet'
 export {
-  receiveSolarSignal,
-  planetsInSolarSystem
-} from './Planet'
+  qeRunFibonacci,
+  qeCustomHttpStatus,
+  qeGetPublicIpAddressIn
+} from './query-engine'

@@ -1,0 +1,183 @@
+yarn run v1.22.19
+$ node --title aegis-repo repo.js 8000 dist
+node:events:491
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::8000
+    at Server.setupListenHandle [as _listen2] (node:net:1485:16)
+    at listenInCluster (node:net:1533:12)
+    at Server.listen (node:net:1621:7)
+    at Function.listen (/Users/tysonmidboe/aegis-app/node_modules/express/lib/application.js:635:24)
+    at Object.<anonymous> (/Users/tysonmidboe/aegis-app/repo.js:13:5)
+    at Module._compile (node:internal/modules/cjs/loader:1159:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1213:10)
+    at Module.load (node:internal/modules/cjs/loader:1037:32)
+    at Module._load (node:internal/modules/cjs/loader:878:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1512:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 8000
+}
+
+Node.js v18.12.1
+error Command failed with exit code 1.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+yarn run v1.22.19
+$ node --title aegis-cache-repo repo.js 8001 cache
+repo serving cache on 8001
+yarn run v1.22.19
+$ node --title aegis-cache-repo repo.js 8001 cache
+repo serving cache on 8001
+yarn run v1.22.19
+$ node --title aegis-cache-repo repo.js 8001 cache
+repo serving cache on 8001
+yarn run v1.22.19
+$ node --title aegis-repo repo.js 8000 dist
+repo serving dist on 8000
+yarn run v1.22.19
+$ node --title aegis-repo repo.js 8000 dist
+repo serving dist on 8000
+yarn run v1.22.19
+$ node --title aegis-repo repo.js 8000 dist
+repo serving dist on 8000
+yarn run v1.22.19
+$ node --title aegis-cache-repo repo.js 8001 cache
+repo serving cache on 8001
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving dist on 8000
+repo serving dist on 8000
+repo serving cache on 8001
+repo serving cache on 8001
+repo serving dist on 8000

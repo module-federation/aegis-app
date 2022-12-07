@@ -41,19 +41,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(nanoid__WEBPACK_IMPORTED_MODULE_1__);
 
 
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
+function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
 
 
 function compose() {
   for (var _len = arguments.length, funcs = new Array(_len), _key = 0; _key < _len; _key++) {
     funcs[_key] = arguments[_key];
   }
-
   return function (initVal) {
     return funcs.reduceRight(function (val, func) {
       return func(val);
@@ -64,13 +63,13 @@ function composeAsync() {
   for (var _len2 = arguments.length, funcs = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
     funcs[_key2] = arguments[_key2];
   }
-
   return function (initVal) {
     return funcs.reduceRight(function (val, func) {
       return val.then(func);
     }, Promise.resolve(initVal));
   };
 }
+
 /**
  * @callback pipeFn
  * @param {object} obj - the object to compose
@@ -80,12 +79,10 @@ function composeAsync() {
 /**
  * @param {pipeFn} func
  */
-
 var asyncPipe = function asyncPipe() {
   for (var _len3 = arguments.length, func = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
     func[_key3] = arguments[_key3];
   }
-
   return function (obj) {
     return func.reduce(function (o, f) {
       return o.then(f);
@@ -127,9 +124,9 @@ function makeObject(prop) {
       return _objectSpread(_objectSpread({}, p), c);
     });
   }
-
   return prop;
 }
+
 /**
  *
  * @param {Promise<{
@@ -138,7 +135,6 @@ function makeObject(prop) {
  * }} promise
  * @returns
  */
-
 function async(promise) {
   return promise.then(function (result) {
     return {

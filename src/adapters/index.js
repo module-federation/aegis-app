@@ -8,6 +8,7 @@ export * from './inventory-adapter'
 export * from './order-adapter'
 export * from './payment-adapter'
 export * from './shipping-adapter'
+export * from './qe-public-ipaddr'
 
 /**
  * @typedef {import('../domain').Model} Model
