@@ -2,6 +2,8 @@
 
 @external('env', 'console.log')
 declare function consoleLog (s: string): void
+@external('aegis', 'callJsFunction')
+declare function callJsFunction (kv: string[][]): string[][]
 
 export function getModelName (): string {
   return 'wasm'
@@ -40,18 +42,29 @@ export function modelFactory (kv: string[][]): string[][] {
 }
 
 export function getPorts (): string[][] {
-  const ports = new Array<string[]>(2)
+  let ports = new Array<string[]>(3)
   //port,service,type,consumesEvent,producesEvent,callback,undo
-  ports[0] = [
-    'runFibonacci',
-    'fibonacciService,inbound,fibonacciBegin,fibonacciEnd,runFibonacci,'
+  ports = [
+    [
+      'runFibonacci',
+      'fibonacciService,inbound,fibonacciBegin,fibonacciEnd,runFibonacci,'
+    ],
+    ['mlOpsLoad', 'mlOps,inbound,mlOpsLoad,mlOpsTrain,mlOpsLoad'],
+    ['mlOpsTrain', 'mlOps,inbound,mlOpsTrain,mlOpsRun,mlOpsTrain'],
+    [
+      'wasmGetPublicIpAddress',
+      'wasm,outbound,mlOpsTrain,wasmGotIp,wasmGetPublicIpAddress'
+    ]
   ]
-  ports[1] = ['emitEvent', 'test,outbound,null,null,emitEvent,']
   return ports
 }
 
-export function emitEvent (kv: string[][]): string[][] {
-  return [['status', 'ok']]
+export function mlOpsLoad (kv: string[][]): string[][] {
+  return [['mlOpsLoad', 'ran']]
+}
+
+export function mlOpsTrain (kv: string[][]): string[][] {
+  return [['mlOpsTrain', 'ran']]
 }
 
 export function getCommands (): string[][] {
