@@ -260,7 +260,7 @@ export const Order = {
       service: 'Test',
       type: 'inbound',
       timeout: 0
-    },
+    }
   },
   relations: {
     customer: {
@@ -376,13 +376,13 @@ export const Order = {
       type: 'string',
       value: (key, value) => decrypt(value),
       enabled: false
-    },
-    {
-      on: 'deserialize',
-      key: 'billingAddress',
-      type: 'string',
-      value: (key, value) => decrypt(value),
-      enabled: false
     }
+    // {
+    //   on: 'deserialize',
+    //   key: 'billingAddress',
+    //   type: 'string',
+    //   value: (key, value) => decrypt(value),
+    //   enabled: false
+    // }
   ]
 }

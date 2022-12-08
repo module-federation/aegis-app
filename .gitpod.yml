@@ -1,1 +1,13 @@
-mainConfiguration: https://github.com/module-federation/aegis-host
+tasks:
+  - name: build & watch
+    init: |
+      yarn
+      yarn build
+    command: |
+      gp async-done build
+      yarn watch
+
+  - name: start
+    command: |
+      gp async-await build
+      yarn start

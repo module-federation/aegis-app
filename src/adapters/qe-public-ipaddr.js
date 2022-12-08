@@ -1,8 +1,12 @@
 import http from 'http'
 
+/**
+ *
+ * @returns
+ */
 export function qeGetPublicIpAddressOut () {
   return async function () {
-    const bytes = []
+    const buf = []
     return new Promise(resolve => {
       http.get(
         {
@@ -10,9 +14,9 @@ export function qeGetPublicIpAddressOut () {
           method: 'get'
         },
         response => {
-          response.on('data', chunk => bytes.push(chunk))
+          response.on('data', chunk => buf.push(chunk))
           response.on('end', function () {
-            resolve({ address: bytes.join('').trim() })
+            resolve({ address: buf.join('') })
           })
         }
       )

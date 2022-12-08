@@ -1,31 +1,30 @@
-"use strict";
+'use strict'
 
-import { Event } from "./services/event-service";
+import { Event } from './services/event-service'
 
 export class EventDispatcher {
-  constructor(adapter = Event) {
-    this.adapter = adapter;
-    this.subscriptions = new Map();
+  constructor (adapter = Event) {
+    this.adapter = adapter
+    this.subscriptions = new Map()
   }
 
-  registerCallback(topic, callback) {
+  registerCallback (topic, callback) {
     if (this.subscriptions.has(topic)) {
-      this.subscriptions.get(topic).push(callback);
-      return;
+      this.subscriptions.get(topic).push(callback)
+      return
     }
-    this.subscriptions.set(topic, [callback]);
+    this.subscriptions.set(topic, [callback])
   }
 
-  async emitEvent(topic, message, method = "notify") {
-    await this.adapter[method](topic, message);
+  async emitEvent (topic, message, method = 'notify') {
+    await this.adapter[method](topic, message)
   }
 
-  async init(method = "listen") {
-    function emitEvent(topic, message) {
-      this.emitEvent(topic, message);
+  async init (method = 'listen') {
+    function emitEvent (topic, message) {
+      this.emitEvent(topic, message)
     }
 
-    // this.emitEvent(/Channel/, "remoteRestart");
     await this.adapter[method](
       /Channel/,
       function ({ topic, message }) {
@@ -34,9 +33,9 @@ export class EventDispatcher {
             .get(topic)
             .forEach(callback =>
               callback({ message, emitEvent: emitEvent.bind(this) })
-            );
+            )
         }
       }.bind(this)
-    );
+    )
   }
 }

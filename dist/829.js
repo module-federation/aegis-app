@@ -691,15 +691,15 @@ var Order = {
       return decrypt(_value2);
     },
     enabled: false
-  }, {
-    on: 'deserialize',
-    key: 'billingAddress',
-    type: 'string',
-    value: function value(key, _value3) {
-      return decrypt(_value3);
-    },
-    enabled: false
-  }]
+  }
+  // {
+  //   on: 'deserialize',
+  //   key: 'billingAddress',
+  //   type: 'string',
+  //   value: (key, value) => decrypt(value),
+  //   enabled: false
+  // }
+  ]
 };
 
 /***/ }),

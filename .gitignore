@@ -10,3 +10,4 @@ kafka.out
 kafka
 token.json
 accessToken.sh
+nohup.out
