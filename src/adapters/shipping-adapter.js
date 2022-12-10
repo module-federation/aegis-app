@@ -1,4 +1,4 @@
-"use strict";
+'use strict'
 
 /**
  * @callback portCallback
@@ -37,13 +37,13 @@
  * @returns {function({model:Order,args:[portCallback]}):Order}
  */
 
-const ORDER_SERVICE = "orderService";
-const ORDER_TOPIC = "orderChannel";
+const ORDER_SERVICE = 'orderService'
+const ORDER_TOPIC = 'orderChannel'
 
 const handleError = (error, reject = null, func = null) => {
-  console.error({ file: __filename, func, error });
-  if (reject) reject(error);
-};
+  console.error({ file: __filename, func, error })
+  if (reject) reject(error)
+}
 
 /**
  * Call `shipOrder` to request shipment of the order items.
@@ -56,12 +56,12 @@ const handleError = (error, reject = null, func = null) => {
  * request message.
  *
  */
-export function shipOrder(service) {
+export function shipOrder (service) {
   return async function (options) {
     const {
       model: order,
-      args: [callback],
-    } = options;
+      args: [callback]
+    } = options
 
     /**
      * Called by the event listener when the shipOrder
@@ -72,24 +72,24 @@ export function shipOrder(service) {
      * @param {function(Error)} reject
      * @returns {function(message):Promise<Order>}
      */
-    function shipOrderCallback(resolve, reject) {
+    function shipOrderCallback (resolve, reject) {
       return async function ({ message }) {
         try {
-          const event = JSON.parse(message);
-          console.debug("received event... ", event);
-          const payload = service.getPayload(shipOrder.name, event);
-          const updated = await callback(options, payload);
-          resolve(updated);
+          const event = JSON.parse(message)
+          console.debug('received event... ', event)
+          const payload = service.getPayload(shipOrder.name, event)
+          const updated = await callback(options, payload)
+          resolve(updated)
         } catch (error) {
-          handleError(error, reject, shipOrderCallback.name);
+          handleError(error, reject, shipOrderCallback.name)
         }
-      };
+      }
     }
 
     /**
      * Send the shipOrder event to the shipping service.
      */
-    function callShipOrder() {
+    function callShipOrder () {
       return order.notify(
         service.topic,
         JSON.stringify(
@@ -100,10 +100,10 @@ export function shipOrder(service) {
             signature: order.signatureRequired,
             externalId: order.orderNo,
             requester: ORDER_SERVICE,
-            respondOn: ORDER_TOPIC,
+            respondOn: ORDER_TOPIC
           })
         )
-      );
+      )
     }
 
     return new Promise(function (resolve, reject) {
@@ -113,49 +113,49 @@ export function shipOrder(service) {
           model: order,
           id: order.orderNo,
           topic: ORDER_TOPIC,
-          filters: [order.orderNo, "orderShipped", "shipmentId"],
-          callback: shipOrderCallback(resolve, reject),
+          filters: [order.orderNo, 'orderShipped', 'shipmentId'],
+          callback: shipOrderCallback(resolve, reject)
         })
         .then(callShipOrder)
-        .catch(handleError);
-    });
-  };
+        .catch(handleError)
+    })
+  }
 }
 
 /**
  * @param {import('../services/shipping-service').shippingService} service
  * @type {adapterFactory}
  */
-export function trackShipment(service) {
+export function trackShipment (service) {
   return async function (options) {
     const {
       model: order,
-      args: [callback],
-    } = options;
+      args: [callback]
+    } = options
 
     /**
      *
      * @param {function(Order)} resolve resolve the promise
      * @param {function(Error)} reject reject promise
      */
-    function trackShipmentCallback(resolve, reject) {
+    function trackShipmentCallback (resolve, reject) {
       return async function ({ message, subscription }) {
         try {
-          const event = JSON.parse(message);
-          console.debug("received event...", event);
-          const payload = service.getPayload(trackShipment.name, event);
-          const updated = await callback(options, payload);
-          if (updated.trackingStatus === "orderDelivered") {
-            subscription.unsubscribe();
-            resolve(updated);
+          const event = JSON.parse(message)
+          console.debug('received event...', event)
+          const payload = service.getPayload(trackShipment.name, event)
+          const updated = await callback(options, payload)
+          if (updated.trackingStatus === 'orderDelivered') {
+            subscription.unsubscribe()
+            resolve(updated)
           }
         } catch (error) {
-          handleError(error, reject, trackShipment.name);
+          handleError(error, reject, trackShipment.name)
         }
-      };
+      }
     }
 
-    function callTrackShipment() {
+    function callTrackShipment () {
       return order.notify(
         service.topic,
         JSON.stringify(
@@ -163,10 +163,10 @@ export function trackShipment(service) {
             shipmentId: order.shipmentId,
             externalId: order.orderNo,
             requester: ORDER_SERVICE,
-            respondOn: ORDER_TOPIC,
+            respondOn: ORDER_TOPIC
           })
         )
-      );
+      )
     }
 
     return new Promise(async function (resolve, reject) {
@@ -176,25 +176,25 @@ export function trackShipment(service) {
           model: order,
           id: order.orderNo,
           topic: ORDER_TOPIC,
-          filters: [order.orderNo, "trackingId", "trackingStatus"],
-          callback: trackShipmentCallback(resolve, reject),
+          filters: [order.orderNo, 'trackingId', 'trackingStatus'],
+          callback: trackShipmentCallback(resolve, reject)
         })
         .then(callTrackShipment)
-        .catch(handleError);
-    });
-  };
+        .catch(handleError)
+    })
+  }
 }
 
 /**
  * @param {import('../services/shipping-service').shippingService} service
  * @type {adapterFactory}
  */
-export function verifyDelivery(service) {
+export function verifyDelivery (service) {
   return async function (options) {
     const {
       model: order,
-      args: [callback],
-    } = options;
+      args: [callback]
+    } = options
 
     /**
      *
@@ -202,21 +202,21 @@ export function verifyDelivery(service) {
      * @param {function(Error)} reject
      * @returns
      */
-    function verifyDeliveryCallback(resolve, reject) {
+    function verifyDeliveryCallback (resolve, reject) {
       return async function ({ message }) {
         try {
-          const event = JSON.parse(message);
-          console.debug("received event...", event);
-          const payload = service.getPayload(verifyDelivery.name, event);
-          const updated = await callback(options, payload);
-          resolve(updated);
+          const event = JSON.parse(message)
+          console.debug('received event...', event)
+          const payload = service.getPayload(verifyDelivery.name, event)
+          const updated = await callback(options, payload)
+          resolve(updated)
         } catch (e) {
-          handleError(e, reject, verifyDeliveryCallback.name);
+          handleError(e, reject, verifyDeliveryCallback.name)
         }
-      };
+      }
     }
 
-    function callVerifyDelivery() {
+    function callVerifyDelivery () {
       return order.notify(
         service.topic,
         JSON.stringify(
@@ -224,10 +224,10 @@ export function verifyDelivery(service) {
             trackingId: order.trackingId,
             externalId: order.orderNo,
             requester: ORDER_SERVICE,
-            respondOn: ORDER_TOPIC,
+            respondOn: ORDER_TOPIC
           })
         )
-      );
+      )
     }
 
     return new Promise(async function (resolve, reject) {
@@ -236,12 +236,12 @@ export function verifyDelivery(service) {
           once: true,
           model: order,
           id: order.orderNo,
-          topic: "orderChannel",
-          filters: [order.orderNo, "deliveryVerified", "proofOfDelivery"],
-          callback: verifyDeliveryCallback(resolve, reject),
+          topic: 'orderChannel',
+          filters: [order.orderNo, 'deliveryVerified', 'proofOfDelivery'],
+          callback: verifyDeliveryCallback(resolve, reject)
         })
         .then(callVerifyDelivery)
-        .catch(handleError);
-    });
-  };
+        .catch(handleError)
+    })
+  }
 }

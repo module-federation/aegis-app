@@ -86,6 +86,73 @@ function validateAddress(service) {
 
 /***/ }),
 
+/***/ "./src/adapters/dam-api.js":
+/*!*********************************!*\
+  !*** ./src/adapters/dam-api.js ***!
+  \*********************************/
+/*! namespace exports */
+/*! export damBrowseOut [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export damDownloadOut [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export damSearchOut [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export damUploadOut [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "damUploadOut": () => /* binding */ damUploadOut,
+/* harmony export */   "damSearchOut": () => /* binding */ damSearchOut,
+/* harmony export */   "damBrowseOut": () => /* binding */ damBrowseOut,
+/* harmony export */   "damDownloadOut": () => /* binding */ damDownloadOut
+/* harmony export */ });
+// export function upload (filename, catalog, storagePath, readableStream) {}
+
+// export function search (filename, catalog, tags, limit, writableStream) {}
+
+// export function browse (catalog, tags, limit, writableStream) {}
+
+// export function download (fileId, writableStream) {}
+
+function damUploadOut(service) {
+  return function (data) {
+    console.log({
+      data: data
+    });
+    return {
+      filename: data.args[0].filename,
+      status: 'UPLOADING'
+    };
+  };
+}
+function damSearchOut(service) {
+  return function (data) {
+    return {
+      tags: data.args[0].tags,
+      matches: 361,
+      status: 'COMPLETE'
+    };
+  };
+}
+function damBrowseOut(service) {
+  return function (data) {
+    return {
+      status: 'COMPLETE'
+    };
+  };
+}
+function damDownloadOut(service) {
+  return function (data) {
+    return {
+      fileId: data.args[0],
+      status: 'DOWNLOADING'
+    };
+  };
+}
+
+/***/ }),
+
 /***/ "./src/adapters/event-adapter.js":
 /*!***************************************!*\
   !*** ./src/adapters/event-adapter.js ***!
@@ -411,6 +478,10 @@ function notify() {
 /*! export ServiceLocator [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/service-locator.js .ServiceLocator */
 /*! export authorizePayment [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/payment-adapter.js .authorizePayment */
 /*! export completePayment [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/payment-adapter.js .completePayment */
+/*! export damBrowseOut [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/dam-api.js .damBrowseOut */
+/*! export damDownloadOut [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/dam-api.js .damDownloadOut */
+/*! export damSearchOut [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/dam-api.js .damSearchOut */
+/*! export damUploadOut [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/dam-api.js .damUploadOut */
 /*! export listen [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/event-adapter.js .listen */
 /*! export notify [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/event-adapter.js .notify */
 /*! export pickOrder [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/inventory-adapter.js .pickOrder */
@@ -469,7 +540,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "trackShipment": () => /* reexport safe */ _shipping_adapter__WEBPACK_IMPORTED_MODULE_7__.trackShipment,
 /* harmony export */   "verifyDelivery": () => /* reexport safe */ _shipping_adapter__WEBPACK_IMPORTED_MODULE_7__.verifyDelivery,
 /* harmony export */   "qeGetPublicIpAddressOut": () => /* reexport safe */ _qe_public_ipaddr__WEBPACK_IMPORTED_MODULE_8__.qeGetPublicIpAddressOut,
-/* harmony export */   "wasmGetPublicIpAddress": () => /* reexport safe */ _wasm_public_ipaddr__WEBPACK_IMPORTED_MODULE_9__.wasmGetPublicIpAddress
+/* harmony export */   "wasmGetPublicIpAddress": () => /* reexport safe */ _wasm_public_ipaddr__WEBPACK_IMPORTED_MODULE_9__.wasmGetPublicIpAddress,
+/* harmony export */   "damBrowseOut": () => /* reexport safe */ _dam_api__WEBPACK_IMPORTED_MODULE_10__.damBrowseOut,
+/* harmony export */   "damDownloadOut": () => /* reexport safe */ _dam_api__WEBPACK_IMPORTED_MODULE_10__.damDownloadOut,
+/* harmony export */   "damSearchOut": () => /* reexport safe */ _dam_api__WEBPACK_IMPORTED_MODULE_10__.damSearchOut,
+/* harmony export */   "damUploadOut": () => /* reexport safe */ _dam_api__WEBPACK_IMPORTED_MODULE_10__.damUploadOut
 /* harmony export */ });
 /* harmony import */ var _service_locator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./service-locator */ "./src/adapters/service-locator.js");
 /* harmony import */ var _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./websocket-adapter */ "./src/adapters/websocket-adapter.js");
@@ -481,6 +556,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shipping_adapter__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./shipping-adapter */ "./src/adapters/shipping-adapter.js");
 /* harmony import */ var _qe_public_ipaddr__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./qe-public-ipaddr */ "./src/adapters/qe-public-ipaddr.js");
 /* harmony import */ var _wasm_public_ipaddr__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./wasm-public-ipaddr */ "./src/adapters/wasm-public-ipaddr.js");
+/* harmony import */ var _dam_api__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./dam-api */ "./src/adapters/dam-api.js");
+
 
 
 
@@ -1175,23 +1252,23 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
  */
 function qeGetPublicIpAddressOut() {
   return /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-    var buf;
+    var buffer;
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            buf = [];
+            buffer = [];
             return _context.abrupt("return", new Promise(function (resolve) {
               http__WEBPACK_IMPORTED_MODULE_0___default().get({
                 hostname: 'checkip.amazonaws.com',
                 method: 'get'
               }, function (response) {
                 response.on('data', function (chunk) {
-                  return buf.push(chunk);
+                  return buffer.push(chunk);
                 });
                 response.on('end', function () {
                   resolve({
-                    address: buf.join('')
+                    address: buffer.join('')
                   });
                 });
               });
@@ -1504,8 +1581,8 @@ function _iterableToArrayLimit(arr, i) { var _i = null == arr ? null : "undefine
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-var ORDER_SERVICE = "orderService";
-var ORDER_TOPIC = "orderChannel";
+var ORDER_SERVICE = 'orderService';
+var ORDER_TOPIC = 'orderChannel';
 var handleError = function handleError(error) {
   var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
   var func = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
@@ -1558,7 +1635,7 @@ function shipOrder(service) {
                             message = _ref2.message;
                             _context.prev = 1;
                             event = JSON.parse(message);
-                            console.debug("received event... ", event);
+                            console.debug('received event... ', event);
                             payload = service.getPayload(shipOrder.name, event);
                             _context.next = 7;
                             return callback(options, payload);
@@ -1599,7 +1676,7 @@ function shipOrder(service) {
                   model: order,
                   id: order.orderNo,
                   topic: ORDER_TOPIC,
-                  filters: [order.orderNo, "orderShipped", "shipmentId"],
+                  filters: [order.orderNo, 'orderShipped', 'shipmentId'],
                   callback: shipOrderCallback(resolve, reject)
                 }).then(callShipOrder)["catch"](handleError);
               }));
@@ -1647,13 +1724,13 @@ function trackShipment(service) {
                             message = _ref5.message, subscription = _ref5.subscription;
                             _context3.prev = 1;
                             event = JSON.parse(message);
-                            console.debug("received event...", event);
+                            console.debug('received event...', event);
                             payload = service.getPayload(trackShipment.name, event);
                             _context3.next = 7;
                             return callback(options, payload);
                           case 7:
                             updated = _context3.sent;
-                            if (updated.trackingStatus === "orderDelivered") {
+                            if (updated.trackingStatus === 'orderDelivered') {
                               subscription.unsubscribe();
                               resolve(updated);
                             }
@@ -1692,7 +1769,7 @@ function trackShipment(service) {
                             model: order,
                             id: order.orderNo,
                             topic: ORDER_TOPIC,
-                            filters: [order.orderNo, "trackingId", "trackingStatus"],
+                            filters: [order.orderNo, 'trackingId', 'trackingStatus'],
                             callback: trackShipmentCallback(resolve, reject)
                           }).then(callTrackShipment)["catch"](handleError));
                         case 1:
@@ -1750,7 +1827,7 @@ function verifyDelivery(service) {
                             message = _ref9.message;
                             _context6.prev = 1;
                             event = JSON.parse(message);
-                            console.debug("received event...", event);
+                            console.debug('received event...', event);
                             payload = service.getPayload(verifyDelivery.name, event);
                             _context6.next = 7;
                             return callback(options, payload);
@@ -1792,8 +1869,8 @@ function verifyDelivery(service) {
                             once: true,
                             model: order,
                             id: order.orderNo,
-                            topic: "orderChannel",
-                            filters: [order.orderNo, "deliveryVerified", "proofOfDelivery"],
+                            topic: 'orderChannel',
+                            filters: [order.orderNo, 'deliveryVerified', 'proofOfDelivery'],
                             callback: verifyDeliveryCallback(resolve, reject)
                           }).then(callVerifyDelivery)["catch"](handleError));
                         case 1:

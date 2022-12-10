@@ -8,6 +8,6 @@ watch('./src', { recursive: true }, (eventType, filename) => {
   exec('./watch.sh', (error, stdout, stdin) => {
     console.log({ eventType, filename })
     if (error) return console.error(error)
-    return console.log(stdout || stdin)
+    console.log(stdout || stdin)
   })
 })

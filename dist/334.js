@@ -383,6 +383,42 @@ function checkPayload(key) {
 
 /***/ }),
 
+/***/ "./src/domain/dam-api.js":
+/*!*******************************!*\
+  !*** ./src/domain/dam-api.js ***!
+  \*******************************/
+/*! namespace exports */
+/*! export damBrowseIn [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export damDownloadIn [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export damSearchIn [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export damUploadIn [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "damUploadIn": () => /* binding */ damUploadIn,
+/* harmony export */   "damSearchIn": () => /* binding */ damSearchIn,
+/* harmony export */   "damBrowseIn": () => /* binding */ damBrowseIn,
+/* harmony export */   "damDownloadIn": () => /* binding */ damDownloadIn
+/* harmony export */ });
+function damUploadIn(data) {
+  return this.damUploadOut(data.args);
+}
+function damSearchIn(data) {
+  return this.damSearchOut(data.args);
+}
+function damBrowseIn(data) {
+  return this.damBrowseOut(data.args);
+}
+function damDownloadIn(data) {
+  return this.damDownloadOut(data.id);
+}
+
+/***/ }),
+
 /***/ "./src/domain/mixins.js":
 /*!******************************!*\
   !*** ./src/domain/mixins.js ***!
@@ -2933,6 +2969,10 @@ function _runFibonacciJs() {
 /*! export approveOrders [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .approveOrders */
 /*! export cancelOrders [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .cancelOrders */
 /*! export customHttpStatus [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .customHttpStatus */
+/*! export damBrowseIn [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/dam-api.js .damBrowseIn */
+/*! export damDownloadIn [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/dam-api.js .damDownloadIn */
+/*! export damSearchIn [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/dam-api.js .damSearchIn */
+/*! export damUploadIn [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/dam-api.js .damUploadIn */
 /*! export listSolarSystems [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/Galaxy.js .listSolarSystems */
 /*! export planetsInSolarSystem [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/Planet.js .planetsInSolarSystem */
 /*! export qeCustomHttpStatus [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/query-engine.js .qeCustomHttpStatus */
@@ -2968,13 +3008,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "planetsInSolarSystem": () => /* reexport safe */ _Planet__WEBPACK_IMPORTED_MODULE_3__.planetsInSolarSystem,
 /* harmony export */   "qeRunFibonacci": () => /* reexport safe */ _query_engine__WEBPACK_IMPORTED_MODULE_4__.qeRunFibonacci,
 /* harmony export */   "qeCustomHttpStatus": () => /* reexport safe */ _query_engine__WEBPACK_IMPORTED_MODULE_4__.qeCustomHttpStatus,
-/* harmony export */   "qeGetPublicIpAddressIn": () => /* reexport safe */ _query_engine__WEBPACK_IMPORTED_MODULE_4__.qeGetPublicIpAddressIn
+/* harmony export */   "qeGetPublicIpAddressIn": () => /* reexport safe */ _query_engine__WEBPACK_IMPORTED_MODULE_4__.qeGetPublicIpAddressIn,
+/* harmony export */   "damBrowseIn": () => /* reexport safe */ _dam_api__WEBPACK_IMPORTED_MODULE_5__.damBrowseIn,
+/* harmony export */   "damDownloadIn": () => /* reexport safe */ _dam_api__WEBPACK_IMPORTED_MODULE_5__.damDownloadIn,
+/* harmony export */   "damSearchIn": () => /* reexport safe */ _dam_api__WEBPACK_IMPORTED_MODULE_5__.damSearchIn,
+/* harmony export */   "damUploadIn": () => /* reexport safe */ _dam_api__WEBPACK_IMPORTED_MODULE_5__.damUploadIn
 /* harmony export */ });
 /* harmony import */ var _SolarSystem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SolarSystem */ "./src/domain/SolarSystem.js");
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./order */ "./src/domain/order.js");
 /* harmony import */ var _Galaxy__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Galaxy */ "./src/domain/Galaxy.js");
 /* harmony import */ var _Planet__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Planet */ "./src/domain/Planet.js");
 /* harmony import */ var _query_engine__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./query-engine */ "./src/domain/query-engine.js");
+/* harmony import */ var _dam_api__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./dam-api */ "./src/domain/dam-api.js");
+
 
 
 

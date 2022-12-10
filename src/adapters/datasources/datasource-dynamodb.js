@@ -1,6 +1,6 @@
 export const DataSourceAdapterDynamo = function (
   url,
-  cacheSize = 2000,
+  cacheSize = 3000,
   DataSourceMemory
 ) {
   /**

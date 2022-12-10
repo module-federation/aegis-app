@@ -78,11 +78,6 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
         console.debug('archive', id);
         archive(id);
       }
-    }, {
-      key: "chat",
-      value: function chat() {
-        console.log('chat datasource custom method');
-      }
     }]);
     return DataSourceMongoDbArchive;
   }(DataSourceMongoDb);
@@ -164,12 +159,120 @@ var Customer = {
 
 /***/ }),
 
+/***/ "./src/config/dam-api.js":
+/*!*******************************!*\
+  !*** ./src/config/dam-api.js ***!
+  \*******************************/
+/*! namespace exports */
+/*! export DigitalAssetMgmt [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "DigitalAssetMgmt": () => /* binding */ DigitalAssetMgmt
+/* harmony export */ });
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+/**
+ * @type {import('../domain/index').ModelSpecification}
+ */
+var DigitalAssetMgmt = {
+  modelName: 'DigitalAssetMgmt',
+  endpoint: 'dam',
+  domain: 'dam',
+  factory: function factory(dependencies) {
+    return function (payload) {
+      return _objectSpread(_objectSpread({}, dependencies), payload);
+    };
+  },
+  ports: {
+    damUploadIn: {
+      service: 'dam',
+      type: 'inbound',
+      timeout: 0
+    },
+    damSearchIn: {
+      service: 'dam',
+      type: 'inbound',
+      timeout: 0
+    },
+    damBrowseIn: {
+      service: 'dam',
+      type: 'inbound',
+      timeout: 0
+    },
+    damDownloadIn: {
+      service: 'dam',
+      type: 'inbound',
+      timeout: 0
+    },
+    damDownloadOut: {
+      service: 'dam',
+      type: 'outbound',
+      timeout: 500,
+      circuitBreaker: {
+        "default": {
+          callVolume: 100,
+          intervalMs: 20,
+          errorRate: 30
+        }
+      }
+    },
+    damUploadOut: {
+      service: 'dam',
+      type: 'outbound',
+      timeout: 500,
+      circuitBreaker: {
+        "default": {
+          callVolume: 100,
+          intervalMs: 20,
+          errorRate: 30
+        }
+      }
+    },
+    damSearchOut: {
+      service: 'dam',
+      type: 'outbound',
+      timeout: 500,
+      circuitBreaker: {
+        "default": {
+          callVolume: 100,
+          intervalMs: 20,
+          errorRate: 30
+        }
+      }
+    },
+    damBrowseOut: {
+      service: 'dam',
+      type: 'outbound',
+      timeout: 500,
+      circuitBreaker: {
+        "default": {
+          callVolume: 100,
+          intervalMs: 20,
+          errorRate: 30
+        }
+      }
+    }
+  }
+};
+
+/***/ }),
+
 /***/ "./src/config/index.js":
 /*!*****************************!*\
   !*** ./src/config/index.js ***!
   \*****************************/
 /*! namespace exports */
 /*! export Customer [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/customer.js .Customer */
+/*! export DigitalAssetMgmt [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/dam-api.js .DigitalAssetMgmt */
 /*! export Inventory [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/inventory.js .Inventory */
 /*! export Order [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/order.js .Order */
 /*! export QueryEngine [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/query-engine.js .QueryEngine */
@@ -187,7 +290,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Customer": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_2__.Customer,
 /* harmony export */   "User": () => /* reexport safe */ _user__WEBPACK_IMPORTED_MODULE_3__.User,
 /* harmony export */   "Inventory": () => /* reexport safe */ _inventory__WEBPACK_IMPORTED_MODULE_4__.Inventory,
-/* harmony export */   "QueryEngine": () => /* reexport safe */ _query_engine__WEBPACK_IMPORTED_MODULE_5__.QueryEngine
+/* harmony export */   "QueryEngine": () => /* reexport safe */ _query_engine__WEBPACK_IMPORTED_MODULE_5__.QueryEngine,
+/* harmony export */   "DigitalAssetMgmt": () => /* reexport safe */ _dam_api__WEBPACK_IMPORTED_MODULE_6__.DigitalAssetMgmt
 /* harmony export */ });
 /* harmony import */ var _webswitch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./webswitch */ "./src/config/webswitch.js");
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./order */ "./src/config/order.js");
@@ -195,6 +299,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _user__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./user */ "./src/config/user.js");
 /* harmony import */ var _inventory__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./inventory */ "./src/config/inventory.js");
 /* harmony import */ var _query_engine__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./query-engine */ "./src/config/query-engine.js");
+/* harmony import */ var _dam_api__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./dam-api */ "./src/config/dam-api.js");
+
 
 
 

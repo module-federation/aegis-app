@@ -20,3 +20,4 @@ export {
   qeCustomHttpStatus,
   qeGetPublicIpAddressIn
 } from './query-engine'
+export { damBrowseIn, damDownloadIn, damSearchIn, damUploadIn } from './dam-api'
