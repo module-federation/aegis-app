@@ -3,9 +3,15 @@ import { exec } from 'node:child_process'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import os from 'node:os'
+import { Duplex, Readable } from 'node:stream'
+
+const cmd = './watch.sh'
+const dir = './src'
+const delay = 500
 
 /**
- * Get all files in `dir` and in all directories it contains
+ * Get all files in `dir` and its subdirectories and their
+ * subdirectories, and so on...
  * @param {string} dir directory to read
  * @returns
  */
@@ -26,27 +32,35 @@ async function walk (dir) {
 
 let run = true
 
-function action (file, cb, ms) {
+/**
+ *
+ * @param {string} cmd - script to run
+ * @param {(stderr:Duplex,stdout:Duplex,stdin:Duplex)=>void} cb - stderr, stdout, stdin
+ * @param {number} ms - milliseconds to wait before executing `cmd`
+ * @returns
+ */
+function action (cmd, cb, ms) {
   return function (eventType, filename) {
     console.log(eventType, filename)
     if (ms) {
       if (!run) return
       run = false
-      setTimeout(() => (run = true && exec(file, cb)), ms)
+      setTimeout(() => (run = true && exec(cmd, cb)), ms)
     } else {
-      exec(file, cb)
+      exec(cmd, cb)
     }
   }
 }
 
-function log (error, stdout, stdin) {
-  if (error) return console.error(error)
-  console.log(stdout || stdin)
+function log (stderr, stdout, stdin) {
+  console.log(stderr || stdout || stdin)
 }
 
 /**
- * Watch for changes to source files. For any change, recompile and hot reload.
- * @param {string} filePath - relative path to file from pwd
+ * Watch for changes to source files. For any change, recompile and hot-reload.
+ * @param {string} filePath - relative path to file from {@link process.cwd()}
+ * @param {(eventType:string,filename:string)=>void} cb - callback, see {@link action}
+ * @param {{recursive:boolean}} options - include all subdirectories (not supported on linux)
  */
 function monitor (filePath, cb, options = {}) {
   console.debug('watching ', filePath)
@@ -54,7 +68,7 @@ function monitor (filePath, cb, options = {}) {
 }
 
 if (/linux/i.test(os.platform()))
-  walk('./src').then(files =>
-    files.forEach(file => monitor(file, action('./watch.sh', log, 500)))
+  walk(dir).then(files =>
+    files.forEach(file => monitor(file, action(cmd, log, delay)))
   )
-else monitor('./src', action('./watch.sh', log), { recursive: true })
+else monitor(dir, action(cmd, log, delay), { recursive: true })

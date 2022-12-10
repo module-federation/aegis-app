@@ -138,6 +138,7 @@ function damSearchOut(service) {
 function damBrowseOut(service) {
   return function (data) {
     return {
+      catalog: data.args[0].catalog,
       status: 'COMPLETE'
     };
   };

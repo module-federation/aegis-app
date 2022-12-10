@@ -28,7 +28,10 @@ export function damSearchOut (service) {
 
 export function damBrowseOut (service) {
   return function (data) {
-    return { status: 'COMPLETE' }
+    return {
+      catalog: data.args[0].catalog,
+      status: 'COMPLETE'
+    }
   }
 }
 
