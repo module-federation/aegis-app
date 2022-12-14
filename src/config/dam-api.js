@@ -4,7 +4,7 @@
 export const DigitalAssetMgmt = {
   modelName: 'DigitalAssetMgmt',
   endpoint: 'dam',
-  domain: 'dam',
+  domain: 'DigitalAssetMgmt',
   factory: dependencies => payload => ({ ...dependencies, ...payload }),
   ports: {
     damUploadIn: {
