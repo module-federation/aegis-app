@@ -3,7 +3,8 @@
  */
 export const QueryEngine = {
   modelName: 'QueryEngine',
-  endpoint: 'qe',
+  endpoint: 'query-engine',
+  domain: 'queryengine',
   factory: dependencies => payload => ({ ...dependencies, ...payload }),
   ports: {
     qeRunFibonacci: {

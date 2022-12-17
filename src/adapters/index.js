@@ -11,6 +11,7 @@ export * from './shipping-adapter'
 export * from './qe-public-ipaddr'
 export * from './wasm-public-ipaddr'
 export * from './dam-api'
+export * from './ticket-master'
 
 /**
  * @typedef {import('../domain').Model} Model

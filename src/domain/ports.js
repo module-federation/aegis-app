@@ -21,3 +21,5 @@ export {
   qeGetPublicIpAddressIn
 } from './query-engine'
 export { damBrowseIn, damDownloadIn, damSearchIn, damUploadIn } from './dam-api'
+export { tmListEventsIn } from './ticket-master'
+export { callFetchService } from './access-controller'
