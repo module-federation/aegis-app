@@ -1,0 +1,14 @@
+{
+  "folders": [
+    {
+      "path": "../aegis-app"
+    },
+    {
+      "path": "../aegis-host"
+    },
+    {
+      "path": "../aegis"
+    }
+  ],
+  "settings": {}
+}
