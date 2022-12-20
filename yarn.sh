@@ -1,2 +1,0 @@
-lsof |grep yarn &
-yarn
