@@ -1,4 +1,3 @@
-
 github:
   prebuilds:
     # enable for the master/default branch (defaults to true)
@@ -72,6 +71,10 @@ workspaceLocation: aegis-app/aegis-app.code-workspace
 ports:
   - port: 8000
     description: local repo
+    visibility: public
+    onOpen: ignore
+  - port: 8001
+    description: cache repo
     visibility: public
     onOpen: ignore
   - port: 8080
