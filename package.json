@@ -17,6 +17,7 @@
     "build-local": "yarn clean && webpack --config webpack.config.local.js && cd ../aegis/wasm && yarn deploy",
     "start-repo": "node --title aegis-repo repo.js 8000 dist",
     "hot-reload": "curl -s http://localhost/reload",
+    "start-all": "npm run kafka-start && node -r dotenv/config dist/main.js",
     "build-cache": "yarn clean-cache && webpack --config webpack.config.cache.local",
     "start-cache": "node --title aegis-cache-repo repo.js 8001 cache",
     "build-github": "yarn clean && webpack --config webpack.config.js",
