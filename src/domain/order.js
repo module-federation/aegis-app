@@ -167,7 +167,7 @@ export const freezeOnCompletion = propKey => o =>
  * @param {*} propKey
  * @returns {string | void} the key or `void`
  */
-export const requiredForGuest = propKey => o => (o.customerId ? null : propKey)
+export const requiredForGuest = propKey => o => o.customerId ? null : propKey
 
 /**
  * Value required to approve order.
@@ -551,9 +551,9 @@ const OrderActions = {
     try {
       order.trackShipment(trackingUpdate)
       console.debug({ func: OrderStatus.SHIPPING, order })
-      await (await order.update({ orderStatus: OrderStatus.SHIPPING })).emit(
-        'orderPicked'
-      )
+      await (
+        await order.update({ orderStatus: OrderStatus.SHIPPING })
+      ).emit('orderPicked')
     } catch (error) {
       handleError(error, order, OrderStatus.SHIPPING)
     }
@@ -880,7 +880,7 @@ export async function cancelOrders (data) {
     serialize: false
   })
 
-  return { status: 'ok' }
+  return { status: '🏆' }
 }
 
 /**
@@ -890,15 +890,9 @@ export async function cancelOrders (data) {
  */
 
 export async function approveOrders (data) {
-  try {
-    console.log(x)
-  } catch (error) {
-    throw new OrderError(error, 401)
-  }
-
   const approveOrdersTransform = new Transform({
     objectMode: true,
-    transform: (chunk, _encoding, done) => {
+    transform: (chunk, encoding, done) => {
       if (chunk._id) delete chunk._id
       done(
         null,
@@ -913,7 +907,7 @@ export async function approveOrders (data) {
     serialize: false
   })
 
-  return { status: 'ok' }
+  return { status: '🏆' }
 }
 
 /**
