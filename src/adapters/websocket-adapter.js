@@ -107,6 +107,12 @@ export function websocketStatus () {
   }
 }
 
+export function websocketOnError () {
+  return function ({ args: [callback] }) {
+    if (socket) return socket.on('error', err => callback(err))
+  }
+}
+
 export function websocketTerminate () {
   return function () {
     if (socket) return socket.terminate()
