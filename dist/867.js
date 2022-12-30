@@ -500,6 +500,7 @@ function notify() {
 /*! export websocketClose [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websocketClose */
 /*! export websocketConnect [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websocketConnect */
 /*! export websocketOnClose [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websocketOnClose */
+/*! export websocketOnError [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websocketOnError */
 /*! export websocketOnMessage [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websocketOnMessage */
 /*! export websocketOnOpen [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websocketOnOpen */
 /*! export websocketOnPong [provided] [no usage info] [missing usage info prevents renaming] -> ./src/adapters/websocket-adapter.js .websocketOnPong */
@@ -521,6 +522,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "websocketClose": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websocketClose,
 /* harmony export */   "websocketConnect": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websocketConnect,
 /* harmony export */   "websocketOnClose": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websocketOnClose,
+/* harmony export */   "websocketOnError": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websocketOnError,
 /* harmony export */   "websocketOnMessage": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websocketOnMessage,
 /* harmony export */   "websocketOnOpen": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websocketOnOpen,
 /* harmony export */   "websocketOnPong": () => /* reexport safe */ _websocket_adapter__WEBPACK_IMPORTED_MODULE_1__.websocketOnPong,
@@ -2028,6 +2030,7 @@ function wasmGetPublicIpAddress() {
 /*! export websocketClose [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export websocketConnect [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export websocketOnClose [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export websocketOnError [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export websocketOnMessage [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export websocketOnOpen [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export websocketOnPong [provided] [no usage info] [missing usage info prevents renaming] */
@@ -2051,6 +2054,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "websocketOnOpen": () => /* binding */ websocketOnOpen,
 /* harmony export */   "websocketOnPong": () => /* binding */ websocketOnPong,
 /* harmony export */   "websocketStatus": () => /* binding */ websocketStatus,
+/* harmony export */   "websocketOnError": () => /* binding */ websocketOnError,
 /* harmony export */   "websocketTerminate": () => /* binding */ websocketTerminate
 /* harmony export */ });
 /* harmony import */ var ws__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ws */ "./node_modules/ws/index.js");
@@ -2221,6 +2225,15 @@ function websocketStatus() {
     var _ref10$args = _slicedToArray(_ref10.args, 1),
       callback = _ref10$args[0];
     if (socket) return socket.readyState;
+  };
+}
+function websocketOnError() {
+  return function (_ref11) {
+    var _ref11$args = _slicedToArray(_ref11.args, 1),
+      callback = _ref11$args[0];
+    if (socket) return socket.on('error', function (err) {
+      return callback(err);
+    });
   };
 }
 function websocketTerminate() {
