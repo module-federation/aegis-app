@@ -88,6 +88,7 @@ export class ServiceMeshClient extends EventEmitter {
         ...performance.nodeTiming
       },
       services: this.mesh.listServices(),
+      events: ,
       socketState: this.mesh.websocketStatus() || 'undefined'
     }
   }
