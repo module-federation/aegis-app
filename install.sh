@@ -1,7 +1,6 @@
 export PORT=8080
-cd ..
-# git clone https://github.com/module-federation/aegis
-# git clone https://github.com/module-federation/aegis-host
+git clone https://github.com/module-federation/aegis
+git clone https://github.com/module-federation/aegis-host
 cd aegis
 yarn
 yarn build
@@ -22,4 +21,10 @@ cd ../aegis
 nohup node watch.mjs &
 cd ../aegis-host
 nohup node watch.mjs &
+export PORT=8888
+export SWITCH=true
+nohup node --title webswitch src/bootstrap.js | tee public/aegis.log &
+export PORT=80
+export SWITCH=false
 node --title aegis src/bootstrap.js | tee public/aegis.log
+
