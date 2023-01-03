@@ -1884,6 +1884,7 @@ function tmListEventsOut(service) {
             chunks = [];
             return _context.abrupt("return", new Promise(function (resolve, reject) {
               https__WEBPACK_IMPORTED_MODULE_0___default().get("https://app.ticketmaster.com/discovery/v2/events.json?apikey=".concat(apiKey), function (res) {
+                res.on('error', reject);
                 res.on('data', function (chunk) {
                   return chunks.push(chunk);
                 });

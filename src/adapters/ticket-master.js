@@ -8,6 +8,7 @@ export function tmListEventsOut (service) {
       https.get(
         `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${apiKey}`,
         res => {
+          res.on('error', reject)
           res.on('data', chunk => chunks.push(chunk))
           res.on('end', () => resolve(chunks.join('')))
         }
