@@ -1,11 +1,15 @@
 export PORT=8080
 git clone https://github.com/module-federation/aegis
+git checkout release-0-1-0
+git fetch
 git clone https://github.com/module-federation/aegis-host
+git checkout release-0-1-0
+git fetch
 cd aegis
 yarn
 yarn build
 cd ../aegis-app
-yarn
+yarnwww
 yarn build
 cd ../aegis-host
 yarn
