@@ -10,6 +10,7 @@
     "url": "https://github.com/module-federation/aegis-app"
   },
   "scripts": {
+    "install": "./install.sh",
     "build": "yarn build-local",
     "start": "./start.sh",
     "watch": "node watch.mjs",

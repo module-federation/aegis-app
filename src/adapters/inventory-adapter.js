@@ -76,7 +76,7 @@ export function pickOrder (service) {
               eventTime: new Date().toISOString(),
               eventSource: 'orderService',
               eventData: {
-                replyChannel: 'orderChannel',
+                respChannel: 'orderChannel',
                 commandName: 'pickOrder',
                 commandArgs: {
                   lineItems: order.orderItems,

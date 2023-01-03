@@ -61,7 +61,7 @@ export const Registry = {
       const eventName = /*'outOfStock';*/ 'orderPicked'
       this.sendEvent({
         emitEvent,
-        topic: event.eventData.replyChannel,
+        topic: event.eventData.respChannel,
         eventName,
         eventData: { warehouse_addr: warehouseAddress, externalId },
         eventSource: 'inventoryService'

@@ -708,7 +708,7 @@ function pickOrder(service) {
           eventTime: new Date().toISOString(),
           eventSource: 'orderService',
           eventData: {
-            replyChannel: 'orderChannel',
+            respChannel: 'orderChannel',
             commandName: 'pickOrder',
             commandArgs: {
               lineItems: order.orderItems,
@@ -1990,23 +1990,23 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 function wasmGetPublicIpAddress() {
   return /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-    var bytes;
+    var chunks;
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            bytes = [];
+            chunks = [];
             return _context.abrupt("return", new Promise(function (resolve) {
               http__WEBPACK_IMPORTED_MODULE_0___default().get({
                 hostname: 'checkip.amazonaws.com',
                 method: 'get'
-              }, function (response) {
-                response.on('data', function (chunk) {
-                  return bytes.push(chunk);
+              }, function (res) {
+                res.on('data', function (chunk) {
+                  return chunks.push(chunk);
                 });
-                response.on('end', function () {
+                res.on('end', function () {
                   resolve({
-                    address: bytes.join('').trim()
+                    address: chunks.join('').trim()
                   });
                 });
               });
