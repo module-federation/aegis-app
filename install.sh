@@ -9,7 +9,7 @@ cd aegis
 yarn
 yarn build
 cd ../aegis-app
-yarnwww
+yarn
 yarn build
 cd ../aegis-host
 yarn
