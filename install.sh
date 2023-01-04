@@ -16,7 +16,10 @@ yarn link
 cd ../aegis-host
 yarn link @module-federation/aegis
 yarn build
-cd ../aegis
+cd ../aegis/wasm
+yarn build
+yarn deploy
+cd ..
 nohup node watch.mjs &
 cd ../aegis-host
 nohup node watch.mjs &
@@ -26,4 +29,3 @@ nohup node --title webswitch src/bootstrap.js | tee public/aegis.log &
 export PORT=80
 export SWITCH=false
 node --title aegis src/bootstrap.js | tee public/aegis.log
-
