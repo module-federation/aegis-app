@@ -1,4 +1,3 @@
-export PORT=8080
 git clone https://github.com/module-federation/aegis
 git clone https://github.com/module-federation/aegis-host
 cd aegis
