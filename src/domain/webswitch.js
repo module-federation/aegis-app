@@ -228,7 +228,7 @@ export class ServiceMeshClient extends EventEmitter {
   }
 
   /**
-   * Connects if needed then sends message to mesh broker service.
+   * Sends message to mesh broker service.
    * @param {*} msg
    */
   publish (msg) {

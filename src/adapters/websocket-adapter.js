@@ -50,11 +50,7 @@ function decode (msg) {
 
 export function websocketSend () {
   return function ({ args: [msg, options = {}] }) {
-    if (
-      socket &&
-      socket.readyState === socket.OPEN &&
-      socket.bufferedAmount < 1
-    ) {
+    if (socket?.readyState === socket?.OPEN && socket?.bufferedAmount < 1) {
       socket.send(
         encode(msg),
         useBinary() ? { ...options, binary: true } : options

@@ -1,7 +1,7 @@
 export * from './webswitch' // always export this
 export * from './order'
-export * from './inventory'
-export * from './customer'
+// export * from './inventory'
+// export * from './customer'
 
 // export * from './user'
 // export * from './query-engine'
