@@ -8,6 +8,8 @@ export {
   testContainsMany,
   runFibonacciJs
 } from './order'
+
+export { runFibonacciCust } from './customer'
 // export { listSolarSystems, sendGalaticSignal } from './Galaxy'
 // export {
 //   systemsInGalaxy,

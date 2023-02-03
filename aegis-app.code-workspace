@@ -1,10 +1,7 @@
 {
   "folders": [
     {
-      "path": "../aegis-app"
-    },
-    {
-      "path": "../aegis-host"
+      "path": "../aegis-monorepo"
     },
     {
       "path": "../aegis"

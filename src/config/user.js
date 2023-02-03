@@ -8,7 +8,6 @@ import { uuid } from '../domain/utils'
  * @type {import('../domain').ModelSpecification}
  */
 export const User = {
-  modelName: 'user',
   endpoint: 'users',
   dependencies: { uuid },
   factory: userFactory,

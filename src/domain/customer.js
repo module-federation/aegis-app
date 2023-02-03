@@ -1,7 +1,7 @@
-"use strict";
+'use strict'
 
-export function makeCustomerFactory(dependencies) {
-  return function createCustomer({
+export function makeCustomerFactory (dependencies) {
+  return function createCustomer ({
     firstName,
     lastName,
     shippingAddress,
@@ -9,7 +9,7 @@ export function makeCustomerFactory(dependencies) {
     billingAddress = shippingAddress,
     phone,
     email,
-    userId,
+    userId
   } = {}) {
     return Object.freeze({
       customerId: dependencies.uuid(),
@@ -20,17 +20,35 @@ export function makeCustomerFactory(dependencies) {
       billingAddress,
       phone,
       email,
-      userId,
-    });
-  };
+      userId
+    })
+  }
 }
 
-export async function okToDelete(customer) {
-  try {
-    const orders = await customer.orders();
-    return orders.length > 0;
-  } catch (error) {
-    console.error({ func: okToDelete.name, error });
-    return true;
+export async function okToDelete (customer) {
+  const orders = await customer.orders()
+  if (orders?.length > 0)
+    throw new Error('cant delete customer with open orders')
+  return customer
+}
+
+function fibonacci (x) {
+  if (x === 0) {
+    return 0
+  }
+  if (x === 1) {
+    return 1
+  }
+  return fibonacci(x - 1) + fibonacci(x - 2)
+}
+
+export async function runFibonacciCust (data) {
+  console.log({ data })
+  const param = parseInt(data.args.fibonacci || 20)
+  const start = Date.now()
+  return {
+    fibonacci: param,
+    result: fibonacci(param),
+    time: Date.now() - start
   }
 }

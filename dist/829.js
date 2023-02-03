@@ -2,6 +2,60 @@ exports.id = 829;
 exports.ids = [829];
 exports.modules = {
 
+/***/ "./src/adapters/datasources/datasource-adapter-customer.js":
+/*!*****************************************************************!*\
+  !*** ./src/adapters/datasources/datasource-adapter-customer.js ***!
+  \*****************************************************************/
+/*! namespace exports */
+/*! export DataSourceAdapterCustomer [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "DataSourceAdapterCustomer": () => /* binding */ DataSourceAdapterCustomer
+/* harmony export */ });
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _get() { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get.bind(); } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(arguments.length < 3 ? target : receiver); } return desc.value; }; } return _get.apply(this, arguments); }
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+var DataSourceAdapterCustomer = function DataSourceAdapterCustomer(url, cacheSize, DataSourceFile) {
+  /**
+   * Datasource adapter for AWS Dynamo DB
+   */
+  var DataSourceCustomer = /*#__PURE__*/function (_DataSourceFile) {
+    _inherits(DataSourceCustomer, _DataSourceFile);
+    var _super = _createSuper(DataSourceCustomer);
+    function DataSourceCustomer() {
+      _classCallCheck(this, DataSourceCustomer);
+      return _super.apply(this, arguments);
+    }
+    _createClass(DataSourceCustomer, [{
+      key: "save",
+      value: function save(id, data) {
+        _get(_getPrototypeOf(DataSourceCustomer.prototype), "save", this).call(this, id, data);
+      }
+    }]);
+    return DataSourceCustomer;
+  }(DataSourceFile);
+  return DataSourceCustomer;
+};
+
+/***/ }),
+
 /***/ "./src/adapters/datasources/datasource-mongodb.js":
 /*!********************************************************!*\
   !*** ./src/adapters/datasources/datasource-mongodb.js ***!
@@ -86,11 +140,119 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
 
 /***/ }),
 
+/***/ "./src/config/customer.js":
+/*!********************************!*\
+  !*** ./src/config/customer.js ***!
+  \********************************/
+/*! namespace exports */
+/*! export Customer [provided] [no usage info] [missing usage info prevents renaming] */
+/*! other exports [not provided] [no usage info] */
+/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Customer": () => /* binding */ Customer
+/* harmony export */ });
+/* harmony import */ var _domain_mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../domain/mixins */ "./src/domain/mixins.js");
+/* harmony import */ var _domain_customer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/customer */ "./src/domain/customer.js");
+/* harmony import */ var _adapters_datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../adapters/datasources/datasource-mongodb */ "./src/adapters/datasources/datasource-mongodb.js");
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! nanoid */ "webpack/sharing/consume/default/nanoid/nanoid");
+/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(nanoid__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _adapters_datasources_datasource_adapter_customer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../adapters/datasources/datasource-adapter-customer */ "./src/adapters/datasources/datasource-adapter-customer.js");
+
+
+
+
+
+
+
+
+/**
+ * @type {import('../domain/index').ModelSpecification}
+ */
+var Customer = {
+  modelName: 'customer',
+  endpoint: 'customers',
+  dependencies: {
+    uuid: function uuid() {
+      return (0,nanoid__WEBPACK_IMPORTED_MODULE_3__.nanoid)(8);
+    }
+  },
+  factory: _domain_customer__WEBPACK_IMPORTED_MODULE_1__.makeCustomerFactory,
+  validate: _domain_mixins__WEBPACK_IMPORTED_MODULE_0__.validateModel,
+  onDelete: _domain_customer__WEBPACK_IMPORTED_MODULE_1__.okToDelete,
+  datasource: {
+    factory: _adapters_datasources_datasource_adapter_customer__WEBPACK_IMPORTED_MODULE_4__.DataSourceAdapterCustomer,
+    cacheSize: 4000,
+    baseClass: 'DataSourceFile'
+  },
+  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.freezeProperties)('customerId'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)('firstName', 'lastName', 'email', 'shippingAddress', 'billingAddress', 'creditCardNumber'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.validateProperties)([{
+    propKey: 'email',
+    // unique: { encrypted: true },
+    regex: 'email'
+  }, {
+    propKey: 'creditCardNumber',
+    regex: 'creditCard'
+  }])],
+  relations: {
+    orders: {
+      modelName: 'order',
+      type: 'oneToMany',
+      foreignKey: 'customerId'
+    }
+  },
+  commands: {
+    decrypt: {
+      command: 'decrypt',
+      acl: ['read', 'decrypt']
+    },
+    runFibonacci: {
+      command: function command(model) {
+        var start = Date.now();
+        function fibonacci(x) {
+          if (x === 0) {
+            return 0;
+          }
+          if (x === 1) {
+            return 1;
+          }
+          return fibonacci(x - 1) + fibonacci(x - 2);
+        }
+        var param = parseFloat(model.fibonacci);
+        return {
+          result: fibonacci(Number.isNaN(param) ? 10 : param),
+          time: Date.now() - start
+        };
+      },
+      acl: ['read', 'write']
+    }
+  },
+  ports: {
+    runFibonacciCust: {
+      service: 'customer',
+      type: 'inbound',
+      timeout: 0
+    }
+  },
+  accessControlList: {
+    customer: {
+      allow: 'read',
+      type: 'relation',
+      desc: 'Allow orders to see customers.'
+    }
+  }
+};
+
+/***/ }),
+
 /***/ "./src/config/index.js":
 /*!*****************************!*\
   !*** ./src/config/index.js ***!
   \*****************************/
 /*! namespace exports */
+/*! export Customer [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/customer.js .Customer */
 /*! export Order [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/order.js .Order */
 /*! export WebSwitch [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/webswitch.js .WebSwitch */
 /*! other exports [not provided] [no usage info] */
@@ -101,14 +263,16 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "WebSwitch": () => /* reexport safe */ _webswitch__WEBPACK_IMPORTED_MODULE_0__.WebSwitch,
-/* harmony export */   "Order": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_1__.Order
+/* harmony export */   "Order": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_1__.Order,
+/* harmony export */   "Customer": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_2__.Customer
 /* harmony export */ });
 /* harmony import */ var _webswitch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./webswitch */ "./src/config/webswitch.js");
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./order */ "./src/config/order.js");
+/* harmony import */ var _customer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./customer */ "./src/config/customer.js");
  // always export this
 
 // export * from './inventory'
-// export * from './customer'
+
 
 // export * from './user'
 // export * from './query-engine'
@@ -153,7 +317,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
  * @type {import('../domain/index').ModelSpecification}
  */
 var Order = {
-  modelName: 'order',
   endpoint: 'orders',
   factory: _domain_order__WEBPACK_IMPORTED_MODULE_0__.makeOrderFactory,
   domain: 'order',
@@ -351,12 +514,6 @@ var Order = {
       foreignKey: 'itemId',
       arrayKey: 'orderItems',
       desc: 'An order contains a list of inventory items to ship.'
-    },
-    chat: {
-      modelName: 'user',
-      type: 'custom',
-      foreignKey: 'userId',
-      desc: 'A custom relation used for integrated chat'
     }
   },
   routes: [{
@@ -368,7 +525,6 @@ var Order = {
             case 0:
               return _context.abrupt("return", ports.listModels({
                 writable: res,
-                serialize: true,
                 query: req.query
               }));
             case 1:
@@ -388,28 +544,27 @@ var Order = {
         return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) switch (_context2.prev = _context2.next) {
             case 0:
-              console.log('/orders');
-              _context2.prev = 1;
-              _context2.next = 4;
-              return ports.addModel(req.body);
-            case 4:
+              _context2.prev = 0;
+              _context2.next = 3;
+              return ports.createModel(req.body);
+            case 3:
               result = _context2.sent;
               res.status(200).json({
                 message: 'ok',
                 ctx: result.context,
                 id: result.id
               });
-              _context2.next = 11;
+              _context2.next = 10;
               break;
-            case 8:
-              _context2.prev = 8;
-              _context2.t0 = _context2["catch"](1);
+            case 7:
+              _context2.prev = 7;
+              _context2.t0 = _context2["catch"](0);
               throw new _domain_order__WEBPACK_IMPORTED_MODULE_0__.OrderError(_context2.t0, 404);
-            case 11:
+            case 10:
             case "end":
               return _context2.stop();
           }
-        }, _callee2, null, [[1, 8]]);
+        }, _callee2, null, [[0, 7]]);
       }));
       function post(_x4, _x5, _x6) {
         return _post.apply(this, arguments);
@@ -423,11 +578,7 @@ var Order = {
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) switch (_context3.prev = _context3.next) {
             case 0:
-              return _context3.abrupt("return", ports.listModels({
-                writable: res,
-                serialize: true,
-                query: req.query
-              }));
+              return _context3.abrupt("return", ports.findModel(req.params.id));
             case 1:
             case "end":
               return _context3.stop();
@@ -445,35 +596,54 @@ var Order = {
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) switch (_context4.prev = _context4.next) {
             case 0:
-              console.log('/orders/:id');
-              _context4.prev = 1;
-              _context4.next = 4;
+              _context4.prev = 0;
+              _context4.next = 3;
               return ports.editModel({
                 id: req.params.id,
                 changes: req.body
               });
-            case 4:
+            case 3:
               result = _context4.sent;
               res.status(200).json({
                 message: 'ok',
                 ctx: result.context
               });
-              _context4.next = 11;
+              _context4.next = 10;
               break;
-            case 8:
-              _context4.prev = 8;
-              _context4.t0 = _context4["catch"](1);
+            case 7:
+              _context4.prev = 7;
+              _context4.t0 = _context4["catch"](0);
               throw new _domain_order__WEBPACK_IMPORTED_MODULE_0__.OrderError(_context4.t0, 404);
-            case 11:
+            case 10:
             case "end":
               return _context4.stop();
           }
-        }, _callee4, null, [[1, 8]]);
+        }, _callee4, null, [[0, 7]]);
       }));
       function patch(_x10, _x11, _x12) {
         return _patch.apply(this, arguments);
       }
       return patch;
+    }(),
+    "delete": function () {
+      var _delete2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(req, res, ports) {
+        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+          while (1) switch (_context5.prev = _context5.next) {
+            case 0:
+              ports.removeModel(req.params.id);
+              res.status(200).json({
+                message: 'ok'
+              });
+            case 2:
+            case "end":
+              return _context5.stop();
+          }
+        }, _callee5);
+      }));
+      function _delete(_x13, _x14, _x15) {
+        return _delete2.apply(this, arguments);
+      }
+      return _delete;
     }()
   }],
   commands: {
@@ -943,6 +1113,12 @@ __webpack_require__.r(__webpack_exports__);
  * @property { executeCommand } executeCommand
  */
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+function _iterableToArrayLimit(arr, i) { var _i = null == arr ? null : "undefined" != typeof Symbol && arr[Symbol.iterator] || arr["@@iterator"]; if (null != _i) { var _s, _e, _x, _r, _arr = [], _n = !0, _d = !1; try { if (_x = (_i = _i.call(arr)).next, 0 === i) { if (Object(_i) !== _i) return; _n = !1; } else for (; !(_n = (_s = _x.call(_i)).done) && (_arr.push(_s.value), _arr.length !== i); _n = !0); } catch (err) { _d = !0, _e = err; } finally { try { if (!_n && null != _i["return"] && (_r = _i["return"](), Object(_r) !== _r)) return; } finally { if (_d) throw _e; } } return _arr; } }
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -963,7 +1139,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
  * @param {ModelSpecification} spec
  */
 function validateSpec(spec) {
-  var missing = ['modelName', 'endpoint', 'factory'].filter(function (key) {
+  var missing = ['endpoint', 'factory'].filter(function (key) {
     return !spec[key];
   });
   if ((missing === null || missing === void 0 ? void 0 : missing.length) > 0) {
@@ -984,8 +1160,13 @@ function makeModel(spec) {
     dependencies: _objectSpread(_objectSpread({}, dependencies), (0,_bind_adapters__WEBPACK_IMPORTED_MODULE_1__.default)(spec.ports, _adapters__WEBPACK_IMPORTED_MODULE_3__, _services__WEBPACK_IMPORTED_MODULE_2__))
   });
 }
-var models = Object.values(_config__WEBPACK_IMPORTED_MODULE_5__).map(function (spec) {
-  return makeModel(spec);
+var models = Object.entries(_config__WEBPACK_IMPORTED_MODULE_5__).map(function (_ref) {
+  var _ref2 = _slicedToArray(_ref, 2),
+    k = _ref2[0],
+    v = _ref2[1];
+  return makeModel(_objectSpread(_objectSpread({}, v), {}, {
+    modelName: k
+  }));
 });
 
 /***/ }),

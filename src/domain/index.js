@@ -249,7 +249,7 @@ import * as modelSpecs from '../config'
  * @param {ModelSpecification} spec
  */
 function validateSpec (spec) {
-  const missing = ['modelName', 'endpoint', 'factory'].filter(key => !spec[key])
+  const missing = ['endpoint', 'factory'].filter(key => !spec[key])
   if (missing?.length > 0) {
     throw new Error(
       `missing properties: ${missing}, spec: ${Object.entries(spec)}`
@@ -275,4 +275,6 @@ function makeModel (spec) {
   }
 }
 
-export const models = Object.values(modelSpecs).map(spec => makeModel(spec))
+export const models = Object.entries(modelSpecs).map(([k, v]) =>
+  makeModel({ ...v, modelName: k })
+)

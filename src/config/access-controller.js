@@ -2,7 +2,6 @@
  * @type {import('../domain/index').ModelSpecification}
  */
 export const AccessController = {
-  modelName: 'AccessController',
   endpoint: 'access-controller',
   domain: 'queryengine',
   factory: dependencies => payload => ({ ...dependencies, ...payload }),

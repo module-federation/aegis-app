@@ -43,7 +43,6 @@ import { DataSourceAdapterMongoDb } from '../adapters/datasources/datasource-mon
  * @type {import('../domain/index').ModelSpecification}
  */
 export const Order = {
-  modelName: 'order',
   endpoint: 'orders',
   factory: makeOrderFactory,
   domain: 'order',
@@ -276,12 +275,6 @@ export const Order = {
       foreignKey: 'itemId',
       arrayKey: 'orderItems',
       desc: 'An order contains a list of inventory items to ship.'
-    },
-    chat: {
-      modelName: 'user',
-      type: 'custom',
-      foreignKey: 'userId',
-      desc: 'A custom relation used for integrated chat'
     }
   },
   routes: [
@@ -290,14 +283,12 @@ export const Order = {
       get: async (req, res, ports) =>
         ports.listModels({
           writable: res,
-          serialize: true,
           query: req.query
         }),
 
       post: async (req, res, ports) => {
-        console.log('/orders')
         try {
-          const result = await ports.addModel(req.body)
+          const result = await ports.createModel(req.body)
           res
             .status(200)
             .json({ message: 'ok', ctx: result.context, id: result.id })
@@ -308,15 +299,8 @@ export const Order = {
     },
     {
       path: '/orders/:id',
-      get: async (req, res, ports) =>
-        ports.listModels({
-          writable: res,
-          serialize: true,
-          query: req.query
-        }),
-
+      get: async (req, res, ports) => ports.findModel(req.params.id),
       patch: async (req, res, ports) => {
-        console.log('/orders/:id')
         try {
           const result = await ports.editModel({
             id: req.params.id,
@@ -326,6 +310,10 @@ export const Order = {
         } catch (error) {
           throw new OrderError(error, 404)
         }
+      },
+      delete: async (req, res, ports) => {
+        ports.removeModel(req.params.id)
+        res.status(200).json({ message: 'ok' })
       }
     }
   ],
