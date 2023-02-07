@@ -893,17 +893,14 @@ export async function approveOrders (data) {
     objectMode: true,
     transform: (chunk, encoding, done) => {
       if (chunk._id) delete chunk._id
-      done(
-        null,
-        JSON.stringify({ ...chunk, orderStatus: OrderStatus.APPROVED })
-      )
+      this.push(JSON.stringify({ ...chunk, orderStatus: OrderStatus.APPROVED }))
+      done()
     }
   })
 
   await this.list({
     writable: this.createWriteStream(),
-    transform: approveOrdersTransform,
-    serialize: false
+    transform: approveOrdersTransform
   })
 
   return { status: '🏆' }

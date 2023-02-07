@@ -2502,6 +2502,7 @@ function approveOrders(_x17) {
  */
 function _approveOrders() {
   _approveOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee22(data) {
+    var _this2 = this;
     var approveOrdersTransform;
     return _regeneratorRuntime().wrap(function _callee22$(_context22) {
       while (1) switch (_context22.prev = _context22.next) {
@@ -2510,16 +2511,16 @@ function _approveOrders() {
             objectMode: true,
             transform: function transform(chunk, encoding, done) {
               if (chunk._id) delete chunk._id;
-              done(null, JSON.stringify(_objectSpread(_objectSpread({}, chunk), {}, {
+              _this2.push(JSON.stringify(_objectSpread(_objectSpread({}, chunk), {}, {
                 orderStatus: OrderStatus.APPROVED
               })));
+              done();
             }
           });
           _context22.next = 3;
           return this.list({
             writable: this.createWriteStream(),
-            transform: approveOrdersTransform,
-            serialize: false
+            transform: approveOrdersTransform
           });
         case 3:
           return _context22.abrupt("return", {
