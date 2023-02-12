@@ -21,11 +21,11 @@ export const Customer = {
   factory: makeCustomerFactory,
   validate: validateModel,
   onDelete: okToDelete,
-  datasource: {
-    factory: DataSourceAdapterCustomer,
-    cacheSize: 4000,
-    baseClass: 'DataSourceFile'
-  },
+  // datasource: {
+  //   factory: DataSourceAdapterCustomer,
+  //   cacheSize: 4000,
+  //   baseClass: 'DataSourceFile'
+  // },
   mixins: [
     freezeProperties('customerId'),
     requireProperties(

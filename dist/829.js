@@ -183,11 +183,11 @@ var Customer = {
   factory: _domain_customer__WEBPACK_IMPORTED_MODULE_1__.makeCustomerFactory,
   validate: _domain_mixins__WEBPACK_IMPORTED_MODULE_0__.validateModel,
   onDelete: _domain_customer__WEBPACK_IMPORTED_MODULE_1__.okToDelete,
-  datasource: {
-    factory: _adapters_datasources_datasource_adapter_customer__WEBPACK_IMPORTED_MODULE_4__.DataSourceAdapterCustomer,
-    cacheSize: 4000,
-    baseClass: 'DataSourceFile'
-  },
+  // datasource: {
+  //   factory: DataSourceAdapterCustomer,
+  //   cacheSize: 4000,
+  //   baseClass: 'DataSourceFile'
+  // },
   mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.freezeProperties)('customerId'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)('firstName', 'lastName', 'email', 'shippingAddress', 'billingAddress', 'creditCardNumber'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.validateProperties)([{
     propKey: 'email',
     // unique: { encrypted: true },
