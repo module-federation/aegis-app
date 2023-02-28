@@ -86,6 +86,11 @@ export const Customer = {
       service: 'customer',
       type: 'inbound',
       timeout: 0
+    },
+    doesFieldExist: {
+      service: 'customer',
+      type: 'inbound',
+      timeout: 0
     }
   },
   accessControlList: {

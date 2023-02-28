@@ -52,6 +52,11 @@ function serviceUrl () {
  * Cf. modelSpec by the same name, i.e. `webswitch`.
  */
 export class ServiceMeshClient extends EventEmitter {
+  /**
+   * The model is passed as the only arg.
+   *
+   * @param {import('../../domain').Model} mesh the domain model
+   */
   constructor (mesh) {
     super('webswitch')
     this.url
@@ -88,6 +93,7 @@ export class ServiceMeshClient extends EventEmitter {
         ...performance.nodeTiming
       },
       services: this.mesh.listServices(),
+      events: this.mesh.listEvents(),
       socketState: this.mesh.websocketStatus() || 'undefined'
     }
   }
@@ -261,20 +267,38 @@ export class ServiceMeshClient extends EventEmitter {
 }
 
 /**
+ * @typedef {{
+ *   senderQueue:string[],
+ *   queueDepth:function():number,
+ *   connect:function(),
+ *   close:function(),
+ *   publish(object),
+ *   enqueue:function(string),
+ *   dequeue:function(),
+ *   subscribe:function(string,function())
+ * }} serviceMeshIface
+ */
+
+/**
  * Domain model factory function. This model is
  * used internally by the Aegis framework as a
  * pluggable service mesh client. Implement the
  * the methods below to create a new plugin.
  *
  * @param {*} dependencies injected depedencies
- * @returns
+ * @returns {function({function():string[],function():string[]}):serviceMeshIface}
  */
 export function makeClient (dependencies) {
   let client
-  return function ({ listServices }) {
+  return function ({ listServices, listEvents }) {
     return {
+      /**@type {function():string[]} */
       listServices,
+      /**@type {function():string[]} */
+      listEvents,
+      /**@type {string[]} */
       sendQueue: [],
+      /**@type {number} */
       sendQueueMax: 1000,
 
       queueDepth () {
@@ -289,6 +313,10 @@ export function makeClient (dependencies) {
         return this.sendQueue.shift()
       },
 
+      /**
+       *
+       * @returns {ServiceMeshClient}
+       */
       getClient () {
         if (client) return client
         client = new ServiceMeshClient(this)

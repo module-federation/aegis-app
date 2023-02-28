@@ -971,3 +971,9 @@ export async function runFibonacciJs (data) {
     time: Date.now() - start
   }
 }
+
+export async function getFieldList () {
+  const model = await this.list({ query: { __limit: 1 } })
+  console.log({ model: model[0] })
+  return Object.keys(model[0])
+}

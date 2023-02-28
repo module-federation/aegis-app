@@ -260,6 +260,11 @@ export const Order = {
       service: 'Test',
       type: 'inbound',
       timeout: 0
+    },
+    getFieldList: {
+      service: 'Test',
+      type: 'inbound',
+      timeout: 0
     }
   },
   relations: {

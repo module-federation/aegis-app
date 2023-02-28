@@ -52,3 +52,13 @@ export async function runFibonacciCust (data) {
     time: Date.now() - start
   }
 }
+
+export async function doesFieldExist (data) {
+  console.log({ name: data.args?.name })
+  return {
+    field: data.args?.name,
+    exists: (
+      await (await this.fetchRelatedService('ORDER')).getFieldList()
+    ).includes(data.args?.name)
+  }
+}

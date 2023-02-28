@@ -6,10 +6,11 @@ export {
   trackAsyncContext,
   customHttpStatus,
   testContainsMany,
-  runFibonacciJs
+  runFibonacciJs,
+  getFieldList
 } from './order'
 
-export { runFibonacciCust } from './customer'
+export { runFibonacciCust, doesFieldExist } from './customer'
 // export { listSolarSystems, sendGalaticSignal } from './Galaxy'
 // export {
 //   systemsInGalaxy,
