@@ -7,8 +7,8 @@ var serverConfig = {
 
   entry: ['@babel/polyfill', path.resolve(__dirname, 'src/index.js')],
   output: {
-    path: path.resolve(__dirname, 'cache'),
-    publicPath: 'http://localhost:8001/',
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: 'http://localhost:8002/',
     libraryTarget: 'commonjs'
   },
   devtool: 'source-map',
@@ -57,14 +57,14 @@ var serverConfig = {
   },
   plugins: [
     new ModuleFederationPlugin({
-      name: 'distributed-cache',
+      name: 'local',
       library: { type: 'commonjs-module' },
       filename: 'remoteEntry.js',
       exposes: {
-        './model-cache': './src/domain',
-        './adapter-cache': './src/adapters',
-        './service-cache': './src/services',
-        './port-cache': './src/domain/ports',
+        './models': './src/domain',
+        './adapters': './src/adapters',
+        './services': './src/services',
+        './ports': './src/domain/ports.js',
         './event-bus': './src/services/event-bus'
       },
       shared: {

@@ -2,60 +2,6 @@ exports.id = 829;
 exports.ids = [829];
 exports.modules = {
 
-/***/ "./src/adapters/datasources/datasource-adapter-customer.js":
-/*!*****************************************************************!*\
-  !*** ./src/adapters/datasources/datasource-adapter-customer.js ***!
-  \*****************************************************************/
-/*! namespace exports */
-/*! export DataSourceAdapterCustomer [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "DataSourceAdapterCustomer": () => /* binding */ DataSourceAdapterCustomer
-/* harmony export */ });
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
-function _get() { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get.bind(); } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(arguments.length < 3 ? target : receiver); } return desc.value; }; } return _get.apply(this, arguments); }
-function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-var DataSourceAdapterCustomer = function DataSourceAdapterCustomer(url, cacheSize, DataSourceFile) {
-  /**
-   * Datasource adapter for AWS Dynamo DB
-   */
-  var DataSourceCustomer = /*#__PURE__*/function (_DataSourceFile) {
-    _inherits(DataSourceCustomer, _DataSourceFile);
-    var _super = _createSuper(DataSourceCustomer);
-    function DataSourceCustomer() {
-      _classCallCheck(this, DataSourceCustomer);
-      return _super.apply(this, arguments);
-    }
-    _createClass(DataSourceCustomer, [{
-      key: "save",
-      value: function save(id, data) {
-        _get(_getPrototypeOf(DataSourceCustomer.prototype), "save", this).call(this, id, data);
-      }
-    }]);
-    return DataSourceCustomer;
-  }(DataSourceFile);
-  return DataSourceCustomer;
-};
-
-/***/ }),
-
 /***/ "./src/adapters/datasources/datasource-mongodb.js":
 /*!********************************************************!*\
   !*** ./src/adapters/datasources/datasource-mongodb.js ***!
@@ -140,119 +86,11 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
 
 /***/ }),
 
-/***/ "./src/config/customer.js":
-/*!********************************!*\
-  !*** ./src/config/customer.js ***!
-  \********************************/
-/*! namespace exports */
-/*! export Customer [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Customer": () => /* binding */ Customer
-/* harmony export */ });
-/* harmony import */ var _domain_mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../domain/mixins */ "./src/domain/mixins.js");
-/* harmony import */ var _domain_customer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/customer */ "./src/domain/customer.js");
-/* harmony import */ var _adapters_datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../adapters/datasources/datasource-mongodb */ "./src/adapters/datasources/datasource-mongodb.js");
-/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! nanoid */ "webpack/sharing/consume/default/nanoid/nanoid");
-/* harmony import */ var nanoid__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(nanoid__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _adapters_datasources_datasource_adapter_customer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../adapters/datasources/datasource-adapter-customer */ "./src/adapters/datasources/datasource-adapter-customer.js");
-
-
-
-
-
-
-
-
-/**
- * @type {import('../domain/index').ModelSpecification}
- */
-var Customer = {
-  modelName: 'customer',
-  endpoint: 'customers',
-  dependencies: {
-    uuid: function uuid() {
-      return (0,nanoid__WEBPACK_IMPORTED_MODULE_3__.nanoid)(8);
-    }
-  },
-  factory: _domain_customer__WEBPACK_IMPORTED_MODULE_1__.makeCustomerFactory,
-  validate: _domain_mixins__WEBPACK_IMPORTED_MODULE_0__.validateModel,
-  onDelete: _domain_customer__WEBPACK_IMPORTED_MODULE_1__.okToDelete,
-  // datasource: {
-  //   factory: DataSourceAdapterCustomer,
-  //   cacheSize: 4000,
-  //   baseClass: 'DataSourceFile'
-  // },
-  mixins: [(0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.freezeProperties)('customerId'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.requireProperties)('firstName', 'lastName', 'email', 'shippingAddress', 'billingAddress', 'creditCardNumber'), (0,_domain_mixins__WEBPACK_IMPORTED_MODULE_0__.validateProperties)([{
-    propKey: 'email',
-    // unique: { encrypted: true },
-    regex: 'email'
-  }, {
-    propKey: 'creditCardNumber',
-    regex: 'creditCard'
-  }])],
-  relations: {
-    orders: {
-      modelName: 'order',
-      type: 'oneToMany',
-      foreignKey: 'customerId'
-    }
-  },
-  commands: {
-    decrypt: {
-      command: 'decrypt',
-      acl: ['read', 'decrypt']
-    },
-    runFibonacci: {
-      command: function command(model) {
-        var start = Date.now();
-        function fibonacci(x) {
-          if (x === 0) {
-            return 0;
-          }
-          if (x === 1) {
-            return 1;
-          }
-          return fibonacci(x - 1) + fibonacci(x - 2);
-        }
-        var param = parseFloat(model.fibonacci);
-        return {
-          result: fibonacci(Number.isNaN(param) ? 10 : param),
-          time: Date.now() - start
-        };
-      },
-      acl: ['read', 'write']
-    }
-  },
-  ports: {
-    runFibonacciCust: {
-      service: 'customer',
-      type: 'inbound',
-      timeout: 0
-    }
-  },
-  accessControlList: {
-    customer: {
-      allow: 'read',
-      type: 'relation',
-      desc: 'Allow orders to see customers.'
-    }
-  }
-};
-
-/***/ }),
-
 /***/ "./src/config/index.js":
 /*!*****************************!*\
   !*** ./src/config/index.js ***!
   \*****************************/
 /*! namespace exports */
-/*! export Customer [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/customer.js .Customer */
 /*! export Order [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/order.js .Order */
 /*! export WebSwitch [provided] [no usage info] [missing usage info prevents renaming] -> ./src/config/webswitch.js .WebSwitch */
 /*! other exports [not provided] [no usage info] */
@@ -263,16 +101,14 @@ var Customer = {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "WebSwitch": () => /* reexport safe */ _webswitch__WEBPACK_IMPORTED_MODULE_0__.WebSwitch,
-/* harmony export */   "Order": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_1__.Order,
-/* harmony export */   "Customer": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_2__.Customer
+/* harmony export */   "Order": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_1__.Order
 /* harmony export */ });
 /* harmony import */ var _webswitch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./webswitch */ "./src/config/webswitch.js");
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./order */ "./src/config/order.js");
-/* harmony import */ var _customer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./customer */ "./src/config/customer.js");
  // always export this
 
+// export * from './customer'
 // export * from './inventory'
-
 
 // export * from './user'
 // export * from './query-engine'
@@ -496,6 +332,11 @@ var Order = {
       timeout: 0
     },
     runFibonacciJs: {
+      service: 'Test',
+      type: 'inbound',
+      timeout: 0
+    },
+    getFieldList: {
       service: 'Test',
       type: 'inbound',
       timeout: 0
@@ -1266,6 +1107,11 @@ function serviceUrl() {
 var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
   _inherits(ServiceMeshClient, _EventEmitter);
   var _super = _createSuper(ServiceMeshClient);
+  /**
+   * The model is passed as the only arg.
+   *
+   * @param {import('../../domain').Model} mesh the domain model
+   */
   function ServiceMeshClient(mesh) {
     var _this;
     _classCallCheck(this, ServiceMeshClient);
@@ -1303,6 +1149,7 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
         pid: process.pid,
         telemetry: _objectSpread(_objectSpread(_objectSpread({}, process.memoryUsage()), process.cpuUsage()), performance.nodeTiming),
         services: this.mesh.listServices(),
+        events: this.mesh.listEvents(),
         socketState: this.mesh.websocketStatus() || 'undefined'
       };
     }
@@ -1564,21 +1411,40 @@ var ServiceMeshClient = /*#__PURE__*/function (_EventEmitter) {
 }((events__WEBPACK_IMPORTED_MODULE_1___default()));
 
 /**
+ * @typedef {{
+ *   senderQueue:string[],
+ *   queueDepth:function():number,
+ *   connect:function(),
+ *   close:function(),
+ *   publish(object),
+ *   enqueue:function(string),
+ *   dequeue:function(),
+ *   subscribe:function(string,function())
+ * }} serviceMeshIface
+ */
+
+/**
  * Domain model factory function. This model is
  * used internally by the Aegis framework as a
  * pluggable service mesh client. Implement the
  * the methods below to create a new plugin.
  *
  * @param {*} dependencies injected depedencies
- * @returns
+ * @returns {function({function():string[],function():string[]}):serviceMeshIface}
  */
 function makeClient(dependencies) {
   var client;
   return function (_ref) {
-    var listServices = _ref.listServices;
+    var listServices = _ref.listServices,
+      listEvents = _ref.listEvents;
     return {
+      /**@type {function():string[]} */
       listServices: listServices,
+      /**@type {function():string[]} */
+      listEvents: listEvents,
+      /**@type {string[]} */
       sendQueue: [],
+      /**@type {number} */
       sendQueueMax: 1000,
       queueDepth: function queueDepth() {
         return this.sendQueue.length;
@@ -1589,6 +1455,10 @@ function makeClient(dependencies) {
       dequeue: function dequeue() {
         return this.sendQueue.shift();
       },
+      /**
+       *
+       * @returns {ServiceMeshClient}
+       */
       getClient: function getClient() {
         if (client) return client;
         client = new ServiceMeshClient(this);

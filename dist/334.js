@@ -75,6 +75,7 @@ function checkPayload(key) {
   !*** ./src/domain/customer.js ***!
   \********************************/
 /*! namespace exports */
+/*! export doesFieldExist [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export makeCustomerFactory [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export okToDelete [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export runFibonacciCust [provided] [no usage info] [missing usage info prevents renaming] */
@@ -87,7 +88,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "makeCustomerFactory": () => /* binding */ makeCustomerFactory,
 /* harmony export */   "okToDelete": () => /* binding */ okToDelete,
-/* harmony export */   "runFibonacciCust": () => /* binding */ runFibonacciCust
+/* harmony export */   "runFibonacciCust": () => /* binding */ runFibonacciCust,
+/* harmony export */   "doesFieldExist": () => /* binding */ doesFieldExist
 /* harmony export */ });
 
 
@@ -183,6 +185,38 @@ function _runFibonacciCust() {
     }, _callee2);
   }));
   return _runFibonacciCust.apply(this, arguments);
+}
+function doesFieldExist(_x3) {
+  return _doesFieldExist.apply(this, arguments);
+}
+function _doesFieldExist() {
+  _doesFieldExist = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(data) {
+    var _data$args, _data$args2, _data$args3;
+    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
+        case 0:
+          console.log({
+            name: (_data$args = data.args) === null || _data$args === void 0 ? void 0 : _data$args.name
+          });
+          _context3.t0 = (_data$args2 = data.args) === null || _data$args2 === void 0 ? void 0 : _data$args2.name;
+          _context3.next = 4;
+          return this.fetchRelatedService('ORDER');
+        case 4:
+          _context3.next = 6;
+          return _context3.sent.getFieldList();
+        case 6:
+          _context3.t1 = _context3.sent.includes((_data$args3 = data.args) === null || _data$args3 === void 0 ? void 0 : _data$args3.name);
+          return _context3.abrupt("return", {
+            field: _context3.t0,
+            exists: _context3.t1
+          });
+        case 8:
+        case "end":
+          return _context3.stop();
+      }
+    }, _callee3, this);
+  }));
+  return _doesFieldExist.apply(this, arguments);
 }
 
 /***/ }),
@@ -1143,6 +1177,7 @@ var GlobalMixins = [encryptPersonalInfo];
 /*! export errorCallback [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export freezeOnApproval [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export freezeOnCompletion [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export getFieldList [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export handleOrderEvent [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export itemCount [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export makeOrderFactory [provided] [no usage info] [missing usage info prevents renaming] */
@@ -1214,7 +1249,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "trackAsyncContext": () => /* binding */ trackAsyncContext,
 /* harmony export */   "customHttpStatus": () => /* binding */ customHttpStatus,
 /* harmony export */   "testContainsMany": () => /* binding */ testContainsMany,
-/* harmony export */   "runFibonacciJs": () => /* binding */ runFibonacciJs
+/* harmony export */   "runFibonacciJs": () => /* binding */ runFibonacciJs,
+/* harmony export */   "getFieldList": () => /* binding */ getFieldList
 /* harmony export */ });
 /* harmony import */ var _mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mixins */ "./src/domain/mixins.js");
 /* harmony import */ var _domain_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/utils */ "./src/domain/utils.js");
@@ -2659,6 +2695,35 @@ function _runFibonacciJs() {
   }));
   return _runFibonacciJs.apply(this, arguments);
 }
+function getFieldList() {
+  return _getFieldList.apply(this, arguments);
+}
+function _getFieldList() {
+  _getFieldList = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee27() {
+    var model;
+    return _regeneratorRuntime().wrap(function _callee27$(_context27) {
+      while (1) switch (_context27.prev = _context27.next) {
+        case 0:
+          _context27.next = 2;
+          return this.list({
+            query: {
+              __limit: 1
+            }
+          });
+        case 2:
+          model = _context27.sent;
+          console.log({
+            model: model[0]
+          });
+          return _context27.abrupt("return", Object.keys(model[0]));
+        case 5:
+        case "end":
+          return _context27.stop();
+      }
+    }, _callee27, this);
+  }));
+  return _getFieldList.apply(this, arguments);
+}
 
 /***/ }),
 
@@ -2670,6 +2735,8 @@ function _runFibonacciJs() {
 /*! export approveOrders [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .approveOrders */
 /*! export cancelOrders [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .cancelOrders */
 /*! export customHttpStatus [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .customHttpStatus */
+/*! export doesFieldExist [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/customer.js .doesFieldExist */
+/*! export getFieldList [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .getFieldList */
 /*! export runFibonacciCust [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/customer.js .runFibonacciCust */
 /*! export runFibonacciJs [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .runFibonacciJs */
 /*! export testContainsMany [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .testContainsMany */
@@ -2687,7 +2754,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "customHttpStatus": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.customHttpStatus,
 /* harmony export */   "testContainsMany": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.testContainsMany,
 /* harmony export */   "runFibonacciJs": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.runFibonacciJs,
-/* harmony export */   "runFibonacciCust": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_1__.runFibonacciCust
+/* harmony export */   "getFieldList": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.getFieldList,
+/* harmony export */   "runFibonacciCust": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_1__.runFibonacciCust,
+/* harmony export */   "doesFieldExist": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_1__.doesFieldExist
 /* harmony export */ });
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./order */ "./src/domain/order.js");
 /* harmony import */ var _customer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./customer */ "./src/domain/customer.js");

@@ -1,14 +1,14 @@
 var path = require('path')
-const ModuleFederationPlugin = require('webpack').container
-  .ModuleFederationPlugin
+const { ModuleFederationPlugin } = require('webpack').container
 const httpNode = require('./webpack/http-node')
 
 var serverConfig = {
   target: httpNode,
+
   entry: ['@babel/polyfill', path.resolve(__dirname, 'src/index.js')],
   output: {
     path: path.resolve(__dirname, 'cache'),
-    publicPath: 'https://localhost:8001/',
+    publicPath: 'http://localhost:8003/',
     libraryTarget: 'commonjs'
   },
   devtool: 'source-map',
@@ -18,6 +18,31 @@ var serverConfig = {
   mode: 'development',
   module: {
     rules: [
+      {
+        test: /\.py$/,
+        use: [{ loader: 'python-webpack-loader' }]
+      },
+      {
+        test: /\.wasm$/,
+        type: 'webassembly/async'
+      }
+    ]
+  },
+  experiments: {
+    asyncWebAssembly: true
+  },
+  optimization: {
+    chunkIds: 'deterministic' // To keep filename consistent between different modes (for example building only)
+  },
+  module: {
+    rules: [
+      {
+        test: /\.py$/,
+        loader: 'py-loader',
+        options: {
+          compiler: 'transcrypt'
+        }
+      },
       {
         test: /\.js?$/,
         exclude: /node_modules/,
@@ -50,6 +75,12 @@ var serverConfig = {
           eager: true
         },
         kafkajs: {
+          eager: true
+        },
+        nanoid: {
+          eager: true
+        },
+        'multicast-dns': {
           eager: true
         }
       }

@@ -6,7 +6,7 @@ import os from 'node:os'
 
 const cmd = buildCommand()
 const dir = './src'
-const delay = 500
+const delay = 800
 
 function buildCommand () {
   // below fails randomly😡
