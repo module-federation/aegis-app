@@ -7,7 +7,8 @@ export {
   customHttpStatus,
   testContainsMany,
   runFibonacciJs,
-  getFieldList
+  getFieldList,
+  createModelEvent
 } from './order'
 
 export { runFibonacciCust, doesFieldExist } from './customer'

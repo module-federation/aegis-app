@@ -830,7 +830,7 @@ export async function returnShipment (order) {
 }
 
 export function accountOrder (req, res) {}
-1
+
 /**
  * @type {undoFunction}
  * Start process to return canceled order items to inventory.
@@ -947,8 +947,8 @@ export async function customHttpStatus (data) {
 }
 
 export async function testContainsMany (data) {
-  this.chat()
-  return { status: 'ok' }
+  console.log({ fn: testContainsMany.name, data })
+  return { status: '👍', inventory: await this.inventory() }
 }
 
 function fibonacci (x) {
@@ -976,4 +976,16 @@ export async function getFieldList () {
   const model = await this.list({ query: { __limit: 1 } })
   console.log({ model: model[0] })
   return Object.keys(model[0])
+}
+
+export async function createModelEvent () {
+  return new Promise(resolve => {
+    this.emit('createModel_ORDER', {
+      cb: model => resolve(model),
+      args: {
+        a: 1,
+        b: 2
+      }
+    })
+  })
 }
