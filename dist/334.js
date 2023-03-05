@@ -1173,6 +1173,7 @@ var GlobalMixins = [encryptPersonalInfo];
 /*! export checkItem [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export checkItems [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export checkout [provided] [no usage info] [missing usage info prevents renaming] */
+/*! export createModelEvent [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export customHttpStatus [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export errorCallback [provided] [no usage info] [missing usage info prevents renaming] */
 /*! export freezeOnApproval [provided] [no usage info] [missing usage info prevents renaming] */
@@ -1250,7 +1251,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "customHttpStatus": () => /* binding */ customHttpStatus,
 /* harmony export */   "testContainsMany": () => /* binding */ testContainsMany,
 /* harmony export */   "runFibonacciJs": () => /* binding */ runFibonacciJs,
-/* harmony export */   "getFieldList": () => /* binding */ getFieldList
+/* harmony export */   "getFieldList": () => /* binding */ getFieldList,
+/* harmony export */   "createModelEvent": () => /* binding */ createModelEvent
 /* harmony export */ });
 /* harmony import */ var _mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mixins */ "./src/domain/mixins.js");
 /* harmony import */ var _domain_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../domain/utils */ "./src/domain/utils.js");
@@ -2418,7 +2420,7 @@ function _returnShipment() {
   return _returnShipment.apply(this, arguments);
 }
 function accountOrder(req, res) {}
-1;
+
 /**
  * @type {undoFunction}
  * Start process to return canceled order items to inventory.
@@ -2647,11 +2649,19 @@ function _testContainsMany() {
     return _regeneratorRuntime().wrap(function _callee25$(_context25) {
       while (1) switch (_context25.prev = _context25.next) {
         case 0:
-          this.chat();
-          return _context25.abrupt("return", {
-            status: 'ok'
+          console.log({
+            fn: testContainsMany.name,
+            data: data
           });
-        case 2:
+          _context25.next = 3;
+          return this.inventory();
+        case 3:
+          _context25.t0 = _context25.sent;
+          return _context25.abrupt("return", {
+            status: '👍',
+            inventory: _context25.t0
+          });
+        case 5:
         case "end":
           return _context25.stop();
       }
@@ -2724,6 +2734,34 @@ function _getFieldList() {
   }));
   return _getFieldList.apply(this, arguments);
 }
+function createModelEvent() {
+  return _createModelEvent.apply(this, arguments);
+}
+function _createModelEvent() {
+  _createModelEvent = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee28() {
+    var _this3 = this;
+    return _regeneratorRuntime().wrap(function _callee28$(_context28) {
+      while (1) switch (_context28.prev = _context28.next) {
+        case 0:
+          return _context28.abrupt("return", new Promise(function (resolve) {
+            _this3.emit('createModel_ORDER', {
+              cb: function cb(model) {
+                return resolve(model);
+              },
+              args: {
+                a: 1,
+                b: 2
+              }
+            });
+          }));
+        case 1:
+        case "end":
+          return _context28.stop();
+      }
+    }, _callee28);
+  }));
+  return _createModelEvent.apply(this, arguments);
+}
 
 /***/ }),
 
@@ -2734,6 +2772,7 @@ function _getFieldList() {
 /*! namespace exports */
 /*! export approveOrders [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .approveOrders */
 /*! export cancelOrders [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .cancelOrders */
+/*! export createModelEvent [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .createModelEvent */
 /*! export customHttpStatus [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .customHttpStatus */
 /*! export doesFieldExist [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/customer.js .doesFieldExist */
 /*! export getFieldList [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/order.js .getFieldList */
@@ -2755,6 +2794,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "testContainsMany": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.testContainsMany,
 /* harmony export */   "runFibonacciJs": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.runFibonacciJs,
 /* harmony export */   "getFieldList": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.getFieldList,
+/* harmony export */   "createModelEvent": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_0__.createModelEvent,
 /* harmony export */   "runFibonacciCust": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_1__.runFibonacciCust,
 /* harmony export */   "doesFieldExist": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_1__.doesFieldExist
 /* harmony export */ });

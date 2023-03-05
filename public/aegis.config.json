@@ -1,0 +1,120 @@
+{
+  "desc": "hot-reloadable configurtion variables, see https://github.com/module-federatio/aegis",
+  "general": {
+    "desc": "live-updateable environmental vars",
+    "fqdn": "localhost",
+    "remoteServices": "aegis-services",
+    "resumeWorkflow": true,
+    "checkIpHost": "https://checkip.amazonaws.com",
+    "useIdempotencyKey": false,
+    "defaultCircuitBreaker": {
+      "errorRate": 25,
+      "callVolume": 100,
+      "intervalMs": 6000,
+      "fallbackFn": null
+    }
+  },
+  "adapters": {
+    "desc": "adapter config",
+    "cacheSize": 3000,
+    "enableFederatedQueries": false,
+    "defaultDatasource": "DataSourceFile",
+    "datasources": {
+      "DataSourceMemory": {
+        "desc": "Non-persistent, in-memory storage",
+        "enabled": true
+      },
+      "DataSourceFile": {
+        "desc": "Persistent storage on local file system",
+        "enabled": true
+      },
+      "DataSourceMongoDb": {
+        "desc": "Persistent NoSQL, JSON document storage",
+        "enabled": true,
+        "url": "mongodb://localhost:27017",
+        "cacheSize": 3000
+      },
+      "DataSourceIpfs": {
+        "desc": "Decentralized p2p Internet-wide storage network",
+        "enabled": false
+      },
+      "DataSourceSolidPod": {
+        "desc": "Sir Tim Berners Lee's redesign of the Web for data privacy",
+        "enabled": false
+      },
+      "DataSourceEtherium": {
+        "desc": "blockchain storage based on solidity",
+        "enabled": false
+      },
+      "DataSourceAppFabric": {
+        "desc": "Aegis ",
+        "enabled": false
+      }
+    }
+  },
+  "services": {
+    "desc": "services config",
+    "activeServiceMesh": "WebSwitch",
+    "serviceMesh": {
+      "WebSwitch": {
+        "desc": "Default implementation. Switched mesh over web sockets.",
+        "enabled": true,
+        "isSwitch": false,
+        "heartbeat": 3000,
+        "uplink": null,
+        "debug": false,
+        "isBackupSwitch": false
+      },
+      "MeshLink": {
+        "desc": "Fast UDP-based, peer-to-peer mesh with shared Redis cache.",
+        "enabled": true,
+        "config": {
+          "redis": {
+            "host": "127.0.0.1",
+            "port": 6379
+          },
+          "ttl": 10000,
+          "prefix": "aegis",
+          "strict": false,
+          "relayLimit": 1,
+          "relayDelay": 0,
+          "updateInterval": 1000
+        }
+      },
+      "NatsMesh": {
+        "desc": "Switched mesh using NATS broker",
+        "enabled": false
+      },
+      "QuicMesh": {
+        "desc": "Uses QUIC transport protocol (replacing TCP in HTTP/3). Optimized for streaming.",
+        "enabled": false
+      }
+    },
+    "auth": {
+      "keySet": {
+        "cache": true,
+        "rateLimit": true,
+        "jwksRequestsPerMinute": 5,
+        "jwksUri": "https://dev-2fe2iar6.us.auth0.com/.well-known/jwks.json",
+        "audience": "https://microlib.io/",
+        "issuer": "https://dev-2fe2iar6.us.auth0.com/",
+        "algorithms": ["RS256"]
+      }
+    },
+    "token": {
+      "desc": "info to acquire token",
+      "authEnabled": false,
+      "oauthUri": "https://server.us.auth0.com/oauth/token",
+      "client_id": "__client_id__",
+      "client_secret": "__client_secret__",
+      "audience": "https://aegis.io/",
+      "grant_type": "__client_credentials__"
+    },
+    "cert": {
+      "webRoot": "public",
+      "certDir": "cert",
+      "domain": "localhost",
+      "domainEmail": "admin@federated-microservices.com"
+    }
+  }
+}

@@ -46,12 +46,12 @@ export const Order = {
   endpoint: 'orders',
   factory: makeOrderFactory,
   domain: 'order',
-  datasource: {
-    factory: DataSourceAdapterMongoDb,
-    url: 'mongodb://127.0.0.1:27017',
-    cacheSize: 4000,
-    baseClass: 'DataSourceMongoDb'
-  },
+  // datasource: {
+  //   factory: DataSourceAdapterMongoDb,
+  //   url: 'mongodb://127.0.0.1:27017',
+  //   cacheSize: 4000,
+  //   baseClass: 'DataSourceMongoDb'
+  // },
   dependencies: { uuid: () => nanoid(8) },
   mixins: [
     requireProperties(
@@ -262,6 +262,11 @@ export const Order = {
       timeout: 0
     },
     getFieldList: {
+      service: 'Test',
+      type: 'inbound',
+      timeout: 0
+    },
+    createModelEvent: {
       service: 'Test',
       type: 'inbound',
       timeout: 0
