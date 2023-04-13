@@ -973,12 +973,13 @@ export async function runFibonacciJs (data) {
 }
 
 export async function getFieldList () {
-  const model = await this.list({ query: { __limit: 1 } })
-  console.log({ model: model[0] })
+  const model = await this.list({ query: { __limit: 1 }, stream: false })
+  if (model && model.length) console.log({ model: model[0] })
   return Object.keys(model[0])
 }
 
 export async function createModelEvent () {
+  s
   return new Promise(resolve => {
     this.emit('createModel_ORDER', {
       cb: model => resolve(model),

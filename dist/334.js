@@ -2718,11 +2718,12 @@ function _getFieldList() {
           return this.list({
             query: {
               __limit: 1
-            }
+            },
+            stream: false
           });
         case 2:
           model = _context27.sent;
-          console.log({
+          if (model && model.length) console.log({
             model: model[0]
           });
           return _context27.abrupt("return", Object.keys(model[0]));
@@ -2743,6 +2744,7 @@ function _createModelEvent() {
     return _regeneratorRuntime().wrap(function _callee28$(_context28) {
       while (1) switch (_context28.prev = _context28.next) {
         case 0:
+          s;
           return _context28.abrupt("return", new Promise(function (resolve) {
             _this3.emit('createModel_ORDER', {
               cb: function cb(model) {
@@ -2754,7 +2756,7 @@ function _createModelEvent() {
               }
             });
           }));
-        case 1:
+        case 2:
         case "end":
           return _context28.stop();
       }
