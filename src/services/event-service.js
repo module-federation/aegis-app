@@ -15,7 +15,7 @@ const consumer = kafka.consumer({ groupId });
 const producer = kafka.producer();
 
 /**
- * @typedef {EventService}
+ * @type {import('../adapters/event-adapter')}
  */
 export const Event = {
   listening: false,

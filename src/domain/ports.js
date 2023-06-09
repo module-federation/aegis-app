@@ -9,9 +9,9 @@ export {
   runFibonacciJs,
   getFieldList,
   createModelEvent
-} from './order'
+} from './models/order'
 
-export { runFibonacciCust, doesFieldExist } from './customer'
+export { runFibonacciCust, doesFieldExist } from './models/customer'
 // export { listSolarSystems, sendGalaticSignal } from './Galaxy'
 // export {
 //   systemsInGalaxy,

@@ -56,6 +56,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-session": "^1.17.1",
+    "fastify": "^4.17.0",
     "kafkajs": "^1.14.0",
     "mongodb": "4.9.0",
     "multicast-dns": "^7.2.5",

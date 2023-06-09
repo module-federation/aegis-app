@@ -4,7 +4,7 @@ const session = require('express-session')
 const express = require('express')
 const http = require('http')
 const WebSocket = require('ws')
-const { uuid } = require('./domain/utils')
+const { uuid } = require('./domain/util/utils')
 require('dotenv').config()
 const services = require('./service-registry').default
 const cluster = require('cluster')
