@@ -1,3 +1,4 @@
+const Litehouse = require('..')
 const litehouse = new Litehouse()
 const test = require('node:test')
 const assert = require('node:assert')
@@ -18,7 +19,7 @@ const Classifier = (msg, deps) => ({
   }
 })
 
-test(() => {
+test('model', () => {
   litehouse.addModel(MODEL, Classifier, {
     export: [METHOD_IMPORTDB, METHOD_CLASSIFY]
   })
@@ -56,4 +57,14 @@ test(() => {
       .then(msg => Promise.resolve(assert.equal(msg.name, 'bald eagle')))
       .catch(err => Promise.reject(err))
   ])
+})
+
+test('remote import', async () => {
+  const litehouse = new Litehouse()
+  const fs = require('fs')
+  const factory = litehouse.import('models/classifier')
+  const model = factory({ classdb: 'birds' })
+  await model.importDb()
+  const result = model.classify(fs.createReadStream('bird.jpg'))
+  assert.equal(result.name, 'bald eagle')
 })

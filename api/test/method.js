@@ -5,7 +5,7 @@ const litehouse = new Litehouse()
 const MODEL = 'math'
 const METHOD = 'fibonacci'
 
-test(async () => {
+test('method', async () => {
   const model = litehouse.addModel(MODEL, msg => ({
     name: 'math',
     desc: 'various mathematical functions'
@@ -38,4 +38,15 @@ test(async () => {
     })
     .then(msg => Promise.resolve(assert.equal(msg.answer, 1000000)))
     .catch(err => Promise.reject(err))
+})
+
+test('override', () => {
+  const decorate = require('./models/dependencies/classifier/decorate')
+  const litehouse = new Litehouse()
+  const model = Litehouse.importRemote('models/classifier')
+
+  // overrides generated method, see model.js
+  model.addMethod('classify', (msg, model) =>
+    decorate(model.classify(msg.readable))
+  )
 })

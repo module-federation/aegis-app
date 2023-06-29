@@ -15,6 +15,7 @@ interface IModel {
   addAdapter (name: string, cb: cb): void
   addService (name: string, cb: cb): void
   addRelation (name: string, model: string, foreignKey: string, desc: string, localOnly: boolean): Model
+  addDataSource (name: string, adapter: string)
 }
 
 declare class Litehouse implements IAegis {
@@ -28,5 +29,5 @@ declare class Model implements IModel {
   addMethod (name: string, cb: cb): void
   addAdapter (name: string, cb: cb): void
   addService (name: string, cb: cb): void
-  addRelation(name: string, model: string, foreignKey: string, desc: string, localOnly: boolean): Model;
+  addRelation (name: string, model: string, foreignKey: string, desc: string, localOnly: boolean): Model
 }
