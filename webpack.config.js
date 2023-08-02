@@ -1,6 +1,7 @@
 var path = require('path')
-const { ModuleFederationPlugin } = require('webpack').container
+const { UniversalFederationPlugin } = require('@module-federation/node')
 const httpNode = require('./webpack/http-node')
+
 
 var serverConfig = {
   target: httpNode,
@@ -56,7 +57,7 @@ var serverConfig = {
     ]
   },
   plugins: [
-    new ModuleFederationPlugin({
+    new UniversalFederationPlugin({
       name: 'local',
       library: { type: 'commonjs-module' },
       filename: 'remoteEntry.js',
