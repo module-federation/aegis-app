@@ -1,21 +1,17 @@
-exports.id = 929;
-exports.ids = [929];
+"use strict";
+exports.id = 829;
+exports.ids = [829];
 exports.modules = {
 
 /***/ "./src/adapters/datasources/datasource-adapter-customer.js":
 /*!*****************************************************************!*\
   !*** ./src/adapters/datasources/datasource-adapter-customer.js ***!
   \*****************************************************************/
-/*! namespace exports */
-/*! export DataSourceAdapterCustomer [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "DataSourceAdapterCustomer": () => /* binding */ DataSourceAdapterCustomer
+/* harmony export */   DataSourceAdapterCustomer: function() { return /* binding */ DataSourceAdapterCustomer; }
 /* harmony export */ });
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -60,16 +56,11 @@ var DataSourceAdapterCustomer = function DataSourceAdapterCustomer(url, cacheSiz
 /*!*************************************************************!*\
   !*** ./src/adapters/datasources/datasource-adapter-file.js ***!
   \*************************************************************/
-/*! namespace exports */
-/*! export DataSourceAdapterCustomFile [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "DataSourceAdapterCustomFile": () => /* binding */ DataSourceAdapterCustomFile
+/* harmony export */   DataSourceAdapterCustomFile: function() { return /* binding */ DataSourceAdapterCustomFile; }
 /* harmony export */ });
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -124,16 +115,11 @@ var DataSourceAdapterCustomFile = function DataSourceAdapterCustomFile(url, cach
 /*!********************************************************!*\
   !*** ./src/adapters/datasources/datasource-mongodb.js ***!
   \********************************************************/
-/*! namespace exports */
-/*! export DataSourceAdapterMongoDb [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "DataSourceAdapterMongoDb": () => /* binding */ DataSourceAdapterMongoDb
+/* harmony export */   DataSourceAdapterMongoDb: function() { return /* binding */ DataSourceAdapterMongoDb; }
 /* harmony export */ });
 
 
@@ -208,16 +194,11 @@ var DataSourceAdapterMongoDb = function DataSourceAdapterMongoDb(url, cacheSize,
 /*!***************************************!*\
   !*** ./src/domain/config/customer.js ***!
   \***************************************/
-/*! namespace exports */
-/*! export Customer [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Customer": () => /* binding */ Customer
+/* harmony export */   Customer: function() { return /* binding */ Customer; }
 /* harmony export */ });
 /* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/mixins */ "./src/domain/util/mixins.js");
 /* harmony import */ var _models_customer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../models/customer */ "./src/domain/models/customer.js");
@@ -320,24 +301,15 @@ var Customer = {
 /*!************************************!*\
   !*** ./src/domain/config/index.js ***!
   \************************************/
-/*! namespace exports */
-/*! export Customer [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/config/customer.js .Customer */
-/*! export Inventory [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/config/inventory.js .Inventory */
-/*! export Order [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/config/order.js .Order */
-/*! export ToDo [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/config/todo.js .ToDo */
-/*! export WebSwitch [provided] [no usage info] [missing usage info prevents renaming] -> ./src/domain/config/webswitch.js .WebSwitch */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_exports__, __webpack_require__.d, __webpack_require__.r, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "WebSwitch": () => /* reexport safe */ _webswitch__WEBPACK_IMPORTED_MODULE_0__.WebSwitch,
-/* harmony export */   "Order": () => /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_1__.Order,
-/* harmony export */   "Customer": () => /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_2__.Customer,
-/* harmony export */   "Inventory": () => /* reexport safe */ _inventory__WEBPACK_IMPORTED_MODULE_3__.Inventory,
-/* harmony export */   "ToDo": () => /* reexport safe */ _todo__WEBPACK_IMPORTED_MODULE_4__.ToDo
+/* harmony export */   Customer: function() { return /* reexport safe */ _customer__WEBPACK_IMPORTED_MODULE_2__.Customer; },
+/* harmony export */   Inventory: function() { return /* reexport safe */ _inventory__WEBPACK_IMPORTED_MODULE_3__.Inventory; },
+/* harmony export */   Order: function() { return /* reexport safe */ _order__WEBPACK_IMPORTED_MODULE_1__.Order; },
+/* harmony export */   ToDo: function() { return /* reexport safe */ _todo__WEBPACK_IMPORTED_MODULE_4__.ToDo; },
+/* harmony export */   WebSwitch: function() { return /* reexport safe */ _webswitch__WEBPACK_IMPORTED_MODULE_0__.WebSwitch; }
 /* harmony export */ });
 /* harmony import */ var _webswitch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./webswitch */ "./src/domain/config/webswitch.js");
 /* harmony import */ var _order__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./order */ "./src/domain/config/order.js");
@@ -361,16 +333,11 @@ __webpack_require__.r(__webpack_exports__);
 /*!****************************************!*\
   !*** ./src/domain/config/inventory.js ***!
   \****************************************/
-/*! namespace exports */
-/*! export Inventory [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Inventory": () => /* binding */ Inventory
+/* harmony export */   Inventory: function() { return /* binding */ Inventory; }
 /* harmony export */ });
 /* harmony import */ var _adapters_datasources_datasource_mongodb__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../adapters/datasources/datasource-mongodb */ "./src/adapters/datasources/datasource-mongodb.js");
 /* harmony import */ var _models_inventory__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../models/inventory */ "./src/domain/models/inventory.js");
@@ -433,16 +400,11 @@ var Inventory = {
 /*!************************************!*\
   !*** ./src/domain/config/order.js ***!
   \************************************/
-/*! namespace exports */
-/*! export Order [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Order": () => /* binding */ Order
+/* harmony export */   Order: function() { return /* binding */ Order; }
 /* harmony export */ });
 /* harmony import */ var _models_order__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../models/order */ "./src/domain/models/order.js");
 /* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/mixins */ "./src/domain/util/mixins.js");
@@ -870,16 +832,11 @@ var Order = {
 /*!***********************************!*\
   !*** ./src/domain/config/todo.js ***!
   \***********************************/
-/*! namespace exports */
-/*! export ToDo [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "ToDo": () => /* binding */ ToDo
+/* harmony export */   ToDo: function() { return /* binding */ ToDo; }
 /* harmony export */ });
 /* harmony import */ var _adapters_datasources_datasource_adapter_file__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../adapters/datasources/datasource-adapter-file */ "./src/adapters/datasources/datasource-adapter-file.js");
 /* harmony import */ var _models_todo__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../models/todo */ "./src/domain/models/todo.js");
@@ -914,16 +871,11 @@ var ToDo = {
 /*!****************************************!*\
   !*** ./src/domain/config/webswitch.js ***!
   \****************************************/
-/*! namespace exports */
-/*! export WebSwitch [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "WebSwitch": () => /* binding */ WebSwitch
+/* harmony export */   WebSwitch: function() { return /* binding */ WebSwitch; }
 /* harmony export */ });
 /* harmony import */ var _models_webswitch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../models/webswitch */ "./src/domain/models/webswitch.js");
 
@@ -1018,16 +970,11 @@ var WebSwitch = {
 /*!*****************************!*\
   !*** ./src/domain/index.js ***!
   \*****************************/
-/*! namespace exports */
-/*! export models [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "models": () => /* binding */ models
+/* harmony export */   models: function() { return /* binding */ models; }
 /* harmony export */ });
 /* harmony import */ var _util_mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/mixins */ "./src/domain/util/mixins.js");
 /* harmony import */ var _util_bind_adapters__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/bind-adapters */ "./src/domain/util/bind-adapters.js");
@@ -1314,8 +1261,8 @@ function makeModel(spec) {
   var mixins = spec.mixins || [];
   var dependencies = spec.dependencies || {};
   return _objectSpread(_objectSpread({}, spec), {}, {
-    mixins: mixins.concat(_util_mixins__WEBPACK_IMPORTED_MODULE_0__.default),
-    dependencies: _objectSpread(_objectSpread({}, dependencies), (0,_util_bind_adapters__WEBPACK_IMPORTED_MODULE_1__.default)(spec.ports, _adapters__WEBPACK_IMPORTED_MODULE_3__, _services__WEBPACK_IMPORTED_MODULE_2__))
+    mixins: mixins.concat(_util_mixins__WEBPACK_IMPORTED_MODULE_0__["default"]),
+    dependencies: _objectSpread(_objectSpread({}, dependencies), (0,_util_bind_adapters__WEBPACK_IMPORTED_MODULE_1__["default"])(spec.ports, _adapters__WEBPACK_IMPORTED_MODULE_3__, _services__WEBPACK_IMPORTED_MODULE_2__))
   });
 }
 var models = Object.entries(_config__WEBPACK_IMPORTED_MODULE_5__).map(function (_ref) {
@@ -1333,22 +1280,14 @@ var models = Object.entries(_config__WEBPACK_IMPORTED_MODULE_5__).map(function (
 /*!****************************************!*\
   !*** ./src/domain/models/inventory.js ***!
   \****************************************/
-/*! namespace exports */
-/*! export assetTypes [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export categories [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export makeInventoryFactory [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export properties [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "assetTypes": () => /* binding */ assetTypes,
-/* harmony export */   "properties": () => /* binding */ properties,
-/* harmony export */   "categories": () => /* binding */ categories,
-/* harmony export */   "makeInventoryFactory": () => /* binding */ makeInventoryFactory
+/* harmony export */   assetTypes: function() { return /* binding */ assetTypes; },
+/* harmony export */   categories: function() { return /* binding */ categories; },
+/* harmony export */   makeInventoryFactory: function() { return /* binding */ makeInventoryFactory; },
+/* harmony export */   properties: function() { return /* binding */ properties; }
 /* harmony export */ });
 
 
@@ -1391,16 +1330,11 @@ var makeInventoryFactory = function makeInventoryFactory(dependencies) {
 /*!***********************************!*\
   !*** ./src/domain/models/todo.js ***!
   \***********************************/
-/*! namespace exports */
-/*! export makeToDoFactory [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "makeToDoFactory": () => /* binding */ makeToDoFactory
+/* harmony export */   makeToDoFactory: function() { return /* binding */ makeToDoFactory; }
 /* harmony export */ });
 
 
@@ -1422,18 +1356,12 @@ function makeToDoFactory(dependencies) {
 /*!****************************************!*\
   !*** ./src/domain/models/webswitch.js ***!
   \****************************************/
-/*! namespace exports */
-/*! export ServiceMeshClient [provided] [no usage info] [missing usage info prevents renaming] */
-/*! export makeClient [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__, __webpack_require__.n, __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "ServiceMeshClient": () => /* binding */ ServiceMeshClient,
-/* harmony export */   "makeClient": () => /* binding */ makeClient
+/* harmony export */   ServiceMeshClient: function() { return /* binding */ ServiceMeshClient; },
+/* harmony export */   makeClient: function() { return /* binding */ makeClient; }
 /* harmony export */ });
 /* harmony import */ var os__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! os */ "os");
 /* harmony import */ var os__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(os__WEBPACK_IMPORTED_MODULE_0__);
@@ -1925,16 +1853,11 @@ function makeClient(dependencies) {
 /*!******************************************!*\
   !*** ./src/domain/util/bind-adapters.js ***!
   \******************************************/
-/*! namespace exports */
-/*! export default [provided] [no usage info] [missing usage info prevents renaming] */
-/*! other exports [not provided] [no usage info] */
-/*! runtime requirements: __webpack_require__.r, __webpack_exports__, __webpack_require__.d, __webpack_require__.* */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => /* binding */ makeAdapters
+/* harmony export */   "default": function() { return /* binding */ makeAdapters; }
 /* harmony export */ });
 
 
@@ -1966,4 +1889,4 @@ function makeAdapters(ports, adapters, services) {
 
 };
 ;
-//# sourceMappingURL=929.js.map
+//# sourceMappingURL=829.js.map

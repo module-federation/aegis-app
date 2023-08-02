@@ -10,7 +10,7 @@
     "url": "https://github.com/module-federation/aegis-app"
   },
   "scripts": {
-    "build": "yarn build-local",
+    "build": "export NODE_OPTIONS=--openssl-legacy-provider NPM_TOKEN=123 && yarn clean && webpack --config webpack.config.js",
     "start": "./start.sh",
     "watch": "node watch.mjs",
     "bar": "yarn build-n-restart",
@@ -53,6 +53,7 @@
   "license": "MIT",
   "dependencies": {
     "@assemblyscript/loader": "^0.19.10",
+    "@module-federation/node": "^1.0.5",
     "axios": "^0.21.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
@@ -85,8 +86,8 @@
     "mocha": "^8.2.0",
     "py-loader": "^0.3.1",
     "snowpack": "^3.4.0",
-    "webpack": "5.0.0-beta.28",
-    "webpack-cli": "^3.3.12",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
     "webpack-node-externals": "^2.5.2"
   }
 }

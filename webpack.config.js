@@ -1,9 +1,9 @@
 var path = require('path')
-const { ModuleFederationPlugin } = require('webpack').container
+const { UniversalFederationPlugin } = require('@module-federation/node')
 const httpNode = require('./webpack/http-node')
 
 var serverConfig = {
-  target: httpNode,
+  target: 'node',
 
   entry: ['@babel/polyfill', path.resolve(__dirname, 'src/index.js')],
   output: {
@@ -56,8 +56,8 @@ var serverConfig = {
     ]
   },
   plugins: [
-    new ModuleFederationPlugin({
-      name: 'local',
+    new UniversalFederationPlugin({
+      name: 'microservices',
       library: { type: 'commonjs-module' },
       filename: 'remoteEntry.js',
       exposes: {
