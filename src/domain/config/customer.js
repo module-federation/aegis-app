@@ -52,7 +52,8 @@ export const Customer = {
     orders: {
       modelName: 'order',
       type: 'oneToMany',
-      foreignKey: 'customerId'
+      foreignKey: 'customerId',
+      localOnly: true
     }
   },
   commands: {
