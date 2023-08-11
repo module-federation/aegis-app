@@ -6396,11 +6396,6 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
 
 // Models
 
-
-/**
- *
- * @param {ModelSpecification} spec
- */
 function validateSpec(spec) {
   var missing = ['endpoint', 'factory'].filter(function (key) {
     return !spec[key];
@@ -6414,11 +6409,12 @@ function validateSpec(spec) {
  * @param {ModelSpecification} spec
  * @param {*} dependencies - services injected
  */
-function makeModel(spec) {
+function makeModel(spec, modelName) {
   validateSpec(spec);
   var mixins = spec.mixins || [];
   var dependencies = spec.dependencies || {};
   return _objectSpread(_objectSpread({}, spec), {}, {
+    modelName: modelName.toUpperCase(),
     mixins: mixins.concat(_util_mixins__WEBPACK_IMPORTED_MODULE_0__["default"]),
     dependencies: _objectSpread(_objectSpread({}, dependencies), (0,_util_bind_adapters__WEBPACK_IMPORTED_MODULE_1__["default"])(spec.ports, _adapters__WEBPACK_IMPORTED_MODULE_3__, _services__WEBPACK_IMPORTED_MODULE_2__))
   });
@@ -6427,9 +6423,9 @@ var models = Object.entries(_config__WEBPACK_IMPORTED_MODULE_5__).map(function (
   var _ref2 = _slicedToArray(_ref, 2),
     k = _ref2[0],
     v = _ref2[1];
-  return makeModel(_objectSpread(_objectSpread({}, v), {}, {
-    modelName: k
-  }));
+  return _defineProperty({}, k.toUpperCase(), makeModel(v, k));
+}).reduce(function (a, b) {
+  return _objectSpread(_objectSpread({}, a), b);
 });
 
 /***/ }),
