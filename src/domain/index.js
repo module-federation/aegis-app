@@ -244,10 +244,6 @@ import * as ports from './ports'
 // Models
 import * as modelSpecs from './config'
 
-/**
- *
- * @param {ModelSpecification} spec
- */
 function validateSpec (spec) {
   const missing = ['endpoint', 'factory'].filter(key => !spec[key])
   if (missing?.length > 0) {
@@ -261,12 +257,13 @@ function validateSpec (spec) {
  * @param {ModelSpecification} spec
  * @param {*} dependencies - services injected
  */
-function makeModel (spec) {
+function makeModel (spec, modelName) {
   validateSpec(spec)
   const mixins = spec.mixins || []
   const dependencies = spec.dependencies || {}
   return {
     ...spec,
+    modelName: modelName.toUpperCase(),
     mixins: mixins.concat(GlobalMixins),
     dependencies: {
       ...dependencies,
@@ -275,6 +272,7 @@ function makeModel (spec) {
   }
 }
 
-export const models = Object.entries(modelSpecs).map(([k, v]) =>
-  makeModel({ ...v, modelName: k })
-)
+export const models = Object.entries(modelSpecs)
+  .map(([k, v]) => ({ [k.toUpperCase()]: makeModel(v, k) }))
+  .reduce((a, b) => ({ ...a, ...b }))
+
